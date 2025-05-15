@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage[bb=boondox]{mathalfa}
+\makeatletter
+\newcommand{\bigplus}{%
+  \DOTSB\mathop{\mathpalette\mattos@bigplus\relax}\slimits@
+}
+\newcommand\mattos@bigplus[2]{%
+  \vcenter{\hbox{%
+    \sbox\z@{$#1\sum$}%
+    \resizebox{!}{0.9\dimexpr\ht\z@+\dp\z@}{\raisebox{\depth}{$\m@th#1+$}}%
+  }}%
+  \vphantom{\sum}%
+}
+\makeatother
+\title{Provenance of aggregate queries with HAVING clause in ProvSQL.}
+\author{Pratik Karmakar \and Aryak Sen \and Pierre Senellart}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+$R$ is a relation on set of attributes $U$.\\
+We consider $U^{GB} \subseteq U$ and $U^{AGG}\subseteq U$ and $U^{GB}\cap U^{AGG} = \phi$.\\
+For each tuple $t$, 
+\begin{align*}
+T = \{t^*\in \mathrm{Supp}(R)|\forall u\in U^{GB}, t(u) = t^*(u)\}.    
+\end{align*}
+
+Extending on the semantics of aggregate GROUP BY queries~\cite{amsterdamer2011provenance} we express the provenance of HAVING queries as: 
+\begin{align*}
+    q:= \sigma_{SUM} = c
+\end{align*}
+
+\begin{align*}
+\mathrm{Provenance}(q) = \delta(\bigplus_{t_i \in T} t_i) * [\bigplus{K\otimes{SUM}}_{t_i\in T}t_i \otimes c_i = c\otimes \mathbb{1}]    
+\end{align*}
+
+\footnote{In deterministic scenario, provenance of HAVING queries is just Boolean existence onus the comparison operator??}
+\footnote{For probabilistic databases, provenance of HAVING queries is to be computed using the DP algo.}
+\bibliographystyle{splncs04}
+\bibliography{ref}
+\end{document}
