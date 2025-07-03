@@ -1,9 +1,0 @@
-\begin{thebibliography}{1}
-\providecommand{\url}[1]{\texttt{#1}}
-\providecommand{\urlprefix}{URL }
-\providecommand{\doi}[1]{https://doi.org/#1}
-
-\bibitem{amsterdamer2011provenance}
-Amsterdamer, Y., Deutch, D., Tannen, V.: Provenance for aggregate queries. In: Proceedings of the thirtieth ACM SIGMOD-SIGACT-SIGART symposium on Principles of database systems. pp. 153--164 (2011)
-
-\end{thebibliography}
