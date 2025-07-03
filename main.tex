@@ -98,19 +98,19 @@ A K-relation is $R: tup(U) \rightarrow K$
 
 Let $G$ be the set of attributes in a GROUP BY clause,
 $$G \subseteq Schema(R)$$
-and aggregate function $f\in\{SUM, PROD, MIN, MAX\}$ over attributes $A\in U\setminus G$.\\
-And, $$\delta = \gamma_{G,f(A)}(R),$$
-$$\delta(g) = agg(\gamma, \{R(t) | t[G] = g\}) \forall group \in tup(G)$$
+and aggregate function $\psi\in\{SUM, PROD, MIN, MAX\}$ over attributes $A\in U\setminus G$.\\
+And, $$\delta = \gamma_{G,\psi(A)}(R),$$
+$$\delta(g) = agg(\psi, \{R(t) | t[G] = g\}) \forall group \in tup(G)$$
 
 \subsection{HAVING only for constant C to be compared against $f$}
 \begin{align*}
-  \delta = \gamma_{G,f(A)}(R): g \mapsto \delta(g) = f(\{R(t)|t[G] = g\})\in K
+  \delta = \gamma_{G,\psi(A)}(R): g \mapsto \delta(g) = f(\{R(t)|t[G] = g\})\in K
 \end{align*}
 
 Only one provenance token $\delta(g)$ for each group $g$ in the GROUP BY clause.\\
-We give semantics for $f(A) op C$:
+We give semantics for $\psi(A) op C$:
 \begin{align*}
-  [\gamma_{G,f(A)}(R) \text{ HAVING } f(A) op C] = (g \mapsto \gamma ([\delta(g) op C])\otimes \delta(g))\\
+  [\gamma_{G,\psi(A)}(R) \text{ HAVING } \psi(A) op C] = (g \mapsto \gamma ([\delta(g) op C])\otimes \delta(g))\\
   \text{where } op \in \{=, \neq, <, \leq, >, \geq\}
 \end{align*}
 
