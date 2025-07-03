@@ -73,7 +73,9 @@ $K \leftarrow$ Set of strings\\
   &Cmp(k_1, op, k_2) = [+k_1 + op + k_2 +]
 \end{align*}
 \begin{align*}
-&agg(\gamma, \{k_i\}): \{SUM, MIN, MAX, PROD\}\times K^n \rightarrow K\\
+&F=\{SUM, MIN, MAX, PROD\}\\
+&\psi\in\F\\
+&agg(\psi, \{k_i\}): F \times K^n \rightarrow K\\
 &SUM: \sum k_i\\
 &MIN: min(k_1, \dots, k_n)\\
 &MAX: max(k_1, \dots, k_n)\\
