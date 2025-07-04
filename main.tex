@@ -6,6 +6,7 @@
 \usepackage{csquotes}
 \usepackage[bb=boondox]{mathalfa}
 \newcommand{\dq}[1]{\text{\enquote{#1}}}
+\newcommand{\op}{\hspace{0.1cm}\mathsf{op}\hspace{0.1cm}}
 \makeatletter
 \newcommand{\bigplus}{%
   \DOTSB\mathop{\mathpalette\mattos@bigplus\relax}\slimits@
@@ -70,7 +71,7 @@ $K \leftarrow$ Set of strings\\
 \begin{align*}
   &Cmp: K^2 \rightarrow K\\
   &op\in\{=,\neq, <, \leq, >, \geq\}\\
-  &Cmp(k_1, op, k_2) = [+k_1 + op + k_2 +]
+  &Cmp(k_1, \op, k_2) = [+k_1 + \op + k_2 +]
 \end{align*}
 \begin{align*}
 &F=\{SUM, MIN, MAX, PROD\}\\
@@ -108,10 +109,10 @@ $$\delta(g) = agg(\psi, \{R(t) | t[G] = g\}) \forall group \in tup(G)$$
 \end{align*}
 
 Only one provenance token $\delta(g)$ for each group $g$ in the GROUP BY clause.\\
-We give semantics for $\psi(A) op C$:
+We give semantics for $\psi(A) \op C$:
 \begin{align*}
-  [\gamma_{G,\psi(A)}(R) \text{ HAVING } \psi(A) op C] = (g \mapsto \gamma ([\delta(g) op C])\otimes \delta(g))\\
-  \text{where } op \in \{=, \neq, <, \leq, >, \geq\}
+  [\gamma_{G,\psi(A)}(R) \text{ HAVING} (\psi(A) \op C)] = (g \mapsto \gamma ([\delta(g) \op C])\otimes \delta(g))\\
+  \text{where } \op \in \{=, \neq, <, \leq, >, \geq\}
 \end{align*}
 
 \footnote{In deterministic scenario, provenance of HAVING queries is just Boolean existence onus the comparison operator??}
