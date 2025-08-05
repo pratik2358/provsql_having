@@ -20,14 +20,15 @@
 }
 \makeatother
 \title{Provenance of aggregate queries with HAVING clause in ProvSQL.}
-\author{Pratik Karmakar \and Aryak Sen \and Pierre Senellart}
+\author{Pratik Karmakar \and Aryak Sen \and Silviu Maniu \and Pierre Senellart}
 \date{}
 
 \begin{document}
 \maketitle
 \section{Notes on aggregation and HAVING semantics}
 
-Let's assume that any selection on the result of an aggregation is a atomic selection of the form .k=C or .k=.j. If not, we can write:
+Let's assume that any selection on the result of an aggregation is an 
+atomic selection of the form .k=C or .k=.j. If not, we can write:
 
 $\sigma_{\phi\land\psi}(q)=\sigma(\phi)(\sigma(\psi)(q))$
 $\sigma_{\phi\lor\psi}(q)=\sigma(\phi)(q)\cup\sigma(\psi)(q)$
