@@ -1,0 +1,66 @@
+\subsection{Homomorphisms}
+
+\subsubsection{$\Phi : \mathsf{BF}_n \to T$}
+
+For each Boolean valuation $b = (b_1,\dots,b_n) \in \{0,1\}^n$, define:
+
+$$
+Q_b \subseteq \mathbb{R} \footnote{- \(Q_b\) intervals basically tell us when each combination of tuple truth values happens.
+- \(\Phi(f)\) simply collects all the times when \(f\) would be true for each tuple.}
+$$
+
+
+$Q_b$ form a disjoint cover of time.
+
+We define:
+
+$$
+\Phi(f) = \bigcup_{\substack{b \in \{0,1\}^n \\ f(b) = 1}} Q_b
+$$
+
+\begin{proof}
+\begin{itemize}
+\item \textbf{Zero}
+$$
+\Phi(0_B) = \bigcup_{\varnothing} Q_b = \varnothing = 0_T
+$$
+
+\item
+\textbf{One}
+$$
+\Phi(1_B) = \bigcup_{b: \text{always true}} Q_b = \mathbb{T} = 1_T
+$$
+\item
+\textbf{Addition}
+$$
+\Phi(f \lor g)
+= \bigcup_{b: f(b) \lor g(b) = 1} Q_b
+= \left(\bigcup_{b: f(b) = 1} Q_b\right) \cup \left(\bigcup_{b: g(b) = 1} Q_b\right)
+= \Phi(f) \oplus \Phi(g)
+$$
+\item
+\textbf{Multiplication}
+$$
+\Phi(f \land g)
+= \bigcup_{b: f(b) \land g(b) = 1} Q_b
+= \left(\bigcup_{b: f(b) = 1} Q_b\right) \cap \left(\bigcup_{b: g(b) = 1} Q_b\right)
+= \Phi(f) \otimes \Phi(g)
+$$
+\item
+\textbf{monus}
+$$
+\Phi(f \land \neg g)
+= \bigcup_{b: f(b) \land \neg g(b) = 1} Q_b
+= \left(\bigcup_{b: f(b) = 1} Q_b\right) \cap \left(1_T \slash \left(\bigcup_{b: g(b) = 1} Q_b\right)\right)
+= \Phi(f) \otimes \Phi(g)
+$$
+    
+
+\end{itemize}
+
+\end{proof}
+
+Thus $\Phi$ is a semiring homomorphism.
+
+
+
