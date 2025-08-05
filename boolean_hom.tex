@@ -1,0 +1,124 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{proposition}{Proposition}
+
+\begin{document}
+
+\section*{Detailed Proof of the Semiring Homomorphism}
+
+Let
+\[
+  \mathbb{B} = (\{0,1\},\,\vee,\,\wedge,\,0,\,1)
+\]
+be the Boolean semiring, and let
+\[
+  \mathcal{B}(X) = \bigl(\{\,f:X\to\{0,1\}\},\,\vee_{\mathrm{pt}},\,\wedge_{\mathrm{pt}},\,0_X,\,1_X\bigr)
+\]
+be the semiring of Boolean functions on a set $X$, where for all $f,g\in\mathcal{B}(X)$ and all $x\in X$:
+\[
+  (f\vee_{\mathrm{pt}} g)(x) = f(x)\vee g(x),
+  \quad
+  (f\wedge_{\mathrm{pt}} g)(x) = f(x)\wedge g(x),
+\]
+and $0_X(x)=0$, $1_X(x)=1$ for every $x\in X$.
+
+\begin{proposition}
+Define
+\[
+  \phi : \mathbb{B} \;\longrightarrow\; \mathcal{B}(X)
+  \quad\text{by}\quad
+  \phi(0) = 0_X,
+  \quad
+  \phi(1) = 1_X.
+\]
+Then $\phi$ is a semiring homomorphism.
+\end{proposition}
+
+\begin{proof}
+We check each requirement in turn.
+
+---
+
+\section*{Identity Preservation}
+
+- Additive identity.  In $\mathbb B$, $0$ is the additive identity.  In $\mathcal B(X)$, $0_X$ is the additive identity.  By definition, $\phi(0)=0_X$.
+
+- Multiplicative identity.  In $\mathbb B$, $1$ is the multiplicative identity.  In $\mathcal B(X)$, $1_X$ is the multiplicative identity.  By definition, $\phi(1)=1_X$.
+
+Thus $\phi$ sends identities to identities.
+
+---
+
+\section{Preservation of Addition ($\vee$)}
+
+Let $a,b\in\{0,1\}$.  We need to show
+\[
+  \phi(a\vee b)
+  \;=\;
+  \phi(a)\,\vee_{\mathrm{pt}}\,\phi(b).
+\]
+By definition of $\phi$, the left-hand side is the constant-$(a\vee b)$ function:
+\[
+  \phi(a\vee b) \;=\; 
+  \bigl(x\mapsto a\vee b\bigr).
+\]
+On the right-hand side, recall $\phi(a)$ and $\phi(b)$ are the constant-$a$ and constant-$b$ functions, respectively:
+\[
+  \phi(a)(x) = a,
+  \quad
+  \phi(b)(x) = b,
+  \quad
+  \text{for all }x\in X.
+\]
+Then by the definition of pointwise $\vee_{\mathrm{pt}}$,
+\[
+  \bigl[\phi(a)\,\vee_{\mathrm{pt}}\,\phi(b)\bigr](x)
+  = \phi(a)(x)\;\vee\;\phi(b)(x)
+  = a \;\vee\; b.
+\]
+Hence the function $\phi(a)\vee_{\mathrm{pt}}\phi(b)$ is ALSO the constant-$(a\vee b)$ function.  Concretely:
+\[
+  \phi(a\vee b)(x)
+  = (a\vee b)
+  = \phi(a)(x)\vee \phi(b)(x)
+  = \bigl[\phi(a)\vee_{\mathrm{pt}}\phi(b)\bigr](x),
+  \quad \forall x\in X.
+\]
+Since two functions that agree on every $x\in X$ are equal, we conclude
+\[
+  \phi(a\vee b)
+  = \phi(a)\,\vee_{\mathrm{pt}}\,\phi(b).
+\]
+
+\section{Preservation of Multiplication ($\wedge$)}
+
+Let again $a,b\in\{0,1\}$.  We must show
+\[
+  \phi(a\wedge b)
+  \;=\;
+  \phi(a)\,\wedge_{\mathrm{pt}}\,\phi(b).
+\]
+- Left side: by definition, $\phi(a\wedge b)$ is the constant-$(a\wedge b)$ function:
+  \[
+    \phi(a\wedge b)(x) = a\wedge b,\quad\forall x\in X.
+  \]
+- Right side: since $\phi(a)$ is constant-$a$ and $\phi(b)$ is constant-$b$, the pointwise AND gives
+  \[
+    \bigl[\phi(a)\,\wedge_{\mathrm{pt}}\,\phi(b)\bigr](x)
+    = \phi(a)(x)\;\wedge\;\phi(b)(x)
+    = a\wedge b,
+    \quad \forall x\in X.
+  \]
+Thus $\phi(a\wedge b)$ and $\phi(a)\wedge_{\mathrm{pt}}\phi(b)$ are the same constant-$(a\wedge b)$ function, and so
+\[
+  \phi(a\wedge b)
+  = \phi(a)\,\wedge_{\mathrm{pt}}\,\phi(b).
+\]
+
+---
+
+Since $\phi$ maps $0\mapsto0_X$, $1\mapsto1_X$, and preserves both addition and multiplication, it satisfies the definition of a semiring homomorphism.
+\end{proof}
+
+\end{document}

@@ -330,6 +330,19 @@ q'(T)
 as required.
 \end{proof}
 
+In a more general case we can compare between two aggregates from a 
+relation, \(T\) with column \(y\). Consider the query below:
+
+\begin{listing}[ht]
+\caption{Return 1 if \(\lvert T\rvert = SUM(T.y)\)}
+\begin{minted}[linenos,frame=single,fontsize=\small]{sql}
+SELECT DISTINCT 1
+  FROM T
+  HAVING COUNT(*) = SUM(T.y);
+\end{minted}
+\end{listing}
+
+
 \input{homomorphisms.tex}
 
 \cite{amsterdamer2011provenance}
