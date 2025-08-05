@@ -1,8 +1,20 @@
 \subsection{Homomorphisms}
 
-\subsubsection{$\Phi : \mathsf{BF}_n \to T$}
+\subsubsection{$\Phi : \mathcal{B} \to T$}
 
-For each Boolean valuation $b = (b_1,\dots,b_n) \in \{0,1\}^n$, define:
+$$T = (\mathcal{T}, \cup, \cap, \emptyset, \{]-\infty, +\infty[\}, \backslash)$$
+
+For $A,B\in \mathcal{T}$, we define $A\backslash B$ as:
+$$A\backslash B = \cup_{a\in A, b\in B}a\cap \bar{b}$$ 
+where $\bar{b} = ]-\infty, +\infty[\backslash b$.
+
+Now for Boolean function semiring,
+$$\mathcal{B} = (\textbf{b}, \lor, \land, 0_{\mathcal{B}}, 1_{\mathcal{B}})$$
+Where $\textbf{b} = (b_1,\dots,b_n) \in \{0,1\}^n$ is the set of all Boolean functions on $n$ variables, $\lor$ 
+is pointwise disjunction, $\land$ is pointwise conjunction, $0_{\mathcal{B}}$ is the constant function that is always false, and $1_{\mathcal{B}}$ is the constant function that is always true.
+
+where $0_B$ is the constant function that is always false, and $1_B$ is the constant function that is always true.
+For each Boolean valuation $\textbf{b}$, define:
 
 $$
 Q_b \subseteq \mathbb{R} \footnote{- \(Q_b\) intervals basically tell us when each combination of tuple truth values happens.
@@ -22,13 +34,13 @@ $$
 \begin{itemize}
 \item \textbf{Zero}
 $$
-\Phi(0_B) = \bigcup_{\varnothing} Q_b = \varnothing = 0_T
+\Phi(0_{\mathcal{B}}) = \bigcup_{b:\{0,1\}^n \mapsto \{0\}} Q_b = \emptyset
 $$
 
 \item
 \textbf{One}
 $$
-\Phi(1_B) = \bigcup_{b: \text{always true}} Q_b = \mathbb{T} = 1_T
+\Phi(1_{\mathcal{B}}) = \bigcup_{b:\{0,1\}^n \mapsto \{1\}} Q_b = ]-\infty, +\infty[
 $$
 \item
 \textbf{Addition}
@@ -36,7 +48,7 @@ $$
 \Phi(f \lor g)
 = \bigcup_{b: f(b) \lor g(b) = 1} Q_b
 = \left(\bigcup_{b: f(b) = 1} Q_b\right) \cup \left(\bigcup_{b: g(b) = 1} Q_b\right)
-= \Phi(f) \oplus \Phi(g)
+= \Phi(f) \cup \Phi(g)
 $$
 \item
 \textbf{Multiplication}
@@ -44,15 +56,15 @@ $$
 \Phi(f \land g)
 = \bigcup_{b: f(b) \land g(b) = 1} Q_b
 = \left(\bigcup_{b: f(b) = 1} Q_b\right) \cap \left(\bigcup_{b: g(b) = 1} Q_b\right)
-= \Phi(f) \otimes \Phi(g)
+= \Phi(f) \cap \Phi(g)
 $$
 \item
 \textbf{monus}
 $$
 \Phi(f \land \neg g)
 = \bigcup_{b: f(b) \land \neg g(b) = 1} Q_b
-= \left(\bigcup_{b: f(b) = 1} Q_b\right) \cap \left(1_T \slash \left(\bigcup_{b: g(b) = 1} Q_b\right)\right)
-= \Phi(f) \otimes \Phi(g)
+= \left(\bigcup_{b: f(b) = 1} Q_b\right) \cap \left(1_T \backslash \left(\bigcup_{b: g(b) = 1} Q_b\right)\right)
+= \Phi(f) \backslash \Phi(g)
 $$
     
 
