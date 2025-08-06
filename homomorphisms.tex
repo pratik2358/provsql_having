@@ -5,7 +5,7 @@ A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
   indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
 The semiring of Boolean functions is:
 $$
-B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\,\vee,\,\wedge,\,0_B,\,1_B,\,\setminus_B)
+B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
 $$
 \begin{itemize}
     \item \(\varphi \vee \psi\): pointwise OR
@@ -87,11 +87,11 @@ Thus $\Phi_{\mathrm{T}}$ is a semiring homomorphism.
 
 It is easy to show that absorptivity and A13 is satisfied.
 
-\subsubsection{$\Phi_{\mathrm{trop}}: \mathcal{B} \to T_{\min}$}
+\subsubsection{$\Phi_{\mathrm{trop}}: B^X \to T_{\min}$}
 
 We define:
 $$
-T_{\min} = (\mathbb{R}_{\ge 0} \cup \{\infty\},\,\min,\,+,\,\infty,\,0,\,\setminus_T).
+T_{\min} = (\mathbb{R}_{\ge 0} \cup \{\infty\},\min,+,\infty,0,\setminus_T).
 $$
 \begin{itemize}
     \item Addition: \(\min\)
@@ -113,12 +113,12 @@ $$
 \textbf{Homomorphism}:\newline
 Assign each token \(x_i\in X\) a cost \(c(x_i)\in\mathbb{R}_{\ge0}\cup\{\infty\}\). For any valuation \(\nu\), define
 $$
-w(\nu) = \sum_{x_i:\,\nu(x_i)=\top} c(x_i).
+w(\nu) = \sum_{x_i:\nu(x_i)=\top} c(x_i).
 $$
 Then for boolean function  \(\varphi\):
 $$
 \Phi_{\mathrm{trop}}(\varphi) 
-= \min_{\nu:\,\varphi(\nu)=\top} w(\nu),
+= \min_{\nu:\varphi(\nu)=\top} w(\nu),
 $$
 with \(\Phi_{\mathrm{trop}}(0_B)=\infty\).
 \newline
@@ -133,10 +133,10 @@ Let \(X=\{x_1,x_2\}\), \(c(x_1)=2\), \(c(x_2)=5\).
 - \(\psi = x_2\): \(\Phi_{\mathrm{trop}}(\psi)=5\).  
 - \(\varphi \setminus_B \psi\) true only when \(\nu=(\top,\bot)\), cost \(2\).
 
-$A13$ does not hold.
+It is easy to show that $A13$ and absorptivity are satisfied.
 
 
-\subsubsection{$\Phi_{\mathrm{sec}}: \mathcal{B} \to T_{\min}$}
+\subsubsection{$\Phi_{\mathrm{sec}}: B^X \to T_{\min}$}
 
 For each \(x\in X\) , say, there is a clearance level \(\lambda(x)\in \mathcal L\) assigned to it,
 with \(\mathcal L\) totally ordered: \(\ell_{\min}\) (least restrictive),
@@ -144,7 +144,7 @@ and \(\ell_{\max}\) (most restrictive).
 
 For a valuation \(\nu\):
 \[
-S(\nu) = \{\,x\in X \mid \nu(x)=\top\}.
+S(\nu) = \{x\in X \mid \nu(x)=\top\}.
 \]
 \[
 \sec(\nu) =
@@ -161,7 +161,7 @@ Then we can define a homomorphism:
 \[
 \Phi_{\mathrm{sec}}(\varphi)
 \;=\;
-\min_{\nu:\,\varphi(\nu)=\top}\;\sec(\nu),
+\min_{\nu:\varphi(\nu)=\top}\;\sec(\nu),
 \]
 and if \(\varphi\equiv 0\), then
 \[
@@ -182,13 +182,13 @@ This is basically the “minimum clearance level required to get a tuple as a re
     \item \textbf{Addition} (\(\vee \to \min\))  
         \[
             \Phi(\varphi\vee\psi)
-            = \min\bigl(\Phi(\varphi),\,\Phi(\psi)\bigr).
+            = \min\bigl(\Phi(\varphi),\Phi(\psi)\bigr).
         \]
     \item \textbf{Multiplication} (\(\wedge \to \max\))  
         
         \[
             \Phi(\varphi\wedge\psi)
-            = \max\bigl(\Phi(\varphi),\,\Phi(\psi)\bigr).
+            = \max\bigl(\Phi(\varphi),\Phi(\psi)\bigr).
         \]
     \item \textbf{Monus} (\(\setminus\))  
         Set of valuations for which  \(\varphi\setminus_B\psi\) holds =  
@@ -230,15 +230,15 @@ and ordering \(\mathrm{Pub}<\mathrm{Sec}<\mathrm{Top}\).
 
 For a finite set of Boolean events \(X\), the Why-provenance semiring can be defined as
 \[
-\mathrm{Why}(X) = \bigl(2^{2^X},\;\cup,\;\bigsqcup,\;\emptyset,\;\{\emptyset\}\bigr),
+\mathrm{Why}(X) = \bigl(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\}\bigr),
 \]
 where for \(A,B\subseteq 2^X\),
 \[
-A \bigsqcup B = \{\,a \cup b \mid a\in A,\;b\in B\},
+A \Cup B = \{a \cup b \mid a\in A,\;b\in B\},
 \]
 and the monus is
 \[
-A \setminus_W B = \{\,a\in A\mid \forall\,b\in B,\;b\nsubseteq a\}.
+A \setminus_W B = \{a\in A\mid \forall b\in B,\;b\nsubseteq a\}.
 \]
 - 0 = \(\emptyset\)  
 - 1 = \(\{\emptyset\}\)
@@ -248,7 +248,7 @@ A \setminus_W B = \{\,a\in A\mid \forall\,b\in B,\;b\nsubseteq a\}.
 
  
 \[
-B^X = \bigl(\{\varphi:\{0,1\}^X\to\{0,1\}\},\,\vee,\,\wedge,\,0_B,\,1_B\bigr).
+B^X = \bigl(\{\varphi:\{0,1\}^X\to\{0,1\}\},\vee,\wedge,0_B,1_B\bigr).
 \]
 
 Attempted homomorphism \(\Phi\):
@@ -260,7 +260,7 @@ View each Boolean function \(\varphi\) in **minimal DNF**:
    where each \(C_i\subseteq X\) is minimal.\newline
 Then Define:
    \[
-   \Phi(\varphi) = \{\,C_1,\dots,C_k\}\subseteq 2^X.
+   \Phi(\varphi) = \{C_1,\dots,C_k\}\subseteq 2^X.
    \]
 \textbf{Proof sketch}
 \begin{itemize}
@@ -276,19 +276,19 @@ Then Define:
    \Phi(\varphi) = \Phi(\alpha)\cup\Phi(\beta).
    \]
 
-\item Multiplication (\(\wedge\) $\rightarrow$  \(\bigsqcup\)):  
+\item Multiplication (\(\wedge\) $\rightarrow$  \(\Cup\)):  
    If \(\varphi=\alpha\wedge\beta\),
    \[
    \Phi(\varphi)
-   = \min\{\,a\cup b\mid a\in\Phi(\alpha),\,b\in\Phi(\beta)\}
-   = \Phi(\alpha)\bigsqcup\Phi(\beta).
+   = \min\{a\cup b\mid a\in\Phi(\alpha),b\in\Phi(\beta)\}
+   = \Phi(\alpha)\Cup\Phi(\beta).
    \]
 
 \item Monus (\(\setminus_B\) $\rightarrow$  \(\setminus_W\)):  
    For \(\varphi\setminus_B\psi = \varphi\wedge\neg\psi\),
    \[
    \Phi(\varphi\setminus_B\psi)
-   = \{\,a\in\Phi(\varphi)\mid \forall\,b\in\Phi(\psi),\,b\nsubseteq a\}
+   = \{a\in\Phi(\varphi)\mid \forall b\in\Phi(\psi),b\nsubseteq a\}
    = \Phi(\varphi)\setminus_W\Phi(\psi).
    \]
 
@@ -313,7 +313,7 @@ Let \(X=\{x,y\}\).
 
 - Multiplication:  
   \(\varphi \wedge \psi = x\wedge(x\wedge y) = x\wedge y\), so  
-  \(\Phi(\varphi\wedge\psi) = \{\{x,y\}\} = \Phi(\varphi)\bigsqcup\Phi(\psi).\)
+  \(\Phi(\varphi\wedge\psi) = \{\{x,y\}\} = \Phi(\varphi)\Cup\Phi(\psi).\)
 
 - Monus:  
   \(\varphi\setminus_B\psi = x\wedge\ne\psi(x\wedge y) = x\wedge(\neg x\vee\neg y) = x\wedge\neg y\).  
