@@ -1,6 +1,23 @@
 \subsection{Homomorphisms}
-
-\subsubsection{$\Phi : \mathcal{B} \to T$}
+\subsubsection{Preliminaries}
+\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
+A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
+  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
+The semiring of Boolean functions is:
+$$
+B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\,\vee,\,\wedge,\,0_B,\,1_B,\,\setminus_B)
+$$
+\begin{itemize}
+    \item \(\varphi \vee \psi\): pointwise OR
+    \item \(\varphi \wedge \psi\): pointwise AND
+    \item \(0_B\): the constant-false function
+    \item \(1_B\): the constant-true function
+    \item Monus:
+        $$
+        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
+        $$
+\end{itemize}
+\subsubsection{$\Phi : B^X \to T$}
 
 $$T = (\mathcal{T}, \cup, \cap, \emptyset, \{]-\infty, +\infty[\}, \backslash)$$
 
@@ -74,5 +91,235 @@ $$
 
 Thus $\Phi$ is a semiring homomorphism.
 
+\subsubsection{$\Phi_{\mathrm{trop}}: \mathcal{B} \to T_{\min}$}
+
+We define:
+$$
+T_{\min} = (\mathbb{R}_{\ge 0} \cup \{\infty\},\,\min,\,+,\,\infty,\,0,\,\setminus_T).
+$$
+\begin{itemize}
+    \item Addition: \(\min\)
+    \item Multiplication: \(+\)
+    \item Zero: \(\infty\)
+    \item One: \(0\)
+    \item Monus:
+    \[
+    a \setminus_T b :=
+    \begin{cases}
+        a & \text{if } a < b \\
+        \infty & \text{otherwise}
+    \end{cases}
+    \]
+\end{itemize}
 
 
+
+\textbf{Homomorphism}:\newline
+Assign each token \(x_i\in X\) a cost \(c(x_i)\in\mathbb{R}_{\ge0}\cup\{\infty\}\). For any valuation \(\nu\), define
+$$
+w(\nu) = \sum_{x_i:\,\nu(x_i)=\top} c(x_i).
+$$
+Then for boolean function  \(\varphi\):
+$$
+\Phi_{\mathrm{trop}}(\varphi) 
+= \min_{\nu:\,\varphi(\nu)=\top} w(\nu),
+$$
+with \(\Phi_{\mathrm{trop}}(0_B)=\infty\).
+\newline
+
+\textbf{Proof sketch}: \newline
+- \(\Phi_{\mathrm{trop}}(\varphi \vee \psi) = \min(\Phi_{\mathrm{trop}}(\varphi), \Phi_{\mathrm{trop}}(\psi))\).  
+- \(\Phi_{\mathrm{trop}}(\varphi \wedge \psi) = \Phi_{\mathrm{trop}}(\varphi) + \Phi_{\mathrm{trop}}(\psi)\).  
+- Monus: follows. \newline
+\textbf{Example}: \newline
+Let \(X=\{x_1,x_2\}\), \(c(x_1)=2\), \(c(x_2)=5\).  
+- \(\varphi = x_1\): \(\Phi_{\mathrm{trop}}(\varphi)=2\).  
+- \(\psi = x_2\): \(\Phi_{\mathrm{trop}}(\psi)=5\).  
+- \(\varphi \setminus_B \psi\) true only when \(\nu=(\top,\bot)\), cost \(2\).
+
+$A13$ does not hold.
+
+
+\subsubsection{$\Phi_{\mathrm{sec}}: \mathcal{B} \to T_{\min}$}
+
+For each \(x\in X\) , say, there is a clearance level \(\lambda(x)\in \mathcal L\) assigned to it,
+with \(\mathcal L\) totally ordered: \(\ell_{\min}\) (least restrictive),
+and \(\ell_{\max}\) (most restrictive).
+
+For a valuation \(\nu\):
+\[
+S(\nu) = \{\,x\in X \mid \nu(x)=\top\}.
+\]
+\[
+\sec(\nu) =
+\begin{cases}
+\ell_{\min}, & S(\nu)=\emptyset,\\
+\max_{x\in S(\nu)} \lambda(x), & \text{o.w.}
+\end{cases}
+\]
+
+
+
+Then we can define a homomorphism:
+
+\[
+\Phi_{\mathrm{sec}}(\varphi)
+\;=\;
+\min_{\nu:\,\varphi(\nu)=\top}\;\sec(\nu),
+\]
+and if \(\varphi\equiv 0\), then
+\[
+\Phi_{\mathrm{sec}}(0_B) = \ell_{\max}.
+\]
+
+This is basically the “minimum clearance level required to get a tuple as a result.”
+
+
+
+\textbf{Proof sketch:}
+\begin{itemize}
+    \item \textbf{Zero and One}  
+        \begin{itemize}
+            \item \(\Phi_{\mathrm{sec}}(0_B)=\ell_{\max}\) (no world satisfies 0).
+            \item \(\Phi_{\mathrm{sec}}(1_B)=\ell_{\min}\) (world with no tokens gives \(\ell_{\min}\)).
+        \end{itemize}
+    \item \textbf{Addition} (\(\vee \to \min\))  
+        \[
+            \Phi(\varphi\vee\psi)
+            = \min\bigl(\Phi(\varphi),\,\Phi(\psi)\bigr).
+        \]
+    \item \textbf{Multiplication} (\(\wedge \to \max\))  
+        
+        \[
+            \Phi(\varphi\wedge\psi)
+            = \max\bigl(\Phi(\varphi),\,\Phi(\psi)\bigr).
+        \]
+    \item \textbf{Monus} (\(\setminus\))  
+        Set of valuations for which  \(\varphi\setminus_B\psi\) holds =  
+        \(\{\nu \mid \varphi(\nu)=\top,\;\psi(\nu)=\bot\}\).  
+        We can take \(\min\) of their security levels.
+        Monus of security semiring?????
+        \[
+            a\setminus_S b =
+            \begin{cases}
+                a, & a<b,\\
+                \ell_{\max}, &\text{otherwise}.
+            \end{cases}
+        \]
+\end{itemize}
+
+---
+
+ 5. Smalll Example
+
+Let \(X=\{x,y\}\) with \(\lambda(x)=\mathrm{Pub}\), \(\lambda(y)=\mathrm{Sec}\),
+and ordering \(\mathrm{Pub}<\mathrm{Sec}<\mathrm{Top}\).
+
+- \(\varphi = x\):  
+  Worlds: \((1,0)\to\mathrm{Pub}\), \((1,1)\to\mathrm{Sec}\).  
+  \(\Phi(x)=\min(\mathrm{Pub},\mathrm{Sec})=\mathrm{Pub}.\)
+
+- \(\psi = y\):  
+  Worlds: \((0,1),(1,1)\to\mathrm{Sec}\).  
+  \(\Phi(y)=\mathrm{Sec}.\)
+
+- \(\varphi\vee\psi\): worlds \((1,0),(0,1),(1,1)\) → clearances Pub, Sec, Sec → min = Pub.
+
+- \(\varphi\wedge\psi\): only \((1,1)\) → clearance max(Pub, Sec)=Sec.
+
+- \(\varphi\setminus_B\psi\): world \((1,0)\) only → Pub, matching \(\mathrm{Pub}\setminus_S\mathrm{Sec}=\mathrm{Pub}.\)
+
+
+\subsubsection{\(\Phi : B^X \to \mathrm{Why}(X)\)}
+
+For a finite set of Boolean events \(X\), the Why-provenance semiring can be defined as
+\[
+\mathrm{Why}(X) = \bigl(2^{2^X},\;\cup,\;\bigsqcup,\;\emptyset,\;\{\emptyset\}\bigr),
+\]
+where for \(A,B\subseteq 2^X\),
+\[
+A \bigsqcup B = \{\,a \cup b \mid a\in A,\;b\in B\},
+\]
+and the monus is
+\[
+A \setminus_W B = \{\,a\in A\mid \forall\,b\in B,\;b\nsubseteq a\}.
+\]
+- 0 = \(\emptyset\)  
+- 1 = \(\{\emptyset\}\)
+
+
+
+
+ 
+\[
+B^X = \bigl(\{\varphi:\{0,1\}^X\to\{0,1\}\},\,\vee,\,\wedge,\,0_B,\,1_B\bigr).
+\]
+
+Attempted homomorphism \(\Phi\):
+View each Boolean function \(\varphi\) in **minimal DNF**:
+   \[
+   \varphi(\nu)
+   = \bigvee_{i=1}^k \Bigl(\bigwedge_{x_j\in C_i} \nu(x_j)\Bigr),
+   \]
+   where each \(C_i\subseteq X\) is minimal.\newline
+Then Define:
+   \[
+   \Phi(\varphi) = \{\,C_1,\dots,C_k\}\subseteq 2^X.
+   \]
+\textbf{Proof sketch}
+\begin{itemize}
+\item Zero:  
+   \(\varphi\equiv 0\) has no terms $\implies$ \(\Phi(0_B)=\emptyset\).
+
+\item One:  
+   \(\varphi\equiv 1\) has the empty conjunction $\implies$ \(\Phi(1_B)=\{\emptyset\}\).
+
+\item Addition (\(\vee\) $\rightarrow$ \(\cup\)):  
+   If \(\varphi=\alpha\vee\beta\),
+   \[
+   \Phi(\varphi) = \Phi(\alpha)\cup\Phi(\beta).
+   \]
+
+\item Multiplication (\(\wedge\) $\rightarrow$  \(\bigsqcup\)):  
+   If \(\varphi=\alpha\wedge\beta\),
+   \[
+   \Phi(\varphi)
+   = \min\{\,a\cup b\mid a\in\Phi(\alpha),\,b\in\Phi(\beta)\}
+   = \Phi(\alpha)\bigsqcup\Phi(\beta).
+   \]
+
+\item Monus (\(\setminus_B\) $\rightarrow$  \(\setminus_W\)):  
+   For \(\varphi\setminus_B\psi = \varphi\wedge\neg\psi\),
+   \[
+   \Phi(\varphi\setminus_B\psi)
+   = \{\,a\in\Phi(\varphi)\mid \forall\,b\in\Phi(\psi),\,b\nsubseteq a\}
+   = \Phi(\varphi)\setminus_W\Phi(\psi).
+   \]
+
+\end{itemize}
+
+
+\textbf{Example}
+
+Let \(X=\{x,y\}\).
+
+- \(\varphi = x \vee (x\wedge y)\).  
+  - Minimal DNF: \(\varphi = x\).  
+  - \(\Phi(\varphi) = \{\{x\}\}.\)
+
+- \(\psi = x \wedge y\).  
+  - Minimal DNF: \(\psi = x\wedge y\).  
+  - \(\Phi(\psi) = \{\{x,y\}\}.\)
+
+- Addition:  
+  \(\varphi \vee \psi = x \vee (x\wedge y)\) $\implies$ minimal = \(x\), so  
+  \(\Phi(\varphi\vee\psi) = \{\{x\}\} = \Phi(\varphi)\cup\Phi(\psi).\)
+
+- Multiplication:  
+  \(\varphi \wedge \psi = x\wedge(x\wedge y) = x\wedge y\), so  
+  \(\Phi(\varphi\wedge\psi) = \{\{x,y\}\} = \Phi(\varphi)\bigsqcup\Phi(\psi).\)
+
+- Monus:  
+  \(\varphi\setminus_B\psi = x\wedge\neg(x\wedge y) = x\wedge(\neg x\vee\neg y) = x\wedge\neg y\).  
+  - Minimal DNF: \(x\wedge\neg y\) $\implies$ support \(\{x\}\).  
+  - \(\Phi(\varphi\setminus_B\psi) = \{\{x\}\} = \Phi(\varphi)\setminus_W\Phi(\psi).\)
