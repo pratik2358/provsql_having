@@ -1,0 +1,12 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Equivalent: join all c‐tuples, EXCEPT join all (c+1)‐tuples}
+\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{DISTINCT}\PYG{+w}{ }\PYG{l+m+mi}{1}
+\PYG{+w}{  }\PYG{k}{FROM}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{n}{a1}
+\PYG{+w}{  }\PYG{k}{JOIN}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{n}{a2}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{n}{a1}\PYG{p}{.}\PYG{n}{id}\PYG{o}{\PYGZlt{}}\PYG{n}{a2}\PYG{p}{.}\PYG{n}{id}
+\PYG{+w}{  }\PYG{err}{…}\PYG{+w}{ }\PYG{k}{JOIN}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{n}{a\PYGZus{}c}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{n}{a\PYGZus{}}\PYG{err}{\PYGZob{}}\PYG{k}{c}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{err}{\PYGZcb{}}\PYG{p}{.}\PYG{n}{id}\PYG{o}{\PYGZlt{}}\PYG{n}{a\PYGZus{}c}\PYG{p}{.}\PYG{n}{id}
+\PYG{k}{EXCEPT}
+\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{DISTINCT}\PYG{+w}{ }\PYG{l+m+mi}{1}
+\PYG{+w}{  }\PYG{k}{FROM}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{n}{b1}
+\PYG{+w}{  }\PYG{k}{JOIN}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{n}{b2}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{n}{b1}\PYG{p}{.}\PYG{n}{id}\PYG{o}{\PYGZlt{}}\PYG{n}{b2}\PYG{p}{.}\PYG{n}{id}
+\PYG{+w}{  }\PYG{err}{…}\PYG{+w}{ }\PYG{k}{JOIN}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{n}{b\PYGZus{}}\PYG{err}{\PYGZob{}}\PYG{k}{c}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{err}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{n}{b\PYGZus{}}\PYG{err}{\PYGZob{}}\PYG{k}{c}\PYG{err}{\PYGZcb{}}\PYG{p}{.}\PYG{n}{id}\PYG{o}{\PYGZlt{}}\PYG{n}{b\PYGZus{}}\PYG{err}{\PYGZob{}}\PYG{k}{c}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{err}{\PYGZcb{}}\PYG{p}{.}\PYG{n}{id}\PYG{p}{;}
+\end{MintedVerbatim}
