@@ -1,6 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYG{c+c1}{\PYGZhy{}\PYGZhy{} COUNT(*) = c}
-\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{DISTINCT}\PYG{+w}{ }\PYG{l+m+mi}{1}
-\PYG{+w}{  }\PYG{k}{FROM}\PYG{+w}{ }\PYG{n}{T}
-\PYG{+w}{ }\PYG{k}{HAVING}\PYG{+w}{ }\PYG{k}{COUNT}\PYG{p}{(}\PYG{o}{*}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{c}\PYG{p}{;}
-\end{MintedVerbatim}

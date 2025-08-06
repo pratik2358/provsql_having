@@ -1,5 +1,4 @@
 \begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Equivalent: join all c‐tuples, EXCEPT join all (c+1)‐tuples}
 \PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{DISTINCT}\PYG{+w}{ }\PYG{l+m+mi}{1}
 \PYG{+w}{  }\PYG{k}{FROM}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{n}{a1}
 \PYG{+w}{  }\PYG{k}{JOIN}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{n}{a2}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{n}{a1}\PYG{p}{.}\PYG{n}{id}\PYG{o}{\PYGZlt{}}\PYG{n}{a2}\PYG{p}{.}\PYG{n}{id}

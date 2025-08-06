@@ -10,16 +10,16 @@
 
 \subsection*{Boolean‐Function Semiring}
 
-Let \(X\) be a set of “worlds.”  Define the \emph{Boolean‐function semiring}
+Let \(X\) be a set of worlds.  Define the \emph{Boolean‐function semiring}
 \[
   \mathcal{B}(X)
-  = \bigl(\{\,f : X \to \{0,1\}\},\;\oplus,\;\otimes,\;0_X,\;1_X\bigr),
+  = \bigl(\{f : X \to \{0,1\}\},\oplus,\otimes,0_{\mathcal{B}},1_{\mathcal{B}}\bigr),
 \]
 where for all \(f,g: X\to\{0,1\}\) and \(x\in X\):
 \[
-  (f\oplus g)(x) = f(x)\;\vee\;g(x),
+  (f\oplus g)(x) = f(x)\vee g(x),
   \quad
-  (f\otimes g)(x) = f(x)\;\wedge\;g(x),
+  (f\otimes g)(x) = f(x)\wedge g(x),
 \]
 and
 \[
@@ -28,7 +28,7 @@ and
 Define the \emph{monus} (pointwise ``and‐not'') by
 \[
   (f\ominus g)(x)
-  = f(x)\;\wedge\;\neg\bigl(g(x)\bigr),
+  = f(x)\wedge\neg\bigl(g(x)\bigr),
   \quad
   \text{i.e.\ }f\ominus g = f\otimes(\neg g).
 \]
@@ -37,7 +37,6 @@ Define the \emph{monus} (pointwise ``and‐not'') by
 On a relation \(T\) with Boolean‐function annotations \(b_1,\dots,b_n\in\mathcal{B}(X)\), consider:
 
 \begin{minted}[fontsize=\small]{sql}
--- COUNT(*) = c
 SELECT DISTINCT 1
   FROM T
  HAVING COUNT(*) = c;
@@ -47,14 +46,13 @@ Its provenance is
 \[
   q(T)
   = \bigoplus_{w:\{1,\dots,n\}\to\{0,1\}}
-    \Bigl(\,\bigotimes_{w(i)=1}b_i
-           \;\otimes\;
+    \Bigl(\bigotimes_{w(i)=1}b_i
+           \otimes
            \bigl(1_X\ominus(\!\bigoplus_{w(i)=0}b_i)\bigr)
     \Bigr).
 \]
 
 \begin{minted}[fontsize=\small]{sql}
--- Equivalent: join all c‐tuples, EXCEPT join all (c+1)‐tuples
 SELECT DISTINCT 1
   FROM T AS a1
   JOIN T AS a2 ON a1.id<a2.id 
@@ -69,9 +67,9 @@ SELECT DISTINCT 1
 Its provenance is
 \[
   q'(T)
-  = \Bigl(\!\bigoplus_{\,t\subseteq[n],|t|=c}\!\bigotimes_{i\in t}b_i\Bigr)
-    \;\ominus\;
-    \Bigl(\!\bigoplus_{\,t'\subseteq[n],|t'|=c+1}\!\bigotimes_{i\in t'}b_i\Bigr).
+  = \Bigl(\!\bigoplus_{t\subseteq[n],|t|=c}\!\bigotimes_{i\in t}b_i\Bigr)
+    \ominus
+    \Bigl(\!\bigoplus_{t'\subseteq[n],|t'|=c+1}\!\bigotimes_{i\in t'}b_i\Bigr).
 \]
 
 \begin{proposition}
@@ -92,7 +90,7 @@ Then by definition of \(\ominus\),
 But all operations in \(\mathcal{B}(X)\) are \emph{pointwise}.  Hence for each \(x\in X\),
 \[
   q'(T)(x)
-  = A(x)\;\wedge\;\neg\bigl(B(x)\bigr),
+  = A(x)\wedge\neg\bigl(B(x)\bigr),
 \]
 and the standard Boolean‐semiring argument shows
 \[
