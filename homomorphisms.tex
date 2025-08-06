@@ -238,10 +238,10 @@ A \Cup B = \{a \cup b \mid a\in A,\;b\in B\},
 \]
 and the monus is
 \[
-A \setminus_W B = \{a\in A\mid \forall b\in B,\;b\nsubseteq a\}.
+A \setminus_W B = \{ a \mid a \in A,  a \notin B \}.
 \]
-- 0 = \(\emptyset\)  
-- 1 = \(\{\emptyset\}\)
+0 = \(\emptyset\)\\  
+1 = \(\{\emptyset\}\)
 
 
 
@@ -252,7 +252,7 @@ B^X = \bigl(\{\varphi:\{0,1\}^X\to\{0,1\}\},\vee,\wedge,0_B,1_B\bigr).
 \]
 
 Attempted homomorphism \(\Phi\):
-View each Boolean function \(\varphi\) in **minimal DNF**:
+View each Boolean function \(\varphi\) in \textbf{minimal DNF}:
    \[
    \varphi(\nu)
    = \bigvee_{i=1}^k \Bigl(\bigwedge_{x_j\in C_i} \nu(x_j)\Bigr),
@@ -298,24 +298,28 @@ Then Define:
 \textbf{Example}
 
 Let \(X=\{x,y\}\).
-
-- \(\varphi = x \vee (x\wedge y)\).  
-  - Minimal DNF: \(\varphi = x\).  
-  - \(\Phi(\varphi) = \{\{x\}\}.\)
-
-- \(\psi = x \wedge y\).  
-  - Minimal DNF: \(\psi = x\wedge y\).  
-  - \(\Phi(\psi) = \{\{x,y\}\}.\)
+\begin{itemize}
+    \item \(\varphi = x \vee (x\wedge y)\).  
+    \item Minimal DNF: \(\varphi = x\).
+    \item \(\Phi(\varphi) = \{\{x\}\}\).
+    \item \(\psi = x\wedge y\).  
+    \item Minimal DNF: \(\psi = x\wedge y\).
+    \item \(\Phi(\psi) = \{\{x,y\}\}\).
+\end{itemize}
 
 - Addition:  
-  \(\varphi \vee \psi = x \vee (x\wedge y)\) $\implies$ minimal = \(x\), so  
+  \(\varphi \vee \psi = x \vee (x\wedge y)\) $\implies$ minimal = \(x\), so
+
   \(\Phi(\varphi\vee\psi) = \{\{x\}\} = \Phi(\varphi)\cup\Phi(\psi).\)
 
 - Multiplication:  
-  \(\varphi \wedge \psi = x\wedge(x\wedge y) = x\wedge y\), so  
+  \(\varphi \wedge \psi = x\wedge(x\wedge y) = x\wedge y\), so
+
   \(\Phi(\varphi\wedge\psi) = \{\{x,y\}\} = \Phi(\varphi)\Cup\Phi(\psi).\)
 
 - Monus:  
-  \(\varphi\setminus_B\psi = x\wedge\ne\psi(x\wedge y) = x\wedge(\neg x\vee\neg y) = x\wedge\neg y\).  
-  - Minimal DNF: \(x\wedge\neg y\) $\implies$ support \(\{x\}\).  
-  - \(\Phi(\varphi\setminus_B\psi) = \{\{x\}\} = \Phi(\varphi)\setminus_W\Phi(\psi).\)
+  \(\varphi\setminus_B\psi = x\wedge\ne\psi(x\wedge y) = x\wedge(\neg x\vee\neg y) = x\wedge\neg y\).
+\begin{itemize}
+    \item Minimal DNF: \(x\wedge\neg y\) $\implies$ support \(\{x\}\).
+    \item \(\Phi(\varphi\setminus_B\psi) = \{\{x\}\} = \Phi(\varphi)\setminus_W\Phi(\psi).\)
+\end{itemize}
