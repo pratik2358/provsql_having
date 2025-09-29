@@ -85,7 +85,27 @@ $$
 
 Thus $\Phi_{\mathrm{T}}$ is a semiring homomorphism.
 
-It is easy to show that absorptivity and A13 is satisfied.
+\textit{Proof for assumptions:}
+
+Assume that there exists a non trivial homomorphism $\Phi_{\mathrm{T}}$.
+
+Let $x_b$ be the boolean events that are 1 on valuation b.
+
+Now for valuations $a,b$ such that a$\neq$b,
+
+$x_a \land x_b = 0_B$
+
+$\Phi_{\mathrm{T}}(O_B)=\emptyset$
+
+$\Phi_{\mathrm{T}}(x_a \land x_b)=\Phi_{\mathrm{T}}(x_a) \cap \Phi_{\mathrm{T}}(x_b) = \emptyset$
+
+Now,
+
+$1_B=\lor_{b\in val}x_b$
+
+$\Phi_{\mathrm{T}}(1_B)=\cup_{b\in val}\Phi_{\mathrm{T}}(x_b)=\c$
+
+
 
 \subsubsection{$\Phi_{\mathrm{trop}}: B^X \to T_{\min}$}
 
