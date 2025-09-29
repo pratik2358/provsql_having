@@ -21,6 +21,28 @@ $$
 For any valuation $v:X \to T$, let $\Phi^{\mathrm{T}}_v : B[X] \to T$ be a homomorphism such that for any $b\in B[X]$ 
 $\Phi^{\mathrm{T}}_v(b)=v(b)$.
 
+For a variable $b$, $\Phi_v^T(b) = v(b)$.
+For a monomial, $m = b_{i_1}\dots b_{i_k}$,
+$$\Phi_v^T(m) = v(b_{i_1}) \cap \dots \cap v(b_{i_k})$$
+For a polynomial $p = \sum_{i=1}^n m_i$,
+$$\Phi_v^T(p) = \bigcup_{i=1}^n \Phi_v^T(m_i)$$
+\begin{itemize}
+    \item $$\Phi_v^T(0_{B}) = \emptyset$$
+    \item $$\Phi_v^T(1_{B}) = ]-\infty, +\infty[$$
+    \item $$\Phi_v^T(b_1 \vee b_2) = \Phi_v^T(b_1) \cup \Phi_v^T(b_2) = v(b_1)\cup v(b_2)$$
+    \item $$\Phi_v^T(b_1 \wedge b_2) = \Phi_v^T(b_1) \cap \Phi_v^T(b_2) = v(b_1)\cap v(b_2)$$
+    \item \item $$\Phi_v^T(b_1 \setminus_B b_2) = \Phi_v^T(b_1 \wedge \neg b_2) = \Phi_v^T(b_1)\cap \Phi_v^T(\neg b_2)\\
+    = v(b_1)\cap v(\neg b_2)$$
+\end{itemize}
+
+\textbf{Absorptivity of $T$}:\newline
+For any $t_1,t_2 \in T$, $t_1 \cap (t_1 \cup t_2) = t_1$ and $t_1 \cup (t_1 \cap t_2) = t_1$.\\
+Now for any $b_1,b_2 \in B^X$, $\Phi_v^T(b_1 \wedge (b_1 \lor b_2)) = \Phi_v^T(b_1) \cap (\Phi_v^T(b_1) \cup \Phi_v^T(b_2)) = v(b_1) \cap (v(b_1) \cup v(b_2)) = v(b_1)$, similarly the other one holds.\\
+\textbf{Axiom A13 of $T$}:\newline
+For any $t_1,t_2,t_3 \in T$, $t_1 \cap (t_2 \setminus t_3) = (t_1 \cap t_2) \setminus (t_1 \cap t_3)$.\\ (holds)
+Now for any $b_1,b_2,b_3 \in B^X$, $\Phi_v^T(b_1 \wedge (b_2 \setminus_B b_3)) = \Phi_v^T(b_1) \cap (\Phi_v^T(b_2) \cap \Phi_v^T(\neg b_3)) = v(b_1) \cap (v(b_2) \cap v(\neg b_3)) = (v(b_1) \cap v(b_2)) \cap (v(b_1) \cap ]-\infty,+\infty[ \setminus v(b_3)) = \Phi_v^T(b_1 \wedge b_2) \cup \Phi_v^T(b_1 \wedge b_3) = \Phi_v^T((b_1 \wedge b_2) \lor (b_1 \wedge b_3))$.\\
+\textbf{Equivalence preservation}:\newline
+If two Boolean functions $b_1$ and $b_2$ are equivalent, then $\Phi_v^T(b_1) = \Phi_v^T(b_2)$.
 
 
 \subsubsection{$\Phi_{\mathrm{trop}}: B^X \to T_{\min}$}
