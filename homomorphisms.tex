@@ -17,93 +17,9 @@ $$
         \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
         $$
 \end{itemize}
-\subsubsection{$\Phi_{\mathrm{T}} : B^X \to T$}
-
-$$T = (\mathcal{T}, \cup, \cap, \emptyset, \{]-\infty, +\infty[\}, \backslash)$$
-
-For $A,B\in \mathcal{T}$, we define $A\backslash B$ as:
-$$A\backslash B = \cup_{a\in A, b\in B}a\cap \bar{b}$$ 
-where $\bar{b} = ]-\infty, +\infty[\backslash b$.
-
-For each Boolean valuation $\nu$, define:
-
-$$
-Q_{\nu} \subseteq \mathbb{R} \footnote{- \(Q_{\nu}\) intervals basically tell us when each combination of tuple truth values happens.
-- \(\Phi(\varphi)\) simply collects all the times when \(\varphi\) would be true for each tuple.}
-$$
-
-
-$Q_{\nu}$ form a disjoint cover of time.
-
-We define:
-
-$$
-\Phi_{\mathrm{T}}(\varphi) = \bigcup_{\substack{b \in \{0,1\}^n \\ \varphi(b) = 1}} Q_{\nu}
-$$
-
-\begin{proof}
-\begin{itemize}
-\item \textbf{Zero}
-$$
-\Phi_{\mathrm{T}}(0_B) = \bigcup_{b:0_B=1} Q_{\nu} = \emptyset
-$$
-
-\item
-\textbf{One}
-$$
-\Phi_{\mathrm{T}}(1_B) = \bigcup_{b:1_B=1} Q_{\nu} = ]-\infty, +\infty[
-$$
-\item
-\textbf{Addition}
-$$
-\Phi_{\mathrm{T}}(\varphi \lor \psi)
-= \bigcup_{b: \varphi(b) \lor \psi(b) = 1} Q_{\nu}
-= \left(\bigcup_{b: \varphi(b) = 1} Q_{\nu}\right) \cup \left(\bigcup_{b: \psi(b) = 1} Q_{\nu}\right)
-= \Phi_{\mathrm{T}}(\varphi) \cup \Phi_{\mathrm{T}}(\psi)
-$$
-\item
-\textbf{Multiplication}
-$$
-\Phi_{\mathrm{T}}(\varphi \land \psi)
-= \bigcup_{b: \varphi(b) \land \psi(b) = 1} Q_{\nu}
-= \left(\bigcup_{b: \varphi(b) = 1} Q_{\nu}\right) \cap \left(\bigcup_{b: \psi(b) = 1} Q_{\nu}\right)
-= \Phi_{\mathrm{T}}(\varphi) \cap \Phi_{\mathrm{T}}(\psi)
-$$
-\item
-\textbf{monus}
-$$
-\Phi_{\mathrm{T}}(\varphi \land \neg \psi)
-= \bigcup_{b: \varphi(b) \land \neg \psi(b) = 1} Q_{\nu}
-= \left(\bigcup_{b: \varphi(b) = 1} Q_{\nu}\right) \cap \left(1_T \backslash \left(\bigcup_{b: \psi(b) = 1} Q_{\nu}\right)\right)
-= \Phi_{\mathrm{T}}(\varphi) \backslash \Phi_{\mathrm{T}}(\psi)
-$$
-    
-
-\end{itemize}
-
-\end{proof}
-
-Thus $\Phi_{\mathrm{T}}$ is a semiring homomorphism.
-
-\textit{Proof for assumptions:}
-
-Assume that there exists a non trivial homomorphism $\Phi_{\mathrm{T}}$.
-
-Let $x_b$ be the boolean events that are 1 on valuation b.
-
-Now for valuations $a,b$ such that a$\neq$b,
-
-$x_a \land x_b = 0_B$
-
-$\Phi_{\mathrm{T}}(O_B)=\emptyset$
-
-$\Phi_{\mathrm{T}}(x_a \land x_b)=\Phi_{\mathrm{T}}(x_a) \cap \Phi_{\mathrm{T}}(x_b) = \emptyset$
-
-Now,
-
-$1_B=\lor_{b\in val}x_b$
-
-$\Phi_{\mathrm{T}}(1_B)=\cup_{b\in val}\Phi_{\mathrm{T}}(x_b)=\c$
+\subsubsection{$\Phi^{\mathrm{T}}_v : B[X] \to T$}
+For any valuation $v:X \to T$, let $\Phi^{\mathrm{T}}_v : B[X] \to T$ be a homomorphism such that for any $b\in B[X]$ 
+$\Phi^{\mathrm{T}}_v(b)=v(b)$.
 
 
 
