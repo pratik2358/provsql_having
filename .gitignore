@@ -8,4 +8,5 @@
 main.synctex.gz
 *synctex.gz
 minted
-*.DS_Store
+_minted-main
+.DS_Store
