@@ -174,26 +174,13 @@ For $u,v\in \mathcal{M}, op \in \{ =, \neq , >, <, \geq, \leq\}$
 
 Let $\mathcal{T} = \{t_1, t_2, \dots, t_n\}$, be the set of all tuples in the relational database and $w: \mathcal{T} \mapsto \{0,1\}$ be a possible world function and,
 $\mathcal{W} = \{w \mid w:\mathcal{T} \mapsto \{0,1\}\}$, be the set of all possible worlds.
-Then,
-
-$[[u \oslash v]]_{op}= \bigoplus_{w \in \mathcal{W},{eval_w(u) \oslash eval_w(v)}} mon(w)\otimes\left(1 \ominus pol(w)\right)$
-where,
-$eval_w(u)$ is the semimodule expression evaluated in world $w$ :
-
-$eval_{w}(u) = \sum_{t_i\in Vars(u)} w(t_i)\times annotation(t_i)*value(t_i)$
-$Vars(u) =$ set of all tuples in $u$.
-and,
-$ mon(w)=\bigotimes_{w(t_i)=1}annotation(t_i)$\\
-$pol(w)=\bigoplus_{w(t_i)=0}annotation(t_i)$
-
-
-
-Another way of setting up possible world definition:\newline
+Then,\newline
 let $$w: \{1,2,\dots,m\} \mapsto \{0,1\}$$ and $$w': \{1,2,\dots,n\} \mapsto \{0,1\}$$
 
-\begin{multline}
-  \bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}b_i\otimes\bigotimes_{w'(j) = 1}b'_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}b_i\oplus \bigoplus_{w'(j) = 0}b'j)\right)\right)
-\end{multline}
+\begin{align*}
+  &[[u \oslash v]]_{op}=\\
+  &\bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}b_i\otimes\bigotimes_{w'(j) = 1}b'_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}b_i\oplus \bigoplus_{w'(j) = 0}b'j)\right)\right)
+\end{align*}
 
 \textbf{Counting semiring properties:}
 
@@ -375,5 +362,4 @@ As shown in~\cite{amsterdamer2011provenance}, provenance semirings...
 
 \bibliographystyle{splncs04}
 \bibliography{ref}
-
 \end{document}
