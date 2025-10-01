@@ -22,6 +22,11 @@
   }}%
   \vphantom{\sum}%
 }
+\newcommand{\mline}[1]{%
+  \begin{multiline}
+    #1
+  \end{multiline}
+}
 \makeatother
 \title{Provenance of aggregate queries with HAVING clause in ProvSQL.}
 \author{Pratik Karmakar \and Aryak Sen \and Silviu Maniu \and Pierre Senellart}
@@ -46,18 +51,17 @@ atomic selection of the form .k=C or .k=.j. If not, we can write:
 
 $\sigma_{\phi\land\psi}(q)=\sigma(\phi)(\sigma(\psi)(q))$
 $\sigma_{\phi\lor\psi}(q)=\sigma(\phi)(q)\cup\sigma(\psi)(q)$
-$\sigma_{\lnot\phi}(q)=q-\sigma(\phi)(q)$
+$\sigma_{\lnot\phi}(q)=q-\sigma(\phi)(q)$\\
 
-
-$$
+$
 \langle\sigma_{\#k\ op\ C}(q)\rangle^{\hat I}
 =\{\{(u,\alpha\otimes[u.k\ op\ 1*C])\mid(u,\alpha)\in \langle q\rangle^{\hat I}, \alpha\otimes[u.k\ op\ C]\neq 0\}\}
-$$
+$\\
 
-$$
+$
 \langle\sigma_{\#k\ op\ \#j}(q)\rangle^{\hat I}
 =\{\{(u,\alpha\otimes[u.k\ op\ u.j])\mid(u,\alpha)\in \langle q\rangle^{\hat I}, \alpha\otimes[u.k\ op\ \#j]\neq 0\}\}
-$$
+$\\
 when .k refers to a column that dynamically has type “aggregate”.
 
 Semantics of [semimodule op semimodule] in different algebraic structures:
@@ -125,9 +129,6 @@ $$Prov(g) = \begin{cases}
    0, & \text{otherwise}
    \end{cases}$$
 
-
-
-
 Should be same in join for absoptive semerings
 
 \subsection{Testing the provenance semantics on different semirings:}
@@ -160,39 +161,39 @@ $$a * b = a \times b$$
 
 Delta: 
 For $a \in K$
-$$\delta(a) = \begin{cases} 0, & a=0\\ 1, & a>0 \end{cases}$$
-$$\delta:K \mapsto K $$
-$$\delta(0_K)=0_K$$
-$$\delta(n.1_K)=1_K$$
+$\delta(a) = \begin{cases} 0, & a=0\\ 1, & a>0 \end{cases}$
+$\delta:K \mapsto K $
+$\delta(0_K)=0_K$
+$\delta(n.1_K)=1_K$
 
 Aggregate comparison operation : \newline
 Let $\mathcal{M}$ be a semimodule $K\times M$.
 $[[\cdot]]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}: \mathcal{M} \times \{ =, \neq , >, <, \geq, \leq\} \times \mathcal{M} \rightarrow K$
-For $u,v\in \mathcal{M}, op \in \{ =, \neq , >, <, \geq, \leq\}$  
-
-
-
+For $u,v\in \mathcal{M}, op \in \{ =, \neq , >, <, \geq, \leq\}$
 
 
 Let $\mathcal{T} = \{t_1, t_2, \dots, t_n\}$, be the set of all tuples in the relational database and $w: \mathcal{T} \mapsto \{0,1\}$ be a possible world function and,
 $\mathcal{W} = \{w \mid w:\mathcal{T} \mapsto \{0,1\}\}$, be the set of all possible worlds.
 Then,
 
-$$ [[u \oslash v]]_{op}= \bigoplus_{w \in \mathcal{W},{eval_w(u) \oslash eval_w(v)}} mon(w)\otimes\left(1 \ominus pol(w)\right)$$
+$[[u \oslash v]]_{op}= \bigoplus_{w \in \mathcal{W},{eval_w(u) \oslash eval_w(v)}} mon(w)\otimes\left(1 \ominus pol(w)\right)$
 where,
 $eval_w(u)$ is the semimodule expression evaluated in world $w$ :
 
-$$eval_{w}(u) = \sum_{t_i\in Vars(u)} w(t_i)\times annotation(t_i)*value(t_i)$$
+$eval_{w}(u) = \sum_{t_i\in Vars(u)} w(t_i)\times annotation(t_i)*value(t_i)$
 $Vars(u) =$ set of all tuples in $u$.
 and,
-$$ mon(w)=\bigotimes_{w(t_i)=1}annotation(t_i)$$
-$$pol(w)=\bigoplus_{w(t_i)=0}annotation(t_i)$$
+$ mon(w)=\bigotimes_{w(t_i)=1}annotation(t_i)$\\
+$pol(w)=\bigoplus_{w(t_i)=0}annotation(t_i)$
 
 
 
 Another way of setting up possible world definition:\newline
 let $$w: \{1,2,\dots,m\} \mapsto \{0,1\}$$ and $$w': \{1,2,\dots,n\} \mapsto \{0,1\}$$
-$\bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}b_i\otimes\bigotimes_{w'(j) = 1}b'_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}b_i\oplus \bigoplus_{w'(j) = 0}b'j)\right)\right)$
+
+\begin{multline}
+  \bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}b_i\otimes\bigotimes_{w'(j) = 1}b'_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}b_i\oplus \bigoplus_{w'(j) = 0}b'j)\right)\right)
+\end{multline}
 
 \textbf{Counting semiring properties:}
 
@@ -369,7 +370,10 @@ $$
 
 \input{homomorphisms.tex}
 
-\cite{amsterdamer2011provenance}
+% Example citation to ensure at least one \cite command is present
+As shown in~\cite{amsterdamer2011provenance}, provenance semirings...
+
 \bibliographystyle{splncs04}
 \bibliography{ref}
+
 \end{document}
