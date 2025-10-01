@@ -142,20 +142,20 @@ additive monoid for aggregation. Let $*:K\times M \mapsto M$ be a scalar multipl
 $a * b = a \times b$.
 
 Then an aggregation expression would be of the form $\bigplus_M *(a,b)$, where $(a,b)$ resembles semimodule $K \times M$, say $\mathcal{M}$.
-For any two aggregations $u,v$,
+For any two aggregations $\mathbf{u},\mathbf{v}$,
 
-$[u \oslash v]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}: \mathcal{M} \times \{ =, \neq , >, <, \geq, \leq\} \times \mathcal{M} \rightarrow K$
+$[\mathbf{u} \oslash \mathbf{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}: \mathcal{M} \times \{ =, \neq , >, <, \geq, \leq\} \times \mathcal{M} \rightarrow K$
 
 
 Let $\mathcal{X} = \{x_1, x_2, \dots, x_n\}$, be the variables, $w: \mathcal{X} \mapsto K$ be a valuation and,
 $\mathcal{W} = \{w \mid w:\mathcal{X} \mapsto K\}$, be the set of all valuations.
 
-Then for valuations, 
-$w: \{1,2,\dots,m\} \mapsto K$ and $w': \{1,2,\dots,n\} \mapsto K$
+For comparing two aggregations $\mathbf{u},\mathbf{v}$ we consider a possible-world setup where K is a Boolean semiring and valuations(here, possible worlds)
+$w: \{1,2,\dots,m\} \mapsto \{0,1\}$ and $w': \{1,2,\dots,n\} \mapsto \{0,1\}$ such that, 
 
 \begin{align*}
-  &[[u \oslash v]]_{op}=\\
-  &\bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}b_i\otimes\bigotimes_{w'(j) = 1}b'_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}b_i\oplus \bigoplus_{w'(j) = 0}b'j)\right)\right)
+  &[[\mathbf{u} \oslash \mathbf{v}]]_{op}=\\
+  &\bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}u_i\otimes\bigotimes_{w'(j) = 1}v_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}u_i\oplus \bigoplus_{w'(j) = 0}v_j)\right)\right)
 \end{align*}
 
 
