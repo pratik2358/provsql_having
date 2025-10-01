@@ -1,22 +1,10 @@
 \subsection{Homomorphisms}
-\subsubsection{Preliminaries}
-\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
-A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
-  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
-The semiring of Boolean functions is:
-$$
-B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
-$$
-\begin{itemize}
-    \item \(\varphi \vee \psi\): pointwise OR
-    \item \(\varphi \wedge \psi\): pointwise AND
-    \item \(0_B\): the constant-false function
-    \item \(1_B\): the constant-true function
-    \item Monus:
-        $$
-        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
-        $$
-\end{itemize}
+We have seen that our provenance semantics work for 
+the semiring of Boolean functions. In this section we investigate other m-semirings and see if they are homomorphic 
+to the semiring of Boolean functions. This will ensure that the provenance sematics, that worked for $B[X]$ can be transferred to 
+our target semirings without re-deriving from scratch.
+
+
 \subsubsection{$\Phi^{\mathrm{T}}_v : B[X] \to T$}
 For any valuation $v:X \to T$, let $\Phi^{\mathrm{T}}_v : B[X] \to T$ be a homomorphism such that for any $b\in B[X]$ 
 $\Phi^{\mathrm{T}}_v(b)=v(b)$.
@@ -94,7 +82,7 @@ Let \(X=\{x_1,x_2\}\), \(c(x_1)=2\), \(c(x_2)=5\).
 It is easy to show that $A13$ and absorptivity are satisfied.
 
 
-\subsubsection{$\Phi_{\mathrm{sec}}: B^X \to T_{\min}$}
+\subsubsection{$\Phi_{\mathrm{sec}}: B^X \to T_{\sec}$}
 
 For each \(x\in X\) , say, there is a clearance level \(\lambda(x)\in \mathcal L\) assigned to it,
 with \(\mathcal L\) totally ordered: \(\ell_{\min}\) (least restrictive),
@@ -183,101 +171,3 @@ and ordering \(\mathrm{Pub}<\mathrm{Sec}<\mathrm{Top}\).
 
 - \(\varphi\setminus_B\psi\): world \((1,0)\) only → Pub, matching \(\mathrm{Pub}\setminus_S\mathrm{Sec}=\mathrm{Pub}.\)
 
-
-\subsubsection{\(\Phi : B^X \to \mathrm{Why}(X)\)}
-
-For a finite set of Boolean events \(X\), the Why-provenance semiring can be defined as
-\[
-\mathrm{Why}(X) = \bigl(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\}\bigr),
-\]
-where for \(A,B\subseteq 2^X\),
-\[
-A \Cup B = \{a \cup b \mid a\in A,\;b\in B\},
-\]
-and the monus is
-\[
-A \setminus_W B = \{ a \mid a \in A,  a \notin B \}.
-\]
-0 = \(\emptyset\)\\  
-1 = \(\{\emptyset\}\)
-
-
-
-
- 
-\[
-B^X = \bigl(\{\varphi:\{0,1\}^X\to\{0,1\}\},\vee,\wedge,0_B,1_B\bigr).
-\]
-
-Attempted homomorphism \(\Phi\):
-View each Boolean function \(\varphi\) in \textbf{minimal DNF}:
-   \[
-   \varphi(\nu)
-   = \bigvee_{i=1}^k \Bigl(\bigwedge_{x_j\in C_i} \nu(x_j)\Bigr),
-   \]
-   where each \(C_i\subseteq X\) is minimal.\newline
-Then Define:
-   \[
-   \Phi(\varphi) = \{C_1,\dots,C_k\}\subseteq 2^X.
-   \]
-\textbf{Proof sketch}
-\begin{itemize}
-\item Zero:  
-   \(\varphi\equiv 0\) has no terms $\implies$ \(\Phi(0_B)=\emptyset\).
-
-\item One:  
-   \(\varphi\equiv 1\) has the empty conjunction $\implies$ \(\Phi(1_B)=\{\emptyset\}\).
-
-\item Addition (\(\vee\) $\rightarrow$ \(\cup\)):  
-   If \(\varphi=\alpha\vee\beta\),
-   \[
-   \Phi(\varphi) = \Phi(\alpha)\cup\Phi(\beta).
-   \]
-
-\item Multiplication (\(\wedge\) $\rightarrow$  \(\Cup\)):  
-   If \(\varphi=\alpha\wedge\beta\),
-   \[
-   \Phi(\varphi)
-   = \min\{a\cup b\mid a\in\Phi(\alpha),b\in\Phi(\beta)\}
-   = \Phi(\alpha)\Cup\Phi(\beta).
-   \]
-
-\item Monus (\(\setminus_B\) $\rightarrow$  \(\setminus_W\)):  
-   For \(\varphi\setminus_B\psi = \varphi\wedge\neg\psi\),
-   \[
-   \Phi(\varphi\setminus_B\psi)
-   = \{a\in\Phi(\varphi)\mid \forall b\in\Phi(\psi),b\nsubseteq a\}
-   = \Phi(\varphi)\setminus_W\Phi(\psi).
-   \]
-
-\end{itemize}
-
-
-\textbf{Example}
-
-Let \(X=\{x,y\}\).
-\begin{itemize}
-    \item \(\varphi = x \vee (x\wedge y)\).  
-    \item Minimal DNF: \(\varphi = x\).
-    \item \(\Phi(\varphi) = \{\{x\}\}\).
-    \item \(\psi = x\wedge y\).  
-    \item Minimal DNF: \(\psi = x\wedge y\).
-    \item \(\Phi(\psi) = \{\{x,y\}\}\).
-\end{itemize}
-
-- Addition:  
-  \(\varphi \vee \psi = x \vee (x\wedge y)\) $\implies$ minimal = \(x\), so
-
-  \(\Phi(\varphi\vee\psi) = \{\{x\}\} = \Phi(\varphi)\cup\Phi(\psi).\)
-
-- Multiplication:  
-  \(\varphi \wedge \psi = x\wedge(x\wedge y) = x\wedge y\), so
-
-  \(\Phi(\varphi\wedge\psi) = \{\{x,y\}\} = \Phi(\varphi)\Cup\Phi(\psi).\)
-
-- Monus:  
-  \(\varphi\setminus_B\psi = x\wedge\ne\psi(x\wedge y) = x\wedge(\neg x\vee\neg y) = x\wedge\neg y\).
-\begin{itemize}
-    \item Minimal DNF: \(x\wedge\neg y\) $\implies$ support \(\{x\}\).
-    \item \(\Phi(\varphi\setminus_B\psi) = \{\{x\}\} = \Phi(\varphi)\setminus_W\Phi(\psi).\)
-\end{itemize}

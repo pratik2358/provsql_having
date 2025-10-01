@@ -29,8 +29,18 @@
 
 \begin{document}
 \maketitle
-\section{Notes on aggregation and HAVING semantics}
+\section{Introduction}
+Nested aggregations are an important feature to
+have in a practical system. Basic support of nested aggregation
+is already implemented in ProvSQL. However, there is an
+important semantics issue: the approach presented in the
+literature for supporting nested aggregation, which adds a
+comparison operator, makes sense for some specific provenance
+frameworks (such as Boolean provenance), but there is no
+clear semantics of how these comparison operators should
+be implemented for arbitrary m-semirings.
 
+\section{Setup}
 Let's assume that any selection on the result of an aggregation is an 
 atomic selection of the form .k=C or .k=.j. If not, we can write:
 
@@ -69,7 +79,7 @@ $\langle \epsilon(\Pi_{\#1}(\sigma_{\#2\neq\#4}(R\bowtie_{\#1=\#3} R))\rangle^{\
 R is assumed to be a binary relation without duplicates.
 
 
-\subsection{a first proof for HAVING COUNT$(*) > C$}
+\subsection{Reducing HAVING COUNT$(*) > C$ to a JOIN-equivalent query}
 
 $R \subseteq  A \times B$ is a binary relation without duplicates.
 Counting semiring : $K = (\mathcal{N}, +, ., 0, 1)$
@@ -81,6 +91,7 @@ $Q_1$:$\langle\Pi_{\#1}(\sigma_{\#2>C}(\gamma_{\#1}[1:+](R)))\rangle^{\hat I}$
 $Q_2$: $\langle \epsilon(\Pi_{\#1}(\sigma_{distinct}(\rho_{R_1}(R)\bowtie_{\#1=\#3} \rho_{R_2}(R)\bowtie_{\#1=\#5}\dots\bowtie_{\#1=\#(2C+1)}\rho_{R_{C+1}}(R))))\rangle^{\hat I}$
 
 Evaluating provenance semantics for $Q_1$:
+
 $\gamma_{\#1}[1:+](R)$ evaluates $COUNT(*)$ for each corresponding group. $\sigma_{\#2>C}$ gives us groups with more than $C$ tuples, projecting on the group key $\Pi_{\#1}$.
 Hence we get :
 
@@ -92,7 +103,7 @@ $$Prov(g) = \begin{cases}
    0, & \text{otherwise}
    \end{cases}$$
 
-\subsection{Evaluating provenance semantics for $Q_2$:}
+Evaluating provenance semantics for $Q_2$:
 
 So we have a $C+1$-way self-join.
 We keep the tuples for which  all of $(g,r_1),(g,r_2),\dots,(g,r_{C+1})$ are pairwise distinct. We then project on $\#1$ and elimate duplicates using $\epsilon$.
@@ -119,7 +130,11 @@ $$Prov(g) = \begin{cases}
 
 Should be same in join for absoptive semerings
 
-\subsection{Counting Semiring Definitions:}
+\subsection{Testing the provenance semantics on different semirings:}
+Now we are going to validate the propsed semantics across some m-semirings. The goal is to 
+verify whether the semantics can be implemented within the algrebraic structures of each m-semiring 
+while satisfying the required m-semiring axioms.
+\subsubsection{Counting Semiring}
 $$K = (\mathbb{N}, \oplus, \otimes, 0, 1)$$
 $\mathbb{N} = \{0,1,2,\dots\}$
 
@@ -179,7 +194,8 @@ Another way of setting up possible world definition:\newline
 let $$w: \{1,2,\dots,m\} \mapsto \{0,1\}$$ and $$w': \{1,2,\dots,n\} \mapsto \{0,1\}$$
 $\bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}b_i\otimes\bigotimes_{w'(j) = 1}b'_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}b_i\oplus \bigoplus_{w'(j) = 0}b'j)\right)\right)$
 
-\subsubsection{Counting semiring properties}
+\textbf{Counting semiring properties:}
+
 1. Additive monoid
 - Associativity: $$(a \oplus b) \oplus c = a \oplus (b\oplus c)$$
 - Commutativity: $$a \oplus b = b \oplus a$$
@@ -217,7 +233,7 @@ $$
 0,&\text{o.w.}\end{cases}
 $$
 
-\subsection{Boolean Semiring}
+\subsubsection{Boolean Semiring}
 $$B = (\{0,1\}, \lor, \land, 0, 1)$$
 $$\lor : \text{Standard logical OR}$$
 $$\land : \text{Standard logical AND}$$
@@ -330,6 +346,26 @@ q'(T)
 \]
 as required.
 \end{proof}
+
+\subsubsection{Semiring of Boolean Functions}
+
+\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
+A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
+  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
+The semiring of Boolean functions is:
+$$
+B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
+$$
+\begin{itemize}
+    \item \(\varphi \vee \psi\): pointwise OR
+    \item \(\varphi \wedge \psi\): pointwise AND
+    \item \(0_B\): the constant-false function
+    \item \(1_B\): the constant-true function
+    \item Monus:
+        $$
+        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
+        $$
+\end{itemize}
 
 \input{homomorphisms.tex}
 
