@@ -131,10 +131,34 @@ $$Prov(g) = \begin{cases}
 
 Should be same in join for absoptive semerings
 
-\subsection{Testing the provenance semantics on different semirings:}
-Now we are going to validate the propsed semantics across some m-semirings. The goal is to 
+\subsection{Testing the provenance semantics on different m-semirings:}
+Now we are going propose and validate our semantics across some m-semirings. The goal is to 
 verify whether the semantics can be implemented within the algrebraic structures of each m-semiring 
 while satisfying the required m-semiring axioms.
+
+Let $(K,\oplus,\otimes,\mathbb{0},\mathbb{1},\delta,\ominus)$ be an m-semiring with an 
+added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an 
+additive monoid for aggregation. Let $*:K\times M \mapsto M$ be a scalar multiplication, such that for $a \in K, b \in M$, 
+$a * b = a \times b$.
+
+Then an aggregation expression would be of the form $\bigplus_M *(a,b)$, where $(a,b)$ resembles semimodule $K \times M$, say $\mathcal{M}$.
+For any two aggregations $u,v$,
+
+$[u \oslash v]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}: \mathcal{M} \times \{ =, \neq , >, <, \geq, \leq\} \times \mathcal{M} \rightarrow K$
+
+
+Let $\mathcal{X} = \{x_1, x_2, \dots, x_n\}$, be the variables, $w: \mathcal{X} \mapsto K$ be a valuation and,
+$\mathcal{W} = \{w \mid w:\mathcal{X} \mapsto K\}$, be the set of all valuations.
+
+Then for valuations, 
+$w: \{1,2,\dots,m\} \mapsto K$ and $w': \{1,2,\dots,n\} \mapsto K$
+
+\begin{align*}
+  &[[u \oslash v]]_{op}=\\
+  &\bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}b_i\otimes\bigotimes_{w'(j) = 1}b'_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}b_i\oplus \bigoplus_{w'(j) = 0}b'j)\right)\right)
+\end{align*}
+
+
 \subsubsection{Counting Semiring}
 $$K = (\mathbb{N}, \oplus, \otimes, 0, 1)$$
 $\mathbb{N} = \{0,1,2,\dots\}$
@@ -152,13 +176,6 @@ Additional operators:
 Monus: $(a \ominus b): \text{Truncated subtraction}$
 $$ a \ominus b = \begin{cases} 0, &  a\leq b\\ a-b,& a>b \end{cases}$$
 
-Extra-semiring operations:
-Semimodule operation$(*)$:
-
-Let $K$ be a semiring and, $M$ be an additive monoid, with scalar $*:K\times M \mapsto M$, then for $a \in K, b \in M$
-$$a * b = a \times b$$
-
-
 Delta: 
 For $a \in K$
 $\delta(a) = \begin{cases} 0, & a=0\\ 1, & a>0 \end{cases}$
@@ -166,21 +183,6 @@ $\delta:K \mapsto K $
 $\delta(0_K)=0_K$
 $\delta(n.1_K)=1_K$
 
-Aggregate comparison operation : \newline
-Let $\mathcal{M}$ be a semimodule $K\times M$.
-$[[\cdot]]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}: \mathcal{M} \times \{ =, \neq , >, <, \geq, \leq\} \times \mathcal{M} \rightarrow K$
-For $u,v\in \mathcal{M}, op \in \{ =, \neq , >, <, \geq, \leq\}$
-
-
-Let $\mathcal{T} = \{t_1, t_2, \dots, t_n\}$, be the set of all tuples in the relational database and $w: \mathcal{T} \mapsto \{0,1\}$ be a possible world function and,
-$\mathcal{W} = \{w \mid w:\mathcal{T} \mapsto \{0,1\}\}$, be the set of all possible worlds.
-Then,\newline
-let $$w: \{1,2,\dots,m\} \mapsto \{0,1\}$$ and $$w': \{1,2,\dots,n\} \mapsto \{0,1\}$$
-
-\begin{align*}
-  &[[u \oslash v]]_{op}=\\
-  &\bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}b_i\otimes\bigotimes_{w'(j) = 1}b'_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}b_i\oplus \bigoplus_{w'(j) = 0}b'j)\right)\right)
-\end{align*}
 
 \textbf{Counting semiring properties:}
 
