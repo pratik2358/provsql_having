@@ -10,3 +10,4 @@ main.synctex.gz
 minted
 _minted-main
 .DS_Store
+*.pyg
