@@ -138,13 +138,73 @@ while satisfying the required m-semiring axioms.
 
 Let $(K,\oplus,\otimes,\mathbb{0},\mathbb{1},\delta,\ominus)$ be an m-semiring with an 
 added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an 
-additive monoid for aggregation. Let $*:K\times M \mapsto M$ be a scalar multiplication, such that for $a \in K, b \in M$, 
-$a * b = a \times b$.
+additive monoid of aggregate values. Let $*:K\times M \mapsto M$ be a scalar action of $K$ on $M$, such that for $a \in K, b \in M$, 
+$a * b = a \times b \in M$.
 
-Then an aggregation expression would be of the form $\bigplus_M *(a,b)$, where $(a,b)$ resembles semimodule $K \times M$, say $\mathcal{M}$.
-For any two aggregations $\mathbf{u},\mathbf{v}$,
+We represent an aggregation expression $\mathbf{a}$ as  $\bigoplus_{\mathcal{M},i}(a_i^{(K)},a_i^{(M)})$ where $\bigoplus_{\mathcal{M}}$ is a formal semimodule($\mathcal{M}$) sum over 
+variables $i$ involved in the aggregation.
+Now for any two aggregations $\mathbf{u},\mathbf{v}$, we define the comparison operator $\oslash$ at the semimodule level as, 
 
-$[\mathbf{u} \oslash \mathbf{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}: \mathcal{M} \times \{ =, \neq , >, <, \geq, \leq\} \times \mathcal{M} \rightarrow K$
+$[\mathbf{u} \oslash \mathbf{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K\}$ such that, 
+
+\begin{multline}
+[\mathbf{u} \oslash \mathbf{v}]_{\mathrm{op}}=
+\bigoplus_{S,T} 
+\Biggl(
+\underbrace{
+\Bigl( \bigotimes_{i \in S} u_i^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{j \in T} v_j^{(K)} \Bigr)
+}_{\text{product of annotations in } K} \\
+\otimes
+\underbrace{
+\chi_{\mathrm{op}}\bigl(\mathrm{val}_\mathbf{u}(S), \mathrm{val}_\mathbf{v}(T)\bigr)
+}_{\text{comparison result in K}} 
+\;\otimes\;\\
+\underbrace{
+\delta\Biggl( \bigoplus_{i \notin S} u_i^{(K)} \;\oplus\; \bigoplus_{j \notin T} v_j^{(K)} \Biggr)
+}_{\text{sum in $K$ of excluded variables}}
+\Biggr)
+\end{multline}
+
+where,
+
+$\chi_{\mathrm{op}}\bigl(\mathrm{val}_\mathbf{u}(S), \mathrm{val}_\mathbf{v}(T)\bigr)=\begin{cases}
+\mathbb{1}_K & \text{if } \mathrm{val}_\mathbf{u}(S) \;\mathit{op}\; \mathrm{val}_\mathbf{v}(T),\\
+\mathbb{0}_K & \text{otherwise.}
+\end{cases}$ 
+
+and, 
+$\mathrm{val}_\mathbf{u}(S)$ and $\mathrm{val}_\mathbf{v}(T)$ are $\bigplus_{M, i \in S}u_i^{(M)}$  and 
+$\bigplus_{M, j \in T}v_j^{(M)}$, $S$ and $T$ being possible world valuations.
+
+\textbf{Toy example:}
+Consider the aggregation expressions:
+
+\[
+\mathbf{u} = \{ (t_1,5), (t_2,7) \}, \quad
+\mathbf{v} = \{ (t_3,6) \}
+\]
+
+where each element is a semimodule element $(u_i^{(K)}, u_i^{(M)})$:
+
+\begin{itemize}
+    \item $u_i^{(K)}$ is the provenance annotation in the semiring $K$ (here, strings $t_1, t_2, t_3$)
+    \item $u_i^{(M)}$ is the numeric monoid value
+\end{itemize}
+\[
+S \subseteq \mathbf{u}: \{ \{t_1\}, \{t_2\}, \{t_1,t_2\} \}, \quad
+T \subseteq \mathbf{v}: \{ \{t_3\} \}
+\]
+
+\begin{multline}
+[\mathbf{u} \oslash_{<} \mathbf{v}]
+= 
+(t_1 \otimes t_3) \otimes 1_K \otimes \delta(t_2) 
+\;\oplus\;\\ 
+(t_2 \otimes t_3) \otimes 0_K \otimes \delta(t_1) 
+\;\oplus\;\\
+(t_1 \otimes t_2 \otimes t_3)\\
+\otimes 0_K \otimes \delta(\emptyset)
+\end{multline}
 
 
 Let $\mathcal{X} = \{x_1, x_2, \dots, x_n\}$, be the variables, $w: \mathcal{X} \mapsto K$ be a valuation and,
