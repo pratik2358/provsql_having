@@ -160,7 +160,7 @@ $[\mathbf{u} \oslash \mathbf{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}
 }_{\text{comparison result in K}} 
 \;\otimes\;\\
 \underbrace{
-\delta\Biggl( \bigoplus_{i \notin S} u_i^{(K)} \;\oplus\; \bigoplus_{j \notin T} v_j^{(K)} \Biggr)
+\Biggl(\mathbb{1}_K \ominus \delta\Biggl( \bigoplus_{i \notin S} u_i^{(K)} \;\oplus\; \bigoplus_{j \notin T} v_j^{(K)} \Biggr)\Biggr)
 }_{\text{sum in $K$ of excluded variables}}
 \Biggr)
 \end{multline}
@@ -176,7 +176,7 @@ and,
 $\mathrm{val}_\mathbf{u}(S)$ and $\mathrm{val}_\mathbf{v}(T)$ are $\bigplus_{M, i \in S}u_i^{(M)}$  and 
 $\bigplus_{M, j \in T}v_j^{(M)}$, $S$ and $T$ being possible world valuations.
 
-\textbf{Toy example:}
+\textbf{Toy example (in formula semiring):}
 Consider the aggregation expressions:
 
 \[
@@ -195,16 +195,15 @@ S \subseteq \mathbf{u}: \{ \{t_1\}, \{t_2\}, \{t_1,t_2\} \}, \quad
 T \subseteq \mathbf{v}: \{ \{t_3\} \}
 \]
 
-\begin{multline}
+\begin{align*}
 [\mathbf{u} \oslash_{<} \mathbf{v}]
 = 
-(t_1 \otimes t_3) \otimes 1_K \otimes \delta(t_2) 
+&(t_1 \otimes t_3) \otimes \mathbb{1}_K \otimes (\mathbb{1_k}\ominus\delta(t_2)) 
 \;\oplus\;\\ 
-(t_2 \otimes t_3) \otimes 0_K \otimes \delta(t_1) 
+&(t_2 \otimes t_3) \otimes 0_K \otimes (\mathbb{1}_K\ominus\delta(t_1)) 
 \;\oplus\;\\
-(t_1 \otimes t_2 \otimes t_3)\\
-\otimes 0_K \otimes \delta(\emptyset)
-\end{multline}
+&(t_1 \otimes t_2 \otimes t_3) \otimes 0_K \otimes (\mathbb{1}_K\ominus\delta(\emptyset))
+\end{align*}
 
 
 Let $\mathcal{X} = \{x_1, x_2, \dots, x_n\}$, be the variables, $w: \mathcal{X} \mapsto K$ be a valuation and,
