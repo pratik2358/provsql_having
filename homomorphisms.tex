@@ -64,9 +64,12 @@ $Form(X)$ being inductively generated, $\Phi^*$ is uniquely defined on all formu
 
 \end{proof}
 
-\textbf{Uniqueness(by construction)}
+\textbf{Uniqueness}
 \begin{proof}
-If $\exists\;\Psi_v^T:B[x]\rightarrow T$ such that $\Psi_v^T(\iota(x))=v(x)\text{ for all }x \in X$, we show that $\Psi_v^T=\Phi_v^T$
+Assume that $\exists\;\Psi_v^T:B[x]\rightarrow T$ such that $\Psi_v^T(\iota(x))=v(x)\text{ for all }x \in X$. Hence $\Psi_v^T=\Phi_v^T$.
+
+$B[X]$ is a free Boolean algebra on $\iota(x)$  and $\phi \in B[X]$ is image of $q:Form(X)\rightarrow B[X]$ of some boolean formula $\alpha$.  When it comes to free algebras, homomorphisms 
+are only determined by the values of their generators. And by assumption $\Psi_v^T$ and $\Phi_v^T$ agreee on $\iota(x) \text{ for all } x \in X$.
 \end{proof}
 For any $t_1,t_2 \in T$, $t_1 \cap (t_1 \cup t_2) = t_1$ and $t_1 \cup (t_1 \cap t_2) = t_1$.\\
 Now for any $b_1,b_2 \in B^X$, $\Phi_v^T(b_1 \wedge (b_1 \lor b_2)) = \Phi_v^T(b_1) \cap (\Phi_v^T(b_1) \cup \Phi_v^T(b_2)) = v(b_1) \cap (v(b_1) \cup v(b_2)) = v(b_1)$, similarly the other one holds.\\
