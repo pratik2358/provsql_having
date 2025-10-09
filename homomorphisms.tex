@@ -6,13 +6,13 @@ our target semirings without re-deriving from scratch.
 
 
 \subsubsection{$\Phi^{\mathrm{T}}_v : B[X] \to T$}
-For any valuation $v:X \to T$, let $\Phi^{\mathrm{T}}_v : B[X] \to T$ be a homomorphism such that for any $b\in B[X]$ 
+For any valuation $v:X \to T$, let $\Phi^{\mathrm{T}}_v : B[X] \to T$ be a mapping such that for any $b\in B[X]$, 
 $\Phi^{\mathrm{T}}_v(b)=v(b)$.
 
 For a variable $b$, $\Phi_v^T(b) = v(b)$.
-For a monomial, $m = b_{i_1}\dots b_{i_k}$,
+Without loss of generality, considering a Boolean function in DNF, for a conjuction of variables $m = b_{i_1} \wedge b_{i_2} \wedge \dots \wedge b_{i_k}$,
 $$\Phi_v^T(m) = v(b_{i_1}) \cap \dots \cap v(b_{i_k})$$
-For a polynomial $p = \sum_{i=1}^n m_i$,
+For a disjunction $p = \bigvee_{i=1}^n m_i$,
 $$\Phi_v^T(p) = \bigcup_{i=1}^n \Phi_v^T(m_i)$$
 \begin{itemize}
     \item $$\Phi_v^T(0_{B}) = \emptyset$$
