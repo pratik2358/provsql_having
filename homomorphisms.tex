@@ -29,13 +29,12 @@ Define a map $\Phi^*:\mathsf{Form}(X)\rightarrow T$ by recursion:
 \end{align*}
 such that the Boolean connectives are interpreted in $T$ through the set-theoretic operations $\cup, \cap$ and set complement.
 
-$\mathsf{Form}(X)$ being inductively generated, $\Phi^*$ is uniquely defined on all formulae.
-  For any two logically equivalent formulae $\phi, \psi \in \mathsf{Form}(X)$, $\Phi^*(\phi)=\Phi^*(\psi)$ in $T$, because every Boolean algebra axiom holds in 
-  the Boolean algebra of temporal semiring $T$ via the set-theoretic operations and since
+$\mathsf{Form}(X)$ being inductively generated, $\Phi^*$ is well-defined on all formulae.
+  For any two logically equivalent formulae $\phi, \psi \in \mathsf{Form}(X)$ we have, $\Phi^*(\phi)=\Phi^*(\psi)$ in $T$. This is because every Boolean algebra axiom in $Form(X)$  is interpreted in $T$ through set-theoretic operations and since
   $\mathsf{ker}(\Phi^*):=\{(\phi,\psi)\in \mathsf{Form}(X)\times \mathsf{Form}(X)|\Phi^*(\phi)=\Phi^*(\psi)\}$ is a Boolean congrunence satisfying the equational theory of Boolean algebra, 
-  therefore semantically equal formulae are mapped to equal elements in $T$ by $\Phi^*$.
-  Thus for any Boolean formula $\phi\;\exists \Phi_v^T$, such that $\Phi_v^T(q(\phi))=\Phi^*(\phi)$.
-  For any generator variable $x \in X$, $\exists\Phi_v^T(x\mapsto [x]_{B[X]})=\Phi_v^T(q(\iota(x)))=\Phi^*(\iota(x))=v(x)$.
+  therefore logically equivalent formulae are mapped to the same element in $T$ by $\Phi^*$.
+  Thus for any Boolean formula $\phi$, we can define a homomorphism on it's equivalence class(which is essentially a Boolean function) as,  $\Phi_v^T(q(\phi)):=\Phi^*(\phi)$. This ensures that $\Phi_v^T$ is well-defined and for 
+  any variable $x \in X$, $\Phi_v^T(x\mapsto [x]_{B[X]})=\Phi_v^T(q(\iota(x)))=\Phi^*(\iota(x))=v(x)$.
 
 \end{proof}
 
@@ -43,9 +42,9 @@ $\mathsf{Form}(X)$ being inductively generated, $\Phi^*$ is uniquely defined on 
 \begin{proof}
 Assume that $\exists\;\Psi_v^T:B[x]\rightarrow T$ such that $\Psi_v^T(x\mapsto [x]_{B[X]})=v(x)\text{ for all }x \in X$.
 
-$B[X]$ is a free Boolean algebra on $x\mapsto [x]_{B[X]}$  and $\alpha \in B[X]$ is image of $q:\mathsf{Form}(X)\rightarrow B[X]$ of some boolean formula $\phi$. 
-When it comes to free algebras, homomorphisms are only determined by the values of their generators. 
-And by assumption of $\Psi_v^T$ and existence of $\Phi_v^T$, they agreee on $\Phi^*(\iota(x)) \text{ for all } x \in X$. Hence, $\Psi_v^T=\Phi_v^T$.
+$B[X]$ is a free Boolean algebra on $X$  and $\alpha \in B[X]$ is image of $q:\mathsf{Form}(X)\rightarrow B[X]$ of some boolean formula $\phi$. 
+When it comes to free algebras, homomorphisms are only determined by the values of their generators(all Boolean atomic functions, $[x]_{B[x]}\in B[X]$)
+And by assumption of $\Psi_v^T$ and existence of $\Phi_v^T$, they agreee on all generators. Hence, $\Psi_v^T=\Phi_v^T$.
 \end{proof}
 
 \subsubsection*{$\Phi_v^T$ preserves Axiom A.13.}
