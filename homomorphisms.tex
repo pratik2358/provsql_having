@@ -6,74 +6,48 @@ our target semirings without re-deriving from scratch.
 
 
 \subsubsection{$\Phi^{\mathrm{T}}_v : B[X] \to T$}
-For any valuation $v:X \to T$, let $\Phi^{\mathrm{T}}_v : B[X] \to T$ be a mapping such that for all $x\in X$, 
-$\Phi^{\mathrm{T}}_v(\iota(x))=v(x)$, where $\iota:X\rightarrow B[X]$ is canonical and injective. Hereafter, we would
-write $\Phi^{\mathrm{T}}_v(x)=v(x)$ for simplicity and implicitly assume the canonical embedding.
-Concretely:
+For any valuation $v:X \to T$,  $\exists$ a homomorphism $\Phi^{\mathrm{T}}_v : B[X] \to T$ such that for all $x\in X$, 
+$\Phi^{\mathrm{T}}_v(x\mapsto [x]_{B[X]})=v(x)$.
+
+\subsubsection*{Existence(by construction)}
+\begin{proof}
+Let $\mathsf{Form}(X)$ be the set of well formed Boolean formulas built on the variables in X. There is a canonical surjection 
+$q:\mathsf{Form}(X)\rightarrow B[X]$(basically maps each syntactical formula to its equivalence class).
+
+We define $\iota: X \rightarrow \mathsf{Form}(X)$, and thus essentially any Boolean function in $B[X]$ is a composition $q\circ \iota$.
+
+Define a map $\Phi^*:\mathsf{Form}(X)\rightarrow T$ by recursion:
 \begin{align*}
-&\Phi_v^T(0_B) := \varnothing,\quad\Phi_v^T(1_B) := \mathbb{R},\\
-&\Phi_v^T(x) := v(x)\quad\text{for }x\in X,\\
-&\Phi_v^T(\varphi\vee\psi) := \Phi_v^T(\varphi)\cup\Phi_v^T(\psi),\\
-&\Phi_v^T(\varphi\wedge\psi) := \Phi_v^T(\varphi)\cap\Phi_v^T(\psi),\\
-&\Phi_v^T(\neg\varphi) := \mathbb{R}\setminus\Phi_v^T(\varphi).\\
-&\Phi_v^T(b_1 \setminus_B b_2) = \Phi_v^T(b_1 \wedge \neg b_2) = \Phi_v^T(b_1)\cap \Phi_v^T(\neg b_2)= v(b_1)\cap v(\neg b_2)
+&\Phi^*(0_B) := \varnothing,\quad\Phi^*(1_B) := \mathbb{R},\\
+&\Phi^*(\iota(x)) := v(x)\quad\text{for }x\in X,\\
+\vspace{2cm}
+&\text{And for any }\varphi,\psi \in \mathsf{Form}(X):\\
+&\Phi^*(\varphi\vee\psi) := \Phi^*(\varphi)\cup\Phi^*(\psi),\\
+&\Phi^*(\varphi\wedge\psi) := \Phi^*(\varphi)\cap\Phi^*(\psi),\\
+&\Phi^*(\neg\varphi) := \mathbb{R}\setminus\Phi^*(\varphi).\\
+&\Phi^*(\phi \setminus_B \psi) = \Phi^*(\phi \wedge \neg \psi) = \Phi^*(\phi)\cap \Phi^*(\neg \psi)
 \end{align*}
+such that the Boolean connectives are interpreted in $T$ through the set-theoretic operations $\cup, \cap$ and set complement.
 
-\medskip
-
-\paragraph{Proposition. \(\Phi_v^T\) is a homomorphism.}
-
-\begin{proof}
-Without loss of generality we assume functions in \(B[X]\) are given in DNF.
-
-\textbf{(1) Constants.}
-By definition \(\Phi_v^T(0_B)=\varnothing=0_T\) and \(\Phi_v^T(1_B)=\mathbb{R}=1_T\).
-
-\textbf{(2) Variables.}
-For a variable \(x\in X\) we have by definition \(\Phi_v^T(x)=v(x)\).
-
-\textbf{(3) Preservation of \(\vee\) and \(\wedge\).}
-Let \(\varphi,\psi\in B[X]\). By definition
-\[
-\Phi_v^T(\varphi\vee\psi)=\Phi_v^T(\varphi)\cup\Phi_v^T(\psi),
-\]and
-\[
-\Phi_v^T(\varphi\wedge\psi)=\Phi_v^T(\varphi)\cap\Phi_v^T(\psi).
-\]
-Thus \(\Phi_v^T\) commutes with \(\vee\) and \(\wedge\).
-
-\textbf{(4) Preservation of monus.}
-By definition \(\Phi_v^T(\neg\varphi)=\mathbb{R}\setminus\Phi_v^T(\varphi)=\neg_T\Phi_v^T(\varphi)\). Hence \(\Phi_v^T\) commutes with complementation.
+$\mathsf{Form}(X)$ being inductively generated, $\Phi^*$ is uniquely defined on all formulae.
+  For any two logically equivalent formulae $\phi, \psi \in \mathsf{Form}(X)$, $\Phi^*(\phi)=\Phi^*(\psi)$ in $T$, because every Boolean algebra axiom holds in 
+  the Boolean algebra of temporal semiring $T$ via the set-theoretic operations and since
+  $\mathsf{ker}(\Phi^*):=\{(\phi,\psi)\in \mathsf{Form}(X)\times \mathsf{Form}(X)|\Phi^*(\phi)=\Phi^*(\psi)\}$ is a Boolean congrunence satisfying the equational theory of Boolean algebra, 
+  therefore semantically equal formulae are mapped to equal elements in $T$ by $\Phi^*$.
+  Thus for any Boolean formula $\phi\;\exists \Phi_v^T$, such that $\Phi_v^T(q(\phi))=\Phi^*(\phi)$.
+  For any generator variable $x \in X$, $\exists\Phi_v^T(x\mapsto [x]_{B[X]})=\Phi_v^T(q(\iota(x)))=\Phi^*(\iota(x))=v(x)$.
 
 \end{proof}
 
-\textbf{Existence(by construction)}
+\subsubsection*{Uniqueness}
 \begin{proof}
-Let $Form(X)$ be the set of well formed Boolean formulas built on the variables in X. There is a canonical surjection from 
-$q:Form(X)\rightarrow B[X]$(basically maps each syntactical formula to its equivalence class).
-Thus, our $\iota$ is essentially $q\circ X \hookrightarrow Form(X)$.
-Define a map $\Phi^*:Form(X)\rightarrow T$ by recursion similarly as $\Phi_v^T$.
-$Form(X)$ being inductively generated, $\Phi^*$ is uniquely defined on all formulas.
-  For any two logically equivalent formula $\alpha, \beta \in Form(X)$, $\Phi^*(\alpha)=\Phi^*(\beta)$ in $T$, because $\Phi^*$ is defined as an interpretation 
-  of Boolean connectives in $T$ through the set-theoretic operations $\cup, \cap$ and set complement. In other words, every Boolean algebra axiom holds in 
-  the Boolean algebra of temporal semiring $T$ via the set-theoretic operations. Thus, any equality proved from those axioms is preserved in our mapping $\Phi^*$.
-  The kernel of $\Phi^*$ is a Boolean congrunence satisfying the equational theory of Boolean algebra, therefore semantically equal formulas are mapped to equal elements in $T$ by $\Phi^*$.
-  Thus for all Boolean formulas $\alpha$ $\Phi_v^T(q(\alpha))=\Phi^*(\alpha)$ and for any generator variable $x \in X$ $\Phi_v^T(\iota(x))=\Phi_v^T(q(x))=\Phi^*(x)=v(x)$.
+Assume that $\exists\;\Psi_v^T:B[x]\rightarrow T$ such that $\Psi_v^T(x\mapsto [x]_{B[X]})=v(x)\text{ for all }x \in X$.
 
-  $ker(\Phi^*):=\{(\alpha,\beta)\in Form(X)\times Form(X)|\Phi^*(\alpha)=\Phi^*(\beta)\}$
-
+$B[X]$ is a free Boolean algebra on $x\mapsto [x]_{B[X]}$  and $\alpha \in B[X]$ is image of $q:\mathsf{Form}(X)\rightarrow B[X]$ of some boolean formula $\phi$. 
+When it comes to free algebras, homomorphisms are only determined by the values of their generators. 
+And by assumption of $\Psi_v^T$ and existence of $\Phi_v^T$, they agreee on $\Phi^*(\iota(x)) \text{ for all } x \in X$. Hence, $\Psi_v^T=\Phi_v^T$.
 \end{proof}
-
-\textbf{Uniqueness}
-\begin{proof}
-Assume that $\exists\;\Psi_v^T:B[x]\rightarrow T$ such that $\Psi_v^T(\iota(x))=v(x)\text{ for all }x \in X$. Hence $\Psi_v^T=\Phi_v^T$.
-
-$B[X]$ is a free Boolean algebra on $\iota(x)$  and $\phi \in B[X]$ is image of $q:Form(X)\rightarrow B[X]$ of some boolean formula $\alpha$.  When it comes to free algebras, homomorphisms 
-are only determined by the values of their generators. And by assumption $\Psi_v^T$ and $\Phi_v^T$ agreee on $\iota(x) \text{ for all } x \in X$.
-\end{proof}
-For any $t_1,t_2 \in T$, $t_1 \cap (t_1 \cup t_2) = t_1$ and $t_1 \cup (t_1 \cap t_2) = t_1$.\\
-Now for any $b_1,b_2 \in B^X$, $\Phi_v^T(b_1 \wedge (b_1 \lor b_2)) = \Phi_v^T(b_1) \cap (\Phi_v^T(b_1) \cup \Phi_v^T(b_2)) = v(b_1) \cap (v(b_1) \cup v(b_2)) = v(b_1)$, similarly the other one holds.\\
-\textbf{Axiom A13 of $T$}:\newline
+\subsubsection*{Axiom A13 of $T$}
 For any $t_1,t_2,t_3 \in T$, $t_1 \cap (t_2 \setminus t_3) = (t_1 \cap t_2) \setminus (t_1 \cap t_3)$.\\ (holds)
 Now for any $b_1, b_2, b_3 \in B^X$,
 \[
@@ -86,6 +60,21 @@ Now for any $b_1, b_2, b_3 \in B^X$,
 &= \Phi_v^T((b_1 \wedge b_2) \wedge (b_1 \wedge \neg b_3))
 \end{aligned}
 \]
+
+\begin{proof}
+Let \(\varphi,\psi\in B[X]\). By definition
+\[
+\Phi_v^T(\varphi\vee\psi)=\Phi_v^T(\varphi)\cup\Phi_v^T(\psi),
+\]and
+\[
+\Phi_v^T(\varphi\wedge\psi)=\Phi_v^T(\varphi)\cap\Phi_v^T(\psi).
+\]
+Thus \(\Phi_v^T\) commutes with \(\vee\) and \(\wedge\).
+
+\textbf{Preservation of monus.}
+By definition \(\Phi_v^T(\neg\varphi)=\mathbb{R}\setminus\Phi_v^T(\varphi)=\neg_T\Phi_v^T(\varphi)\). Hence \(\Phi_v^T\) commutes with complementation.
+
+\end{proof}
 \textbf{Equivalence preservation}:\newline
 If two Boolean functions $b_1$ and $b_2$ are equivalent, then $\Phi_v^T(b_1) = \Phi_v^T(b_2)$.
 
