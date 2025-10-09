@@ -49,15 +49,15 @@ And by assumption of $\Psi_v^T$ and existence of $\Phi_v^T$, they agreee on $\Ph
 \end{proof}
 \subsubsection*{Axiom A13 of $T$}
 For any $t_1,t_2,t_3 \in T$, $t_1 \cap (t_2 \setminus t_3) = (t_1 \cap t_2) \setminus (t_1 \cap t_3)$.\\ (holds)
-Now for any $b_1, b_2, b_3 \in B^X$,
+Now for any $\phi, \psi, \gamma \in B[X]$,
 \[
 \begin{aligned}
-&\Phi_v^T(b_1 \wedge (b_2 \setminus_B b_3))\\ 
-&= \Phi_v^T(b_1) \cap (\Phi_v^T(b_2) \cap \Phi_v^T(\neg b_3)) \\
-&= v(b_1) \cap (v(b_2) \cap v(\neg b_3)) \\
-&= (v(b_1) \cap v(b_2)) \cap (v(b_1) \cap (]-\infty,+\infty[ \setminus v(b_3))) \\
-&= \Phi_v^T(b_1 \wedge b_2) \cap \Phi_v^T(b_1 \wedge \neg b_3) \\
-&= \Phi_v^T((b_1 \wedge b_2) \wedge (b_1 \wedge \neg b_3))
+&\Phi_v^T(\phi \wedge (\psi \setminus_B \gamma))\\ 
+&= \Phi_v^T(\phi) \cap (\Phi_v^T(\psi) \cap \Phi_v^T(\neg \gamma)) \\
+&= \Phi^*(\phi) \cap (\Phi^*(\psi) \cap \Phi^*(\neg \gamma)) \\
+&= (\Phi^*(\phi) \cap \Phi^*(\psi)) \cap (\Phi^*(\phi) \cap (]-\infty,+\infty[ \setminus \Phi^*(\gamma))) \\
+&= \Phi_v^T(\phi \wedge \psi) \cap \Phi_v^T(\phi \wedge \neg \gamma) \\
+&= \Phi_v^T((\phi \wedge \psi) \wedge (\phi \wedge \neg \gamma))
 \end{aligned}
 \]
 
