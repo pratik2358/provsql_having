@@ -24,7 +24,7 @@ Define a map $\Phi^*:\mathsf{Form}(X)\rightarrow T$ by recursion:
 &\text{And for any }\varphi,\psi \in \mathsf{Form}(X):\\
 &\Phi^*(\varphi\vee\psi) := \Phi^*(\varphi)\cup\Phi^*(\psi),\\
 &\Phi^*(\varphi\wedge\psi) := \Phi^*(\varphi)\cap\Phi^*(\psi),\\
-&\Phi^*(\neg\varphi) := \mathbb{R}\setminus\Phi^*(\varphi).\\
+&\Phi^*(\neg\varphi) := \mathbb{R}\setminus\Phi^*(\varphi)= \Phi^*(\varphi)^\complement\\
 &\Phi^*(\phi \setminus_B \psi) = \Phi^*(\phi \wedge \neg \psi) = \Phi^*(\phi)\cap \Phi^*(\neg \psi)
 \end{align*}
 such that the Boolean connectives are interpreted in $T$ through the set-theoretic operations $\cup, \cap$ and set complement.
@@ -47,37 +47,44 @@ $B[X]$ is a free Boolean algebra on $x\mapsto [x]_{B[X]}$  and $\alpha \in B[X]$
 When it comes to free algebras, homomorphisms are only determined by the values of their generators. 
 And by assumption of $\Psi_v^T$ and existence of $\Phi_v^T$, they agreee on $\Phi^*(\iota(x)) \text{ for all } x \in X$. Hence, $\Psi_v^T=\Phi_v^T$.
 \end{proof}
-\subsubsection*{Axiom A13 of $T$}
-For any $t_1,t_2,t_3 \in T$, $t_1 \cap (t_2 \setminus t_3) = (t_1 \cap t_2) \setminus (t_1 \cap t_3)$.\\ (holds)
-Now for any $\phi, \psi, \gamma \in B[X]$,
+
+\subsubsection*{$\Phi_v^T$ preserves Axiom A.13.}
+
+Let $\phi, \psi, \gamma \in B[X]$ and pick representatives $\tilde{\phi}, \tilde{\psi}, \tilde{\gamma} \in \mathsf{Form}(X)$ such that
+\[
+q(\tilde{\phi}) = \phi, \quad q(\tilde{\psi}) = \psi, \quad q(\tilde{\gamma}) = \gamma.
+\]
+
+Then we have
 \[
 \begin{aligned}
-&\Phi_v^T(\phi \wedge (\psi \setminus_B \gamma))\\ 
-&= \Phi_v^T(\phi) \cap (\Phi_v^T(\psi) \cap \Phi_v^T(\neg \gamma)) \\
-&= \Phi^*(\phi) \cap (\Phi^*(\psi) \cap \Phi^*(\neg \gamma)) \\
-&= (\Phi^*(\phi) \cap \Phi^*(\psi)) \cap (\Phi^*(\phi) \cap (]-\infty,+\infty[ \setminus \Phi^*(\gamma))) \\
-&= \Phi_v^T(\phi \wedge \psi) \cap \Phi_v^T(\phi \wedge \neg \gamma) \\
-&= \Phi_v^T((\phi \wedge \psi) \wedge (\phi \wedge \neg \gamma))
+\Phi_v^T\big(\phi \wedge (\psi \setminus_B \gamma)\big) 
+&= \Phi^*\big(\tilde{\phi} \wedge (\tilde{\psi} \wedge \neg \tilde{\gamma})\big) \\
+&= \Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\psi} \wedge \neg \tilde{\gamma}) \\
+&= \Phi^*(\tilde{\phi}) \cap \big(\Phi^*(\tilde{\psi}) \cap \Phi^*(\neg \tilde{\gamma})\big) \\
+&= \Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\psi}) \cap (\Phi^*(\tilde{\gamma}))^\complement.
 \end{aligned}
 \]
 
-\begin{proof}
-Let \(\varphi,\psi\in B[X]\). By definition
+Similarly,
 \[
-\Phi_v^T(\varphi\vee\psi)=\Phi_v^T(\varphi)\cup\Phi_v^T(\psi),
-\]and
-\[
-\Phi_v^T(\varphi\wedge\psi)=\Phi_v^T(\varphi)\cap\Phi_v^T(\psi).
+\begin{aligned}
+\Phi_v^T\big((\phi \wedge \psi) \setminus_B (\phi \wedge \gamma)\big) 
+&= \Phi^*\big((\tilde{\phi} \wedge \tilde{\psi}) \wedge \neg (\tilde{\phi} \wedge \tilde{\gamma})\big) \\
+&= (\Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\psi})) \cap (\Phi^*(\tilde{\phi} \wedge \tilde{\gamma}))^\complement \\
+&= (\Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\psi})) \cap (\Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\gamma}))^\complement \\
+&= (\Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\psi})) \cap (\Phi^*(\tilde{\phi})^\complement \cup \Phi^*(\tilde{\gamma})^\complement) \\
+&= (\underbrace{\Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\psi}) \cap \Phi^*(\tilde{\phi})^\complement}_{\varnothing}) 
+   \;\cup\; (\Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\psi}) \cap \Phi^*(\tilde{\gamma})^\complement) \\
+&= \Phi^*(\tilde{\phi}) \cap \Phi^*(\tilde{\psi}) \cap (\Phi^*(\tilde{\gamma}))^\complement.
+\end{aligned}
 \]
-Thus \(\Phi_v^T\) commutes with \(\vee\) and \(\wedge\).
 
-\textbf{Preservation of monus.}
-By definition \(\Phi_v^T(\neg\varphi)=\mathbb{R}\setminus\Phi_v^T(\varphi)=\neg_T\Phi_v^T(\varphi)\). Hence \(\Phi_v^T\) commutes with complementation.
-
-\end{proof}
-\textbf{Equivalence preservation}:\newline
-If two Boolean functions $b_1$ and $b_2$ are equivalent, then $\Phi_v^T(b_1) = \Phi_v^T(b_2)$.
-
+Hence,
+\[
+\Phi_v^T\big(\phi \wedge (\psi \setminus_B \gamma)\big) = \Phi_v^T\big((\phi \wedge \psi) \setminus_B (\phi \wedge \gamma)\big),
+\]
+which shows that $\Phi_v^T$ preserves Axiom A13.
 
 
 \subsubsection{$\Phi_{\mathrm{trop}}: B^X \to T_{\min}$}
