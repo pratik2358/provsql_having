@@ -1,4 +1,5 @@
-\documentclass{article}
+\documentclass[10pt,a4paper]{scrartcl}
+\usepackage[left=1cm, right=1cm]{geometry}
 \usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -8,7 +9,16 @@
 \usepackage{minted}
 \usepackage[bb=boondox]{mathalfa}
 \usepackage{amsthm}
-
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
+\SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
+\DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
 \newcommand{\dq}[1]{\text{\enquote{#1}}}
 \newcommand{\op}{\hspace{0.1cm}\mathsf{op}\hspace{0.1cm}}
 \makeatletter
@@ -27,8 +37,10 @@
     #1
   \end{multiline}
 }
+\newcommand{\llbracket}{[\![}
+\newcommand{\rrbracket}{]\!]}
 \makeatother
-\title{Provenance Semantics for Nested Aggregation}
+\title{Provenance for Relational Queries with Nested Aggregation}
 \author{Pratik Karmakar \and Aryak Sen \and Silviu Maniu \and Pierre Senellart}
 \date{}
 
@@ -63,15 +75,15 @@ $
 $\\
 when .k refers to a column that dynamically has type “aggregate”.
 
-Semantics of [semimodule op semimodule] in different algebraic structures:
-- for formula, write it with concatenation
-- for Boolean function semiring, semantics of possible worlds
-- for why-semiring?
-- for which-semiring/lineage?
-- for counting-semiring?
-- for min-max/security semiring?
-- for tropical semiring?
-- etc.
+% Semantics of [semimodule op semimodule] in different algebraic structures:
+% - for formula, write it with concatenation
+% - for Boolean function semiring, semantics of possible worlds
+% - for why-semiring?
+% - for which-semiring/lineage?
+% - for counting-semiring?
+% - for min-max/security semiring?
+% - for tropical semiring?
+% - etc.
 
 What would be nice is that simple cases reduce to just evaluating joins.
 
@@ -128,95 +140,127 @@ $$Prov(g) = \begin{cases}
    0, & \text{otherwise}
    \end{cases}$$
 
-Should be same in join for absoptive semerings
-
-\subsection{Testing the provenance semantics on different m-semirings:}
-Now we are going propose and validate our semantics across some m-semirings. The goal is to 
-verify whether the semantics can be implemented within the algrebraic structures of each m-semiring 
-while satisfying the required m-semiring axioms.
-
-Let $(K,\oplus,\otimes,\mathbb{0},\mathbb{1},\delta,\ominus)$ be an m-semiring with an 
+\subsection{Semantics}
+Extending on the algebra over annotated 
+relations presented in \cite{sen2025provsqlgeneralkeepingtrack} by 
+adding a new predicate form that allows 
+comparison between aggregations we fill the semantics gap that 
+was noted and left for future work.
+\paragraph{Setup.}
+Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an 
 added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an 
 additive monoid of aggregate values. Let $*:K\times M \mapsto K$ be a scalar action of $M$ on $K$, such that for $a \in K, b \in M$, 
 $a * b = a \times b \in K$.
-
-We represent an aggregation expression $\mathbf{a}$ as  $\bigoplus_{\mathcal{M},i}(a_i^{(K)},a_i^{(M)})$ where $\bigoplus_{\mathcal{M}}$ is a formal semimodule($\mathcal{M}$) sum over 
-variables $i$ involved in the aggregation.
-Now for any two aggregations $\mathbf{u},\mathbf{v}$, we define the comparison operator $\oslash$ at the semimodule level as, 
-
-$[\mathbf{u} \oslash \mathbf{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K\}$ such that, 
-
+We fix a finite set $\mathbf{X}$ of variables. Each $\mathbf{x}\in\mathbf{X}$ have provenance annotations in $K$ and values in $M$ 
+given by a semimodule ($K\times M$, say $\mathcal{M}$) map 
+\[
+\mathfrak{Z}:\mathbf{X}\rightarrow \mathcal{M}\; \text{and} \quad \mathfrak{Z}^{(K)}(\mathbf{x})=\mathbf{x}^{(K)}, \; \mathfrak{Z}^{(M)}(\mathbf{x})=\mathbf{x}^{(M)}
+\]
+An aggregation $\mathdutchcal{a}$ is defined by an indicator function 
+$I_\mathdutchcal{a}:\mathbf{X}\rightarrow \{0,1\}$
+on variables from $\mathbf{X}$ that participate in the aggregation as 
+\[
+\mathdutchcal{a} = {\bigoplus_\mathcal{M}}_{\mathbf{x}\in \mathrm{supp}(\mathdutchcal{a})}(\mathbf{x}^{(K)},\mathbf{x}^{(M)})
+\]
+where, 
+$\mathrm{supp}(\mathdutchcal{a})=\{\,\mathbf{x} \mid I_\mathdutchcal{a}(\mathbf{x})=1 \,\}$ and 
+$\bigoplus_{\mathcal{M}}$ is a formal $\mathcal{M}-$sum over 
+variables $\mathbf{x}$ involved in the aggregation.
+A possible world is a represented by a subset $W\subseteq\mathbf{X}$.
+\paragraph{Possible-world semantics.}
+For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as, 
+\[
+[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K 
+\]
+such that,
 \begin{multline}
-[\mathbf{u} \oslash \mathbf{v}]_{\mathrm{op}}=
-\bigoplus_{S,T} 
+[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathrm{op}}=
+\bigoplus_{W} 
 \Biggl(
-\underbrace{
-\Bigl( \bigotimes_{i \in S} u_i^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{j \in T} v_j^{(K)} \Bigr)
-}_{\text{product of annotations in } K} \\
+  \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(K)} \Bigr)
 \otimes
-\underbrace{
-\chi_{\mathrm{op}}\bigl(\mathrm{val}_\mathbf{u}(S), \mathrm{val}_\mathbf{v}(T)\bigr)
-}_{\text{comparison result in K}} 
+  \chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)
 \;\otimes\;\\
-\underbrace{
-\Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{i \notin S} u_i^{(K)} \;\oplus\; \bigoplus_{j \notin T} v_j^{(K)} \Biggr)\Biggr)
-}_{\text{sum in $K$ of excluded variables}}
+  \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \;\oplus\; \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\Biggr)
 \Biggr)
 \end{multline}
-
 where,
-
-$\chi_{\mathrm{op}}\bigl(\mathrm{val}_\mathbf{u}(S), \mathrm{val}_\mathbf{v}(T)\bigr)=\begin{cases}
-\mathbb{1}_K & \text{if } \mathrm{val}_\mathbf{u}(S) \;\mathit{op}\; \mathrm{val}_\mathbf{v}(T),\\
+$\chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)=
+\begin{cases}
+\mathbb{1}_K & \text{if } {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}\;\mathit{op}\;{\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)},\\
 \mathbb{0}_K & \text{otherwise.}
 \end{cases}$ 
+\paragraph{Complexity}
 
-and, 
-$\mathrm{val}_\mathbf{u}(S)$ and $\mathrm{val}_\mathbf{v}(T)$ are $\bigplus_{M, i \in S}u_i^{(M)}$  and 
-$\bigplus_{M, j \in T}v_j^{(M)}$, $S$ and $T$ being possible world valuations.
-
-\textbf{Toy example (in formula semiring):}
-Consider the aggregation expressions:
-
+We show that provenance evaluation of a comparison between 
+two aggregations over an additive monoid $M$, 
+represented as formal $\mathcal{M}$-sums over an arbitrary 
+absorptive $m-$semiring of annotations $K$, when defined by a
+semimodule-level operator
+$\oslash$ based on the proposed semantics is computationally hard.
+While this \textsc{Aggregation-Comparison}(\textbf{AC}) produces 
+a formal provenance over all possible worlds, we first define a 
+suitable decision version to formalize its hardness. 
+\begin{definition}[\textsc{Aggregation-Comparison-Decision} (\textbf{ACD})]
+  Given two $\mathcal{M}-$aggregations $\mathdutchcal{u}$ and $\mathdutchcal{v}$ over a 
+  finite set of variables $\mathbf{X}$
+  the \textbf{ACD} problem asks whether there exists a possible world $W\subseteq\mathbf{X}$ such 
+  that the provenance evaluation of the comparison in an additive monoid $M$ is non-zero in 
+  the $m-$semiring $K$ :
 \[
-\mathbf{u} = \{ (t_1,5), (t_2,7) \}, \quad
-\mathbf{v} = \{ (t_3,6) \}
-\]
+  [\mathdutchcal{u} \oslash \mathdutchcal{v}]_=^W\neq\mathbb{0}_{K}
+  \]
+\end{definition}
+\begin{remark}
+  $  [\mathdutchcal{u} \oslash \mathdutchcal{v}]_=^W$ follows our original semantics exactly but for a specific $W\subseteq\mathbf{X}$ without the outer disjunction over all possible worlds.
+\end{remark}
+The \textsc{Subset-Sum} problem is a classical NP-complete problem which we would use later in our proof. To avoid unnecessary complications we define a set-theoretic version of the \textsc{Subset-Sum} problem which is also NP-complete. 
+\begin{definition}[\textsc{Subset-Sum}]
+  Given a finite set $S\subset\mathbb{Z}_{\geq 0}$ and a target sum $P\in\mathbb{Z}_{\geq 0}$ does 
+  there exist $S'\subseteq S$ such that $\sum_{s\in S'}s=P$ ?
+\end{definition}
+\begin{theorem}
+  \textbf{ACD} is NP-complete.
+\end{theorem}
+\begin{proof}
+W.l.o.g. we specialise \textbf{ACD} over $(\mathbb{Z}_{\geq 0},+,\cdot)$ and the free $m-$semiring of polynomials 
+$\mathbb{N}[\mathbf{X}]$.
+\paragraph{\textbf{ACD}$\in$NP.}
+Let $W\subseteq\mathbf{X}$ be a candidate solution. We verify in polynomial time whether 
+  $[\mathdutchcal{u} \oslash \mathdutchcal{v}]_=^W\neq0$.\\
+${\bigplus_{\mathbb{Z}_{\geq 0}}}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(\mathbb{Z}_{\geq 0})}\text{ and }{\bigplus_{\mathbb{Z}{\geq 0}}}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(\mathbb{Z}{\geq 0})}$ can be computed in polynomial time.
+Then, $\chi_=$ is just a boolean check over these computed sums. 
+Further, we compute the provenance annotations in $\mathbb{N}[X]$ and all these steps 
+are polynomial-time in the size of our constructed instance, so \textbf{ACD}$\in$NP.
+\paragraph{ACD is NP-hard.}
+We reduce an instance of \textsc{Subset-Sum} to an \textbf{ACD}-instance in polynomial time.\\
+We construct $\mathbf{X}^*$ from $\mathbf{X}$ by ensuring that for each $s\in S$ we include a $\mathbf{x}\in\mathbf{X}$ for which 
+  $\mathfrak{Z}^{(\mathbb{Z}_{\geq 0})}(\mathbf{x})=s$. We also inlude in $\mathbf{X}^*$ an $\mathbf{x}\in\mathbf{X}$ such that 
+  $\mathfrak{Z}^{(\mathbb{Z}_{\geq 0})}(\mathbf{x})=P$. Hence, $|\mathbf{X}^*|=|S|+1$.\\
+  We further define two aggregates $\mathdutchcal{u}$ and $\mathdutchcal{v}$ with $\mathrm{supp}(\mathdutchcal{u})=\{\mathbf{x}\in\mathbf{X}^*\mid\mathfrak{Z}^{(\mathbb{Z}_{\geq 0})}(\mathbf{x})=s\}$ and $\mathrm{supp}(\mathdutchcal{v})=\{\mathbf{x}\in\mathbf{X}^*\mid\mathfrak{Z}^{(\mathbb{Z}_{\geq 0})}(\mathbf{x})=P\}$, respectively.
+  $[\mathdutchcal{u}\oslash\mathdutchcal{v}]_=$ is computed using semiring 
+  operations in a free $\mathbb{N}[\mathbf{X}]$ over provenance 
+  annotations decided by a valuation $\mathfrak{Z}^{(\mathbb{N}[\mathbf{X}])}$ 
+  and any $W\subseteq\mathbf{X}^*$ will always result in syntactic 
+  non-zero polynomial summands in  $[\mathdutchcal{u}\oslash\mathdutchcal{v}]_=$  
+  unless $\chi_==0$. $[\mathdutchcal{u}\oslash\mathdutchcal{v}]_=$
+evaluates to a nonzero element of $\mathbb{N}[\mathbf{X}]$
+iff there exists a $S'\subseteq S$ whose elements sum to $P$.
+  In other words, a \textbf{YES}-instance of \textsc{Subset-Sum} will only always reduce to an \textbf{ACD} \textbf{YES}-instance and a \textbf{NO}-instance 
+  of \textsc{Subset-Sum} will only always reduce to a \textbf{NO}-instance of \textbf{ACD}. This reduction, clearly, is in polynomial time in $|S|+1$ and hence 
+  \textbf{ACD} is NP-hard.
+\paragraph{NP-completeness}
+From NP membership and hardness, \textbf{ACD} is NP-complete.
+\end{proof}
 
-where each element is a semimodule element $(u_i^{(K)}, u_i^{(M)})$:
-
-\begin{itemize}
-    \item $u_i^{(K)}$ is the provenance annotation in the semiring $K$ (here, strings $t_1, t_2, t_3$)
-    \item $u_i^{(M)}$ is the numeric monoid value
-\end{itemize}
-\[
-S \subseteq \mathbf{u}: \{ \{t_1\}, \{t_2\}, \{t_1,t_2\} \}, \quad
-T \subseteq \mathbf{v}: \{ \{t_3\} \}
-\]
-
-\begin{align*}
-[\mathbf{u} \oslash \mathbf{v}]_{<}
-= 
-&(t_1 \otimes t_3) \otimes \mathbb{1}_K \otimes (\mathbb{1_k}\ominus(t_2)) 
-\;\oplus\;\\ 
-&(t_2 \otimes t_3) \otimes 0_K \otimes (\mathbb{1}_K\ominus(t_1)) 
-\;\oplus\;\\
-&(t_1 \otimes t_2 \otimes t_3) \otimes 0_K \otimes (\mathbb{1}_K\ominus(\emptyset))
-\end{align*}
-
-
-Let $\mathcal{X} = \{x_1, x_2, \dots, x_n\}$, be the variables, $w: \mathcal{X} \mapsto K$ be a valuation and,
-$\mathcal{W} = \{w \mid w:\mathcal{X} \mapsto K\}$, be the set of all valuations.
-
-For comparing two aggregations $\mathbf{u},\mathbf{v}$ we consider a possible-world setup where K is a Boolean semiring and valuations(here, possible worlds)
-$w: \{1,2,\dots,m\} \mapsto \{0,1\}$ and $w': \{1,2,\dots,n\} \mapsto \{0,1\}$ such that, 
-
-\begin{align*}
-  &[[\mathbf{u} \oslash \mathbf{v}]]_{op}=\\
-  &\bigoplus_{w,w'}\left(\bigotimes_{w(i)=1}u_i\otimes\bigotimes_{w'(j) = 1}v_j\otimes\left(1\ominus(\bigoplus_{w(i) =0}u_i\oplus \bigoplus_{w'(j) = 0}v_j)\right)\right)
-\end{align*}
-
-
+\begin{remark}[On generality]
+Our reduction is carried out in $\mathbb{N}[\mathbf{X}]$. And by its universal property, for any arbitrary m-semiring $K$ 
+  and valuation $\mathfrak{Z}^{(K)}$, $\exists$ a unique homomorphism $\mathcal{E}_{\mathfrak{Z}^{(K)}}:\mathbb{N}[\mathbf{X}]\rightarrow K$. Hardness can be transferred 
+  to any arbitrary m-semiring $K$ for which one can choose a semiring valuation $\mathfrak{Z}^{(K)}$ that preserves non-zeroness of the provenance summands in the reduction.
+\end{remark}
+%\begin{corollary}
+%  \textbf{AC} is  exponential in output size.
+%\end{corollary}
 \subsubsection{Counting Semiring}
 $$K = (\mathbb{N}, \oplus, \otimes, 0, 1)$$
 $\mathbb{N} = \{0,1,2,\dots\}$
