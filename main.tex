@@ -219,7 +219,7 @@ The \textsc{Subset-Sum} problem is a classical NP-complete problem which we woul
   Given a finite set $S\subset\mathbb{Z}_{\geq 0}$ and a target sum $P\in\mathbb{Z}_{\geq 0}$ does 
   there exist $S'\subseteq S$ such that $\sum_{s\in S'}s=P$ ?
 \end{definition}
-\begin{theorem}
+\begin{theorem}\label{th:ACD_NP}
   \textbf{ACD} is NP-complete.
 \end{theorem}
 \begin{proof}
@@ -258,40 +258,67 @@ Our reduction is carried out in $\mathbb{N}[\mathbf{X}]$. And by its universal p
   and valuation $\mathfrak{Z}^{(K)}$, $\exists$ a unique homomorphism $\mathcal{E}_{\mathfrak{Z}^{(K)}}:\mathbb{N}[\mathbf{X}]\rightarrow K$. Hardness can be transferred 
   to any arbitrary m-semiring $K$ for which one can choose a semiring valuation $\mathfrak{Z}^{(K)}$ that preserves non-zeroness of the provenance summands in the reduction.
 \end{remark}
-%\begin{corollary}
-%  \textbf{AC} is  exponential in output size.
-%\end{corollary}
-\subsubsection{Counting Semiring}
-$$K = (\mathbb{N}, \oplus, \otimes, 0, 1)$$
-$\mathbb{N} = \{0,1,2,\dots\}$
+We now define a counting version of the \textsc{Subset-Sum} problem, which is a known \#P-complete problem.
+\begin{definition}[\#\textsc{Subset-Sum}]
+  Given a finite set $S\subset\mathbb{Z}_{\geq 0}$ and a target sum $P\in\mathbb{Z}_{\geq 0}$, count the number of subsets $S'\subseteq S$ such that $\sum_{s\in S'}s = P$.
+\end{definition}
+\begin{theorem}
+  \#\textbf{AC} is $\#$\textbf{P}-hard.
+\end{theorem}
+\begin{proof}
+  W.l.o.g, over $\mathbb{N}[\mathbf{X}]$ and $(\mathbb{Z}_{\geq 0},+,\cdot)$ \textbf{AC} enumerates all possible worlds where the aggregate comparison is satisfied. 
+  We consider a counting version of \textbf{AC}, say \#\textbf{AC}, that simply counts the number of satisfying possible worlds.
+  For each subset that is to be checked for equality in \#\textsc{Subset-Sum}, it is easy to reduce the candidate instances into an \#\textbf{AC} instance, 
+  using the the same construction as defined in the proof of Theorem~\ref{th:ACD_NP}.\\
+  And consequently, there exists a bijection between subsets $S'\subseteq S$ with $\sum_{s\in S'} s =P$ and possible worlds $W$ that yields a non-zero provenance summand in $\mathbb{N}[\textbf{X}]$ thus contributing to the \textit{count} in \#\textbf{AC}. 
+  Therefore, the output of \#\textbf{AC} equals the number of solutions to the \#\textsc{Subset-Sum} problem. And since  \#\textsc{Subset-Sum} is \#P-complete, \#\text{AC} is \#P-hard. 
+\end{proof}
+\begin{corollary}
+  \textbf{AC} is $\#$\textbf{P}-hard and in the worst case explicit size of $[\mathdutchcal{u}\oslash\mathdutchcal{v}]_=$ is exponential in input size.
+\end{corollary}
+\begin{proof}
+  Since \#\textbf{AC} is just a counting version of \textbf{AC}, \textbf{AC} is at least as hard as \#\textbf{AC}. Therefore, \textbf{AC} is \#P-hard. \\
+  For every world \(W\subseteq\mathbf{X}\) we have
+  \(W\cap\mathrm{supp}(\mathdutchcal{u})=|W|\ge0\), and
+  \(\chi_= = \mathbb{1}_K\) for every good \(W\); therefore each world contributes the monomial
+  \(\prod_{\textbf{x}\in W} x^{(K)}\). The outer disjunction over possible worlds expands to \(\prod_\mathbf{X}(1+\mathbf{x})\), which
+  contains exactly \(2^{|\mathbf{X}|}\) distinct monomials. The input size
+  of the constructed instance is \(O(|\mathbf{X}|)\),
+  hence any explicit sum-of-monomials representation of the provenance must be of size
+  \(\Omega(2^{|\mathbf{X}|})\).
 
-$\oplus : \text{Standard integer addition}$
+\end{proof}
+\subsubsection{counting semiring}
+$$k = (\mathbb{n}, \oplus, \otimes, 0, 1)$$
+$\mathbb{n} = \{0,1,2,\dots\}$
 
-$\otimes : \text{Standard integer multiplication}$
+$\oplus : \text{standard integer addition}$
 
-$\text{Zero} : 0 \in \mathbb{N}$
+$\otimes : \text{standard integer multiplication}$
 
-$\text{One} : 1 \in \mathbb{N}$
+$\text{zero} : 0 \in \mathbb{n}$
 
-Additional operators:
+$\text{one} : 1 \in \mathbb{n}$
 
-Monus: $(a \ominus b): \text{Truncated subtraction}$
+additional operators:
+
+monus: $(a \ominus b): \text{truncated subtraction}$
 $$ a \ominus b = \begin{cases} 0, &  a\leq b\\ a-b,& a>b \end{cases}$$
 
-Delta: 
-For $a \in K$
+delta: 
+for $a \in k$
 $\delta(a) = \begin{cases} 0, & a=0\\ 1, & a>0 \end{cases}$
-$\delta:K \mapsto K $
-$\delta(0_K)=0_K$
-$\delta(n.1_K)=1_K$
+$\delta:k \mapsto k $
+$\delta(0_k)=0_k$
+$\delta(n.1_k)=1_k$
 
 
-\textbf{Counting semiring properties:}
+\textbf{counting semiring properties:}
 
-1. Additive monoid
-- Associativity: $$(a \oplus b) \oplus c = a \oplus (b\oplus c)$$
-- Commutativity: $$a \oplus b = b \oplus a$$
-- Identity: $$a \oplus 0 = 0$$
+1. additive monoid
+- associativity: $$(a \oplus b) \oplus c = a \oplus (b\oplus c)$$
+- commutativity: $$a \oplus b = b \oplus a$$
+- identity: $$a \oplus 0 = 0$$
 2. Multiplicative monoid
 - Associativity: $$( (a \otimes b) \otimes c = a \otimes (b\otimes c)$$
 - Commutativity: $$a \otimes b = b \otimes a$$
