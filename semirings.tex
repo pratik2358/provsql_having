@@ -1,0 +1,218 @@
+\section{Semiring of Boolean Functions}
+
+\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
+A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
+  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
+The semiring of Boolean functions is:
+$$
+B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
+$$
+\begin{itemize}
+    \item \(\varphi \vee \psi\): pointwise OR
+    \item \(\varphi \wedge \psi\): pointwise AND
+    \item \(0_B\): the constant-false function
+    \item \(1_B\): the constant-true function
+    \item Monus:
+        $$
+        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
+        $$
+\end{itemize}
+
+\section{counting semiring}
+$$k = (\mathbb{n}, \oplus, \otimes, 0, 1)$$
+$\mathbb{n} = \{0,1,2,\dots\}$
+
+$\oplus : \text{standard integer addition}$
+
+$\otimes : \text{standard integer multiplication}$
+
+$\text{zero} : 0 \in \mathbb{n}$
+
+$\text{one} : 1 \in \mathbb{n}$
+
+additional operators:
+
+monus: $(a \ominus b): \text{truncated subtraction}$
+$$ a \ominus b = \begin{cases} 0, &  a\leq b\\ a-b,& a>b \end{cases}$$
+
+delta: 
+for $a \in k$
+$\delta(a) = \begin{cases} 0, & a=0\\ 1, & a>0 \end{cases}$
+$\delta:k \mapsto k $
+$\delta(0_k)=0_k$
+$\delta(n.1_k)=1_k$
+
+
+\textbf{counting semiring properties:}
+
+1. additive monoid
+- associativity: $$(a \oplus b) \oplus c = a \oplus (b\oplus c)$$
+- commutativity: $$a \oplus b = b \oplus a$$
+- identity: $$a \oplus 0 = 0$$
+2. Multiplicative monoid
+- Associativity: $$( (a \otimes b) \otimes c = a \otimes (b\otimes c)$$
+- Commutativity: $$a \otimes b = b \otimes a$$
+- Identity: $$a \otimes 1 = a$$
+3. Distributivity
+- Left Dist: $$a \otimes (b \oplus c)= (a \otimes b)\oplus(a \otimes c)$$
+- RIght Dist: $$(a \oplus b)\otimes c=(a \otimes c)\oplus(b \otimes c)$$
+ 4. Absorption
+$$a \otimes 0 = 0 \otimes a = 0$$
+
+5. Monus \newline
+For $$a, b \in K$$
+- $$(a \ominus b) \oplus b =a$$, if $$a \geq b$$
+- $$a \ominus 0 =a$$
+- $$0 \ominus a = 0$$
+
+6. Semimodule operation
+- Associative with semiring multiplication: $$a \otimes (b * m)= (a \otimes b) * m$$
+- Identity: $$1*m=m$$
+- Absorption: $$0*m=0$$
+7. Other properties
+$$
+ \delta(u)\otimes[[u \oslash   v]]_{\mathit{op}}=\begin{cases}1, & \text{if } u\hspace{0.5em} op\hspace{0.5em} v \text{ holds in } \mathbb{N} \\
+0,&\text{o.w.}\end{cases}
+$$
+
+e.g. For COUNT(*), say we have $f=\bigoplus_{g \in group}$ 1 and we want to filter on the aggregates HAVING >C
+
+$$
+ \delta(f)\otimes[[f \oslash   C]]_{\mathit{>}}=\begin{cases}1, & \text{if } f>C \text{ holds in } \mathbb{N} \\
+0,&\text{o.w.}\end{cases}
+$$
+
+\section{Boolean Semiring}
+$$B = (\{0,1\}, \lor, \land, 0, 1)$$
+$$\lor : \text{Standard logical OR}$$
+$$\land : \text{Standard logical AND}$$
+$$0 : \text{Boolean zero}$$
+$$1 : \text{Boolean one}$$
+\[
+\ominus: \text{Monus for Boolean Semiring} \quad a \ominus b := a \land \neg b
+\]
+Now we take a query as below on a relation $T$ with $n$ tuples:
+
+\begin{listing}[ht]
+\begin{minted}[linenos,frame=single,fontsize=\small]{sql}
+SELECT DISTINCT 1
+  FROM T
+ HAVING COUNT(*) = c;
+\end{minted}
+\end{listing}
+
+This returns 1 if the relation $T$ has exactly $c$ tuples, and 0 otherwise.
+
+In possible world semantics, let $w: \{1,2,\dots,m\} \mapsto \{0,1\}$.
+
+The provenance of this query can be expressed as follows:
+
+$$q(T) = \bigoplus_{w}\left(\bigotimes_{w(i)=1}b_i\otimes\left(\mathbb{1}\ominus(\bigoplus_{w(i) =0}b_i)\right)\right)$$
+
+On the other hand, its equivalent join query will be as follows:
+
+\begin{listing}[ht]
+\caption{Return 1 if \(|T| = c\) using joins on distinct rows}
+\begin{minted}[linenos,frame=single,fontsize=\small]{sql}
+SELECT DISTINCT 1
+  FROM T AS a1
+  JOIN T AS a2 ON a1.id <  a2.id
+  JOIN T AS a3 ON a2.id <  a3.id
+  -- ...
+  JOIN T AS a_c ON a_{c-1}.id < a_c.id
+
+EXCEPT
+
+SELECT DISTINCT 1
+  FROM T AS b1
+  JOIN T AS b2 ON b1.id <  b2.id
+  JOIN T AS b3 ON b2.id <  b3.id
+  -- ...
+  JOIN T AS b_{c+1} ON b_c.id < b_{c+1}.id;
+\end{minted}
+\end{listing}
+
+The provenance of this query can be expressed as follows:
+\[
+q'(T) = \bigoplus_{\substack{t\subseteq T \\ |t| = c}}\left(\bigotimes_{\substack{b_i\in t}}b_i\right) \ominus \bigoplus_{\substack{t'\subseteq T \\ |t'| = c+1}}\left(\bigotimes_{\substack{b_i\in t'}}b_i\right)
+\]
+
+\begin{proof}
+Define
+\[
+A \;=\; \bigvee_{\lvert t\rvert = c}\;\bigwedge_{i\in t} b_i,
+\qquad
+B \;=\; \bigvee_{\lvert t'\rvert = c+1}\;\bigwedge_{i\in t'} b_i.
+\]
+Since in the Boolean semiring \(\oplus=\vee\), \(\otimes=\wedge\) and
+\(\;r\ominus s = r\wedge\neg s\), we have
+\[
+q'(T)
+= A \ominus B
+= A \wedge \neg B.
+\]
+Expand step by step:
+\begin{align*}
+q'(T)
+&= \Bigl(\!\bigvee_{\lvert t\rvert = c}\!\bigwedge_{i\in t}b_i\Bigr)
+   \;\wedge\;
+   \neg\Bigl(\!\bigvee_{\lvert t'\rvert = c+1}\!\bigwedge_{i\in t'}b_i\Bigr)\\[6pt]
+&= \Bigl(\!\bigvee_{\lvert t\rvert = c}\!\bigwedge_{i\in t}b_i\Bigr)
+   \;\wedge\;
+   \Bigl(\!\bigwedge_{\lvert t'\rvert = c+1}\!\neg\bigl(\!\bigwedge_{i\in t'}b_i\bigr)\Bigr)\\[6pt]
+&= \bigvee_{\lvert t\rvert = c}
+    \Bigl(
+      \bigwedge_{i\in t}b_i
+      \;\wedge\;
+      \bigwedge_{|t'|=c+1}\!\neg\bigl(\!\bigwedge_{i\in t'}b_i\bigr)
+    \Bigr).
+\end{align*}
+
+\textbf{Key simplification.}  Fix a particular \(t\) with \(\lvert t\rvert=c\).  Consider
+\[
+\bigwedge_{\substack{t'\subseteq[m]\\|t'|=c+1}}
+\neg\Bigl(\!\bigwedge_{i\in t'}b_i\Bigr).
+\]
+- For each \(j\notin t\), the subset \(t'=t\cup\{j\}\) yields
+  \(\neg\bigl(b_j\wedge\bigwedge_{i\in t}b_i\bigr)=\neg b_j\).  
+- Any other \(t'\) also contains some \(j\notin t\), so its factor
+  \(\neg(\bigwedge_{i\in t'}b_i)\) can be written as
+  \(\neg b_j\vee Y\).  
+
+with \(x=\neg b_j\), each such pair of factors collapses to \(\neg b_j\).  Hence the entire
+AND reduces to
+\(\bigwedge_{j\notin t}\neg b_j\).
+
+Substituting back gives
+\[
+q'(T)
+=\bigvee_{\lvert t\rvert = c}
+\Bigl(\,\bigwedge_{i\in t}b_i
+       \;\wedge\;
+       \bigwedge_{j\notin t}\neg b_j
+\Bigr)
+=\;q(T),
+\]
+as required.
+\end{proof}
+\section{Semiring of Boolean Functions}
+
+\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
+A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
+  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
+The semiring of Boolean functions is:
+$$
+B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
+$$
+\begin{itemize}
+    \item \(\varphi \vee \psi\): pointwise OR
+    \item \(\varphi \wedge \psi\): pointwise AND
+    \item \(0_B\): the constant-false function
+    \item \(1_B\): the constant-true function
+    \item Monus:
+        $$
+        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
+        $$
+\end{itemize}
+
+\input{homomorphisms.tex}
