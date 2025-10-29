@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{mathtools}
 \usepackage{mathrsfs}
 \usepackage{csquotes}
 \usepackage{listings}
@@ -15,6 +16,7 @@
 \newtheorem*{remark}{Remark}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}[theorem]{Proposition}
 \theoremstyle{remark}
 \DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
 \SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
@@ -94,7 +96,7 @@ $\langle \epsilon(\Pi_{\#1}(\sigma_{\#2\neq\#4}(R\bowtie_{\#1=\#3} R))\rangle^{\
 R is assumed to be a binary relation without duplicates.
 
 
-\subsection{Reducing HAVING COUNT$(*) > C$ to a JOIN-equivalent query}
+\section{Reducing HAVING COUNT$(*) > C$ to a JOIN-equivalent query}
 
 $R \subseteq  A \times B$ is a binary relation without duplicates.
 Counting semiring : $K = (\mathcal{N}, +, ., 0, 1)$
@@ -140,12 +142,13 @@ $$Prov(g) = \begin{cases}
    0, & \text{otherwise}
    \end{cases}$$
 
-\subsection{Semantics}
+\section{Semantics}
 Extending on the algebra over annotated 
 relations presented in \cite{sen2025provsqlgeneralkeepingtrack} by 
 adding a new predicate form that allows 
 comparison between aggregations we fill the semantics gap that 
 was noted and left for future work.
+\subsection{Possible world semantics over tuples}
 \paragraph{Setup.}
 Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an 
 added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an 
@@ -288,7 +291,199 @@ We now define a counting version of the \textsc{Subset-Sum} problem, which is a 
   \(\Omega(2^{|\mathbf{X}|})\).
 
 \end{proof}
-\subsubsection{counting semiring}
+\subsection{Possible-world semantics - a lazy approach}
+\begin{proposition}[Block-world mapping and lifted block-level possible-world semantics]
+Let
+  $\mathcal{B} = \{B_1,\dots,B_m\}$ be a collection of blocks disjointly partioning $\mathbf{X}$ such that
+\[
+\bigcup_{k=1}^m B_k = \mathbf{X}
+\qquad\text{and}\qquad
+B_i\cap B_j=\varnothing\ \text{for }i\neq j,
+\]
+Let's abstractly denote $\mathbf{X}_b=\mathcal{B}$ as the universe of block-variables.
+
+Define the mapping
+\[
+f:\mathcal{P}(\mathbf{X})\longrightarrow \mathcal{P}(\mathbf{X}_b),\qquad
+f(W):=\{\,B\in\mathbf{X}_b \mid B\cap W\neq\varnothing\,\},
+\]
+which sends each tuple-level possible world $W\subseteq\mathbf{X}$ to the
+set $W_b\subseteq\mathbf{X}_b$ of blocks that contain at least one tuple of
+$W$.
+
+Then:
+\begin{enumerate}
+  \item For every $W\subseteq\mathbf{X}$ the image $W_b=f(W)$ is \emph{unique}.
+  \item The mapping $f$ induces a partition of the tuple-level worlds:
+    for every $V\subseteq\mathbf{X}_b$,
+    \[
+      \mathcal{W}_V := \{\,W\subseteq\mathbf{X}\mid f(W)=V\,\}
+    \]
+    is the (possibly empty) fibre of $V$, and the family $\{\mathcal{W}_V\}_{V\subseteq\mathbf{X}_b}$
+    is a partition of $\mathcal{P}(\mathbf{X})$.
+  \item (Lifting of semantics) Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$
+    be the same $m$-semiring as in the tuple-level semantics, let $(M,+_M,\mathbb{0}_M)$ be the additive monoid of aggregate values,
+    and let $\mathdutchcal{u},\mathdutchcal{v}$ be two aggregations defined over $\mathbf{X}$ as in the tuple-level setup. Define for each block
+    $B\in\mathbf{X}_b$ the \emph{block-level} annotations and values by
+    \[
+      \mathbf{x}_B^{(K)} \;=\; \bigoplus_{\mathbf{x}\in B} \mathbf{x}^{(K)}
+      \qquad\text{and}\qquad
+      \mathbf{x}_B^{(M)} \;=\; \bigplus_{M,\;\mathbf{x}\in B} \mathbf{x}^{(M)},
+    \]
+    and let $\widehat{\mathdutchcal{u}},\widehat{\mathdutchcal{v}}$ be the induced aggregations on $\mathbf{X}_b$
+    (i.e. they include exactly those blocks that contain some original variables in the supports of $\mathdutchcal{u},\mathdutchcal{v}$ respectively).
+    Then the tuple-level possible-world comparison
+    $[\mathdutchcal{u}\oslash\mathdutchcal{v}]_{\mathrm{op}}$ equals the block-level expression obtained by summing, for each block-world $V\subseteq\mathbf{X}_b$, the contributions of all tuple-worlds mapping to $V$:
+    \[
+      [\mathdutchcal{u}\oslash\mathdutchcal{v}]_{\mathrm{op}}
+      \;=\;
+      \bigoplus_{V\subseteq\mathbf{X}_b}
+        \Biggl(
+          \bigoplus_{W\in\mathcal{W}_V}
+            \Bigl(
+              \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}
+              \;\otimes\;
+              \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})}\mathbf{x}^{(K)}
+              \;\otimes\;
+              \chi_{\mathrm{op}}\!\Bigl(\bigplus_{M,W\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(M)},
+                                      \bigplus_{M,W\cap\mathrm{supp}(\mathdutchcal{v})}\mathbf{x}^{(M)}\Bigr)
+              \;\otimes\;
+              \Phi_{W}
+            \Bigr)
+        \Biggr),
+    \]
+    where $\Phi_{W}$ denotes the ``outside-world mask'' factor appearing in the tuple-level semantics
+    (the factor involving $\ominus$ in the original definition), and, equivalently, one may rewrite the inner sum
+    in terms of block-level annotations as
+    \[
+      [\mathdutchcal{u}\oslash\mathdutchcal{v}]_{\mathrm{op}}
+      \;=\;
+      \bigoplus_{V\subseteq\mathbf{X}_b}
+        \Biggl(
+          \Bigl(\!\bigotimes_{B\in V\cap\mathrm{supp}(\widehat{\mathdutchcal{u}})} \mathbf{x}_B^{(K)}\Bigr)
+          \otimes
+          \Bigl(\!\bigotimes_{B\in V\cap\mathrm{supp}(\widehat{\mathdutchcal{v}})} \mathbf{x}_B^{(K)}\Bigr)
+          \otimes
+          \widehat{\chi}_{\mathrm{op}}\!\Bigl(\bigplus_{M,B\in V\cap\mathrm{supp}(\widehat{\mathdutchcal{u}})}\mathbf{x}_B^{(M)},
+                                          \bigplus_{M,B\in V\cap\mathrm{supp}(\widehat{\mathdutchcal{v}})}\mathbf{x}_B^{(M)}\Bigr)
+          \otimes
+          \widehat{\Phi}_{V}
+        \Biggr),
+    \]
+    where $\widehat{\chi}_{\mathrm{op}}$ and $\widehat{\Phi}_{V}$ are the natural block-level counterparts of $\chi_{\mathrm{op}}$ and $\Phi_{W}$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\begin{enumerate}
+\item \textbf{Uniqueness of the image.}
+The mapping $f$ is defined deterministically: given a tuple-world $W\subseteq\mathbf{X}$,
+the set $f(W)=\{B\in\mathbf{X}_b\mid B\cap W\neq\varnothing\}$ is a well-defined subset of $\mathbf{X}_b$.
+Because $f$ is a function (each input $W$ is assigned exactly one output $f(W)$), the image $W_b$ is unique.
+
+\item \textbf{Fibres partition $\mathcal{P}(\mathbf{X})$.}
+For any $V\subseteq\mathbf{X}_b$ the fibre $\mathcal{W}_V=\{W\subseteq\mathbf{X}\mid f(W)=V\}$ collects exactly those tuple-worlds whose tuples lie precisely in the blocks indexed by $V$ (i.e. each block in $V$ contains at least one tuple of $W$ and no tuple of $W$ lies in a block outside $V$). Distinct $V$ produce disjoint fibres, and every tuple-world $W$ lies in the fibre of $f(W)$, hence the family $\{\mathcal{W}_V\}_{V\subseteq\mathbf{X}_b}$ is a partition of $\mathcal{P}(\mathbf{X})$.
+
+\item \textbf{Lifting of semantics.}
+Start from the tuple-level possible-world expansion from your semantics:
+\[
+[\mathdutchcal{u}\oslash\mathdutchcal{v}]_{\mathrm{op}}
+=
+\bigoplus_{W\subseteq\mathbf{X}}
+  \Gamma(W),
+\qquad\text{where }\Gamma(W)
+\coloneqq
+  \Bigl(\bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}\Bigr)
+  \otimes
+  \Bigl(\bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})}\mathbf{x}^{(K)}\Bigr)
+  \otimes
+  \chi_{\mathrm{op}}\!\Bigl(\bigplus_{M,W\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(M)},
+                          \bigplus_{M,W\cap\mathrm{supp}(\mathdutchcal{v})}\mathbf{x}^{(M)}\Bigr)
+  \otimes
+  \Phi_{W}.
+\]
+Partition the outer sum according to the fibres of $f$:
+\[
+\bigoplus_{W\subseteq\mathbf{X}} \Gamma(W)
+=
+\bigoplus_{V\subseteq\mathbf{X}_b}\ \bigoplus_{W\in\mathcal{W}_V} \Gamma(W).
+\]
+This is merely a reorganization of the sum using the partition $\{\mathcal{W}_V\}$ established above.
+
+It remains to show that each inner sum $\bigoplus_{W\in\mathcal{W}_V}\Gamma(W)$ can be expressed in terms of block-level annotations
+$\mathbf{x}_B^{(K)}$ and $\mathbf{x}_B^{(M)}$. By the definitions
+\[
+\mathbf{x}_B^{(K)}=\bigoplus_{\mathbf{x}\in B}\mathbf{x}^{(K)}
+\qquad\text{and}\qquad
+\mathbf{x}_B^{(M)}=\bigplus_{M,\;\mathbf{x}\in B}\mathbf{x}^{(M)},
+\]
+the product over all tuple-level annotations in $W\cap\mathrm{supp}(\mathdutchcal{u})$
+can be regrouped block-wise. More precisely, because the blocks are disjoint,
+for $W\in\mathcal{W}_V$ the set $W\cap\mathrm{supp}(\mathdutchcal{u})$ is equal to
+\[
+\bigcup_{B\in V}\bigl(B\cap\mathrm{supp}(\mathdutchcal{u})\bigr),
+\]
+and therefore
+\[
+\bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}
+=
+\bigotimes_{B\in V}
+  \Bigl(\bigotimes_{\mathbf{x}\in B\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}\Bigr).
+\]
+Applying the semiring addition $\oplus$ inside each block (which is how we define $\mathbf{x}_B^{(K)}$)
+and using distributivity in the $m$-semiring,
+the inner combination over all tuple-worlds $W$ mapping to the same block-world $V$ collapses to an expression
+involving only the block-level annotations and block-level aggregate values.
+Analogous regrouping applies to the $M$-sums used inside $\chi_{\mathrm{op}}$.
+
+Hence each inner sum $\bigoplus_{W\in\mathcal{W}_V}\Gamma(W)$ can be rewritten as a block-level term of the form
+\[
+\Bigl(\!\bigotimes_{B\in V\cap\mathrm{supp}(\widehat{\mathdutchcal{u}})} \mathbf{x}_B^{(K)}\Bigr)
+\otimes
+\Bigl(\!\bigotimes_{B\in V\cap\mathrm{supp}(\widehat{\mathdutchcal{v}})} \mathbf{x}_B^{(K)}\Bigr)
+\otimes
+\widehat{\chi}_{\mathrm{op}}\!\Bigl(\bigplus_{M,B\in V\cap\mathrm{supp}(\widehat{\mathdutchcal{u}})}\mathbf{x}_B^{(M)},
+                                \bigplus_{M,B\in V\cap\mathrm{supp}(\widehat{\mathdutchcal{v}})}\mathbf{x}_B^{(M)}\Bigr)
+\otimes
+\widehat{\Phi}_{V},
+\]
+where $\widehat{\chi}_{\mathrm{op}}$ tests the block-level aggregated quantities and $\widehat{\Phi}_{V}$
+is the block-level counterpart of the outside-world mask. Substituting these block-level terms back into the outer sum yields the claimed block-level expression.
+
+This completes the proof.
+
+\end{enumerate}
+\end{proof}
+
+\begin{remark}
+
+\begin{itemize}
+  \item The partition (disjointness) hypothesis on the blocks is crucial for the simple form of the map $f$ and the algebraic regrouping. If blocks overlap (e.g. in certain storage/replication layouts) the mapping still exists but the algebraic lifting requires careful duplication-accounting.
+  \item The equalities above are algebraic reorganisations inside the $m$-semiring and the monoid $(M,+_M)$. From an implementation viewpoint this is precisely why block-level possible-worlds can be used as a compact surrogate for tuple-level worlds, and why lazy expansion (reconstructing tuple-level annotations inside a block on demand) is sound: the block-level expression subsumes (by the fibres) the contributions of all tuple-level worlds lying under a given block-world.
+\end{itemize}
+\end{remark}
+
+\section{Semiring of Boolean Functions}
+
+\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
+A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
+  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
+The semiring of Boolean functions is:
+$$
+B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
+$$
+\begin{itemize}
+    \item \(\varphi \vee \psi\): pointwise OR
+    \item \(\varphi \wedge \psi\): pointwise AND
+    \item \(0_B\): the constant-false function
+    \item \(1_B\): the constant-true function
+    \item Monus:
+        $$
+        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
+        $$
+\end{itemize}
+
+\section{counting semiring}
 $$k = (\mathbb{n}, \oplus, \otimes, 0, 1)$$
 $\mathbb{n} = \{0,1,2,\dots\}$
 
@@ -352,7 +547,7 @@ $$
 0,&\text{o.w.}\end{cases}
 $$
 
-\subsubsection{Boolean Semiring}
+\section{Boolean Semiring}
 $$B = (\{0,1\}, \lor, \land, 0, 1)$$
 $$\lor : \text{Standard logical OR}$$
 $$\land : \text{Standard logical AND}$$
@@ -465,8 +660,7 @@ q'(T)
 \]
 as required.
 \end{proof}
-
-\subsubsection{Semiring of Boolean Functions}
+\section{Semiring of Boolean Functions}
 
 \(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
 A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
