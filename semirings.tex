@@ -1,19 +1,22 @@
 \section{Testing provenance semantics across different $m-$semirings of interest}
+
 We test our possible-world semantics on different $m-$semirings of interest. We examine whether our semantics make 
 sense for absorptive $m-$semirings like the Boolean semiring and the semiring of Boolean functions on Query~\ref{q:agg} which involves very simple aggregate comparison on an imaginary relation $T$ with 
 $n$ tuples. We compare the provenance given by our possible-world 
-semantics for Query~\ref{q:agg} with the provenance computation for Query~\ref{q:agg}'s \textsc{JOIN}-equivalent version - Query~\ref{q:join}.   
-
+semantics for Query~\ref{query:A} with the provenance computation for Query~\ref{query:A}'s \textsc{JOIN}-equivalent version - Query~\ref{query:J}.   
 \begin{listing}[h!]
-    \label{q:agg}
+  \caption{Query Agg.}
+\label{query:A}
   \begin{minted}[frame=single,fontsize=\small]{sql}
+--Query_agg
 SELECT DISTINCT 1
   FROM T
  HAVING COUNT(*) = c;
 \end{minted}
 \end{listing}
 \begin{listing}[h!]
-    \label{q:join}
+  \caption{Query JOIN}
+\label{query:J}
 \begin{minted}[frame=single,fontsize=\small]{sql}
 SELECT DISTINCT 1
   FROM T AS a1
@@ -231,7 +234,6 @@ This matches the per-world condition in the $\oslash$-semantics of $q(T)$, so $q
 \subsection{counting semiring}
 \begin{toappendix}
 
-\section*{Counting Semiring Definition}
 
 \[
 k = (\mathbb{N}, \oplus, \otimes, 0, 1)
@@ -279,9 +281,7 @@ a - b, & a > b.
 \delta(0_k) = 0_k, \quad \delta(n \cdot 1_k) = 1_k
 \]
 
----
-
-\subsection*{Counting Semiring Properties}
+\paragraph{Counting Semiring Properties}
 
 \paragraph{1. Additive Monoid}
 \[
@@ -341,10 +341,7 @@ a \otimes (b * m) &= (a \otimes b) * m && \text{(Associativity with multiplicati
 0, & \text{otherwise.}
 \end{cases}
 \]
-
----
-
-\subsection*{Example: COUNT Aggregation with HAVING Clause}
+\paragraph{Example: COUNT Aggregation with HAVING Clause}
 
 For a COUNT(*) aggregate, let:
 \[
@@ -362,40 +359,26 @@ Then to filter using a HAVING condition (e.g., \( f > C \)):
 \]
 
 \end{toappendix}
-
-
-Let
+Let $\mathcal{N} = (\mathbb{N},+,\cdot,0,1)$ be the \emph{counting semiring}, and equip it with the \emph{monus} (truncated subtraction) 
+as defined in the appendixx. Assume that the tuples in the relation $T$ are a realisation of variables $\mathbf{T}\subseteq\mathbf{X}$.
+For Query~\ref{query:A} the provenance in \(\mathcal{N}\) is :
 \[
-  \mathcal{N} = (\mathbb{N},+,\cdot,0,1)
-\]
-be the \emph{counting semiring}, and equip it with the \emph{monus} (truncated subtraction)
-\[
-  a \ominus b =\max(a - b,0).
-\]
-
-On a relation \(T\) with annotations \(b_1,\dots,b_n\in\mathbb{N}\), consider the two queries of 
-“\(\mathrm{COUNT}(*) = c\)” exactly as before:
-
-
-
-Its provenance in \(\mathcal{N}\) becomes
-\[
-  q(T)
+  \mathit{Prov}[q(T)]
   =
-  \bigoplus_{W}
-    \Bigl(\bigotimes_{i\in W\cap T}b_i\Bigr)\otimes\chi_{=}\Bigl({\bigplus_{\mathbb{N}}}_{i\in W\cap T} 1, c\Bigr)\otimes\Bigl(1 \ominus \bigl(\bigoplus_{j\in W\cap T}b_j\bigr)\Bigr)
+  \sum_{W\subseteq \mathbf{T}}
+    \Bigl(\prod_{\mathbf{t}\in W}\mathbf{t}^{(\mathcal{N})}\Bigr)\times\chi_{=}\Bigl(\sum_{\mathbf{t}\in W} 1, c\Bigr)\times\Bigl(1 \ominus \bigl(\sum_{\mathbf{t}\in W\setminus \mathbf{T}}\mathbf{t}^{(\mathcal{N})}\bigr)\Bigr)
   =
-  \sum_{W\subseteq T}
-    \Bigl(\prod_{i\in W\cap T}b_i\cdot\bigl(1\ominus\sum_{j\in W\cap T}b_i\bigr)\Bigr).
+  \sum_{W\subseteq \mathbf{T}, |W|=c}
+    \Bigl(\prod_{\mathbf{t}\in W}\mathbf{t}^{(\mathcal{N})}\times\bigl(1\ominus\sum_{\mathbf{t}\in W\setminus \mathbf{T}}\mathbf{t}^{(\mathcal{N})}\bigr)\Bigr)
 \]
 
-Its provenance is
+For Query~\ref{query:J} provenance is :
 \[
-  q'(T)
+  \mathit{Prov}[q'(T)]
   =
-  \Bigl(\sum_{\substack{t\subseteq[n],\\|t|=c}}\prod_{i\in t}b_i\Bigr)
+  \Bigl(\sum_{\substack{T'\subseteq_{rel.}T ,\\|T'|=c}}\prod_{t\in T}t\Bigr)
   \ominus
-  \Bigl(\sum_{\substack{t'\subseteq[n],\\|t'|=c+1}}\prod_{i\in t'}b_i\Bigr).
+  \Bigl(\sum_{\substack{T'\subseteq_{rel.}T,\\|T'|=c+1}}\prod_{t\in T'}t\Bigr).
 \]
 
 \begin{proposition}
