@@ -5,14 +5,16 @@ $n$ tuples. We compare the provenance given by our possible-world
 semantics for Query~\ref{q:agg} with the provenance computation for Query~\ref{q:agg}'s \textsc{JOIN}-equivalent version - Query~\ref{q:join}.   
 
 \begin{listing}[h!]
-  \begin{minted}[frame=single,fontsize=\small]{sql}\label{q:agg}
+    \label{q:agg}
+  \begin{minted}[frame=single,fontsize=\small]{sql}
 SELECT DISTINCT 1
   FROM T
  HAVING COUNT(*) = c;
 \end{minted}
 \end{listing}
 \begin{listing}[h!]
-\begin{minted}[frame=single,fontsize=\small]{sql}\label{q:join}
+    \label{q:join}
+\begin{minted}[frame=single,fontsize=\small]{sql}
 SELECT DISTINCT 1
   FROM T AS a1
   JOIN T AS a2 ON a1.id <  a2.id
