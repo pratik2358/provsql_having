@@ -1,10 +1,47 @@
-\documentclass{article}
-\usepackage{amsmath,amssymb,amsthm}
+\documentclass[10pt,a4paper]{scrartcl}
+\usepackage[left=1cm, right=1cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{csquotes}
+\usepackage{listings}
 \usepackage{minted}
-\usepackage{geometry}
-\geometry{margin=1in}
-
-\newtheorem{proposition}{Proposition}
+\usepackage[bb=boondox]{mathalfa}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
+\SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
+\DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
+\newcommand{\dq}[1]{\text{\enquote{#1}}}
+\newcommand{\op}{\hspace{0.1cm}\mathsf{op}\hspace{0.1cm}}
+\makeatletter
+\newcommand{\bigplus}{%
+  \DOTSB\mathop{\mathpalette\mattos@bigplus\relax}\slimits@
+}
+\newcommand\mattos@bigplus[2]{%
+  \vcenter{\hbox{%
+    \sbox\z@{$#1\sum$}%
+    \resizebox{!}{0.9\dimexpr\ht\z@+\dp\z@}{\raisebox{\depth}{$\m@th#1+$}}%
+  }}%
+  \vphantom{\sum}%
+}
+\newcommand{\mline}[1]{%
+  \begin{multiline}
+    #1
+  \end{multiline}
+}
+\newcommand{\llbracket}{[\![}
+\newcommand{\rrbracket}{]\!]}
+\makeatother
 
 \begin{document}
 
@@ -32,14 +69,11 @@ Its provenance in \(\mathcal{N}\) becomes
 \[
   q(T)
   =
-  \bigoplus_{w:\{1,\dots,n\}\to\{0,1\}}
-    \Bigl(\bigotimes_{w(i)=1}b_i
-           \otimes
-           \bigl(1\ominus\bigoplus_{w(i)=0}b_i\bigr)
-    \Bigr)
+  \bigoplus_{W\subseteq T}
+    \Bigl(\bigotimes_{W(i)=1}b_i\Bigr)\otimes\chi_{=}\Bigl({\bigplus_{\mathbb{N}}}_{W(i)=1} 1, c\Bigr)\otimes\Bigl(1 \ominus \bigl(\bigoplus_{W(j) = 0}b_j\bigr)\Bigr)
   =
-  \sum_{w}
-    \Bigl(\prod_{w(i)=1}b_i\cdot\bigl(1\ominus\sum_{w(i)=0}b_i\bigr)\Bigr).
+  \sum_{W\subseteq T, |W|=c}
+    \Bigl(\prod_{W(i)=1}b_i\cdot\bigl(1\ominus\sum_{W(j)=0}b_i\bigr)\Bigr).
 \]
 
 \begin{minted}[fontsize=\small]{sql}
