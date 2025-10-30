@@ -1,9 +1,25 @@
-\subsection{Homomorphisms}
+\subsection{$m-$semiring homomorphisms from $B[\mathbf{X}]$ to other $m-$semirings }
 We have seen that our provenance semantics work for 
 the semiring of Boolean functions. In this section we investigate other m-semirings and see if they are homomorphic 
 to the semiring of Boolean functions. This will ensure that the provenance sematics, that worked for $B[X]$ can be transferred to 
 our target semirings without re-deriving from scratch.
-
+\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
+A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
+  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
+The semiring of Boolean functions is:
+$$
+B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
+$$
+\begin{itemize}
+    \item \(\varphi \vee \psi\): pointwise OR
+    \item \(\varphi \wedge \psi\): pointwise AND
+    \item \(0_B\): the constant-false function
+    \item \(1_B\): the constant-true function
+    \item Monus:
+        $$
+        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
+        $$
+\end{itemize}
 
 \subsubsection{$\Phi^{\mathrm{T}}_v : B[X] \to T$}
 For any valuation $v:X \to T$,  $\exists$ a homomorphism $\Phi^{\mathrm{T}}_v : B[X] \to T$ such that for all $x\in X$, 

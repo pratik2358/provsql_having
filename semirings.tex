@@ -1,24 +1,5 @@
-\section{Semiring of Boolean Functions}
-
-\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
-A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
-  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
-The semiring of Boolean functions is:
-$$
-B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
-$$
-\begin{itemize}
-    \item \(\varphi \vee \psi\): pointwise OR
-    \item \(\varphi \wedge \psi\): pointwise AND
-    \item \(0_B\): the constant-false function
-    \item \(1_B\): the constant-true function
-    \item Monus:
-        $$
-        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
-        $$
-\end{itemize}
-
-\section{counting semiring}
+\section{Testing provenance semantics across different semirings of interest}
+\subsection{counting semiring}
 $$k = (\mathbb{n}, \oplus, \otimes, 0, 1)$$
 $\mathbb{n} = \{0,1,2,\dots\}$
 
@@ -82,7 +63,7 @@ $$
 0,&\text{o.w.}\end{cases}
 $$
 
-\section{Boolean Semiring}
+\subsection{Boolean Semiring}
 $$B = (\{0,1\}, \lor, \land, 0, 1)$$
 $$\lor : \text{Standard logical OR}$$
 $$\land : \text{Standard logical AND}$$
@@ -195,24 +176,4 @@ q'(T)
 \]
 as required.
 \end{proof}
-\section{Semiring of Boolean Functions}
-
-\(\varphi\colon \{\bot,\top\}^X \to \{\bot,\top\}\) is a Boolean-function annotation on tuples.
-A valuation \(\nu\colon X \to \{\bot,\top\}\) denotes a possible world,
-  indicating which tokens \(x\in X\) exist (\(\nu(x)=\top\)).
-The semiring of Boolean functions is:
-$$
-B^X = (\{\varphi : \{ \bot,\top \}^X \to \{\bot,\top\}\},\vee,\wedge,0_B,1_B,\setminus_B)
-$$
-\begin{itemize}
-    \item \(\varphi \vee \psi\): pointwise OR
-    \item \(\varphi \wedge \psi\): pointwise AND
-    \item \(0_B\): the constant-false function
-    \item \(1_B\): the constant-true function
-    \item Monus:
-        $$
-        \varphi \setminus_B \psi \;=\; \varphi \wedge \neg \psi
-        $$
-\end{itemize}
-
 \input{homomorphisms.tex}
