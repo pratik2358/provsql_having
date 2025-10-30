@@ -1,37 +1,18 @@
-\section{Testing provenance semantics across different semirings of interest}
+\section{Testing provenance semantics across different $m-$semirings of interest}
+We test our possible-world semantics on different $m-$semirings of interest. We examine whether our semantics make 
+sense for absorptive $m-$semirings like the Boolean semiring and the semiring of Boolean functions on Query~\ref{q:agg} which involves very simple aggregate comparison on an imaginary relation $T$ with 
+$n$ tuples. We compare the provenance given by our possible-world 
+semantics for Query~\ref{q:agg} with the provenance computation for Query~\ref{q:agg}'s \textsc{JOIN}-equivalent version - Query~\ref{q:join}.   
 
-\subsection{Boolean Semiring}
-$$B = (\{0,1\}, \lor, \land, 0, 1)$$
-$$\lor : \text{Standard logical OR}$$
-$$\land : \text{Standard logical AND}$$
-$$0 : \text{Boolean zero}$$
-$$1 : \text{Boolean one}$$
-\[
-\ominus: \text{Monus for Boolean Semiring} \quad a \ominus b := a \land \neg b
-\]
-Now we take a query as below on a relation $T$ with $n$ tuples:
-
-\begin{listing}[ht]
-\begin{minted}[linenos,frame=single,fontsize=\small]{sql}
+\begin{listing}[h!]
+  \begin{minted}[frame=single,fontsize=\small]{sql}\label{q:agg}
 SELECT DISTINCT 1
   FROM T
  HAVING COUNT(*) = c;
 \end{minted}
 \end{listing}
-
-This returns 1 if the relation $T$ has exactly $c$ tuples, and 0 otherwise.
-
-In possible world semantics, let $w: \{1,2,\dots,m\} \mapsto \{0,1\}$.
-
-The provenance of this query can be expressed as follows:
-
-$$q(T) = \bigoplus_{w}\left(\bigotimes_{w(i)=1}b_i\otimes\left(\mathbb{1}\ominus(\bigoplus_{w(i) =0}b_i)\right)\right)$$
-
-On the other hand, its equivalent join query will be as follows:
-
-\begin{listing}[ht]
-\caption{Return 1 if \(|T| = c\) using joins on distinct rows}
-\begin{minted}[linenos,frame=single,fontsize=\small]{sql}
+\begin{listing}[h!]
+\begin{minted}[frame=single,fontsize=\small]{sql}\label{q:join}
 SELECT DISTINCT 1
   FROM T AS a1
   JOIN T AS a2 ON a1.id <  a2.id
@@ -49,6 +30,28 @@ SELECT DISTINCT 1
   JOIN T AS b_{c+1} ON b_c.id < b_{c+1}.id;
 \end{minted}
 \end{listing}
+We also provide a case study analysis on $m-$semirings where our semantics 
+provide different explanations from the provenance semamntics of the join equivalent query.
+\subsection{Boolean Semiring}
+$$B = (\{0,1\}, \lor, \land, 0, 1)$$
+$$\lor : \text{Standard logical OR}$$
+$$\land : \text{Standard logical AND}$$
+$$0 : \text{Boolean zero}$$
+$$1 : \text{Boolean one}$$
+\[
+\ominus: \text{Monus for Boolean Semiring} \quad a \ominus b := a \land \neg b
+\]
+Now we take a query as below on a relation $T$ with $n$ tuples:
+
+This returns 1 if the relation $T$ has exactly $c$ tuples, and 0 otherwise.
+
+In possible world semantics, let $w: \{1,2,\dots,m\} \mapsto \{0,1\}$.
+
+The provenance of this query can be expressed as follows:
+
+$$q(T) = \bigoplus_{w}\left(\bigotimes_{w(i)=1}b_i\otimes\left(\mathbb{1}\ominus(\bigoplus_{w(i) =0}b_i)\right)\right)$$
+
+On the other hand, its equivalent join query will be as follows:
 
 The provenance of this query can be expressed as follows:
 \[
@@ -175,13 +178,6 @@ and
 
 \paragraph{SQL Example.}  
 On a relation \(T\) with Boolean annotations \(b_1,\dots,b_n\in\mathcal{B}(X)\):
-
-\begin{minted}[fontsize=\small]{sql}
-SELECT DISTINCT 1
-  FROM T
- HAVING COUNT(*) = c;
-\end{minted}
-
 Its provenance is
 \[
 q(T)=\bigoplus_{w:\{1,\dots,n\}\to\{0,1\}}
@@ -191,18 +187,6 @@ q(T)=\bigoplus_{w:\{1,\dots,n\}\to\{0,1\}}
 (1_{\mathcal{B}}\ominus\bigoplus_{w(i)=0}b_i)
 \Bigr).
 \]
-
-\begin{minted}[fontsize=\small]{sql}
-SELECT DISTINCT 1
-  FROM T AS a1
-  JOIN T AS a2 ON a1.id<a2.id
-  … JOIN T AS a_c ON a_{c-1}.id<a_c.id
-EXCEPT
-SELECT DISTINCT 1
-  FROM T AS b1
-  JOIN T AS b2 ON b1.id<b2.id
-  … JOIN T AS b_{c+1} ON b_c.id<b_{c+1}.id;
-\end{minted}
 
 Its provenance is
 \[
@@ -390,11 +374,7 @@ be the \emph{counting semiring}, and equip it with the \emph{monus} (truncated s
 On a relation \(T\) with annotations \(b_1,\dots,b_n\in\mathbb{N}\), consider the two queries of 
 “\(\mathrm{COUNT}(*) = c\)” exactly as before:
 
-\begin{minted}[fontsize=\small]{sql}
-SELECT DISTINCT 1
-  FROM T
- HAVING COUNT(*) = c;
-\end{minted}
+
 
 Its provenance in \(\mathcal{N}\) becomes
 \[
@@ -406,18 +386,6 @@ Its provenance in \(\mathcal{N}\) becomes
   \sum_{W\subseteq T}
     \Bigl(\prod_{i\in W\cap T}b_i\cdot\bigl(1\ominus\sum_{j\in W\cap T}b_i\bigr)\Bigr).
 \]
-
-\begin{minted}[fontsize=\small]{sql}
-SELECT DISTINCT 1
-  FROM T AS a_1
-  JOIN T AS a_2 ON a_1.id<a_2.id
-  … JOIN T AS a_c ON a_{c-1}.id<a_c.id
-EXCEPT
-SELECT DISTINCT 1
-  FROM T AS b_1
-  JOIN T AS b_2 ON b_1.id<b_2.id
-  … JOIN T AS b_{c+1} ON b_c.id<b_{c+1}.id;
-\end{minted}
 
 Its provenance is
 \[
