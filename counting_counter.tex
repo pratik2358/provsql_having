@@ -70,10 +70,10 @@ Its provenance in \(\mathcal{N}\) becomes
   q(T)
   =
   \bigoplus_{W}
-    \Bigl(\bigotimes_{W(i)=1}b_i\Bigr)\otimes\chi_{=}\Bigl({\bigplus_{\mathbb{N}}}_{W(i)=1} 1, c\Bigr)\otimes\Bigl(1 \ominus \bigl(\bigoplus_{W(j) = 0}b_j\bigr)\Bigr)
+    \Bigl(\bigotimes_{i\in W\cap T}b_i\Bigr)\otimes\chi_{=}\Bigl({\bigplus_{\mathbb{N}}}_{i\in W\cap T} 1, c\Bigr)\otimes\Bigl(1 \ominus \bigl(\bigoplus_{j\in W\cap T}b_j\bigr)\Bigr)
   =
-  \sum_{W\subseteq T, |W|=c}
-    \Bigl(\prod_{W(i)=1}b_i\cdot\bigl(1\ominus\sum_{W(j)=0}b_i\bigr)\Bigr).
+  \sum_{W\subseteq T}
+    \Bigl(\prod_{i\in W\cap T}b_i\cdot\bigl(1\ominus\sum_{j\in W\cap T}b_i\bigr)\Bigr).
 \]
 
 \begin{minted}[fontsize=\small]{sql}
