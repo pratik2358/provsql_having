@@ -366,10 +366,10 @@ For Query~\ref{query:A} the provenance in \(\mathcal{N}\) is :
   \mathit{Prov}[q(T)]
   =
   \sum_{W\subseteq \mathbf{T}}
-    \Bigl(\prod_{\mathbf{t}\in W}\mathbf{t}^{(\mathcal{N})}\Bigr)\times\chi_{=}\Bigl(\sum_{\mathbf{t}\in W} 1, c\Bigr)\times\Bigl(1 \ominus \bigl(\sum_{\mathbf{t}\in W\setminus \mathbf{T}}\mathbf{t}^{(\mathcal{N})}\bigr)\Bigr)
+    \Bigl(\prod_{\mathbf{t}\in W}\mathbf{t}^{(\mathcal{N})}\Bigr)\times\chi_{=}\Bigl(\sum_{\mathbf{t}\in W} 1, c\Bigr)\times\Bigl(1 \ominus \bigl(\sum_{\mathbf{t}\in\mathbf{T}\setminus W}\mathbf{t}^{(\mathcal{N})}\bigr)\Bigr)
   =
   \sum_{W\subseteq \mathbf{T}, |W|=c}
-    \Bigl(\prod_{\mathbf{t}\in W}\mathbf{t}^{(\mathcal{N})}\times\bigl(1\ominus\sum_{\mathbf{t}\in W\setminus \mathbf{T}}\mathbf{t}^{(\mathcal{N})}\bigr)\Bigr)
+    \Bigl(\prod_{\mathbf{t}\in W}\mathbf{t}^{(\mathcal{N})}\times\bigl(1\ominus\sum_{\mathbf{t}\in\mathbf{T}\setminus W}\mathbf{t}^{(\mathcal{N})}\bigr)\Bigr)
 \]
 
 For Query~\ref{query:J} provenance is :
@@ -383,44 +383,22 @@ For Query~\ref{query:J} provenance is :
 
 \begin{proposition}
 There exist annotations and a choice of \(c\) for which
-\(q'(T)\neq q(T)\)
+  \(\mathit{Prov}[(q'(T)]\neq\mathit{Prov}[q(T)]\)
 in the counting semiring \(\mathcal{N}\).
 \end{proposition}
 
 \begin{proof}
-Take \(\lvert T\rvert=2\), \(c=1\), and annotations
-\[
-  b_1 = 1,\quad b_2 = 2.
-\]
-Then the only world contributing to \(q(T)\) is \(w(1)=w(2)=1\), since any world with an absent tuple gives
-\((1\ominus\sum_{w(i)=0}b_i)=0\).  Hence
-\[
-  q(T)
-  = (1\cdot2)\bigl(1\ominus0\bigr)
-  = 2.
-\]
-On the other hand,
-\[
-  q'(T)
-  = (b_1+b_2)\ominus(b_1\cdot b_2)
-  = (1+2)\ominus(1\cdot2)
-  = 3\ominus2
-  = 1.
-\]
-Thus \(q'(T)=1\neq2=q(T)\).
+  Let $<t^{(\mathbb{N})},t^{(\mathcal{N})}> :=\{(1,1),(1,1),(1,1)\}$ and $c=2$.\\
+  $\mathit{Prov}[q(T)]=0+0+0=0$\\
+  $\mathit{Prov}[q'(t)]=(1+1+1)\ominus 1=2$
+
 \end{proof}
 
 \bigskip
-\noindent\textbf{Discussion of the Failure}
-
-\begin{itemize}
-  \item In \(\mathcal{N}\), addition and multiplication are \emph{not} idempotent, nor is monus an involution.
-  \item The Boolean proof relied on \emph{absorptivity} and pointwise idempotence (\(1\vee1=1\)), which fail for \(\mathbb{N}\).
-  \item Consequently the “join‐except” provenance
-    \(\sum_{|t|=c}-\sum_{|t'|=c+1}\)
-    does \emph{not} coincide with the summation over worlds
-    \(\sum_{w}\prod_{w(i)=1}n_i\cdot(1\ominus\sum_{w(i)=0}n_i)\).
-\end{itemize}
-
-
-
+\noindent\textbf{Discussion}
+ The \textsc{Join‐Except} provenance
+does not coincide with the provenance computed using the possible-world semantics for Query~\ref{query:A}. 
+The possible-world semanctics over a less-informative semiring like $\mathcal{N}$ cannot explain negative results, because of the truncation in $\ominus$.It gives us $0$ for negative results and counts the number of derivations for positive results.
+$\mathit{Prov}[q(t)]=0$ only indicates that, \textsc{Count(*)}$\neq c$. 
+Interestingly for $\mathit{Prov}[q'(t)]=2$ too, we cannot explain negative results. It gives us $1$ WHEN $COUNT(*)=c$ and possibly any number $\neq1$ for $COUNT(*)\neq c$. 
+In that case, our possible-world semantics is atleast more coherent, given that provenance computed for both the JOIN-EXCEPT rewrite and the possible-world semantics over a predicate involving aggregation comparison cannot explain negative results.
