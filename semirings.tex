@@ -1,67 +1,4 @@
 \section{Testing provenance semantics across different semirings of interest}
-\subsection{counting semiring}
-$$k = (\mathbb{n}, \oplus, \otimes, 0, 1)$$
-$\mathbb{n} = \{0,1,2,\dots\}$
-
-$\oplus : \text{standard integer addition}$
-
-$\otimes : \text{standard integer multiplication}$
-
-$\text{zero} : 0 \in \mathbb{n}$
-
-$\text{one} : 1 \in \mathbb{n}$
-
-additional operators:
-
-monus: $(a \ominus b): \text{truncated subtraction}$
-$$ a \ominus b = \begin{cases} 0, &  a\leq b\\ a-b,& a>b \end{cases}$$
-
-delta: 
-for $a \in k$
-$\delta(a) = \begin{cases} 0, & a=0\\ 1, & a>0 \end{cases}$
-$\delta:k \mapsto k $
-$\delta(0_k)=0_k$
-$\delta(n.1_k)=1_k$
-
-
-\textbf{counting semiring properties:}
-
-1. additive monoid
-- associativity: $$(a \oplus b) \oplus c = a \oplus (b\oplus c)$$
-- commutativity: $$a \oplus b = b \oplus a$$
-- identity: $$a \oplus 0 = 0$$
-2. Multiplicative monoid
-- Associativity: $$( (a \otimes b) \otimes c = a \otimes (b\otimes c)$$
-- Commutativity: $$a \otimes b = b \otimes a$$
-- Identity: $$a \otimes 1 = a$$
-3. Distributivity
-- Left Dist: $$a \otimes (b \oplus c)= (a \otimes b)\oplus(a \otimes c)$$
-- RIght Dist: $$(a \oplus b)\otimes c=(a \otimes c)\oplus(b \otimes c)$$
- 4. Absorption
-$$a \otimes 0 = 0 \otimes a = 0$$
-
-5. Monus \newline
-For $$a, b \in K$$
-- $$(a \ominus b) \oplus b =a$$, if $$a \geq b$$
-- $$a \ominus 0 =a$$
-- $$0 \ominus a = 0$$
-
-6. Semimodule operation
-- Associative with semiring multiplication: $$a \otimes (b * m)= (a \otimes b) * m$$
-- Identity: $$1*m=m$$
-- Absorption: $$0*m=0$$
-7. Other properties
-$$
- \delta(u)\otimes[[u \oslash   v]]_{\mathit{op}}=\begin{cases}1, & \text{if } u\hspace{0.5em} op\hspace{0.5em} v \text{ holds in } \mathbb{N} \\
-0,&\text{o.w.}\end{cases}
-$$
-
-e.g. For COUNT(*), say we have $f=\bigoplus_{g \in group}$ 1 and we want to filter on the aggregates HAVING >C
-
-$$
- \delta(f)\otimes[[f \oslash   C]]_{\mathit{>}}=\begin{cases}1, & \text{if } f>C \text{ holds in } \mathbb{N} \\
-0,&\text{o.w.}\end{cases}
-$$
 
 \subsection{Boolean Semiring}
 $$B = (\{0,1\}, \lor, \land, 0, 1)$$
@@ -176,4 +113,199 @@ q'(T)
 \]
 as required.
 \end{proof}
+\subsection{Boolean‐Function Semiring}
+
+Let \(X\) be a set of worlds.  
+Define the \emph{Boolean‐function m‐semiring}:
+\[
+  \mathcal{B}(X)
+  = \bigl(\{f : X \to \{0,1\}\},\oplus,\otimes,0_{\mathcal{B}},1_{\mathcal{B}},\delta,\ominus\bigr),
+\]
+where, for \(f,g : X\to\{0,1\},\;x\in X\):
+\[
+  (f\oplus g)(x)=f(x)\vee g(x), \quad (f\otimes g)(x)=f(x)\wedge g(x),
+\]
+\[
+  (f\ominus g)(x)=f(x)\wedge\neg g(x),\quad \delta(f)(x)=
+  \begin{cases}
+  1 & \text{if } f(x)=1,\\
+  0 & \text{otherwise.}
+  \end{cases}
+\]
+Here \(0_{\mathcal{B}}\) and \(1_{\mathcal{B}}\) are the constant‐0 and constant‐1 functions.  
+Let the additive monoid of aggregate values be \((M,+_M,\mathbb{0}_M)=(\mathbb{N},+,0)\).
+
+---
+
+\paragraph{Aggregation Semantics.}  
+An aggregation expression is
+\[
+\mathbf{a}=\bigoplus_{\mathcal{M},i}(a_i^{(K)},a_i^{(M)}),
+\]
+with \(a_i^{(K)}\in\mathcal{B}(X)\) the Boolean provenance annotation and \(a_i^{(M)}\in\mathbb{N}\) its numeric monoid value.  
+
+Given two aggregations \(\mathbf{u},\mathbf{v}\), their comparison is:
+\begin{multline}
+[\mathbf{u}\oslash \mathbf{v}]_{\mathrm{op}}=
+\bigoplus_{S,T}
+\Biggl(
+\Bigl(\bigotimes_{i\in S}u_i^{(K)}\Bigr)
+\otimes
+\Bigl(\bigotimes_{j\in T}v_j^{(K)}\Bigr) \\
+\otimes\;\chi_{\mathrm{op}}\bigl(\mathrm{val}_\mathbf{u}(S),\mathrm{val}_\mathbf{v}(T)\bigr)
+\otimes
+\Biggl(1_{\mathcal{B}}\ominus\Bigl(\bigoplus_{i\notin S}u_i^{(K)}\;\oplus\;\bigoplus_{j\notin T}v_j^{(K)}\Bigr)\Biggr)
+\Biggr),
+\end{multline}
+where
+\[
+\chi_{\mathrm{op}}(x,y)=
+\begin{cases}
+1_{\mathcal{B}} & \text{if } x\;\mathit{op}\; y, \\
+0_{\mathcal{B}} & \text{otherwise,}
+\end{cases}
+\]
+and
+\[
+\mathrm{val}_\mathbf{u}(S)=\sum_{i\in S}u_i^{(M)},\quad
+\mathrm{val}_\mathbf{v}(T)=\sum_{j\in T}v_j^{(M)}.
+\]
+
+---
+
+\paragraph{SQL Example.}  
+On a relation \(T\) with Boolean annotations \(b_1,\dots,b_n\in\mathcal{B}(X)\):
+
+\begin{minted}[fontsize=\small]{sql}
+SELECT DISTINCT 1
+  FROM T
+ HAVING COUNT(*) = c;
+\end{minted}
+
+Its provenance is
+\[
+q(T)=\bigoplus_{w:\{1,\dots,n\}\to\{0,1\}}
+\Bigl(
+\bigotimes_{w(i)=1}b_i
+\;\otimes\;
+(1_{\mathcal{B}}\ominus\bigoplus_{w(i)=0}b_i)
+\Bigr).
+\]
+
+\begin{minted}[fontsize=\small]{sql}
+SELECT DISTINCT 1
+  FROM T AS a1
+  JOIN T AS a2 ON a1.id<a2.id
+  … JOIN T AS a_c ON a_{c-1}.id<a_c.id
+EXCEPT
+SELECT DISTINCT 1
+  FROM T AS b1
+  JOIN T AS b2 ON b1.id<b2.id
+  … JOIN T AS b_{c+1} ON b_c.id<b_{c+1}.id;
+\end{minted}
+
+Its provenance is
+\[
+q'(T)=\Bigl(\!\bigoplus_{t\subseteq[n],|t|=c}\bigotimes_{i\in t}b_i\Bigr)
+\ominus
+\Bigl(\!\bigoplus_{t'\subseteq[n],|t'|=c+1}\bigotimes_{i\in t'}b_i\Bigr).
+\]
+
+---
+
+\begin{proposition}
+For all \(T\), \(q'(T)=q(T)\) in \(\mathcal{B}(X)\).
+\end{proposition}
+
+\begin{proof}
+Define
+\[
+A=\bigoplus_{|t|=c}\bigotimes_{i\in t}b_i, \quad
+B=\bigoplus_{|t'|=c+1}\bigotimes_{i\in t'}b_i.
+\]
+Then
+\[
+q'(T)=A\ominus B=A\otimes(\neg B).
+\]
+All operations are pointwise in \(\mathcal{B}(X)\), so for each world \(x\in X\):
+\[
+q'(T)(x)=A(x)\wedge\neg B(x).
+\]
+This matches the per‐world condition in the $\oslash$‐semantics of $q(T)$, so $q'(T)=q(T)$.
+\end{proof}
+
+---
+
+\noindent\textbf{Explanation.}
+\begin{itemize}
+  \item Domain: Boolean functions over $X$, not just $\{0,1\}$.  
+  \item Operations: $\oplus,\otimes,\ominus$ act pointwise as $\vee,\wedge,\wedge\neg$.  
+  \item Because $\mathcal{B}(X)$ is idempotent and absorptive, join–except coincides with world‐sum provenance.
+\end{itemize}              
 \input{homomorphisms.tex}
+
+\subsection{counting semiring}
+$$k = (\mathbb{n}, \oplus, \otimes, 0, 1)$$
+$\mathbb{n} = \{0,1,2,\dots\}$
+
+$\oplus : \text{standard integer addition}$
+
+$\otimes : \text{standard integer multiplication}$
+
+$\text{zero} : 0 \in \mathbb{n}$
+
+$\text{one} : 1 \in \mathbb{n}$
+
+additional operators:
+
+monus: $(a \ominus b): \text{truncated subtraction}$
+$$ a \ominus b = \begin{cases} 0, &  a\leq b\\ a-b,& a>b \end{cases}$$
+
+delta: 
+for $a \in k$
+$\delta(a) = \begin{cases} 0, & a=0\\ 1, & a>0 \end{cases}$
+$\delta:k \mapsto k $
+$\delta(0_k)=0_k$
+$\delta(n.1_k)=1_k$
+
+
+\textbf{counting semiring properties:}
+
+1. additive monoid
+- associativity: $$(a \oplus b) \oplus c = a \oplus (b\oplus c)$$
+- commutativity: $$a \oplus b = b \oplus a$$
+- identity: $$a \oplus 0 = 0$$
+2. Multiplicative monoid
+- Associativity: $$( (a \otimes b) \otimes c = a \otimes (b\otimes c)$$
+- Commutativity: $$a \otimes b = b \otimes a$$
+- Identity: $$a \otimes 1 = a$$
+3. Distributivity
+- Left Dist: $$a \otimes (b \oplus c)= (a \otimes b)\oplus(a \otimes c)$$
+- RIght Dist: $$(a \oplus b)\otimes c=(a \otimes c)\oplus(b \otimes c)$$
+ 4. Absorption
+$$a \otimes 0 = 0 \otimes a = 0$$
+
+5. Monus \newline
+For $$a, b \in K$$
+- $$(a \ominus b) \oplus b =a$$, if $$a \geq b$$
+- $$a \ominus 0 =a$$
+- $$0 \ominus a = 0$$
+
+6. Semimodule operation
+- Associative with semiring multiplication: $$a \otimes (b * m)= (a \otimes b) * m$$
+- Identity: $$1*m=m$$
+- Absorption: $$0*m=0$$
+7. Other properties
+$$
+ \delta(u)\otimes[[u \oslash   v]]_{\mathit{op}}=\begin{cases}1, & \text{if } u\hspace{0.5em} op\hspace{0.5em} v \text{ holds in } \mathbb{N} \\
+0,&\text{o.w.}\end{cases}
+$$
+
+e.g. For COUNT(*), say we have $f=\bigoplus_{g \in group}$ 1 and we want to filter on the aggregates HAVING >C
+
+$$
+ \delta(f)\otimes[[f \oslash   C]]_{\mathit{>}}=\begin{cases}1, & \text{if } f>C \text{ holds in } \mathbb{N} \\
+0,&\text{o.w.}\end{cases}
+$$
+
+
