@@ -231,81 +231,243 @@ All operations are pointwise in \(\mathcal{B}(X)\), so for each world \(x\in X\)
 \[
 q'(T)(x)=A(x)\wedge\neg B(x).
 \]
-This matches the per‐world condition in the $\oslash$‐semantics of $q(T)$, so $q'(T)=q(T)$.
+This matches the per-world condition in the $\oslash$-semantics of $q(T)$, so $q'(T)=q(T)$.
 \end{proof}
-
----
 
 \noindent\textbf{Explanation.}
 \begin{itemize}
   \item Domain: Boolean functions over $X$, not just $\{0,1\}$.  
   \item Operations: $\oplus,\otimes,\ominus$ act pointwise as $\vee,\wedge,\wedge\neg$.  
-  \item Because $\mathcal{B}(X)$ is idempotent and absorptive, join–except coincides with world‐sum provenance.
+  \item Because $\mathcal{B}(X)$ is idempotent and absorptive, join-except coincides with world-sum provenance.
 \end{itemize}              
 \input{homomorphisms.tex}
 
 \subsection{counting semiring}
-$$k = (\mathbb{n}, \oplus, \otimes, 0, 1)$$
-$\mathbb{n} = \{0,1,2,\dots\}$
+\begin{toappendix}
 
-$\oplus : \text{standard integer addition}$
+\section*{Counting Semiring Definition}
 
-$\otimes : \text{standard integer multiplication}$
+\[
+k = (\mathbb{N}, \oplus, \otimes, 0, 1)
+\]
 
-$\text{zero} : 0 \in \mathbb{n}$
+where:
 
-$\text{one} : 1 \in \mathbb{n}$
+\[
+\mathbb{N} = \{0, 1, 2, \dots\}
+\]
 
-additional operators:
+\[
+\begin{aligned}
+\oplus &: \text{standard integer addition}, \\
+\otimes &: \text{standard integer multiplication}, \\
+0 &\in \mathbb{N} : \text{zero element}, \\
+1 &\in \mathbb{N} : \text{one element}.
+\end{aligned}
+\]
 
-monus: $(a \ominus b): \text{truncated subtraction}$
-$$ a \ominus b = \begin{cases} 0, &  a\leq b\\ a-b,& a>b \end{cases}$$
+---
 
-delta: 
-for $a \in k$
-$\delta(a) = \begin{cases} 0, & a=0\\ 1, & a>0 \end{cases}$
-$\delta:k \mapsto k $
-$\delta(0_k)=0_k$
-$\delta(n.1_k)=1_k$
+\subsection*{Additional Operators}
+
+\paragraph{Monus (Truncated Subtraction):}
+\[
+a \ominus b = 
+\begin{cases}
+0, & a \le b, \\
+a - b, & a > b.
+\end{cases}
+\]
+
+\paragraph{Delta Function:}
+\[
+\delta(a) = 
+\begin{cases}
+0, & a = 0, \\
+1, & a > 0.
+\end{cases}
+\qquad
+\delta : k \mapsto k
+\]
+\[
+\delta(0_k) = 0_k, \quad \delta(n \cdot 1_k) = 1_k
+\]
+
+---
+
+\subsection*{Counting Semiring Properties}
+
+\paragraph{1. Additive Monoid}
+\[
+\begin{aligned}
+(a \oplus b) \oplus c &= a \oplus (b \oplus c) && \text{(Associativity)} \\
+a \oplus b &= b \oplus a && \text{(Commutativity)} \\
+a \oplus 0 &= a && \text{(Identity)}
+\end{aligned}
+\]
+
+\paragraph{2. Multiplicative Monoid}
+\[
+\begin{aligned}
+(a \otimes b) \otimes c &= a \otimes (b \otimes c) && \text{(Associativity)} \\
+a \otimes b &= b \otimes a && \text{(Commutativity)} \\
+a \otimes 1 &= a && \text{(Identity)}
+\end{aligned}
+\]
+
+\paragraph{3. Distributivity}
+\[
+\begin{aligned}
+a \otimes (b \oplus c) &= (a \otimes b) \oplus (a \otimes c) && \text{(Left Distributivity)} \\
+(a \oplus b) \otimes c &= (a \otimes c) \oplus (b \otimes c) && \text{(Right Distributivity)}
+\end{aligned}
+\]
+
+\paragraph{4. Absorption}
+\[
+a \otimes 0 = 0 \otimes a = 0
+\]
+
+\paragraph{5. Monus Properties}
+For all \( a, b \in k \):
+\[
+\begin{aligned}
+(a \ominus b) \oplus b &= a, && \text{if } a \ge b, \\
+a \ominus 0 &= a, \\
+0 \ominus a &= 0.
+\end{aligned}
+\]
+
+\paragraph{6. Semimodule Operation}
+\[
+\begin{aligned}
+a \otimes (b * m) &= (a \otimes b) * m && \text{(Associativity with multiplication)} \\
+1 * m &= m && \text{(Identity)} \\
+0 * m &= 0 && \text{(Absorption)}
+\end{aligned}
+\]
+
+\paragraph{7. Other Properties}
+\[
+\delta(u) \otimes [[u \oslash v]]_{\textit{op}} =
+\begin{cases}
+1, & \text{if } (u \ \textit{op}\ v) \text{ holds in } \mathbb{N}, \\
+0, & \text{otherwise.}
+\end{cases}
+\]
+
+---
+
+\subsection*{Example: COUNT Aggregation with HAVING Clause}
+
+For a COUNT(*) aggregate, let:
+\[
+f = \bigoplus_{g \in \text{group}} 1
+\]
+
+Then to filter using a HAVING condition (e.g., \( f > C \)):
+
+\[
+\delta(f) \otimes [[f \oslash C]]_{>} =
+\begin{cases}
+1, & \text{if } f > C \text{ in } \mathbb{N}, \\
+0, & \text{otherwise.}
+\end{cases}
+\]
+
+\end{toappendix}
 
 
-\textbf{counting semiring properties:}
+Let
+\[
+  \mathcal{N} = (\mathbb{N},+,\cdot,0,1)
+\]
+be the \emph{counting semiring}, and equip it with the \emph{monus} (truncated subtraction)
+\[
+  a \ominus b =\max(a - b,0).
+\]
 
-1. additive monoid
-- associativity: $$(a \oplus b) \oplus c = a \oplus (b\oplus c)$$
-- commutativity: $$a \oplus b = b \oplus a$$
-- identity: $$a \oplus 0 = 0$$
-2. Multiplicative monoid
-- Associativity: $$( (a \otimes b) \otimes c = a \otimes (b\otimes c)$$
-- Commutativity: $$a \otimes b = b \otimes a$$
-- Identity: $$a \otimes 1 = a$$
-3. Distributivity
-- Left Dist: $$a \otimes (b \oplus c)= (a \otimes b)\oplus(a \otimes c)$$
-- RIght Dist: $$(a \oplus b)\otimes c=(a \otimes c)\oplus(b \otimes c)$$
- 4. Absorption
-$$a \otimes 0 = 0 \otimes a = 0$$
+On a relation \(T\) with annotations \(b_1,\dots,b_n\in\mathbb{N}\), consider the two queries of 
+“\(\mathrm{COUNT}(*) = c\)” exactly as before:
 
-5. Monus \newline
-For $$a, b \in K$$
-- $$(a \ominus b) \oplus b =a$$, if $$a \geq b$$
-- $$a \ominus 0 =a$$
-- $$0 \ominus a = 0$$
+\begin{minted}[fontsize=\small]{sql}
+SELECT DISTINCT 1
+  FROM T
+ HAVING COUNT(*) = c;
+\end{minted}
 
-6. Semimodule operation
-- Associative with semiring multiplication: $$a \otimes (b * m)= (a \otimes b) * m$$
-- Identity: $$1*m=m$$
-- Absorption: $$0*m=0$$
-7. Other properties
-$$
- \delta(u)\otimes[[u \oslash   v]]_{\mathit{op}}=\begin{cases}1, & \text{if } u\hspace{0.5em} op\hspace{0.5em} v \text{ holds in } \mathbb{N} \\
-0,&\text{o.w.}\end{cases}
-$$
+Its provenance in \(\mathcal{N}\) becomes
+\[
+  q(T)
+  =
+  \bigoplus_{W}
+    \Bigl(\bigotimes_{i\in W\cap T}b_i\Bigr)\otimes\chi_{=}\Bigl({\bigplus_{\mathbb{N}}}_{i\in W\cap T} 1, c\Bigr)\otimes\Bigl(1 \ominus \bigl(\bigoplus_{j\in W\cap T}b_j\bigr)\Bigr)
+  =
+  \sum_{W\subseteq T}
+    \Bigl(\prod_{i\in W\cap T}b_i\cdot\bigl(1\ominus\sum_{j\in W\cap T}b_i\bigr)\Bigr).
+\]
 
-e.g. For COUNT(*), say we have $f=\bigoplus_{g \in group}$ 1 and we want to filter on the aggregates HAVING >C
+\begin{minted}[fontsize=\small]{sql}
+SELECT DISTINCT 1
+  FROM T AS a_1
+  JOIN T AS a_2 ON a_1.id<a_2.id
+  … JOIN T AS a_c ON a_{c-1}.id<a_c.id
+EXCEPT
+SELECT DISTINCT 1
+  FROM T AS b_1
+  JOIN T AS b_2 ON b_1.id<b_2.id
+  … JOIN T AS b_{c+1} ON b_c.id<b_{c+1}.id;
+\end{minted}
 
-$$
- \delta(f)\otimes[[f \oslash   C]]_{\mathit{>}}=\begin{cases}1, & \text{if } f>C \text{ holds in } \mathbb{N} \\
-0,&\text{o.w.}\end{cases}
-$$
+Its provenance is
+\[
+  q'(T)
+  =
+  \Bigl(\sum_{\substack{t\subseteq[n],\\|t|=c}}\prod_{i\in t}b_i\Bigr)
+  \ominus
+  \Bigl(\sum_{\substack{t'\subseteq[n],\\|t'|=c+1}}\prod_{i\in t'}b_i\Bigr).
+\]
+
+\begin{proposition}
+There exist annotations and a choice of \(c\) for which
+\(q'(T)\neq q(T)\)
+in the counting semiring \(\mathcal{N}\).
+\end{proposition}
+
+\begin{proof}
+Take \(\lvert T\rvert=2\), \(c=1\), and annotations
+\[
+  b_1 = 1,\quad b_2 = 2.
+\]
+Then the only world contributing to \(q(T)\) is \(w(1)=w(2)=1\), since any world with an absent tuple gives
+\((1\ominus\sum_{w(i)=0}b_i)=0\).  Hence
+\[
+  q(T)
+  = (1\cdot2)\bigl(1\ominus0\bigr)
+  = 2.
+\]
+On the other hand,
+\[
+  q'(T)
+  = (b_1+b_2)\ominus(b_1\cdot b_2)
+  = (1+2)\ominus(1\cdot2)
+  = 3\ominus2
+  = 1.
+\]
+Thus \(q'(T)=1\neq2=q(T)\).
+\end{proof}
+
+\bigskip
+\noindent\textbf{Discussion of the Failure}
+
+\begin{itemize}
+  \item In \(\mathcal{N}\), addition and multiplication are \emph{not} idempotent, nor is monus an involution.
+  \item The Boolean proof relied on \emph{absorptivity} and pointwise idempotence (\(1\vee1=1\)), which fail for \(\mathbb{N}\).
+  \item Consequently the “join‐except” provenance
+    \(\sum_{|t|=c}-\sum_{|t'|=c+1}\)
+    does \emph{not} coincide with the summation over worlds
+    \(\sum_{w}\prod_{w(i)=1}n_i\cdot(1\ominus\sum_{w(i)=0}n_i)\).
+\end{itemize}
+
 
 
