@@ -242,12 +242,12 @@ For any $V\subseteq\mathbf{X}_b$ the fibre $\mathcal{W}_V=\{W\subseteq\mathbf{X}
 
 \item \textbf{Lifting of semantics.}
 Start from the tuple-level possible-world expansion from your semantics:
-\[
-[\mathdutchcal{u}\oslash\mathdutchcal{v}]_{\mathrm{op}}
+  \begin{align*}
+  &[\mathdutchcal{u}\oslash\mathdutchcal{v}]_{\mathrm{op}}
 =
 \bigoplus_{W\subseteq\mathbf{X}}
   \Gamma(W),
-\qquad\text{where }\Gamma(W)
+    \\ &\text{where }\Gamma(W)
 \coloneqq
   \Bigl(\bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}\Bigr)
   \otimes
@@ -257,7 +257,7 @@ Start from the tuple-level possible-world expansion from your semantics:
                           \bigplus_{M,W\cap\mathrm{supp}(\mathdutchcal{v})}\mathbf{x}^{(M)}\Bigr)
   \otimes
   \Phi_{W}.
-\]
+\end{align*}
 Partition the outer sum according to the fibres of $f$:
 \[
 \bigoplus_{W\subseteq\mathbf{X}} \Gamma(W)
