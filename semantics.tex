@@ -147,7 +147,60 @@ We now define a counting version of the \textsc{Subset-Sum} problem, which is a 
   \(\Omega(2^{|\mathbf{X}|})\).
 
 \end{proof}
+
 \subsection{Possible-world semantics - a lazy approach}
+\paragraph{Semantic Partitioning of Tuples}
+
+Let $\mathbf{X}$ be the universe of tuples (variables). Fix a set of attributes $A$ (one or more) that define semantic similarity. Let
+$\phi: \mathbf{X} \to \mathbb{R}^d$
+be a deterministic feature/extraction map that transforms each tuple $\mathbf{x} \in \mathbf{X}$ into a $d$-dimensional representation. Let
+$g: \mathbb{R}^d \to \{1, \dots, m\}$
+be a deterministic clustering. We define a map for assigning blocks from a finite collection $\mathcal{B}$ to $\mathbf{x}\in \mathbf{X}$ as,
+\[
+\kappa: \mathbf{X} \to \mathcal{B} = \{B_1, \dots, B_m\}, \quad \kappa(\mathbf{x}) = B_{g(\phi(\mathbf{x}))}
+\]
+The semantic partition induced by $\kappa$ is the family $\mathcal{B} = \{B_j\}_{j=1}^m$ with
+\[
+B_j = \{\mathbf{x} \in \mathbf{X} \mid \kappa(\mathbf{x}) = B_j \}
+\]
+We require that $\{B_j\}$ forms a partition of $\mathbf{X}$, i.e.,
+\[
+\bigcup_{j=1}^{m} B_j = \mathbf{X}, \quad B_i \cap B_j = \emptyset \text{ for } i \neq j
+\]
+\color{red}
+\paragraph{Choices for $\phi$ and $g$ (From related works on clustering)}
+
+\begin{itemize}
+    \item \textbf{Numeric attributes:} 
+        \begin{itemize}
+            \item $\phi(x)$: normalized numeric vector (z-score or min--max). 
+            \item Similarity metric: Euclidean or Mahalanobis. 
+            \item $g$: k-means or mini-batch k-means for scalability.
+        \end{itemize}
+    \item \textbf{Categorical attributes:} 
+        \begin{itemize}
+            \item Encode with learned embeddings or frequency/one-hot $\to \phi(x)$.
+            \item Similarity metric: cosine similarity.
+            \item $g$: k-means on embedding space or hierarchical clustering.
+        \end{itemize}
+    \item \textbf{Text attributes:} 
+        \begin{itemize}
+            \item Use sentence or attribute embeddings (e.g., Sentence-BERT, transformer CLS) $\to \phi(x)$.
+            \item Similarity metric: cosine similarity.
+            \item $g$: k-means or HDBSCAN for variable-sized clusters.
+        \end{itemize}
+    \item \textbf{Large-scale / approximate nearest neighbors:} 
+        \begin{itemize}
+            \item Use LSH or Faiss for embeddings, letting $g$ assign LSH buckets or ANN clusters.
+        \end{itemize}
+    \item \textbf{Threshold-based semantics:} 
+        \begin{itemize}
+            \item Use DBSCAN with distance threshold $\varepsilon$ so that dense semantic neighborhoods become blocks; outliers form singletons.
+        \end{itemize}
+\end{itemize}
+\color{black}
+\noindent Ensure that the choice of metric and $g$ makes $\kappa$ deterministic (e.g., fixed initialization / random seed) to preserve reproducibility.
+
 \begin{proposition}[Block-world mapping and lifted block-level possible-world semantics]
 Let
   $\mathcal{B} = \{B_1,\dots,B_m\}$ be a collection of blocks disjointly partioning $\mathbf{X}$ such that
