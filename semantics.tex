@@ -206,21 +206,18 @@ Let
   $\mathcal{B} = \{B_1,\dots,B_m\}$ be a collection of blocks disjointly partioning $\mathbf{X}$ such that
 \[
 \bigcup_{k=1}^m B_k = \mathbf{X}
-\qquad\text{and}\qquad
+\qquad\text{,}\qquad
 B_i\cap B_j=\varnothing\ \text{for }i\neq j,
 \]
-Let's abstractly denote $\mathbf{X}_b=\mathcal{B}$ as the universe of block-variables.
+  and $\mathbf{X}_b:=\mathcal{B}$ is the analog of $\mathbf{X}$ but for blocks.
 
-Define the mapping
+Then for a mapping defined as, 
 \[
 f:\mathcal{P}(\mathbf{X})\longrightarrow \mathcal{P}(\mathbf{X}_b),\qquad
 f(W):=\{\,B\in\mathbf{X}_b \mid B\cap W\neq\varnothing\,\},
 \]
 which sends each tuple-level possible world $W\subseteq\mathbf{X}$ to the
-set $W_b\subseteq\mathbf{X}_b$ of blocks that contain at least one tuple of
-$W$.
-
-Then:
+set $W_b\subseteq\mathbf{X}_b$ of blocks that contain at least one tuple of $W$:
 \begin{enumerate}
   \item For every $W\subseteq\mathbf{X}$ the image $W_b=f(W)$ is \emph{unique}.
   \item The mapping $f$ induces a partition of the tuple-level worlds:
