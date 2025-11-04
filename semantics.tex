@@ -152,12 +152,12 @@ We now define a counting version of the \textsc{Subset-Sum} problem, which is a 
 \paragraph{Semantic Partitioning of Variables}
 
 Let $\mathbf{X}$ be the universe of variables (tuples). Fix a set of attribute(s) $A$ that define semantic similarity. Let
-$\phi: \mathbf{X} \to \mathbb{R}^d$
+$\phi^A: \mathbf{X} \to \mathbb{R}^d$
 be a deterministic feature/extraction map that transforms each tuple $\mathbf{x} \in \mathbf{X}$ into a $d$-dimensional representation. Let
 $g: \mathbb{R}^d \to \{1, \dots, m\}$
-be a deterministic clustering. We define a map for assigning blocks from a finite collection $\mathcal{B}$ to $\mathbf{x}\in \mathbf{X}$ as,
+be a deterministic clustering. We define a map for assigning blocks from a finite collection $\mathcal{B}$ as,
 \[
-\kappa: \mathbf{X} \to \mathcal{B} = \{B_1, \dots, B_m\}, \quad \kappa(\mathbf{x}) = B_{g(\phi(\mathbf{x}))}
+\kappa: \mathbf{X} \to \mathcal{B} = \{B_1, \dots, B_m\}, \quad \kappa(\mathbf{x}) = B_{g(\phi^A(\mathbf{x}))}
 \]
 The semantic partition induced by $\kappa$ is the family $\mathcal{B} = \{B_j\}_{j=1}^m$ with
 \[
@@ -168,7 +168,7 @@ We require that $\{B_j\}$ forms a partition of $\mathbf{X}$, i.e.,
 \bigcup_{j=1}^{m} B_j = \mathbf{X}, \quad B_i \cap B_j = \emptyset \text{ for } i \neq j
 \]
 \color{red}
-\paragraph{Choices for $\phi$ and $g$ (From related works on clustering)}
+\paragraph{Choices for $\phi^A$ and $g$ (From related works on clustering)}
 
 \begin{itemize}
     \item \textbf{Numeric attributes:} 
