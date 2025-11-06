@@ -2,14 +2,14 @@
 \begin{algorithm}
   \caption{DP subset enumeration for $[\mathdutchcal{u}\oslash C]_=$}
   \begin{algorithmic}[1]
-    \REQUIRE an array $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ of weights, an array $G$ of gates with $|G| = |A|$, a target $C \in \mathbb{N}$
-    \ENSURE list $\mathcal{R}$ of subsets of $G$ whose weights sum to $C$
+    \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ and a constant $C \in M$
+    \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t. $\forall R \in \mathcal{R},\; \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}=C$
     \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$ \COMMENT{list containing the empty subset}
     \FOR{$j \gets 1$ \TO $C$}
-      \STATE $dp[j] \leftarrow \emptyset$ \COMMENT{$dp[j]$: all gate-subsets realizing sum $j$}
+      \STATE $dp[j] \leftarrow \emptyset$ \COMMENT{$dp[j]$: all subsets realizing sum $j$}
     \ENDFOR
     \FOR{$i \gets 1$ \TO $|A|$}
-      \STATE $w \gets A[i]$, $g \gets G[i]$
+      \STATE $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$
       \FOR{$j \gets C, C-1, \dots, w$}
         \STATE $p \gets j - w$
         \IF{$dp[p] \neq \emptyset$}
