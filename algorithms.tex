@@ -1,0 +1,73 @@
+\section{Implementation}
+\begin{algorithm}
+  \caption{DP possible-world for $[\mathdutchcal{u}\oslash C]_=$}
+\begin{algorithmic}[1]
+  \REQUIRE an array $A\leftarrow supp(\mathdutchcal{u})$, a constant $C$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{DP possible-world for $[\mathdutchcal{u}\oslash C]_>$}
+\begin{algorithmic}[1]
+  \REQUIRE an array $A\leftarrow supp(\mathdutchcal{u})$, a constant $C$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{DP possible-world for $[\mathdutchcal{u}\oslash C]_<$}
+\begin{algorithmic}[1]
+  \REQUIRE an array $A\leftarrow supp(\mathdutchcal{u})$, a constant $C$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{DP possible-world for $[\mathdutchcal{u}\oslash C]_\geq$}
+\begin{algorithmic}[1]
+  \REQUIRE an array $A\leftarrow supp(\mathdutchcal{u})$, a constant $C$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{DP possible-world for $[\mathdutchcal{u}\oslash C]_\leq$}
+\begin{algorithmic}[1]
+  \REQUIRE an array $A\leftarrow supp(\mathdutchcal{u})$, a constant $C$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Dynamic Algorithm for Probability of Subset Sum}
+\label{alg:probability_subset_sum}
+\begin{algorithmic}[1]
+\REQUIRE $nums$: List of integers, $probs$: List of probabilities, $target$: Integer target sum
+\ENSURE Dictionary of subsets summing to $target$ with their probabilities
+
+\STATE Initialize $dp[0 \dots target]$ as an array of dictionaries
+\STATE $dp[0] \gets \{() \to 1.0\}$ \COMMENT{Base case: one subset (empty) with probability 1.0}
+\FOR{$i \gets 1$ to $|nums|$}
+    \STATE $new\_dp[0 \dots target] \gets$ array of empty dictionaries
+    \FOR{$t \gets target$ down to $nums[i-1]$}
+        \IF{$dp[t - nums[i-1]] \neq \emptyset$}
+            \FOR{each $(subset, subset\_prob)$ in $dp[t - nums[i-1]]$}
+                \STATE $new\_subset \gets subset \cup \{nums[i-1]\}$
+                \STATE $new\_prob \gets subset\_prob \times probs[i-1]$
+                \IF{$new\_subset \in new\_dp[t]$}
+                    \STATE $new\_dp[t][new\_subset] \gets new\_dp[t][new\_subset] + new\_prob$
+                \ELSE
+                    \STATE $new\_dp[t][new\_subset] \gets new\_prob$
+                \ENDIF
+            \ENDFOR
+        \ENDIF
+    \ENDFOR
+    \FOR{$t \gets 0$ to $target$}
+        \FOR{each $(subset, subset\_prob)$ in $new\_dp[t]$}
+            \IF{$subset \in dp[t]$}
+                \STATE $dp[t][subset] \gets dp[t][subset] + subset\_prob$
+            \ELSE
+                \STATE $dp[t][subset] \gets subset\_prob$
+            \ENDIF
+        \ENDFOR
+    \ENDFOR
+\ENDFOR
+\RETURN $dp[target]$
+\end{algorithmic}
+\end{algorithm}
