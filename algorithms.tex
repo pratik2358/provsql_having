@@ -1,9 +1,47 @@
 \section{Implementation}
 \begin{algorithm}
-  \caption{DP possible-world for $[\mathdutchcal{u}\oslash C]_=$}
-\begin{algorithmic}[1]
-  \REQUIRE an array $A\leftarrow supp(\mathdutchcal{u})$, a constant $C$
-\end{algorithmic}
+  \caption{DP subset enumeration for $[\mathdutchcal{u}\oslash C]_=$}
+  \begin{algorithmic}[1]
+    \REQUIRE an array $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ of weights, an array $G$ of gates with $|G| = |A|$, a target $C \in \mathbb{N}$
+    \ENSURE list $\mathcal{R}$ of subsets of $G$ whose weights sum to $C$
+    \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$ \COMMENT{list containing the empty subset}
+    \FOR{$j \gets 1$ \TO $C$}
+      \STATE $dp[j] \leftarrow \emptyset$ \COMMENT{$dp[j]$: all gate-subsets realizing sum $j$}
+    \ENDFOR
+    \FOR{$i \gets 1$ \TO $|A|$}
+      \STATE $w \gets A[i]$, $g \gets G[i]$
+      \FOR{$j \gets C, C-1, \dots, w$}
+        \STATE $p \gets j - w$
+        \IF{$dp[p] \neq \emptyset$}
+          \FORALL{$S \in dp[p]$}
+            \STATE append $S \cup \{g\}$ to $dp[j]$
+          \ENDFOR
+        \ENDIF
+      \ENDFOR
+    \ENDFOR
+    \STATE $\mathcal{R} \leftarrow dp[C]$
+    \STATE \RETURN $\mathcal{R}$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Possible-world probability for $[\mathdutchcal{u}\oslash C]_=$}
+  \begin{algorithmic}[1]
+    \REQUIRE list $\mathcal{R}$ of subsets from Algorithm~1, full gate set $\mathcal{G}$, probabilities $p(g)$ for all $g \in \mathcal{G}$
+    \ENSURE $\Pr\big([\mathdutchcal{u}\oslash C]_=\big)$
+    \FORALL{$S \in \mathcal{R}$}
+      \STATE $\pi \gets 1$
+      \FORALL{$g \in \mathcal{G}$}
+        \IF{$g \in S$}
+          \STATE $\pi \gets \pi \cdot p(g)$
+        \ELSE
+          \STATE $\pi \gets \pi \cdot (1 - p(g))$
+        \ENDIF
+      \ENDFOR
+      \STATE $P \gets P + \pi$
+    \ENDFOR
+    \STATE \RETURN $P$
+  \end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}
