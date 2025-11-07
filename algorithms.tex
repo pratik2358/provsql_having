@@ -1,6 +1,6 @@
 \section{Implementation}
 \begin{algorithm}
-  \caption{DP subset enumeration for $[\mathdutchcal{u}\oslash C]_=$}
+  \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_=$}
   \begin{algorithmic}[1]
     \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ and a constant $C \in M$
     \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t. $\forall R \in \mathcal{R},\; \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}=C$
@@ -25,9 +25,9 @@
 \end{algorithm}
 
 \begin{algorithm}
-  \caption{Possible-world probability for $[\mathdutchcal{u}\oslash C]_=$}
+  \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_=$}
   \begin{algorithmic}[1]
-    \REQUIRE list $\mathcal{R}$ of subsets from Algorithm~1, full gate set $\mathcal{G}$, probabilities $p(g)$ for all $g \in \mathcal{G}$
+    \REQUIRE list $\mathcal{R}$ of subsets from Algorithm~1, the dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, probabilities $p(g)$ for all $g \in \mathcal{G}$
     \ENSURE $\Pr\big([\mathdutchcal{u}\oslash C]_=\big)$
     \FORALL{$S \in \mathcal{R}$}
       \STATE $\pi \gets 1$
