@@ -70,7 +70,7 @@
         \ENDIF
       \ENDFOR
     \ENDFOR
-    \STATE $\mathcal{R} \leftarrow \bigcup_{j=0}^{C-1} dp[j]$
+    \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$
     \STATE \RETURN $\mathcal{R}$
   \end{algorithmic}
 \end{algorithm}
@@ -122,7 +122,7 @@
         \ENDIF
       \ENDFOR
     \ENDFOR
-    \STATE $\mathcal{R} \leftarrow \bigcup_{j=0}^{C} dp[j]$
+    \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C} dp[j]$
     \STATE \RETURN $\mathcal{R}$
   \end{algorithmic}
 \end{algorithm}
@@ -147,4 +147,17 @@
   \end{algorithmic}
 \end{algorithm}
 
-
+\begin{table}
+  \centering
+  \begin{tabular}{cc}
+    \toprule
+    operator & $\mathcal{R}$\\
+    \midrule
+    $=$ & $dp[C]$\\
+    $>$ & $\bigcup_{j=C+1}^{T} dp[j]$\\
+    $<$ & $\bigcup_{j=1}^{C-1} dp[j]$\\
+    $\geq$ & $\bigcup_{j=C}^{T} dp[j]$\\
+    $\leq$ & $\bigcup_{j=1}^{C} dp[j]$\\
+    \bottomrule
+  \end{tabular}
+\end{table}
