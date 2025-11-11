@@ -180,11 +180,19 @@ For the \textbf{equal} case, we have:
 \bigoplus_{W,|W| = c} \Biggl(\biggl(\bigotimes_{W\cap \mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}\biggr)\otimes \Biggl(\mathbb{1}_K\ominus \biggl(\bigoplus_{(X\setminus W)\cap \mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}\biggr) \Biggr)\Biggr)
 \]
 \begin{theorem}
-  For commutative $m-$semirings with additive 
-  idempotence, provenance computation using the possible-world 
-  semantics of Definition~\ref{def:pw_semantics} is equivalent to the corresponding provenance computation as described in Proposition~\ref{prop:j_rewrite}.
+  For any commutative $m-$semiring K that is additively 
+  idempotent, provenance of any predicate of the form \textsc{HAVING COUNT(*) }$op\;c$ evaluated using the possible-world 
+  semantics of Definition~\ref{def:pw_semantics} is equivalent to the corresponding provenance computation of the \textsc{JOIN}-based rewrites described in Proposition~\ref{prop:j_rewrite}.
 \end{theorem}
 \begin{proof}
+We peoceed by establishing a monus structure of an arbitrary $m-$semiring $K$, that we will use to manipulate 
+algebraic expressions involving $\ominus$, in this proof.\\
+$K$ satisfies $(A9)-(A12)$.
+  Therefore $\forall\;a,b,c \in K$, \[a-b\leq c\;\iff\;a\leq b+c\]
+  where, $\leq$ is induced by the monoid law:\[a\leq b\;\iff\;\exists c\cdot a +c=b\] 
+  Since $K$ is idempotent over semiring addition, this ordr is a semilattice order: $a\leq b\iff a\otimes b=b$ and $a\ominus b$ is the residual difference satisfying:
+  \[a\leq b\oplus c\;\iff\;a\ominus b\leq c\tag{\S}\]
+
 \end{proof}
 % \subsection{Possible-world semantics - a lazy approach}
 % \paragraph{Semantic Partitioning of Variables}
