@@ -4,7 +4,6 @@ relations presented in \cite{sen2025provsqlgeneralkeepingtrack} by
 adding a new predicate form that allows 
 comparison between aggregations we fill the semantics gap that 
 was noted and left for future work.
-\subsection{Possible world semantics over tuples}
 \paragraph{Setup.}
 Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an 
 added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an 
@@ -26,13 +25,13 @@ $\mathrm{supp}(\mathdutchcal{a})=\{\,\mathbf{x} \mid I_\mathdutchcal{a}(\mathbf{
 $\bigoplus_{\mathcal{M}}$ is a formal $\mathcal{M}-$sum over 
 variables $\mathbf{x}$ involved in the aggregation.
 A possible world is a represented by a subset $W\subseteq\mathbf{X}$.
-\paragraph{Possible-world semantics.}
+\begin{definition}[Possible-world Semantics]\label{def:pw_semantics}
 For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as, 
 \[
 [\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K 
 \]
 such that,
-\begin{multline}
+\begin{multline*}
 [\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathrm{op}}=
 \bigoplus_{W} 
 \Biggl(
@@ -42,13 +41,14 @@ such that,
 \;\otimes\;\\
   \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \;\oplus\; \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\Biggr)
 \Biggr)
-\end{multline}
+\end{multline*}
 where,
 $\chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)=
 \begin{cases}
 \mathbb{1}_K & \text{if } {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}\;\mathit{op}\;{\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)},\\
 \mathbb{0}_K & \text{otherwise.}
-\end{cases}$ 
+\end{cases}$
+\end{definition}
 \paragraph{Complexity}
 
 We show that provenance evaluation of a comparison between 
@@ -148,75 +148,44 @@ We now define a counting version of the \textsc{Subset-Sum} problem, which is a 
 
 \end{proof}
 
-\begin{definition}
-    (Join Rewrite) For queries of the form $\mathsf{HAVING\; COUNT(*) = c}$ over a relation we define the join semantics as below:
-\paragraph{Equal.}
+\begin{proposition}\label{prop:j_rewrite}
+All queries with $\mathsf{HAVING\; COUNT(*)\;\textit{op}\; c}$ as predicate(s), where $\textit{op}\;\in\{=,<,>,\leq,\geq\}$, can be rewritten as equivalent \textsc{JOIN}-based queries for which semiring-provenance can be computed using our semantics in \cite{sen2025provsqlgeneralkeepingtrack} as:
+\begin{enumerate}
+\item
 \[
-[\mathdutchcal{u} \oslash c]_{=}=
-\bigoplus_{W,|W| = c} 
-\Biggl(
-  \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr)
-\otimes
-  \chi_{=}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, c \bigr)
-\;\otimes\;
-  \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)} \Biggr)\Biggr)
-\Biggr)
-\]
-
-\[
-[\mathdutchcal{u} \oslash c]_{=}=
 \bigoplus_{W,|W| = c} 
 \Biggl(
   \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)
    \ominus \bigoplus_{W,|W| = c+1} 
 \Biggl(
   \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)
+  \text{ when } op\;=\;= \], 
+\item \[
+  \bigoplus_{X} \mathbf{x}^{(K)} \ominus \biggl(\bigoplus_{W, |W|=c}\bigotimes \mathbf{x}^{(K)}\biggr)\;\text{when}\;op=\;<
 \]
-
-\paragraph{Greater than equal.}
-
+\item 
 \[
-[\mathdutchcal{u} \oslash c]_{\geq}=
 \bigoplus_{W,|W| = c} 
 \Biggl(
-  \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr)
-\otimes
-  \chi_{\geq}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, c \bigr)
-\Biggr)
+  \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\;\text{when}\;op\;=\;>
 \]
 
-\[
-[\mathdutchcal{u} \oslash c]_{=}=
-\bigoplus_{W,|W| = c} 
-\Biggl(
-  \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)
-\]
+\end{enumerate}
 
-\paragraph{Less than.}
-\[
-[\mathdutchcal{u} \oslash c]_{<}=
-\bigoplus_{W,|W| = c} 
-\Biggl(
-  \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr)
-\otimes
-  \chi_{<}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, c \bigr)
-\;\otimes\;
-  \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)} \Biggr)\Biggr)
-\Biggr)
-\]
-
-\[
-[\mathdutchcal{u} \oslash c]_{<}= \bigoplus_{X} \mathbf{x}^{(K)} \ominus \biggl(\bigoplus_{W, |W|=c}\bigotimes \mathbf{x}^{(K)}\biggr)
-\]
-
-\end{definition}
+\end{proposition}
 
 For the \textbf{equal} case, we have:
 \[
 [\mathdutchcal{u} \oslash c]_{=}=
 \bigoplus_{W,|W| = c} \Biggl(\biggl(\bigotimes_{W\cap \mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}\biggr)\otimes \Biggl(\mathbb{1}_K\ominus \biggl(\bigoplus_{(X\setminus W)\cap \mathrm{supp}(\mathdutchcal{u})}\mathbf{x}^{(K)}\biggr) \Biggr)\Biggr)
 \]
-
+\begin{theorem}
+  For commutative $m-$semirings with additive 
+  idempotence, provenance computation using the possible-world 
+  semantics of Definition~\ref{def:pw_semantics} is equivalent to the corresponding provenance computation as described in Proposition~\ref{prop:j_rewrite}.
+\end{theorem}
+\begin{proof}
+\end{proof}
 % \subsection{Possible-world semantics - a lazy approach}
 % \paragraph{Semantic Partitioning of Variables}
 
