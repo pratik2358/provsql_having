@@ -214,6 +214,19 @@ Let $Y=(\textbf{X}\setminus W)\cap\mathrm{supp}(\textsc{COUNT(*)})$, then the te
   \[
   a\ominus(b_1\oplus\dots\oplus b_n)=(\dots ((a\ominus b_1)\ominus b_2)\dots)\ominus b_n
   \]
+  The \textsc{JOIN}-based provenance expression using Proposition~\ref{prop:j_rewrite} is:
+
+\[
+\bigoplus_{\substack{W\subseteq\mathbf{X}\\|W|=c}}
+\Biggl(
+  \bigotimes_{x\in W\cap \mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)}
+\Biggr)
+\;\ominus\;
+\bigoplus_{\substack{W\subseteq\mathbf{X}\\|W|=c+1}}
+\Biggl(
+  \bigotimes_{x\in W\cap \mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)}
+  \Biggr).\tag{2}
+\]
 \end{proof}
 % \subsection{Possible-world semantics - a lazy approach}
 % \paragraph{Semantic Partitioning of Variables}
