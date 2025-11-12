@@ -349,6 +349,23 @@ Using $(\dagger)$ we deduce \(S_c\ominus S_{c+1}\le \mathrm{PW}\).
 Combining (i) and (ii) gives the equality \(\mathrm{PW}=S_c\ominus S_{c+1}\),
 which is exactly the JOIN-based rewrite. This completes the proof.
 \end{proof}
+
+\begin{toappendix}
+    The resudual property $\S$ relies only on additive monus axioms A9--A12.
+    \begin{itemize}
+        \item A9: \(a - a = 0\)
+        \item A10: \(0 - a = 0\)
+        \item A11: \(a+(b-a) = b + (a-b)\)
+        \item A12: \(a-(b+c) = (a - b) - c\)
+    \end{itemize}
+    \paragraph{Idempotence.} \(a+a = a\)\\
+    From these we can establish a semilattice order: \(x\leq y\; \iff \; x+y = y\).
+    By A11, \(a = (a \ominus b) \oplus (a \land b)\). If \(a\ominus b\leq c\), by definition of \(\leq\), \((a\ominus b) \oplus c = c\).
+    From A11, \(a = b \oplus (a\ominus b)\leq b \oplus c\) because \((a\ominus b) \leq c\).\\
+    Conversely, if \(a\leq b \oplus c\), then \((a \ominus b) \leq (b \oplus c) \ominus b \). Using A12, 
+    \((b \oplus c) \ominus b = c\). Hence, \(a\ominus b \leq c\).\\
+    Thus, the residual property \(\S\) of monus follows directly from axioms A9--A12, and idempotence of \(\oplus\)
+\end{toappendix}
 % \subsection{Possible-world semantics - a lazy approach}
 % \paragraph{Semantic Partitioning of Variables}
 
