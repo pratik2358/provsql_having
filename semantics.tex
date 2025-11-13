@@ -176,11 +176,11 @@ All queries with $\mathsf{HAVING\; COUNT(*)\;\textit{op}\; c}$ as predicate(s), 
 
 
 \begin{theorem}
-  For any commutative $m-$semiring K that is additively 
+  For any commutative $m-$semiring K (satisfying (A9)--(A12)) that is additively 
   idempotent, provenance of any predicate of the form \textsc{HAVING COUNT(*) }$op\;c$ evaluated using the possible-world 
   semantics of Definition~\ref{def:pw_semantics} is equivalent to the corresponding provenance computation of the \textsc{JOIN}-based rewrites described in Proposition~\ref{prop:j_rewrite}.
 \end{theorem}
-\begin{proof}  [Uses A13]
+\begin{proof}[Proof (order-theoretic)]
 We peoceed by establishing a monus structure of an arbitrary $m-$semiring $K$, that we will use to manipulate 
 algebraic expressions involving $\ominus$, in this proof.\\
 $K$ satisfies $(A9)-(A12)$.
@@ -189,108 +189,6 @@ $K$ satisfies $(A9)-(A12)$.
   Since $K$ is idempotent over semiring addition, this ordr is a semilattice order: $a\leq b\iff a\oplus b=b$ and $a\ominus b$ is the residual difference satisfying:
   \[a\leq b\oplus c\;\iff\;a\ominus b\leq c\tag{\S}\]\\
   If $op$ is $=$,\\
-  \begin{multline*}
-    [\textsc{COUNT(*)} \oslash c]_{=}=
-\bigoplus_{W} 
-\Biggl(
-  \bigotimes_{W\cap\mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)} 
-\otimes
-    \chi_{=}\Bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(M)}, c  \Bigr)
-\;\otimes\;
-    \Biggl(\mathbb{1}_K \ominus \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)}\Biggr)
-\Biggr).
-\end{multline*}
-We denote the set of contributing possible worlds by \[\mathcal{W}_c=\{ W\subseteq \mathbf{X}\;|\;\sum_{W\cap\mathrm{supp}(\textsc{COUNT(*)})}\textbf{x}^{(M)}=c  \}\]
-Thus, 
-  \[
-   [\textsc{COUNT(*)} \oslash c]_{=}= \bigoplus_{W\in\mathcal{W}_c} \Biggl(
-   \bigotimes_{W\cap\mathrm{supp}(\textsc{COUNT(*)})}\textbf{x}^{(K)}\otimes\Bigl(1_K\ominus
-   \bigoplus_{(\textbf{X}\setminus W)\cap\mathrm{supp}(\textsc{COUNT(*)})}\textbf{x}^{(K)}
-   \Bigr)
-   \Biggr) \tag{1}
-   \]
-Let $Y=(\textbf{X}\setminus W)\cap\mathrm{supp}(\textsc{COUNT(*)})$, then the term $1_K\ominus\bigoplus_{Y}\textbf{x}^{(K)}$ basically represents the absence of all elemnets of $Y$. 
-  $(A9)-(A12)$ guarantee right distributivity of $\ominus$ over $\oplus$:
-  \[
-  a\ominus(b_1\oplus\dots\oplus b_n)=(\dots ((a\ominus b_1)\ominus b_2)\dots)\ominus b_n
-  \]
-So,
-
-\[
-\mathbb{1}_K \ominus \bigoplus_{x\in S} \mathbf{x}^{(K)}
-= 
-\bigl(\cdots((\mathbb{1}_K \ominus \mathbf{x}_1^{(K)}) \ominus \mathbf{x}_2^{(K)}) \cdots\bigr) \ominus \mathbf{x}_n^{(K)}.
-\]
-  The \textsc{JOIN}-based provenance expression using Proposition~\ref{prop:j_rewrite} is:
-
-\[
-\bigoplus_{\substack{W\subseteq\mathbf{X}\\|W|=c}}
-\Biggl(
-  \bigotimes_{x\in W\cap \mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)}
-\Biggr)
-\;\ominus\;
-\bigoplus_{\substack{W\subseteq\mathbf{X}\\|W|=c+1}}
-\Biggl(
-  \bigotimes_{x\in W\cap \mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)}
-  \Biggr).\tag{2}
-\]
-  Since $\oplus$ is idempotent and $a\leq b \iff a\oplus b=b$, expressions in $K$ can be realised as sets of possible worlds closed under union.
-  Let,
-
-\[
-S_c =
-\bigoplus_{\substack{W\subseteq\mathbf{X}\\|W|=c}}
-  \bigotimes_{x\in W\cap \mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)},
-\qquad
-S_{c+1} =
-\bigoplus_{\substack{W\subseteq\mathbf{X}\\|W|=c+1}}
-\bigotimes_{x\in W\cap \mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)}.
-\]
-
-Then (2) becomes:
-\[
-S_c \ominus S_{c+1}.
-\tag{3}
-\]
-
-Now, by the defining property (†) of the monus (from Bosbach’s equivalence):
-\[
-a \ominus b \text{ is the largest } c \text{ s.t. } a \ge b \oplus c
-\;\;\Longleftrightarrow\;\;
-a \ominus b \le d \;\;\Longleftrightarrow\;\; a \le b \oplus d.
-\]
-
-Hence \(a \ominus b\) behaves as an inclusion–exclusion residual:
-it removes all contributions that appear in both \(a\) and \(b\).
-Since \(S_c\) includes all subsets of size \(c\) or more (by idempotence and closure under \(\oplus\)),
-subtracting \(S_{c+1}\) leaves exactly the subsets of exact size \(c\) — which are the worlds counted in (1).
-
-Therefore, each term in (1) corresponds exactly to one term in \(S_c \ominus S_{c+1}\):
-the first factor \(\bigotimes_{x\in W\cap \mathrm{supp}(\textsc{COUNT(*)})}\mathbf{x}^{(K)}\) accounts for the present tuples,
-the \(\ominus\) factor removes the extensions of \(W\) with additional tuples (enforcing exactly \(W\)),
-additive idempotence ensures duplicates cancel,
-and commutativity allows reordering.
-
-Thus, term-by-term,
-\[
-\Biggl(
-\bigotimes_{x\in W\cap \mathrm{supp}(\textsc{COUNT(*)})} \mathbf{x}^{(K)}
-\Biggr)
-\otimes
-\Biggl(
-\mathbb{1}_K \ominus 
-\bigoplus_{x\in (\mathbf{X}\setminus W)\cap 
-\mathrm{supp}(\textsc{COUNT(*)})}\mathbf{x}^{(K)}
-\Biggr)
-=
-\text{(summand of } S_c \ominus S_{c+1}\text{)}.
-\]
-
-Hence the full sum (1) equals (2).
-\end{proof}
-
-
-\begin{proof}[Proof (order-theoretic, A9--A12 only)]
 Let $U=\mathrm{supp}(\textsc{COUNT(*)})$ and for $T\subseteq U$ set
 $A_T=\bigotimes_{x\in T}\mathbf{x}^{(K)}$ as before. Put
 \[
@@ -298,20 +196,20 @@ S_c=\bigoplus_{|T|=c} A_T,\qquad S_{c+1}=\bigoplus_{|T|=c+1} A_T,
 \]
 and write the possible-world sum (restricted to contributing worlds)
 \[
-\mathrm{PW}=\bigoplus_{\substack{W\subseteq\mathbf X\\|W\cap U|=c}}
+[\textsc{COUNT(*)} \oslash c]_{=}=\bigoplus_{\substack{W\subseteq\mathbf X\\|W\cap U|=c}}
 A_{W\cap U}\otimes\Bigl(\mathbb{1}_K\ominus\bigoplus_{x\in U\setminus(W\cap U)}\mathbf{x}^{(K)}\Bigr).
 \tag{PW}
 \]
 
-We prove \(\mathrm{PW}=S_c\ominus S_{c+1}\) by showing the two inequalities
+We prove \( [\textsc{COUNT(*)} \oslash c]_{=}=S_c\ominus S_{c+1}\) by showing the two inequalities
 \[
-\mathrm{PW}\le S_c\ominus S_{c+1},\qquad S_c\ominus S_{c+1}\le \mathrm{PW}.
+\ [\textsc{COUNT(*)} \oslash c]_{=}\leq S_c\ominus S_{c+1},\qquad S_c\ominus S_{c+1}\le  [\textsc{COUNT(*)} \oslash c]_{=}.
 \]
 
-\paragraph{(i) $\mathrm{PW}\le S_c\ominus S_{c+1}$.}
-By the residual property $(\dagger)$ it suffices to prove
+\paragraph{(i) $ [\mathrm{COUNT(*)} \oslash c]_{=}\le S_c\ominus S_{c+1}$.}
+By the residual difference property $(\S)$ it suffices to prove
 \[
-\mathrm{PW}\oplus S_{c+1}\le S_c.
+\ [\textsc{COUNT(*)} \oslash c]_{=}\oplus S_{c+1}\le S_c.
 \]
 Fix a particular $T\subseteq U$ with $|T|=c$ and denote
 \[
@@ -324,15 +222,15 @@ We show \(t_T\oplus S_{c+1}\le S_c\). Every generator (summand) of
 
 Thus every generator of \(t_T\oplus S_{c+1}\) is a generator of the larger sum
 \(\bigoplus_{|T'|\ge c} A_{T'}\). Since \(S_c=\bigoplus_{|T|=c}A_T\) and idempotent
-addition orders generators by set-inclusion in the usual provenance interpretation,
+addition orders generators by set-inclusion, 
 we therefore have \(t_T\oplus S_{c+1}\le S_c\). Summing over all \(T\) with \(|T|=c\)
-yields \(\mathrm{PW}\oplus S_{c+1}\le S_c\), hence \(\mathrm{PW}\le S_c\ominus S_{c+1}\)
-by $(\dagger)$.
+  yields \( [\textsc{COUNT(*)} \oslash c]_{=}\oplus S_{c+1}\le S_c\), hence \( [\textsc{COUNT(*)} \oslash c]_{=}\le S_c\ominus S_{c+1}\)
+by $(\S)$.
 
-\paragraph{(ii) $S_c\ominus S_{c+1}\le \mathrm{PW}$.}
-Again use the residual property: it suffices to show
+\paragraph{(ii) $S_c\ominus S_{c+1}\le  [\mathrm{COUNT(*)} \oslash c]_{=}$.}
+Again using $\S$: it suffices to show
 \[
-S_c \le S_{c+1}\oplus \mathrm{PW}.
+S_c \le S_{c+1}\oplus  [\textsc{COUNT(*)} \oslash c]_{=}.
 \]
 Every generator $A_T$ with $|T|=c$ appears in the right-hand side because
 \[
@@ -340,14 +238,13 @@ A_T = A_T\otimes\Bigl(\mathbb{1}_K\ominus\bigoplus_{x\in U\setminus T}\mathbf{x}
 \oplus
 \bigoplus_{\substack{S\subseteq U\setminus T\\|S|\ge 1}} A_{T\cup S},
 \]
-the left summand being exactly the $t_T$-term in PW and the right summand
+the left summand being exactly the $t_T$-term in $ [\textsc{COUNT(*)} \oslash c]_{=}$ and the right summand
 contained in $S_{c+1}\oplus S_{c+2}\oplus\cdots$. Therefore each
-$A_T\le S_{c+1}\oplus\mathrm{PW}$, and taking the $\oplus$ of these inequalities
-over all $T$ with $|T|=c$ yields \(S_c\le S_{c+1}\oplus\mathrm{PW}\).
-Using $(\dagger)$ we deduce \(S_c\ominus S_{c+1}\le \mathrm{PW}\).
+$A_T\le S_{c+1}\oplus [\textsc{COUNT(*)} \oslash c]_{=}$, and taking the $\oplus$ of these inequalities
+over all $T$ with $|T|=c$ yields \(S_c\le S_{c+1}\oplus [\textsc{COUNT(*)} \oslash c]_{=}\).
+Using $(\dagger)$ we deduce \(S_c\ominus S_{c+1}\le  [\textsc{COUNT(*)} \oslash c]_{=}\).
 
-Combining (i) and (ii) gives the equality \(\mathrm{PW}=S_c\ominus S_{c+1}\),
-which is exactly the JOIN-based rewrite. This completes the proof.
+Combining (i) and (ii) gives the equality \( [\textsc{COUNT(*)} \oslash c]_{=}=S_c\ominus S_{c+1}\). This completes the proof.
 \end{proof}
 
 \begin{toappendix}
