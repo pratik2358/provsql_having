@@ -180,70 +180,131 @@ All queries with $\mathsf{HAVING\; COUNT(*)\;\textit{op}\; c}$ as predicate(s), 
   idempotent, provenance of any predicate of the form \textsc{HAVING COUNT(*) }$op\;c$ evaluated using the possible-world 
   semantics of Definition~\ref{def:pw_semantics} is equivalent to the corresponding provenance computation of the \textsc{JOIN}-based rewrites described in Proposition~\ref{prop:j_rewrite}.
 \end{theorem}
-\begin{proof}[Proof (order-theoretic)]
-We peoceed by establishing a monus structure of an arbitrary $m-$semiring $K$, that we will use to manipulate 
-algebraic expressions involving $\ominus$, in this proof.\\
-$K$ satisfies $(A9)-(A12)$.
-  Therefore $\forall\;a,b,c \in K$, \[a-b\leq c\;\iff\;a\leq b+c\]
-  where, $\leq$ is induced by the monoid law:\[a\leq b\;\iff\;\exists c \; \text{s.t}\; a +c=b\] 
-  Since $K$ is idempotent over semiring addition, this ordr is a semilattice order: $a\leq b\iff a\oplus b=b$ and $a\ominus b$ is the residual difference satisfying:
-  \[a\leq b\oplus c\;\iff\;a\ominus b\leq c\tag{\S}\]\\
-  If $op$ is $=$,\\
-Let $U=\mathrm{supp}(\textsc{COUNT(*)})$ and for $T\subseteq U$ set
-$A_T=\bigotimes_{x\in T}\mathbf{x}^{(K)}$ as before. Put
+\begin{proof}[Proof]
+\begin{proof}
+Assume axioms A9--A12, together with
 \[
-S_c=\bigoplus_{|T|=c} A_T,\qquad S_{c+1}=\bigoplus_{|T|=c+1} A_T,
-\]
-and write the possible-world sum (restricted to contributing worlds)
-\[
-[\textsc{COUNT(*)} \oslash c]_{=}=\bigoplus_{\substack{W\subseteq\mathbf X\\|W\cap U|=c}}
-A_{W\cap U}\otimes\Bigl(\mathbb{1}_K\ominus\bigoplus_{x\in U\setminus(W\cap U)}\mathbf{x}^{(K)}\Bigr).
+\textbf{A13:}\qquad a\otimes(b\ominus c)=a\otimes b\;\ominus\; a\otimes c,
+\qquad
+\textbf{A14:}\qquad (a\oplus b)\ominus c = (a\ominus c)\oplus(b\ominus c).
 \]
 
-We prove \( [\textsc{COUNT(*)} \oslash c]_{=}=S_c\ominus S_{c+1}\) by showing the two inequalities
+Let $U:=\mathrm{supp}(\textsc{COUNT(*)})$. For any $W\subseteq U$ define the monomial
 \[
-\ [\textsc{COUNT(*)} \oslash c]_{=}\leq S_c\ominus S_{c+1},\qquad S_c\ominus S_{c+1}\le  [\textsc{COUNT(*)} \oslash c]_{=}.
+A_W := \bigotimes_{x\in W}\mathbf{x}^{(K)},
+\]
+and for $|W|=c$ define the ``exact-$W$'' contribution
+\[
+t_W := A_W \otimes \Bigl(\mathbb{1}_K \ominus \bigoplus_{x\in U\setminus W}\mathbf{x}^{(K)}\Bigr).
+\]
+Put
+\[
+S_c := \bigoplus_{\substack{W\subseteq U\\|W|=c}} A_W,\qquad
+S_{c+1} := \bigoplus_{\substack{W'\subseteq U\\|W'|=c+1}} A_{W'},
+\qquad
+\bigl[\textsc{COUNT(*)}\oslash c\bigr]_{=}
+   := \bigoplus_{\substack{W\subseteq U\\|W|=c}} t_W.
 \]
 
-\paragraph{(i) $ [\mathrm{COUNT(*)} \oslash c]_{=}\le S_c\ominus S_{c+1}$.}
-By the residual difference property $(\S)$ it suffices to prove
+\paragraph{Induction: A14 distributes over any finite $\oplus$-sum.}
+We first prove by induction on $n\ge 1$ the identity
 \[
-\ [\textsc{COUNT(*)} \oslash c]_{=}\oplus S_{c+1}\le S_c.
+\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
+   = \bigoplus_{i=1}^n (a_i\ominus c),
+\tag{I}
 \]
-Fix a particular $T\subseteq U$ with $|T|=c$ and denote
-\[
-t_T := A_T\otimes\Bigl(\mathbb{1}_K\ominus\bigoplus_{x\in U\setminus T}\mathbf{x}^{(K)}\Bigr).
-\]
-We show \(t_T\oplus S_{c+1}\le S_c\). Every generator (summand) of
-\(t_T\oplus S_{c+1}\) is of the form $A_{T'}$ for some $T'$ with $|T'|\ge c$:
-- the summands coming from $S_{c+1}$ are by definition $A_{T'}$ with $|T'|=c+1$;
-- the nested subtraction factor in $t_T$ guarantees that any multiplicative extension of $A_T$ (i.e. $A_{T\cup S}$ with $S\neq\emptyset$) is removed from the contribution of $t_T$, so the only remaining atomic contribution from $t_T$ that survives as a generator is $A_T$ itself.
+for arbitrary $a_1,\dots,a_n,c\in K$.
 
-Thus every generator of \(t_T\oplus S_{c+1}\) is a generator of the larger sum
-\(\bigoplus_{|T'|\ge c} A_{T'}\). Since \(S_c=\bigoplus_{|T|=c}A_T\) and idempotent
-addition orders generators by set-inclusion, 
-we therefore have \(t_T\oplus S_{c+1}\le S_c\). Summing over all \(T\) with \(|T|=c\)
-  yields \( [\textsc{COUNT(*)} \oslash c]_{=}\oplus S_{c+1}\le S_c\), hence \( [\textsc{COUNT(*)} \oslash c]_{=}\le S_c\ominus S_{c+1}\)
-by $(\S)$.
-
-\paragraph{(ii) $S_c\ominus S_{c+1}\le  [\mathrm{COUNT(*)} \oslash c]_{=}$.}
-Again using $\S$: it suffices to show
+Base $n=1$ is trivial. For $n=2$ this is exactly A14:
 \[
-S_c \le S_{c+1}\oplus  [\textsc{COUNT(*)} \oslash c]_{=}.
+(a_1\oplus a_2)\ominus c = (a_1\ominus c)\oplus(a_2\ominus c).
 \]
-Every generator $A_T$ with $|T|=c$ appears in the right-hand side because
+Assume (I) holds for $n-1$. Then
 \[
-A_T = A_T\otimes\Bigl(\mathbb{1}_K\ominus\bigoplus_{x\in U\setminus T}\mathbf{x}^{(K)}\Bigr)
-\oplus
-\bigoplus_{\substack{S\subseteq U\setminus T\\|S|\ge 1}} A_{T\cup S},
+\begin{aligned}
+\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
+&= \Bigl(\bigl(\bigoplus_{i=1}^{\,n-1} a_i\bigr)\oplus a_n\Bigr)\ominus c \\
+&\overset{\text{A14}}{=}
+\Bigl(\bigoplus_{i=1}^{\,n-1} a_i\Bigr)\ominus c \;\oplus\; (a_n\ominus c) \\
+&\overset{\text{IH}}{=}
+\bigoplus_{i=1}^{\,n-1} (a_i\ominus c) \;\oplus\; (a_n\ominus c)
+= \bigoplus_{i=1}^n (a_i\ominus c).
+\end{aligned}
 \]
-the left summand being exactly the $t_T$-term in $ [\textsc{COUNT(*)} \oslash c]_{=}$ and the right summand
-contained in $S_{c+1}\oplus S_{c+2}\oplus\cdots$. Therefore each
-$A_T\le S_{c+1}\oplus [\textsc{COUNT(*)} \oslash c]_{=}$, and taking the $\oplus$ of these inequalities
-over all $T$ with $|T|=c$ yields \(S_c\le S_{c+1}\oplus [\textsc{COUNT(*)} \oslash c]_{=}\).
-Using $(\dagger)$ we deduce \(S_c\ominus S_{c+1}\le  [\textsc{COUNT(*)} \oslash c]_{=}\).
+Thus (I) holds for every finite $n$.
 
-Combining (i) and (ii) gives the equality \( [\textsc{COUNT(*)} \oslash c]_{=}=S_c\ominus S_{c+1}\). This completes the proof.
+\paragraph{Algebraic derivation.}
+Using the induction result (I) with the outer sum in $S_c$ and $c:=S_{c+1}$ we obtain
+\[
+S_c\ominus S_{c+1}
+= \Bigl(\bigoplus_{|W|=c} A_W\Bigr)\ominus S_{c+1}
+= \bigoplus_{|W|=c} \bigl(A_W\ominus S_{c+1}\bigr).
+\tag{1}
+\]
+\end{proof}
+%  peoceed by establishing a monus structure of an arbitrary $m-$semiring $K$, that we will use to manipulate 
+% algebraic expressions involving $\ominus$, in this proof.\\
+% $K$ satisfies $(A9)-(A12)$.
+%   Therefore $\forall\;a,b,c \in K$, \[a-b\leq c\;\iff\;a\leq b+c\]
+%   where, $\leq$ is induced by the monoid law:\[a\leq b\;\iff\;\exists c \; \text{s.t}\; a +c=b\] 
+%   Since $K$ is idempotent over semiring addition, this ordr is a semilattice order: $a\leq b\iff a\oplus b=b$ and $a\ominus b$ is the residual difference satisfying:
+%   \[a\leq b\oplus c\;\iff\;a\ominus b\leq c\tag{\S}\]\\
+%   If $op$ is $=$,\\
+% Let $U=\mathrm{supp}(\textsc{COUNT(*)})$ and for $T\subseteq U$ set
+% $A_T=\bigotimes_{x\in T}\mathbf{x}^{(K)}$ as before. Put
+% \[
+% S_c=\bigoplus_{|T|=c} A_T,\qquad S_{c+1}=\bigoplus_{|T|=c+1} A_T,
+% \]
+% and write the possible-world sum (restricted to contributing worlds)
+% \[
+% [\textsc{COUNT(*)} \oslash c]_{=}=\bigoplus_{\substack{W\subseteq\mathbf X\\|W\cap U|=c}}
+% A_{W\cap U}\otimes\Bigl(\mathbb{1}_K\ominus\bigoplus_{x\in U\setminus(W\cap U)}\mathbf{x}^{(K)}\Bigr).
+% \]
+%
+% We prove \( [\textsc{COUNT(*)} \oslash c]_{=}=S_c\ominus S_{c+1}\) by showing the two inequalities
+% \[
+% \ [\textsc{COUNT(*)} \oslash c]_{=}\leq S_c\ominus S_{c+1},\qquad S_c\ominus S_{c+1}\le  [\textsc{COUNT(*)} \oslash c]_{=}.
+% \]
+%
+% \paragraph{(i) $ [\mathrm{COUNT(*)} \oslash c]_{=}\le S_c\ominus S_{c+1}$.}
+% By the residual difference property $(\S)$ it suffices to prove
+% \[
+% \ [\textsc{COUNT(*)} \oslash c]_{=}\oplus S_{c+1}\le S_c.
+% \]
+% Fix a particular $T\subseteq U$ with $|T|=c$ and denote
+% \[
+% t_T := A_T\otimes\Bigl(\mathbb{1}_K\ominus\bigoplus_{x\in U\setminus T}\mathbf{x}^{(K)}\Bigr).
+% \]
+% We show \(t_T\oplus S_{c+1}\le S_c\). Every generator (summand) of
+% \(t_T\oplus S_{c+1}\) is of the form $A_{T'}$ for some $T'$ with $|T'|\ge c$:
+% - the summands coming from $S_{c+1}$ are by definition $A_{T'}$ with $|T'|=c+1$;
+% - the nested subtraction factor in $t_T$ guarantees that any multiplicative extension of $A_T$ (i.e. $A_{T\cup S}$ with $S\neq\emptyset$) is removed from the contribution of $t_T$, so the only remaining atomic contribution from $t_T$ that survives as a generator is $A_T$ itself.
+%
+% Thus every generator of \(t_T\oplus S_{c+1}\) is a generator of the larger sum
+% \(\bigoplus_{|T'|\ge c} A_{T'}\). Since \(S_c=\bigoplus_{|T|=c}A_T\) and idempotent
+% addition orders generators by set-inclusion, 
+% we therefore have \(t_T\oplus S_{c+1}\le S_c\). Summing over all \(T\) with \(|T|=c\)
+%   yields \( [\textsc{COUNT(*)} \oslash c]_{=}\oplus S_{c+1}\le S_c\), hence \( [\textsc{COUNT(*)} \oslash c]_{=}\le S_c\ominus S_{c+1}\)
+% by $(\S)$.
+%
+% \paragraph{(ii) $S_c\ominus S_{c+1}\le  [\mathrm{COUNT(*)} \oslash c]_{=}$.}
+% Again using $\S$: it suffices to show
+% \[
+% S_c \le S_{c+1}\oplus  [\textsc{COUNT(*)} \oslash c]_{=}.
+% \]
+% Every generator $A_T$ with $|T|=c$ appears in the right-hand side because
+% \[
+% A_T = A_T\otimes\Bigl(\mathbb{1}_K\ominus\bigoplus_{x\in U\setminus T}\mathbf{x}^{(K)}\Bigr)
+% \oplus
+% \bigoplus_{\substack{S\subseteq U\setminus T\\|S|\ge 1}} A_{T\cup S},
+% \]
+% the left summand being exactly the $t_T$-term in $ [\textsc{COUNT(*)} \oslash c]_{=}$ and the right summand
+% contained in $S_{c+1}\oplus S_{c+2}\oplus\cdots$. Therefore each
+% $A_T\le S_{c+1}\oplus [\textsc{COUNT(*)} \oslash c]_{=}$, and taking the $\oplus$ of these inequalities
+% over all $T$ with $|T|=c$ yields \(S_c\le S_{c+1}\oplus [\textsc{COUNT(*)} \oslash c]_{=}\).
+% Using $(\dagger)$ we deduce \(S_c\ominus S_{c+1}\le  [\textsc{COUNT(*)} \oslash c]_{=}\).
+%
+% Combining (i) and (ii) gives the equality \( [\textsc{COUNT(*)} \oslash c]_{=}=S_c\ominus S_{c+1}\). This completes the proof.
 \end{proof}
 
 \begin{toappendix}
@@ -261,6 +322,7 @@ Combining (i) and (ii) gives the equality \( [\textsc{COUNT(*)} \oslash c]_{=}=S
     Conversely, if \(a\leq b \oplus c\), then \((a \ominus b) \leq (b \oplus c) \ominus b \). Using A12, 
     \((b \oplus c) \ominus b = c\). Hence, \(a\ominus b \leq c\).\\
     Thus, the residual property \(\S\) of monus follows directly from axioms A9--A12, and idempotence of \(\oplus\)
+    Commutative multiplication is a necessity.
 \end{toappendix}
 % \subsection{Possible-world semantics - a lazy approach}
 % \paragraph{Semantic Partitioning of Variables}
