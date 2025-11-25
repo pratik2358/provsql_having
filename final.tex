@@ -32,15 +32,18 @@ with Monus}
 \end{proposition}
 \begin{proof}
   \textbf{($\Rightarrow$)}
-  Assume S to be additively idempotent, then $\oplus$ is the join of a semilattice order.
-  \\If $a\leq b \implies a\oplus b =b $ \text{and }$\exists x, a\oplus x=b$
-  \\ $a \oplus b = a \oplus (a \oplus x)=a \oplus x = b$
-  \\$a\oplus b = b \implies a \leq b$
-  \\$a\leq b \iff a \oplus b =b$
+  Assume S to be additively idempotent. Define a preorder $\leq$ such that,
+  if $a\leq b$ \text{then }$\exists x,\; a\oplus x=b$.
+  So, $a \oplus b = a \oplus (a \oplus x)=(a\oplus a)\oplus x=a \oplus x = b$. \\$\therefore a\leq b \implies a\oplus b=b$.
+  \\Conversely, if $a\oplus b = b$, choose $x=b$. And trivially, $a\oplus x =a\oplus b=b$
+  $\implies a \leq b$.
+  \\$\therefore a\leq b \iff a \oplus b =b$. Therefore, $(S,\leq)$ is indeed a partial order and $\oplus$ is monotone under $\leq$.
   \\Now, $\forall u, a \leq u$ and $b \leq u$
-  \\ $a \oplus u = u$ and $b\oplus u =u$
+  \\ $a \oplus u = u$ and $b\oplus u =u$.
   \\But, $a\leq a \oplus b$ and $b \leq a \oplus b$
   \\$\therefore a \oplus b $ is the least such $u$ for which $a\leq u $ and $b \leq u$.
+  So, $\oplus$ is the join of a semilattice of $(S,\leq)$.
+
   \paragraph{i.}
   By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus z$, 
   $a\leq a\oplus b\leq c \oplus ((a\oplus b)\ominus c) \implies a\ominus c\leq (a\oplus b)\ominus c$.
@@ -51,6 +54,23 @@ with Monus}
 \\$\therefore $ $(a\oplus b) \ominus c \leq (a\ominus c)\oplus (b\ominus c) $, by definition of monus.
  \\ From \textbf{i.} \& \textbf{ii.}
   $$\boxed{(a\oplus b) \ominus c = (a\ominus c)\oplus (b\ominus c)}$$
+\textbf{($\Leftarrow$)}
+Assume that $\ominus$ of S is right-distributive:
+\[
+  (a\oplus b)\ominus c
+  = (a\ominus c)\oplus(b\ominus c)\;\forall a,b,c\in S.
+\]
+
+For any arbitrary $a\in S$ substitute $b=a$ and $c=a$:
+\[
+  (a\oplus a)\ominus a
+  = (a\ominus a)\oplus(a\ominus a).
+\]
+Since $a\ominus a=0$, the right-hand side is $0$. And $(a\oplus a)\ominus a = 0\implies a\oplus a\leq a$ by definition of monus.
+  But, trivially $a\le a\oplus a$, so antisymmetry of $(S,\leq)$ gives $a\oplus a=a$.
+  Thus, $$\boxed{a \oplus a=a, \; \forall a\in S}$$
+\smallskip
+Both sides, prove the equivalence.
 \end{proof}
 % This is wrong but why?
 %\begin{proposition}
