@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage{amssymb,amsfonts,amsmath}
+\usepackage{amssymb,amsfonts,amsmath,amsthm}
 \usepackage{paralist}
 
 \title{On the Semantics of the Provenance of HAVING queries in Semirings
@@ -30,7 +30,27 @@ with Monus}
   Let $S$ be any m-semiring. $S$ is idempotent if and only if $\ominus$
   is right-distributive over~$\oplus$ in $S$.
 \end{proposition}
-
+\begin{proof}
+  Assume S to be idempotent, then $\oplus$ is the join of a semilattice order.
+  \\If $a\leq b \implies a\oplus b =b $ \text{and }$\exists x, a\oplus x=b$
+  \\ $a \oplus b = a \oplus (a \oplus x)=a \oplus x = b$
+  \\$a\oplus b = b \implies a \leq b$
+  \\$a\leq b \iff a \oplus b =b$
+  \\Now, $\forall u, a \leq u$ and $b \leq u$
+  \\ $a \oplus u = u$ and $b\oplus u =u$
+  \\But, $a\leq a \oplus b$ and $b \leq a \oplus b$
+  \\$\therefore a \oplus b $ is the least such $u$ for which $a\leq u $ and $b \leq u$.
+  \paragraph{i.}
+  By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus z$, 
+  $a\leq a\oplus b\leq c \oplus ((a\oplus b)\ominus c) \implies a\ominus c\leq (a\oplus b)\ominus c$.
+  Similarly, $b\ominus c\leq (a\oplus b)\ominus c$.
+  \\$\therefore (a\ominus c)\oplus (b\ominus c) \leq (a\oplus b) \ominus c$
+  \paragraph{ii.} We have $a\leq c \oplus (a\ominus c)$ and $b\leq c\oplus (b\ominus c)$. So, $a\oplus b \leq c\oplus c \oplus (a\ominus c) \oplus (b\ominus c)$.
+  By idempotence of $\oplus$,  $a\oplus b \leq c \oplus (a\ominus c) \oplus (b\ominus c)$.
+\\$\therefore $ $(a\oplus b) \ominus c \leq (a\ominus c)\oplus (b\ominus c) $, by definition of monus.
+ \\ From \textbf{i.} \& \textbf{ii.}
+  $$\boxed{(a\oplus b) \ominus c = (a\ominus c)\oplus (b\ominus c)}$$
+\end{proof}
 % This is wrong but why?
 %\begin{proposition}
 %   Let $K_1, K_2$ be two m-semirings and $h: K_1\to K_2$ a semiring
