@@ -125,7 +125,140 @@ Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
         $\langle Q^{\op C}_1\rangle^{\hat I_2}\neq\langle Q^{\op C}_2\rangle^{\hat I_2}$.
     \end{compactenum}
 \end{theorem}
+\begin{proof}
 
+Let $U:=\mathrm{supp}(\textsc{COUNT(*)})$. For any $W\subseteq U$ define the monomial
+\[
+A_W := \bigotimes_{x\in W}\mathbf{x}^{(K)},
+\]
+and for $|W|=c$ define the ``exact-$W$'' contribution
+\[
+t_W := A_W \otimes \Bigl(\mathbb{1}_K \ominus \bigoplus_{x\in U\setminus W}\mathbf{x}^{(K)}\Bigr).
+\]
+Put
+\[
+S_c := \bigoplus_{\substack{W\subseteq U\\|W|=c}} A_W,\qquad
+S_{c+1} := \bigoplus_{\substack{W'\subseteq U\\|W'|=c+1}} A_{W'},
+\qquad
+\bigl[\textsc{COUNT(*)}\oslash c\bigr]_{=}
+   := \bigoplus_{\substack{W\subseteq U\\|W|=c}} t_W.
+\]
+
+
+We first prove by induction on $n\ge 1$ the identity
+\[
+\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
+   = \bigoplus_{i=1}^n (a_i\ominus c),
+\tag{I}
+\]
+for arbitrary $a_1,\dots,a_n,c\in K$.
+
+Base $n=1$ is trivial. For $n=2$ this is exactly A14:
+\[
+(a_1\oplus a_2)\ominus c = (a_1\ominus c)\oplus(a_2\ominus c).
+\]
+Assume (I) holds for $n-1$. Then
+\[
+\begin{aligned}
+\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
+&= \Bigl(\bigl(\bigoplus_{i=1}^{\,n-1} a_i\bigr)\oplus a_n\Bigr)\ominus c \\
+&\overset{\text{A14}}{=}
+\Bigl(\bigoplus_{i=1}^{\,n-1} a_i\Bigr)\ominus c \;\oplus\; (a_n\ominus c) \\
+&\overset{\text{IH}}{=}
+\bigoplus_{i=1}^{\,n-1} (a_i\ominus c) \;\oplus\; (a_n\ominus c)
+= \bigoplus_{i=1}^n (a_i\ominus c).
+\end{aligned}
+\]
+Thus (I) holds for every finite $n$.
+
+Using the induction result (I) with the outer sum in $S_c$ and $c:=S_{c+1}$ we obtain
+\[
+S_c\ominus S_{c+1}
+= \Bigl(\bigoplus_{|W|=c} A_W\Bigr)\ominus S_{c+1}
+= \bigoplus_{|W|=c} \bigl(A_W\ominus S_{c+1}\bigr).
+\tag{1}
+\]
+Every $(c{+}1)$-subset $W'$ contains exactly one $c$-subset.  
+Thus
+\[
+S_{c+1}
+= \bigoplus_{\substack{W\subseteq U\\|W|=c}}\;
+   \bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}.
+\]
+  Using (I):
+\[
+S_c \ominus S_{c+1}
+=
+\bigoplus_{\substack{W\subseteq U\\|W|=c}}
+\Bigl(
+A_W \;\ominus\;
+\bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
+\Bigr).
+\tag{$\ast$}
+\]
+
+Fix $W\subseteq U$ with $|W|=c$ and write
+\[
+R_W := \bigoplus_{x\in U\setminus W}\mathbf{x}^{(K)}.
+\]
+For each $u\in U\setminus W$,
+\[
+A_{W\cup\{u\}} = A_W \otimes \mathbf{u}^{(K)}.
+\]
+Right-distributivity of $\otimes$ over $\ominus$ gives
+\[
+A_W \ominus A_{W\cup\{u\}}
+= A_W \ominus(A_W\otimes\mathbf{u}^{(K)})
+= A_W \otimes (\mathbb{1}_K \ominus \mathbf{u}^{(K)}).
+\tag{$\dagger$}
+\]
+
+Thus
+\[
+\begin{aligned}
+A_W \ominus \bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
+&= \bigoplus_{u\in U\setminus W}
+      \bigl(A_W \ominus A_{W\cup\{u\}}\bigr)
+      \\[2pt]
+&= \bigoplus_{u\in U\setminus W}
+      A_W\otimes(\mathbb{1}_K \ominus \mathbf{u}^{(K)})
+      \qquad\text{(by $(\dagger)$)}
+      \\[2pt]
+&= A_W \otimes
+    \Bigl(\bigoplus_{u\in U\setminus W}
+           (\mathbb{1}_K \ominus \mathbf{u}^{(K)})
+    \Bigr).
+\end{aligned}
+\tag{$\ddagger$}
+\]
+
+Applying (I) again,
+\[
+\bigoplus_{u\in U\setminus W}(\mathbb{1}_K \ominus \mathbf{u}^{(K)})
+=
+\Bigl(\bigoplus_{u\in U\setminus W}\mathbb{1}_K\Bigr)
+\;\ominus\;
+\Bigl(\bigoplus_{u\in U\setminus W}\mathbf{u}^{(K)}\Bigr)
+=
+\mathbb{1}_K \ominus R_W,
+\]
+since $\bigoplus_{u}\mathbb{1}_K=\mathbb{1}_K$ by idempotence.
+
+Substituting this into $(\ddagger)$ yields
+\[
+A_W \ominus \bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
+=
+A_W \otimes(\mathbb{1}_K \ominus R_W)
+=
+t_W.
+\]
+
+Putting this into $(\ast)$ and summing over all $|W|=c$ gives
+\[
+S_c \ominus S_{c+1}
+= \bigoplus_{\substack{W\subseteq U\\|W|=c}} t_W.
+\]
+\end{proof}
 \begin{proposition}
   For any binary query $q$, for any $C\in\mathbb{N}^*$, for $\op\in \{\leq,
   =,\geq\}$, for any commutative $m$-semiring $\mathbb{K}$,
