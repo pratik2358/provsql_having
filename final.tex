@@ -1,6 +1,8 @@
 \documentclass{scrartcl}
 \usepackage{amssymb,amsfonts,amsmath,amsthm}
 \usepackage{paralist}
+\usepackage{graphicx}
+\usepackage[pdfborder={0 0 0}]{hyperref}
 
 \title{On the Semantics of the Provenance of HAVING queries in Semirings
 with Monus}
@@ -15,6 +17,8 @@ with Monus}
 \newcommand\op{\star}
 \newcommand\complexity[1]{\textsf{\upshape #1}}
 
+\newcommand\lean[2]{\href{https://provsql.org/lean-docs/Provenance/#1.html\##2}{\fbox{\includegraphics[height=.6em]{lean}}}}
+
 \begin{document}
 \maketitle
 
@@ -27,11 +31,13 @@ with Monus}
 \section{Results}
 
 \begin{proposition}
+  \lean{SemiringWithMonus}{idempotent_iff_add_monus}
   Let $S$ be any m-semiring. $S$ is idempotent if and only if $\ominus$
   is right-distributive over~$\oplus$ in $S$.
 \end{proposition}
 \begin{proof}
   \textbf{($\Rightarrow$)}
+  \lean{SemiringWithMonus}{add_monus_of_idempotent}
   Assume S to be additively idempotent. Define a preorder $\leq$ such that,
   if $a\leq b$ \text{then }$\exists x,\; a\oplus x=b$.
   So, $a \oplus b = a \oplus (a \oplus x)=(a\oplus a)\oplus x=a \oplus x = b$. \\$\therefore a\leq b \implies a\oplus b=b$.
@@ -45,7 +51,7 @@ with Monus}
   So, $\oplus$ is the join of a semilattice of $(S,\leq)$.
 
   \paragraph{i.}
-  By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus z$, 
+  By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus z$,
   $a\leq a\oplus b\leq c \oplus ((a\oplus b)\ominus c) \implies a\ominus c\leq (a\oplus b)\ominus c$.
   Similarly, $b\ominus c\leq (a\oplus b)\ominus c$.
   \\$\therefore (a\ominus c)\oplus (b\ominus c) \leq (a\oplus b) \ominus c$
@@ -55,6 +61,7 @@ with Monus}
  \\ From \textbf{i.} \& \textbf{ii.}
   $$\boxed{(a\oplus b) \ominus c = (a\ominus c)\oplus (b\ominus c)}$$
 \textbf{($\Leftarrow$)}
+  \lean{SemiringWithMonus}{idempotent_of_add_monus}
 Assume that $\ominus$ of S is right-distributive:
 \[
   (a\oplus b)\ominus c
@@ -178,7 +185,7 @@ S_c\ominus S_{c+1}
 = \bigoplus_{|W|=c} \bigl(A_W\ominus S_{c+1}\bigr).
 \tag{1}
 \]
-Every $(c{+}1)$-subset $W'$ contains exactly one $c$-subset.  
+Every $(c{+}1)$-subset $W'$ contains exactly one $c$-subset.
 Thus
 \[
 S_{c+1}
