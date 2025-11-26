@@ -197,67 +197,41 @@ A_W \;\ominus\;
 \tag{$\ast$}
 \]
 
-Fix $W\subseteq U$ with $|W|=c$ and write
+
+Fix $W\subseteq U$ with $|W|=c$ and put
 \[
 R_W := \bigoplus_{x\in U\setminus W}\mathbf{x}^{(K)}.
 \]
-For each $u\in U\setminus W$,
+Since $A_{W\cup\{u\}}=A_W\otimes\mathbf{u}^{(K)}$ for every $u\in U\setminus W$, distributivity of $\otimes$ over $\oplus$ yields
 \[
-A_{W\cup\{u\}} = A_W \otimes \mathbf{u}^{(K)}.
+\bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
+= \bigoplus_{u\in U\setminus W} \bigl(A_W\otimes\mathbf{u}^{(K)}\bigr)
+= A_W \otimes \Bigl(\bigoplus_{u\in U\setminus W}\mathbf{u}^{(K)}\Bigr)
+= A_W\otimes R_W.
 \]
-Right-distributivity of $\otimes$ over $\ominus$ gives
+Now apply right-distributivity of $\otimes$ over $\ominus$ in the form
 \[
-A_W \ominus A_{W\cup\{u\}}
-= A_W \ominus(A_W\otimes\mathbf{u}^{(K)})
-= A_W \otimes (\mathbb{1}_K \ominus \mathbf{u}^{(K)}).
-\tag{$\dagger$}
+(a\ominus b)\otimes c = (a\otimes c)\ominus(b\otimes c),
 \]
-
-Thus
+with $a=\mathbb{1}_K,\; b=R_W,\; c=A_W$. This gives
 \[
-\begin{aligned}
-A_W \ominus \bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
-&= \bigoplus_{u\in U\setminus W}
-      \bigl(A_W \ominus A_{W\cup\{u\}}\bigr)
-      \\[2pt]
-&= \bigoplus_{u\in U\setminus W}
-      A_W\otimes(\mathbb{1}_K \ominus \mathbf{u}^{(K)})
-      \qquad\text{(by $(\dagger)$)}
-      \\[2pt]
-&= A_W \otimes
-    \Bigl(\bigoplus_{u\in U\setminus W}
-           (\mathbb{1}_K \ominus \mathbf{u}^{(K)})
-    \Bigr).
-\end{aligned}
-\tag{$\ddagger$}
+(\mathbb{1}_K\ominus R_W)\otimes A_W
+= A_W \ominus (A_W\otimes R_W).
 \]
-
-Applying (I) again,
-\[
-\bigoplus_{u\in U\setminus W}(\mathbb{1}_K \ominus \mathbf{u}^{(K)})
-=
-\Bigl(\bigoplus_{u\in U\setminus W}\mathbb{1}_K\Bigr)
-\;\ominus\;
-\Bigl(\bigoplus_{u\in U\setminus W}\mathbf{u}^{(K)}\Bigr)
-=
-\mathbb{1}_K \ominus R_W,
-\]
-since $\bigoplus_{u}\mathbb{1}_K=\mathbb{1}_K$ by idempotence.
-
-Substituting this into $(\ddagger)$ yields
+Using commutativity of $\otimes$ we obtain
 \[
 A_W \ominus \bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
-=
-A_W \otimes(\mathbb{1}_K \ominus R_W)
-=
-t_W.
+= A_W \ominus (A_W\otimes R_W)
+= A_W \otimes(\mathbb{1}_K\ominus R_W)
+= t_W.
 \]
-
-Putting this into $(\ast)$ and summing over all $|W|=c$ gives
+Substituting this equality into $(\ast)$ and summing over all $W$ with $|W|=c$ yields
 \[
-S_c \ominus S_{c+1}
-= \bigoplus_{\substack{W\subseteq U\\|W|=c}} t_W.
+S_c\ominus S_{c+1}
+= \bigoplus_{\substack{W\subseteq U\\|W|=c}} t_W,
 \]
+as required.
+
 \end{proof}
 \begin{proposition}
   For any binary query $q$, for any $C\in\mathbb{N}^*$, for $\op\in \{\leq,
