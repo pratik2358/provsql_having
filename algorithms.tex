@@ -1,5 +1,13 @@
 \section{Implementation}
+Using our semantics, we obtain the expression $[u\oslash v]$. Without loss of generality, 
+for every constant value of the aggregation expression $v=C$, we can rewrite this expression 
+as $[u\oslash C]_{\mathrm{op}}$. We now present a dynamic programming algorithm~\ref{alg:dp_subsets} to compute the set of subsets 
+that satisfy the condition imposed by the operator $\mathrm{op}\in\{=,>,<,\ge,\le\}$ with 
+respect to the constant $C$. Using this set of subsets, we can compute the probability of 
+$[u\oslash C]_{\mathrm{op}}$ 
+by using the Algorithm~\ref{alg:probability}.
 \begin{algorithm}
+  \label{alg:dp_subsets}
   \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\mathrm{op}}$ (covers $=,>,<,\ge,\le$)}
   \begin{algorithmic}[1]
     \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$, a constant $C \in M$, and an operator $\mathrm{op}\in\{=,>,<,\ge,\le\}$
@@ -49,6 +57,7 @@
 
 
 \begin{algorithm}
+  \label{alg:probability}
   \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_{\mathrm{op}}$}
   \begin{algorithmic}[1]
     \REQUIRE dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, constant $C\in M$, operator $\mathrm{op}$, and probabilities $p(g)$ for all $g\in\mathcal{G}$
