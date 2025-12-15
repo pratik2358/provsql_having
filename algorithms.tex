@@ -1,94 +1,27 @@
 \section{Implementation}
 \begin{algorithm}
-  \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_=$}
+  \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\mathrm{op}}$ (covers $=,>,<,\ge,\le$)}
   \begin{algorithmic}[1]
-    \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ and a constant $C \in M$
-    \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t. $\forall R \in \mathcal{R},\; \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}=C$
-    \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$ \COMMENT{list containing the empty subset}
-    \FOR{$j \gets 1$ \TO $C$}
-      \STATE $dp[j] \leftarrow \emptyset$ \COMMENT{$dp[j]$: all subsets realizing sum $j$}
-    \ENDFOR
-    \FOR{$i \gets 1$ \TO $|A|$}
-      \STATE $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$
-      \FOR{$j \gets C, C-1, \dots, w$}
-        \STATE $p \gets j - w$
-        \IF{$dp[p] \neq \emptyset$}
-          \FORALL{$S \in dp[p]$}
-            \STATE append $S \cup \{g\}$ to $dp[j]$
-          \ENDFOR
-        \ENDIF
-      \ENDFOR
-    \ENDFOR
-    \STATE $\mathcal{R} \leftarrow dp[C]$
-    \STATE \RETURN $\mathcal{R}$
-  \end{algorithmic}
-\end{algorithm}
+    \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$, a constant $C \in M$, and an operator $\mathrm{op}\in\{=,>,<,\ge,\le\}$
+    \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \mathrm{op}\ C$
 
-\begin{algorithm}
-  \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{>}$}
-  \begin{algorithmic}[1]
-    \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ and a constant $C \in M$
-    \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t. $\forall R \in \mathcal{R},\; \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)} > C$
-    \STATE Let $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$ \COMMENT{max possible sum}
-    \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$ 
-    \FOR{$j \gets 1$ \TO $T$}
-      \STATE $dp[j] \leftarrow \emptyset$
-    \ENDFOR
-    \FOR{$i \gets 1$ \TO $|A|$}
-      \STATE $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$
-      \FOR{$j \gets T, T-1, \dots, w$}
-        \STATE $p \gets j - w$
-        \IF{$dp[p] \neq \emptyset$}
-          \FORALL{$S \in dp[p]$}
-            \STATE append $S \cup \{g\}$ to $dp[j]$
-          \ENDFOR
-        \ENDIF
-      \ENDFOR
-    \ENDFOR
-    \STATE $\mathcal{R} \leftarrow \bigcup_{j=C+1}^{T} dp[j]$
-    \STATE \RETURN $\mathcal{R}$
-  \end{algorithmic}
-\end{algorithm}
+    \IF{$\mathrm{op}\in\{>,\ge\}$}
+      \STATE $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$ \COMMENT{max possible sum}
+      \STATE $J \gets T$
+    \ELSIF{$\mathrm{op}=<$}
+      \STATE $J \gets C-1$
+    \ELSE
+      \STATE $J \gets C$ \COMMENT{$\mathrm{op}\in\{=,\le\}$}
+    \ENDIF
 
-\begin{algorithm}
-  \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{<}$}
-  \begin{algorithmic}[1]
-    \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ and a constant $C \in M$
-    \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t. $\forall R \in \mathcal{R},\; \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)} < C$
-    \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$ 
-    \FOR{$j \gets 1$ \TO $C-1$}
-      \STATE $dp[j] \leftarrow \emptyset$
-    \ENDFOR
-    \FOR{$i \gets 1$ \TO $|A|$}
-      \STATE $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$
-      \FOR{$j \gets C-1, C-2, \dots, w$}
-        \STATE $p \gets j - w$
-        \IF{$dp[p] \neq \emptyset$}
-          \FORALL{$S \in dp[p]$}
-            \STATE append $S \cup \{g\}$ to $dp[j]$
-          \ENDFOR
-        \ENDIF
-      \ENDFOR
-    \ENDFOR
-    \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$
-    \STATE \RETURN $\mathcal{R}$
-  \end{algorithmic}
-\end{algorithm}
-
-
-\begin{algorithm}
-  \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\geq}$}
-  \begin{algorithmic}[1]
-    \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ and a constant $C \in M$
-    \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t. $\forall R \in \mathcal{R},\; \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)} \geq C$
-    \STATE Let $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$
     \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$
-    \FOR{$j \gets 1$ \TO $T$}
+    \FOR{$j \gets 1$ \TO $J$}
       \STATE $dp[j] \leftarrow \emptyset$
     \ENDFOR
+
     \FOR{$i \gets 1$ \TO $|A|$}
       \STATE $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$
-      \FOR{$j \gets T, T-1, \dots, w$}
+      \FOR{$j \gets J, J-1, \dots, w$}
         \STATE $p \gets j - w$
         \IF{$dp[p] \neq \emptyset$}
           \FORALL{$S \in dp[p]$}
@@ -97,41 +30,31 @@
         \ENDIF
       \ENDFOR
     \ENDFOR
-    \STATE $\mathcal{R} \leftarrow \bigcup_{j=C}^{T} dp[j]$
+
+    \IF{$\mathrm{op} = =$}
+      \STATE $\mathcal{R} \leftarrow dp[C]$
+    \ELSIF{$\mathrm{op} = >$}
+      \STATE $\mathcal{R} \leftarrow \bigcup_{j=C+1}^{J} dp[j]$
+    \ELSIF{$\mathrm{op} = <$}
+      \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$
+    \ELSIF{$\mathrm{op} = \ge$}
+      \STATE $\mathcal{R} \leftarrow \bigcup_{j=C}^{J} dp[j]$
+    \ELSE % \mathrm{op}=\le
+      \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C} dp[j]$
+    \ENDIF
+
     \STATE \RETURN $\mathcal{R}$
   \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
-  \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\leq}$}
-  \begin{algorithmic}[1]
-    \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$ and a constant $C \in M$
-    \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t. $\forall R \in \mathcal{R},\; \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)} \leq C$
-    \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$
-    \FOR{$j \gets 1$ \TO $C$}
-      \STATE $dp[j] \leftarrow \emptyset$
-    \ENDFOR
-    \FOR{$i \gets 1$ \TO $|A|$}
-      \STATE $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$
-      \FOR{$j \gets C, C-1, \dots, w$}
-        \STATE $p \gets j - w$
-        \IF{$dp[p] \neq \emptyset$}
-          \FORALL{$S \in dp[p]$}
-            \STATE append $S \cup \{g\}$ to $dp[j]$
-          \ENDFOR
-        \ENDIF
-      \ENDFOR
-    \ENDFOR
-    \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C} dp[j]$
-    \STATE \RETURN $\mathcal{R}$
-  \end{algorithmic}
-\end{algorithm}
 
 \begin{algorithm}
-  \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_=$}
+  \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_{\mathrm{op}}$}
   \begin{algorithmic}[1]
-    \REQUIRE list $\mathcal{R}$ of subsets from Algorithm~1, the dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, probabilities $p(g)$ for all $g \in \mathcal{G}$
-    \ENSURE $\Pr\big([\mathdutchcal{u}\oslash C]_=\big)$
+    \REQUIRE dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, constant $C\in M$, operator $\mathrm{op}$, and probabilities $p(g)$ for all $g\in\mathcal{G}$
+    \ENSURE $\Pr\big([\mathdutchcal{u}\oslash C]_{\mathrm{op}}\big)$
+    \STATE $\mathcal{R} \gets \textsc{DP-Subsets}(A,C,\mathrm{op})$ \COMMENT{Algorithm above}
+    \STATE $P \gets 0$
     \FORALL{$S \in \mathcal{R}$}
       \STATE $\pi \gets 1$
       \FORALL{$g \in \mathcal{G}$}
@@ -147,17 +70,17 @@
   \end{algorithmic}
 \end{algorithm}
 
-\begin{table}[hbt]
-  \centering
-  \begin{tabular}{cc}
-    \toprule
-    operator & $\mathcal{R}$\\
-    \midrule
-    $=$ & $dp[C]$\\
-    $>$ & $\bigcup_{j=C+1}^{T} dp[j]$\\
-    $<$ & $\bigcup_{j=1}^{C-1} dp[j]$\\
-    $\geq$ & $\bigcup_{j=C}^{T} dp[j]$\\
-    $\leq$ & $\bigcup_{j=1}^{C} dp[j]$\\
-    \bottomrule
-  \end{tabular}
-\end{table}
+% \begin{table}[hbt]
+%   \centering
+%   \begin{tabular}{cc}
+%     \toprule
+%     operator & $\mathcal{R}$\\
+%     \midrule
+%     $=$ & $dp[C]$\\
+%     $>$ & $\bigcup_{j=C+1}^{T} dp[j]$\\
+%     $<$ & $\bigcup_{j=1}^{C-1} dp[j]$\\
+%     $\geq$ & $\bigcup_{j=C}^{T} dp[j]$\\
+%     $\leq$ & $\bigcup_{j=1}^{C} dp[j]$\\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}

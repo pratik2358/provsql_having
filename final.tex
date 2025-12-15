@@ -2,8 +2,33 @@
 \usepackage{amssymb,amsfonts,amsmath,amsthm}
 \usepackage{paralist}
 \usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage[pdfborder={0 0 0}]{hyperref}
 
+\DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
+\SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
+\DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
+\newcommand{\dq}[1]{\text{\enquote{#1}}}
+\newcommand{\op}{\hspace{0.1cm}\mathsf{op}\hspace{0.1cm}}
+\makeatletter
+\newcommand{\bigplus}{%
+  \DOTSB\mathop{\mathpalette\mattos@bigplus\relax}\slimits@
+}
+\newcommand\mattos@bigplus[2]{%
+  \vcenter{\hbox{%
+    \sbox\z@{$#1\sum$}%
+    \resizebox{!}{0.9\dimexpr\ht\z@+\dp\z@}{\raisebox{\depth}{$\m@th#1+$}}%
+  }}%
+  \vphantom{\sum}%
+}
+\newcommand{\mline}[1]{%
+  \begin{multiline}
+    #1
+  \end{multiline}
+}
+\newcommand{\llbracket}{[\![}
+\newcommand{\rrbracket}{]\!]}
 \title{On the Semantics of the Provenance of HAVING queries in Semirings
 with Monus}
 
@@ -14,7 +39,6 @@ with Monus}
 \newtheorem{corollary}{Corollary}
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
-\newcommand\op{\star}
 \newcommand\complexity[1]{\textsf{\upshape #1}}
 
 \newcommand\lean[2]{\href{https://provsql.org/lean-docs/Provenance/#1.html\##2}{\fbox{\includegraphics[height=.6em]{lean}}}}
@@ -249,7 +273,7 @@ as required.
 \] over a $\mathbb{K}$-instance $\hat I$ is \complexity{\#P}-hard.
 \end{proposition}
 
-\section{Implementing in Practice}
+\input{algorithms}
 
 \section{Experiments}
 
