@@ -4,7 +4,13 @@
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{booktabs}
 \usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{xcolor}
+
+\usepackage{pifont}
+\newcommand{\ok}{\text{\color{green!50!black}\ding{51}}}
+\newcommand{\ko}{\text{\color{red!50!black}\ding{55}}}
 
 \DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
 \SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
@@ -49,6 +55,8 @@ with Monus}
 \section{Introduction}
 
 \section{Preliminaries}
+
+\input{table_semirings}
 
 \section{Semantics}
 
