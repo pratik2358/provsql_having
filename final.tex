@@ -5,8 +5,39 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage[bb=boondox]{mathalfa}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{booktabs}
 \usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{xcolor}
 
+\usepackage{pifont}
+\newcommand{\ok}{\text{\color{green!50!black}\ding{51}}}
+\newcommand{\ko}{\text{\color{red!50!black}\ding{55}}}
+
+\DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
+\SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
+\DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
+\newcommand{\dq}[1]{\text{\enquote{#1}}}
+\newcommand{\op}{\hspace{0.1cm}\mathsf{op}\hspace{0.1cm}}
+\makeatletter
+\newcommand{\bigplus}{%
+  \DOTSB\mathop{\mathpalette\mattos@bigplus\relax}\slimits@
+}
+\newcommand\mattos@bigplus[2]{%
+  \vcenter{\hbox{%
+    \sbox\z@{$#1\sum$}%
+    \resizebox{!}{0.9\dimexpr\ht\z@+\dp\z@}{\raisebox{\depth}{$\m@th#1+$}}%
+  }}%
+  \vphantom{\sum}%
+}
+\newcommand{\mline}[1]{%
+  \begin{multiline}
+    #1
+  \end{multiline}
+}
+\newcommand{\llbracket}{[\![}
+\newcommand{\rrbracket}{]\!]}
 \title{On the Semantics of the Provenance of HAVING queries in Semirings
 with Monus}
 
@@ -51,6 +82,11 @@ with Monus}
 \maketitle
 
 \section{Introduction}
+
+\section{Preliminaries}
+
+\input{table_semirings}
+
 \section{Semantics}
 Extending on the algebra over annotated 
 relations presented in ***  by 
@@ -928,7 +964,7 @@ Therefore,
 \] over a $\mathbb{K}$-instance $\hat I$ is \complexity{\#P}-hard.
 \end{proposition}
 
-\section{Implementing in Practice}
+\input{algorithms}
 
 \section{Experiments}
 
