@@ -1,7 +1,10 @@
 \documentclass{scrartcl}
+\usepackage[left=1cm, right=1cm]{geometry}
 \usepackage{amssymb,amsfonts,amsmath,amsthm}
 \usepackage{paralist}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[bb=boondox]{mathalfa}
 \usepackage[pdfborder={0 0 0}]{hyperref}
 
 \title{On the Semantics of the Provenance of HAVING queries in Semirings
@@ -14,20 +17,91 @@ with Monus}
 \newtheorem{corollary}{Corollary}
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
+\newtheorem*{remark}{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
 \newcommand\op{\star}
 \newcommand\complexity[1]{\textsf{\upshape #1}}
 
 \newcommand\lean[2]{\href{https://provsql.org/lean-docs/Provenance/#1.html\##2}{\fbox{\includegraphics[height=.6em]{lean}}}}
 
+\DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
+\SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
+\DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
+\newcommand{\dq}[1]{\text{\enquote{#1}}}
+\makeatletter
+\newcommand{\bigplus}{%
+  \DOTSB\mathop{\mathpalette\mattos@bigplus\relax}\slimits@
+}
+\newcommand\mattos@bigplus[2]{%
+  \vcenter{\hbox{%
+    \sbox\z@{$#1\sum$}%
+    \resizebox{!}{0.9\dimexpr\ht\z@+\dp\z@}{\raisebox{\depth}{$\m@th#1+$}}%
+  }}%
+  \vphantom{\sum}%
+}
+\newcommand{\mline}[1]{%
+  \begin{multiline}
+    #1
+  \end{multiline}
+}
+\usepackage[appendix=append]{apxproof}
 \begin{document}
 \maketitle
 
 \section{Introduction}
-
-\section{Preliminaries}
-
 \section{Semantics}
-
+Extending on the algebra over annotated 
+relations presented in ***  by 
+adding a new predicate form that allows 
+comparison between aggregations we fill the semantics gap that 
+was noted and left for future work.
+\paragraph{Setup.}
+Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an 
+added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an 
+additive monoid of aggregate values. Let $*:K\times M \mapsto K$ be a scalar action of $M$ on $K$, such that for $a \in K, b \in M$, 
+$a * b = a \times b \in K$.
+We fix a finite set $\mathbf{X}$ of variables. Each $\mathbf{x}\in\mathbf{X}$ have provenance annotations in $K$ and values in $M$ 
+given by a semimodule ($K\times M$, say $\mathcal{M}$) map 
+\[
+\mathfrak{Z}:\mathbf{X}\rightarrow \mathcal{M}\; \text{and} \quad \mathfrak{Z}^{(K)}(\mathbf{x})=\mathbf{x}^{(K)}, \; \mathfrak{Z}^{(M)}(\mathbf{x})=\mathbf{x}^{(M)}
+\]
+An aggregation $\mathdutchcal{a}$ is defined by an indicator function 
+$I_\mathdutchcal{a}:\mathbf{X}\rightarrow \{0,1\}$
+on variables from $\mathbf{X}$ that participate in the aggregation as 
+\[
+\mathdutchcal{a} = {\bigoplus_\mathcal{M}}_{\mathbf{x}\in \mathrm{supp}(\mathdutchcal{a})}(\mathbf{x}^{(K)},\mathbf{x}^{(M)})
+\]
+where, 
+$\mathrm{supp}(\mathdutchcal{a})=\{\,\mathbf{x} \mid I_\mathdutchcal{a}(\mathbf{x})=1 \,\}$ and 
+$\bigoplus_{\mathcal{M}}$ is a formal $\mathcal{M}-$sum over 
+variables $\mathbf{x}$ involved in the aggregation.
+A possible world is represented by a subset $W\subseteq\mathbf{X}$.
+\begin{definition}[Possible-world Semantics]\label{def:pw_semantics}
+For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as, 
+\[
+[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K 
+\]
+such that,
+\begin{multline*}
+[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathrm{op}}=
+\bigoplus_{W} 
+\Biggl(
+  \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(K)} \Bigr)
+\otimes
+  \chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)
+\;\otimes\;\\
+  \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \;\oplus\; \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\Biggr)
+\Biggr)
+\end{multline*}
+where,
+$\chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)=
+\begin{cases}
+\mathbb{1}_K & \text{if } {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}\;\mathit{op}\;{\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)},\\
+\mathbb{0}_K & \text{otherwise.}
+\end{cases}$
+\end{definition}
 \section{Results}
 
 \begin{proposition}
@@ -39,7 +113,7 @@ with Monus}
   \textbf{($\Rightarrow$)}
   \lean{SemiringWithMonus}{add_monus_of_idempotent}
   Assume S to be additively idempotent. Define a preorder $\leq$ such that,
-  if $a\leq b$ \text{then }$\exists x,\; a\oplus x=b$.
+  if $a\leq b$ then $\exists x,\; a\oplus x=b$.
   So, $a \oplus b = a \oplus (a \oplus x)=(a\oplus a)\oplus x=a \oplus x = b$. \\$\therefore a\leq b \implies a\oplus b=b$.
   \\Conversely, if $a\oplus b = b$, choose $x=b$. And trivially, $a\oplus x =a\oplus b=b$
   $\implies a \leq b$.
@@ -84,7 +158,44 @@ Both sides, prove the equivalence.
 %   Let $K_1, K_2$ be two m-semirings and $h: K_1\to K_2$ a semiring
 %   homomorphism. Then $h$ is an m-semiring homomorphism.
 % \end{proposition}
+\begin{corollary}[Right-distributivity of $\ominus$ over finite $\oplus$-sums]\label{lem:finite-add-monus}
+Let \((K,\oplus,\otimes,\mathbb{0},\mathbb{1},\delta,\ominus)\) be an
+m-semiring in which \(\ominus\) is right-distributive over \(\oplus\), i.e.,
+\[
+(a \oplus b) \ominus c = (a \ominus c) \oplus (b \ominus c)
+\quad\text{for all } a,b,c \in K.
+\]
+Then for every \(n \ge 1\) and all \(a_1,\dots,a_n,c \in K\),
+\[
+\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
+=
+\bigoplus_{i=1}^n (a_i \ominus c).
+\]
+\end{corollary}
 
+\begin{proof}
+We proceed by induction on \(n \ge 1\).
+
+For \(n=1\), the identity is trivial.
+For \(n=2\), the statement is exactly the assumed right-distributivity law:
+\[
+(a_1 \oplus a_2)\ominus c = (a_1\ominus c)\oplus(a_2\ominus c).
+\]
+
+Assume the identity holds for \(n-1\).
+Then
+\[
+\begin{aligned}
+\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
+&= \Bigl(\bigl(\bigoplus_{i=1}^{n-1} a_i\bigr)\oplus a_n\Bigr)\ominus c \\
+&= \Bigl(\bigoplus_{i=1}^{n-1} a_i\Bigr)\ominus c \;\oplus\; (a_n\ominus c) \\
+&= \bigoplus_{i=1}^{n-1} (a_i\ominus c) \;\oplus\; (a_n\ominus c)
+= \bigoplus_{i=1}^n (a_i\ominus c),
+\end{aligned}
+\]
+where the second equality uses right-distributivity and the third uses the
+induction hypothesis.
+\end{proof}
 \begin{proposition}
   Let $K_1, K_2$ be two m-semirings and $h: K_1\to K_2$ an m-semiring
   homomorphism. Then:
@@ -133,113 +244,681 @@ Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
     \end{compactenum}
 \end{theorem}
 \begin{proof}
+  \item 
+  \paragraph{Proof of (i)}
+  For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing 
+  that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative $m$-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
+    $\langle Q^{\op C}_1\rangle^{\hat I}\text{ and }\langle Q^{\op C}_2\rangle^{\hat I}$ apply the same relational algebra operators to the same subquery $q(R)$
+    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (HAVING) condition; all other operators are interpreted identically. Hence, it 
+    suffices to show that for each group produced by
+    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with 
+    that produced by the self-join query.
+Since \(q(R)\) is a binary query, every tuple in its output has the form
+\((\#1,\#2)\).
+Fix a value \(a\) of attribute \(\#1\), arbitrarily.
+We define
+\[
+  \mathbf{X}_a \;=\; \{\, \mathbf{x}_p \mid (a,p) \in q(R) \,\}.
+\]
+  That is, \(\mathbf{X}_a\) is a finite set of aggregate contributing variables in \(q(R)\) corresponding to group-key \(a\).
+  Each variable \(\mathbf{x} \in \mathbf{X}_a\) carries a provenance annotation
+  \(\mathbf{x}^{(\mathbb{K})} \in \mathbb{K}\) and 
+  contributes the value \(1 \in M(\mathbb{N},+,.)\) to the count aggregate.
 
-Let $U:=\mathrm{supp}(\textsc{COUNT(*)})$. For any $W\subseteq U$ define the monomial
+The provenance annotation of the output tuple corresponding
+  to group-key \(a\) depends exclusively on the variables in \(\mathbf{X}_a\).
+Tuples whose first attribute is different from \(a\) do not contribute to
+this group and are therefore irrelevant for the computation of its
+provenance.
+Consider the query
 \[
-A_W := \bigotimes_{x\in W}\mathbf{x}^{(K)},
-\]
-and for $|W|=c$ define the ``exact-$W$'' contribution
-\[
-t_W := A_W \otimes \Bigl(\mathbb{1}_K \ominus \bigoplus_{x\in U\setminus W}\mathbf{x}^{(K)}\Bigr).
-\]
-Put
-\[
-S_c := \bigoplus_{\substack{W\subseteq U\\|W|=c}} A_W,\qquad
-S_{c+1} := \bigoplus_{\substack{W'\subseteq U\\|W'|=c+1}} A_{W'},
-\qquad
-\bigl[\textsc{COUNT(*)}\oslash c\bigr]_{=}
-   := \bigoplus_{\substack{W\subseteq U\\|W|=c}} t_W.
-\]
-
-
-We first prove by induction on $n\ge 1$ the identity
-\[
-\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
-   = \bigoplus_{i=1}^n (a_i\ominus c),
-\tag{I}
-\]
-for arbitrary $a_1,\dots,a_n,c\in K$.
-
-Base $n=1$ is trivial. For $n=2$ this is exactly A14:
-\[
-(a_1\oplus a_2)\ominus c = (a_1\ominus c)\oplus(a_2\ominus c).
-\]
-Assume (I) holds for $n-1$. Then
-\[
-\begin{aligned}
-\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
-&= \Bigl(\bigl(\bigoplus_{i=1}^{\,n-1} a_i\bigr)\oplus a_n\Bigr)\ominus c \\
-&\overset{\text{A14}}{=}
-\Bigl(\bigoplus_{i=1}^{\,n-1} a_i\Bigr)\ominus c \;\oplus\; (a_n\ominus c) \\
-&\overset{\text{IH}}{=}
-\bigoplus_{i=1}^{\,n-1} (a_i\ominus c) \;\oplus\; (a_n\ominus c)
-= \bigoplus_{i=1}^n (a_i\ominus c).
-\end{aligned}
-\]
-Thus (I) holds for every finite $n$.
-
-Using the induction result (I) with the outer sum in $S_c$ and $c:=S_{c+1}$ we obtain
-\[
-S_c\ominus S_{c+1}
-= \Bigl(\bigoplus_{|W|=c} A_W\Bigr)\ominus S_{c+1}
-= \bigoplus_{|W|=c} \bigl(A_W\ominus S_{c+1}\bigr).
-\tag{1}
-\]
-Every $(c{+}1)$-subset $W'$ contains exactly one $c$-subset.
-Thus
-\[
-S_{c+1}
-= \bigoplus_{\substack{W\subseteq U\\|W|=c}}\;
-   \bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}.
-\]
-  Using (I):
-\[
-S_c \ominus S_{c+1}
+Q^{\op C}_1
 =
-\bigoplus_{\substack{W\subseteq U\\|W|=c}}
+\Pi_{\#1}\bigl(
+\sigma_{\#2 \op C}(
+\gamma_{\#1}[1:+](q(R))
+)\bigr).
+\]
+For the group with key value $a$, the operator \(\gamma_{\#1}[1:+]\) produces a single aggregate
+\[
+\mathdutchcal{a}
+=
+  \bigoplus_{\substack{\mathcal{M} \\ \mathbf{x} \in \mathbf{X}_a}} (\mathbf{x}^{(\mathbb{K})}, 1)
+\in \mathcal M .
+\]
+Applying the selection \(\sigma_{\#2 \op C}\) corresponds to evaluating the
+aggregate-comparison predicate \([\mathdutchcal{u}_a \op C]\).
+By our possible-world semantics, the provenance annotation of the output
+tuple corresponding to group-key \(a\) is, 
+\begin{equation}\label{eq:Q1-prov}
+\langle Q^{\op C}_1 \rangle^{\hat I}(a)
+=
+  \bigoplus_{W \subseteq \mathbf{X}_a}
 \Bigl(
-A_W \;\ominus\;
-\bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
+  \bigotimes_{\mathbf{x} \in W} \mathbf{x}^{(K)}
+\;\otimes\;
+\chi_{\op}(|W|,C)
+\;\otimes\;
+\bigl(
+  \mathbb{1}_K \ominus \bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W} \mathbf{x}^{(K)}
+\bigr)
 \Bigr).
-\tag{$\ast$}
+\end{equation}
+\\
+Fix a subset \(W \subseteq X_a\) such that $|W|\op C$. Let, 
+\[
+A=\bigotimes_{\mathbf{x}\in W}\mathbf{x}^{(\mathbb{K})} \; \text{and} \; B=\bigoplus_{\textbf{x}\in \textbf{X}_a \setminus W} \textbf{x}^{(\mathbb{K})}
+\]
+By distributivity of \(\otimes\) over \(\ominus\), 
+\[
+\langle Q^{\op C}_1 \rangle^{\hat I}(a)
+=A\ominus(A\otimes B)
+\]
+By distributivity of $\otimes$ over $\oplus$,
+\[
+A \otimes B = A \otimes \Bigl( \bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W} \mathbf{x}^{(\mathbb{K})}  \Bigr)=\bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W} A \otimes \mathbf{x}^{(\mathbb{K})}=\bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W}  \otimes_{\mathbf{x}\in W \cup \{\mathbf{x} \}} \mathbf{x}^{(\mathbb{K})}
+\]
+Therefore, 
+\[
+A \ominus (A\otimes B)
+=
+\bigotimes_{\mathbf{x} \in W} \mathbf{x}^{(\mathbb{K})}
+\;\ominus\;
+\bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W}
+\otimes_{\mathbf{x} \in W \cup \{\mathbf{x}\}} \mathbf{x}^{(\mathbb{K})} .
+\]
+So, 
+\[
+\langle Q^{\op C}_1 \rangle^{\hat I}(a)
+=
+  \bigoplus_{\substack{W \subseteq \mathbf{X}_a, \\ |W| \op C}}
+\Bigl(
+\bigotimes_{\mathbf{x} \in W} \mathbf{x}^{(\mathbb{K})}
+\;\ominus\;
+\bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W}
+\otimes_{\mathbf{x} \in W \cup \{\mathbf{x}\}} \mathbf{x}^{(\mathbb{K})} 
+\Bigr)
 \]
 
+\paragraph{Provenance of the join querys.}
 
-Fix $W\subseteq U$ with $|W|=c$ and put
+For every $W\subseteq \mathbf{X}_a $ define the monomial
 \[
-R_W := \bigoplus_{x\in U\setminus W}\mathbf{x}^{(K)}.
+A_W \;:=\; \bigotimes_{\mathbf{x}\in W}\mathbf{x}^{(\mathbb{K})} .
 \]
-Since $A_{W\cup\{u\}}=A_W\otimes\mathbf{u}^{(K)}$ for every $u\in U\setminus W$, distributivity of $\otimes$ over $\oplus$ yields
+For $c\ge 0$ put
 \[
-\bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
-= \bigoplus_{u\in U\setminus W} \bigl(A_W\otimes\mathbf{u}^{(K)}\bigr)
-= A_W \otimes \Bigl(\bigoplus_{u\in U\setminus W}\mathbf{u}^{(K)}\Bigr)
-= A_W\otimes R_W.
+S_c \;:=\; \bigoplus_{\substack{W\subseteq \mathbf{X}_a \\|W|=c}} A_W
+\quad
+(\text{with }S_0=\mathbb 1\text{ and }S_c=\mathbb 0\text{ if }c>|\mathbf{X}_a |).
 \]
-Now apply right-distributivity of $\otimes$ over $\ominus$ in the form
+
+Consider the query $Q^{\ge C}_2$.  A valuation contributing to the output
+tuple with key $a$ corresponds to choosing $C$ tuples from $q(R)$ with first
+attribute $a$ and strictly increasing second attributes (due to the chain of
+join conditions $\#2<\#4<\cdots$). This corresponds to choosing a
+$C$-element subset $W\subseteq \mathbf{X}_a $, and 
+$\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
+Therefore
 \[
-(a\ominus b)\otimes c = (a\otimes c)\ominus(b\otimes c),
+\langle Q^{\ge C}_2\rangle^{\hat I}(a)
+=
+\bigoplus_{\substack{W\subseteq \mathbf{X}_a \\|W|=C}} A_W
+=
+S_C.
+\tag{$J_{\ge}$}
 \]
-with $a=\mathbb{1}_K,\; b=R_W,\; c=A_W$. This gives
+
+By definition,
 \[
-(\mathbb{1}_K\ominus R_W)\otimes A_W
-= A_W \ominus (A_W\otimes R_W).
+Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2,
+\qquad
+Q^{\le C}_2 = \Pi_{\#1}(q(R)) \ominus Q^{\ge (C+1)}_2,
 \]
-Using commutativity of $\otimes$ we obtain
+where the difference operator is interpreted tuplewise via $\ominus$.
+Hence, using $(J_{\ge})$,
 \[
-A_W \ominus \bigoplus_{u\in U\setminus W} A_{W\cup\{u\}}
-= A_W \ominus (A_W\otimes R_W)
-= A_W \otimes(\mathbb{1}_K\ominus R_W)
-= t_W.
+\langle Q^{=C}_2\rangle^{\hat I}(a)
+=
+S_C \ominus S_{C+1},
+\qquad
+\langle Q^{\le C}_2\rangle^{\hat I}(a)
+=
+\Bigl(\bigoplus_{\mathbf x\in \mathbf{X}_a }\mathbf{x}^{(\mathbb{K})} \Bigr)\ominus S_{C+1}.
+\tag{$J_{=,\le}$}
 \]
-Substituting this equality into $(\ast)$ and summing over all $W$ with $|W|=c$ yields
+\begin{toappendix}
+  \begin{lemma}\label{lem:monus-le-left}
+Let $(K,\oplus,\mathbb 0)$ be an idempotent commutative monoid, equipped with an
+operation $\ominus$ satisfying the residuation law: for all $x,y,z\in K$,
+\begin{equation}\label{eq:residuation-monus}
+  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z,
+\end{equation}
+where $\le$ is the natural order $a\le b \iff a\oplus b=b$.
+Then for all $x,y\in K$,
 \[
-S_c\ominus S_{c+1}
-= \bigoplus_{\substack{W\subseteq U\\|W|=c}} t_W,
+  x\ominus y \le x.
+\]
+\end{lemma}
+
+\begin{proof}
+By \eqref{eq:residuation-monus} with $z=x$, we have
+\[
+x\ominus y \le x \quad\Longleftrightarrow\quad x \le y\oplus x.
+\]
+But $x\le y\oplus x$ holds because $x\oplus(y\oplus x)=(x\oplus x)\oplus y=x\oplus y=y\oplus x$
+(using associativity, commutativity and idempotence of $\oplus$).
+Hence $x\ominus y\le x$.
+\end{proof}
+
+\begin{lemma}\label{lem:monus-join}
+Under the assumptions of Lemma~\ref{lem:monus-le-left}, for all $x,y\in K$,
+\[
+  x \le y\oplus (x\ominus y).
+\]
+\end{lemma}
+
+\begin{proof}
+Apply \eqref{eq:residuation-monus} with $z=x\ominus y$:
+since $x\ominus y\le x\ominus y$ holds trivially, \eqref{eq:residuation-monus} yields
+\[
+x \le y\oplus (x\ominus y),
 \]
 as required.
+\end{proof}
+
+\begin{lemma}\label{lem:upward-expansion}
+Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring,
+and write the natural order as $a\le b \iff a\oplus b=b$.
+Assume that $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in K$,
+\begin{equation}\label{eq:residuation}
+  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
+\end{equation}
+Fix a finite set $U$ and elements $(\mathbf{x}^{(\mathbb{K})} )_{x\in U}\subseteq K$.
+For $W\subseteq U$ define
+\[
+  A_W := \bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} ,
+  \qquad
+  T_U(W) := A_W \ominus \bigoplus_{x\in U\setminus W} A_{W\cup\{x\}} .
+\]
+Then for every $V\subseteq U$,
+\begin{equation}\label{eq:upward-expansion}
+  A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+We prove \eqref{eq:upward-expansion} by induction on $d:=|U\setminus V|$.
+
+\smallskip\noindent
+\textbf{Base case ($d=0$).}
+Then $V=U$. Since $U\setminus U=\varnothing$ and $\bigoplus_{\varnothing}(\cdot)=\mathbb 0$,
+\[
+  T_U(U)=A_U\ominus \mathbb 0.
+\]
+We claim $A_U\ominus\mathbb 0=A_U$. Indeed, by \eqref{eq:residuation}, for any $z\in K$,
+\[
+  A_U\ominus\mathbb 0 \le z \iff A_U \le \mathbb 0\oplus z = z,
+\]
+so $A_U\ominus\mathbb 0$ is the greatest element below $A_U$, hence equals $A_U$.
+Therefore,
+\[
+  \bigoplus_{\substack{W:\;U\subseteq W\subseteq U}} T_U(W)=T_U(U)=A_U=A_V,
+\]
+and \eqref{eq:upward-expansion} holds.
+
+\smallskip\noindent
+\textbf{Inductive step.}
+Assume $d>0$ and that \eqref{eq:upward-expansion} holds for all pairs $(U,V')$
+with $V\subsetneq V'\subseteq U$ and $|U\setminus V'|<d$.
+Let
+\[
+  Y := \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}} \in K.
+\]
+From \eqref{eq:residuation} we obtain the standard inequality
+\begin{equation}\label{eq:M2-lemma1}
+  X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in K,
+\end{equation}
+by instantiating \eqref{eq:residuation} with $z=X\ominus Y$ (since $X\ominus Y\le X\ominus Y$).
+Applying \eqref{eq:M2-lemma1} to $X=A_V$ gives
+\[
+  A_V \le Y \oplus (A_V\ominus Y).
+\]
+By definition of $T_U(V)$ we have $A_V\ominus Y = T_U(V)$, hence
+\begin{equation}\label{eq:AV-bound}
+  A_V \le T_U(V)\ \oplus\ \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}}.
+\end{equation}
+
+For each $x\in U\setminus V$ set $V_x:=V\cup\{x\}$. Then $|U\setminus V_x|=d-1$,
+so the induction hypothesis yields
+\[
+  A_{V_x}\le \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W).
+\]
+Taking the $\oplus$-sum over all $x\in U\setminus V$ and using monotonicity of $\oplus$,
+\[
+  \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}}
+  =
+  \bigoplus_{x\in U\setminus V} A_{V_x}
+  \le
+  \bigoplus_{x\in U\setminus V}\ \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W).
+\]
+Every $W$ appearing on the right satisfies $V\subseteq V_x\subseteq W\subseteq U$, hence $V\subseteq W\subseteq U$.
+Therefore, using associativity/commutativity/idempotence of $\oplus$ to ignore duplicates and reorder summands,
+\[
+  \bigoplus_{x\in U\setminus V}\ \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W)
+  \le
+  \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
+\]
+Combining with \eqref{eq:AV-bound} yields
+\[
+  A_V \le T_U(V)\ \oplus\ \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)
+  =
+  \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W),
+\]
+since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
+This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
+\end{proof}
+\begin{lemma}[Recurrence for $F_C$]\label{lem:FC-recurrence}
+Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.
+Write the natural order as $a\le b \iff a\oplus b=b$, and assume $\ominus$ satisfies
+residuation $x\ominus y\le z \iff x\le y\oplus z$.
+Assume moreover that $\otimes$ distributes over $\oplus$ and over $\ominus$, i.e.
+\[
+r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b),
+\qquad
+r\otimes(a\ominus b)=(r\otimes a)\ominus(r\otimes b).
+\]
+Fix a finite set $U$ and elements $(\mathbf{x}^{(\mathbb{K})} )_{x\in U}\subseteq K$.
+For $W\subseteq U$ define
+\[
+A_W:=\bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} ,
+\qquad
+T_U(W):=A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}},
+\]
+and for $C\in\mathbb N$ define
+\[
+F_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
+\]
+Let $u\in U$, put $U':=U\setminus\{u\}$ and $\beta:=\alpha_u$.
+Then for all $C\in\mathbb N$ with $C\ge 1$,
+\[
+F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\beta\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+Fix $u\in U$, set $U':=U\setminus\{u\}$ and $\beta:=\alpha_u$, and let $C\ge 1$.
+Split  $F_C(U)$ according to whether $u\in W$:
+\begin{equation}\label{eq:split-I-II}
+F_C(U)
+=
+\underbrace{\bigoplus_{\substack{W\subseteq U'\\|W|\ge C}}T_U(W)}_{(I).\;u\notin W}
+\ \oplus\
+\underbrace{\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_U(W'\cup\{u\})}_{(II).\;u\in W}.
+\end{equation}
+
+\smallskip\noindent\emph{Simplify $(II)$.}
+Fix $W'\subseteq U'$. Then $A_{W'\cup\{u\}}=A_{W'}\otimes\beta$, and
+$U\setminus(W'\cup\{u\})=U'\setminus W'$. Hence, using distributivity of $\otimes$ over $\oplus$,
+\[
+\bigoplus_{x\in U\setminus(W'\cup\{u\})}A_{W'\cup\{u,x\}}
+=
+\bigoplus_{x\in U'\setminus W'}\bigl(A_{W'\cup\{x\}}\otimes\beta\bigr)
+=
+\Bigl(\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\beta.
+\]
+Therefore, using distributivity of $\otimes$ over $\ominus$,
+\[
+T_U(W'\cup\{u\})
+=
+(A_{W'}\otimes\beta)\ominus
+\Bigl(\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\beta
+=
+\Bigl(A_{W'}\ominus\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\beta
+=
+T_{U'}(W')\otimes\beta.
+\]
+Taking $\oplus$ over all $W'\subseteq U'$ with $|W'|\ge C-1$ and factoring $\beta$ using
+distributivity of $\otimes$ over $\oplus$ yields
+\begin{equation}\label{eq:II-simplifies}
+(II)=\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_{U'}(W')\Bigr)\otimes\beta
+=F_{C-1}(U')\otimes\beta.
+\end{equation}
+
+\smallskip\noindent\emph{Relate $T_U(W)$ and $T_{U'}(W)$ for $W\subseteq U'$.}
+Fix $W\subseteq U'$. Since $U\setminus W=(U'\setminus W)\cup\{u\}$, we have
+\[
+\bigoplus_{x\in U\setminus W}A_{W\cup\{x\}}
+=
+\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\Bigr)\oplus (A_W\otimes\beta).
+\]
+Using 
+$x\ominus(y\oplus z)=(x\ominus y)\ominus z$, we get
+\begin{equation}\label{eq:TU-rewrite}
+T_U(W)
+=
+A_W\ominus\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\oplus(A_W\otimes\beta)\Bigr)
+=
+T_{U'}(W)\ominus(A_W\otimes\beta).
+\end{equation}
+
+\smallskip\noindent\emph{Now we sshow $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\beta)$.}
+By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$,
+we have $T_U(W)\le T_{U'}(W)$ for all $W\subseteq U'$.
+Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ yields $(I)\le F_C(U')$.
+Together with \eqref{eq:split-I-II} and \eqref{eq:II-simplifies}, this gives
+\begin{equation}\label{eq:leq-direction}
+F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\beta).
+\end{equation}
+
+\smallskip\noindent\emph{Show $F_C(U')\le F_C(U)$.}
+Fix $W\subseteq U'$ with $|W|\ge C$.
+By the inequality $x\le y\oplus(x\ominus y)$ applied to
+$x=T_{U'}(W)$ and $y=A_W\otimes\beta$, and using \eqref{eq:TU-rewrite}, we get
+\begin{equation}\label{eq:TUprime-bound}
+T_{U'}(W)\le (A_W\otimes\beta)\oplus T_U(W).
+\end{equation}
+Since $|W|\ge C$, the term $T_U(W)$ is one of the summands of $F_C(U)$, hence $T_U(W)\le F_C(U)$.
+Moreover $A_W\otimes\beta=A_{W\cup\{u\}}$, and $|W\cup\{u\}|\ge C$.
+By Lemma~\ref{lem:upward-expansion} applied to $V=W\cup\{u\}$ we have
+\[
+A_{W\cup\{u\}}
+\le
+\bigoplus_{\substack{Y:\;W\cup\{u\}\subseteq Y\subseteq U}} T_U(Y)
+\le
+\bigoplus_{\substack{Y\subseteq U\\|Y|\ge C}}T_U(Y)
+=
+F_C(U),
+\]
+so $A_W\otimes\beta\le F_C(U)$.
+Plugging these two bounds into \eqref{eq:TUprime-bound} yields $T_{U'}(W)\le F_C(U)$.
+Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ gives $F_C(U')\le F_C(U)$.
+
+\smallskip\noindent\emph{Conclude equality.}
+From \eqref{eq:leq-direction}, $F_C(U')\le F_C(U)$ and
+$F_{C-1}(U')\otimes\beta=(II)\le F_C(U)$, we obtain
+$F_C(U')\oplus(F_{C-1}(U')\otimes\beta)\le F_C(U)$.
+Together with \eqref{eq:leq-direction}, this yields
+\[
+F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\beta),
+\]
+as required.
+\end{proof}
+\begin{lemma}[Recurrence for $S_C$]\label{lem:SC-recurrence}
+  Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring such that $\otimes$ distributes over $\oplus$:
+\[
+r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b)\qquad(\forall r,a,b\in K).
+\]
+Fix a finite set $U$ and a family $(\mathbf{x}^{(\mathbb{K})} )_{x\in U}\subseteq K$.
+For $W\subseteq U$ define
+\[
+A_W:=\bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} 
+\quad\text{(with the convention }A_\varnothing:=\mathbb 1\text{),}
+\]
+and for $C\in\mathbb N$ define
+\[
+S_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W
+\quad
+(\text{with the convention that an empty $\oplus$-sum equals }\mathbb 0).
+\]
+Let $u\in U$, put $U':=U\setminus\{u\}$ and $\beta:=\alpha_u$.
+Then for every $C\ge 1$,
+\[
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+Fix $C\ge 1$ and $u\in U$, and write $U=U'\cup\{u\}$ with $U'=U\setminus\{u\}$.
+
+Define two index families:
+\[
+\mathcal A:=\{\,W\subseteq U \mid |W|=C,\ u\notin W\,\},
+\qquad
+\mathcal B:=\{\,W\subseteq U \mid |W|=C,\ u\in W\,\}.
+\]
+Then $\mathcal A$ and $\mathcal B$ are disjoint and their union is the full family
+\[
+\mathcal A\ \dot\cup\ \mathcal B=\{\,W\subseteq U\mid |W|=C\,\},
+\]
+because every $W\subseteq U$ either contains $u$ or does not.
+
+Therefore, by associativity and commutativity of $\oplus$ (finite sum over a disjoint
+union equals the $\oplus$ of the two partial sums),
+\begin{equation}\label{eq:split-SC}
+S_C(U)
+=
+\bigoplus_{W\in\mathcal A} A_W\ \oplus\ \bigoplus_{W\in\mathcal B} A_W.
+\end{equation}
+
+\smallskip\noindent
+\emph{(i) The $\mathcal A$-part.}
+If $W\in\mathcal A$, then $u\notin W$ and $W\subseteq U'=U\setminus\{u\}$.
+Conversely, if $W\subseteq U'$ and $|W|=C$, then $W\subseteq U$ and $u\notin W$.
+Hence
+\[
+\mathcal A=\{\,W\subseteq U'\mid |W|=C\,\},
+\]
+so
+\begin{equation}\label{eq:A-part}
+\bigoplus_{W\in\mathcal A}A_W
+=
+\bigoplus_{\substack{W\subseteq U'\\|W|=C}}A_W
+=
+S_C(U').
+\end{equation}
+
+\smallskip\noindent
+\emph{(ii) The $\mathcal B$-part.}
+Define a map
+\[
+\phi:\{\,W'\subseteq U'\mid |W'|=C-1\,\}\longrightarrow \mathcal B,
+\qquad
+\phi(W'):=W'\cup\{u\}.
+\]
+This map is a bijection:
+\begin{itemize}
+\item It is well-defined because if $W'\subseteq U'$ and $|W'|=C-1$, then
+$u\notin W'$ and thus $|W'\cup\{u\}|=|W'|+1=C$, and $\phi(W')$ contains $u$.
+\item It is injective because if $W'_1\cup\{u\}=W'_2\cup\{u\}$, removing $u$ gives
+$W'_1=W'_2$.
+\item It is surjective because if $W\in\mathcal B$, then $u\in W$ and setting
+$W':=W\setminus\{u\}$ gives $W'\subseteq U'$ and $|W'|=C-1$, with $W=\phi(W')$.
+\end{itemize}
+Hence we may re-index the sum over $\mathcal B$ via $\phi$:
+\begin{equation}\label{eq:B-reindex}
+\bigoplus_{W\in\mathcal B}A_W
+=
+\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{\phi(W')}
+=
+\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{W'\cup\{u\}}.
+\end{equation}
+For each $W'\subseteq U'$ we have, by commutativity and associativity of $\otimes$,
+\[
+A_{W'\cup\{u\}}
+=
+\Bigl(\bigotimes_{x\in W'}\mathbf{x}^{(\mathbb{K})} \Bigr)\otimes \alpha_u
+=
+A_{W'}\otimes \beta.
+\]
+Substituting into \eqref{eq:B-reindex} and using distributivity of $\otimes$ over $\oplus$,
+\begin{equation}\label{eq:B-part}
+\bigoplus_{W\in\mathcal B}A_W
+=
+\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} (A_{W'}\otimes\beta)
+=
+\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{W'}\Bigr)\otimes\beta
+=
+S_{C-1}(U')\otimes\beta.
+\end{equation}
+
+Finally, combining \eqref{eq:split-SC}, \eqref{eq:A-part}, and \eqref{eq:B-part}, we obtain
+\[
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
+\]
+as required.
+\end{proof}
+\end{toappendix}
+
+\paragraph{Provenance of $Q_1^{\ge C}$.}
+From \eqref{eq:Q1-prov} with $\op = \ge$ and $U=\mathbf X_a$, write for each $W\subseteq U$
+\[
+A_W:=\bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} ,
+\qquad
+B_W:=\bigoplus_{x\in U\setminus W}\mathbf{x}^{(\mathbb{K})} .
+\]
+We define, 
+\[
+T_U(W)\ :=\ A_W\ \otimes\ \bigl(\mathbb 1 \ominus B_W\bigr)\ \in \mathbb K.
+\]
+By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
+\begin{align*}
+T_U(W)
+&= (A_W\otimes \mathbb 1)\ominus (A_W\otimes B_W) \\
+&= A_W\ominus\Bigl(A_W\otimes \bigoplus_{x\in U\setminus W}\mathbf{x}^{(\mathbb{K})} \Bigr) \\
+&= A_W\ominus \bigoplus_{x\in U\setminus W}(A_W\otimes \mathbf{x}^{(\mathbb{K})} ) \\
+&= A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}}.
+\end{align*}
+Since $\chi_{\ge}(|W|,C)=\mathbb 1$ iff $|W|\ge C$ and $\mathbb 0$ otherwise, \eqref{eq:Q1-prov} becomes
+\[
+\langle Q^{\ge C}_1\rangle^{\hat I}(a)
+=
+\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
+\]
+Set
+\[
+F_C(U)\ :=\ \bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
+\]
+Then we have shown
+\begin{equation}\label{eq:PW_ge_equals_F}
+\langle Q^{\ge C}_1\rangle^{\hat I}(a)=F_C(U).
+\tag{$PW_{\ge}$}
+\end{equation}
+
+\paragraph{Equality for $\ge C$.}
+We already showed for the join query that
+\[
+\langle Q^{\ge C}_2\rangle^{\hat I}(a)=S_C(U)
+\quad\text{where}\quad
+S_C(U)=\bigoplus_{\substack{W\subseteq U\\|W|=C}}A_W.
+\tag{$J_{\ge}$}
+\]
+By Lemma~\ref{lem:FC-recurrence}, for any $u\in U$ with $U'=U\setminus\{u\}$ and $\beta=u^{(\mathbb{K})}$,
+and for all $C\ge 1$,
+\[
+F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\beta\bigr).
+\tag{R$_F$}
+\]
+By Lemma~\ref{lem:SC-recurrence}, the polynomials $S_C$ satisfy the same recurrence:
+\[
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr)
+\qquad(C\ge 1).
+\tag{R$_S$}
+\]
+
+We prove by induction on $n:=|U|$ that $F_C(U)=S_C(U)$ for all finite $U$ and all $C\ge 1$.
+If $n=0$ then $U=\varnothing$ and $F_C(\varnothing)=\mathbb 0=S_C(\varnothing)$ for $C\ge 1$
+(empty $\oplus$-sum).
+Assume $|U|>0$ and pick $u\in U$, let $U'=U\setminus\{u\}$.
+By the induction hypothesis, $F_C(U')=S_C(U')$ and $F_{C-1}(U')=S_{C-1}(U')$.
+Applying (R$_F$) and (R$_S$) gives
+\[
+F_C(U)
+=F_C(U')\oplus(F_{C-1}(U')\otimes\beta)
+=S_C(U')\oplus(S_{C-1}(U')\otimes\beta)
+=S_C(U).
+\]
+Thus $F_C(U)=S_C(U)$ for all $C\ge 1$, hence by \eqref{eq:PW_ge_equals_F} and $(J_{\ge})$,
+\[
+\langle Q^{\ge C}_1\rangle^{\hat I}(a)=\langle Q^{\ge C}_2\rangle^{\hat I}(a).
+\]
+
+\paragraph{Equality for $=C$.}
+For each $n\in\mathbb N$ we have the boolean identity
+\[
+\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1),
+\]
+since $\chi_{\ge}(n,C),\chi_{\ge}(n,C+1)\in\{\mathbb 0,\mathbb 1\}$.
+Let
+\[
+P_W \ :=\ A_W\otimes(\mathbb 1\ominus B_W)=T_U(W).
+\]
+Then for each $W\subseteq U$,
+\[
+P_W\otimes \chi_{=}( |W|,C)
+=
+P_W\otimes\bigl(\chi_{\ge}(|W|,C)\ominus\chi_{\ge}(|W|,C+1)\bigr)
+=
+(P_W\otimes\chi_{\ge}(|W|,C))\ominus(P_W\otimes\chi_{\ge}(|W|,C+1)),
+\]
+by distributivity of $\otimes$ over $\ominus$.
+Summing over $W$ and using right-distributivity of $\ominus$ over $\oplus$
+(which holds because $\mathbb K$ is idempotent, ),
+we obtain
+\begin{align*}
+\langle Q^{=C}_1\rangle^{\hat I}(a)
+&=
+\bigoplus_{W\subseteq U}\bigl(P_W\otimes\chi_{=}( |W|,C)\bigr)\\
+&=
+\left(\bigoplus_{W\subseteq U} P_W\otimes\chi_{\ge}(|W|,C)\right)
+\ominus
+\left(\bigoplus_{W\subseteq U} P_W\otimes\chi_{\ge}(|W|,C+1)\right)\\
+&=
+\langle Q^{\ge C}_1\rangle^{\hat I}(a)\ \ominus\ \langle Q^{\ge (C+1)}_1\rangle^{\hat I}(a).
+\end{align*}
+By the already established $\ge$-case,
+$\langle Q^{\ge C}_1\rangle^{\hat I}(a)=S_C$ and $\langle Q^{\ge (C+1)}_1\rangle^{\hat I}(a)=S_{C+1}$,
+hence
+\[
+\langle Q^{=C}_1\rangle^{\hat I}(a)=S_C\ominus S_{C+1}=\langle Q^{=C}_2\rangle^{\hat I}(a)
+\]
+by $(J_{=,\le})$.
+
+\paragraph{Equality for $\le C$.}
+For $n\ge 1$ we have the boolean identity
+\[
+\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1).
+\]
+(Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$.)
+Since groups produced by $\gamma_{\#1}$ are nonempty, only $n=|W|\ge 1$ occur.
+Repeating the same lifting argument as above gives
+\[
+\langle Q^{\le C}_1\rangle^{\hat I}(a)
+=
+\langle Q^{\ge 1}_1\rangle^{\hat I}(a)\ \ominus\ \langle Q^{\ge (C+1)}_1\rangle^{\hat I}(a).
+\]
+By the $\ge$-case, $\langle Q^{\ge 1}_1\rangle^{\hat I}(a)=S_1=\bigoplus_{x\in U}\mathbf{x}^{(\mathbb{K})} $ and
+$\langle Q^{\ge (C+1)}_1\rangle^{\hat I}(a)=S_{C+1}$, hence
+\[
+\langle Q^{\le C}_1\rangle^{\hat I}(a)
+=
+\Bigl(\bigoplus_{x\in U}\mathbf{x}^{(\mathbb{K})} \Bigr)\ominus S_{C+1}
+=
+\langle Q^{\le C}_2\rangle^{\hat I}(a)
+\]
+by $(J_{=,\le})$.
+
+\smallskip
+Since the equalities hold for each group key $a$, we conclude
+$\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ for
+$\op\in\{\ge,=,\le\}$.
+\paragraph{Conclusion.}
+Comparing the expressions obtained for
+\(\langle Q^{\op C}_1 \rangle^{\hat I}(a)\) and
+\(\langle Q^{\op C}_2 \rangle^{\hat I}(a)\),
+we conclude that they are equal for the fixed value \(a\).
+Since \(a\) was arbitrary, the two queries produce identical provenance
+annotations for all output tuples.
+Therefore,
+\[
+\langle Q^{\op C}_1 \rangle^{\hat I}
+=
+\langle Q^{\op C}_2 \rangle^{\hat I}.
+\]
+\qed
 
 \end{proof}
+
 \begin{proposition}
   For any binary query $q$, for any $C\in\mathbb{N}^*$, for $\op\in \{\leq,
   =,\geq\}$, for any commutative $m$-semiring $\mathbb{K}$,
