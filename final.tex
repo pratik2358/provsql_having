@@ -243,7 +243,7 @@ induction hypothesis.
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q)))\\
   Q^{\geq C}_2&=\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
     q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C+1)\land\#(2C)<\#(2C+2)}q)\\
-Q^{\leq C}_2&=q-Q_2^{\geq C+1}\\
+    Q^{\leq C}_2&= Q^{\geq 1}_2-Q_2^{\geq C+1}\\
 Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
 \end{align*}
     Then:
@@ -362,42 +362,38 @@ So,
 \Bigr)
 \]
 
-\paragraph{Provenance of the join querys.}
-
-For every $W\subseteq \mathbf{X}_a $ define the monomial
+\smallskip\noindent\emph{Provenance of the join queries:}
+For every $W\subseteq U $ define the monomial
+$
+A_W \;:=\; \bigotimes_{u\in W}\alpha_u .
+$
+For $C\ge 0$ put
 \[
-A_W \;:=\; \bigotimes_{\mathbf{x}\in W}\mathbf{x}^{(\mathbb{K})} .
-\]
-For $c\ge 0$ put
-\[
-S_c \;:=\; \bigoplus_{\substack{W\subseteq \mathbf{X}_a \\|W|=c}} A_W
+S_C \;:=\; \bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
 \quad
-(\text{with }S_0=\mathbb 1\text{ and }S_c=\mathbb 0\text{ if }c>|\mathbf{X}_a |).
+(\text{with }S_0=\mathbb 1\text{ and }S_c=\mathbb 0\text{ if }C>|U|).
 \]
-
 Consider the query $Q^{\ge C}_2$.  A valuation contributing to the output
-tuple with key $a$ corresponds to choosing $C$ tuples from $q(R)$ with first
+tuple with key $a$ corresponds to choosing $C$ tuples from $q$ with first
 attribute $a$ and strictly increasing second attributes (due to the chain of
 join conditions $\#2<\#4<\cdots$). This corresponds to choosing a
-$C$-element subset $W\subseteq \mathbf{X}_a $, and 
+$C$-element subset $W\subseteq U$, and 
 $\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
 Therefore
 \[
 \langle Q^{\ge C}_2\rangle^{\hat I}(a)
 =
-\bigoplus_{\substack{W\subseteq \mathbf{X}_a \\|W|=C}} A_W
+\bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
 =
 S_C.
 \tag{$J_{\ge}$}
 \]
-
 By definition,
 \[
 Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2,
 \qquad
-Q^{\le C}_2 = \Pi_{\#1}(q(R)) \ominus Q^{\ge (C+1)}_2,
+Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2,
 \]
-where the difference operator is interpreted tuplewise via $\ominus$.
 Hence, using $(J_{\ge})$,
 \[
 \langle Q^{=C}_2\rangle^{\hat I}(a)
@@ -406,7 +402,7 @@ S_C \ominus S_{C+1},
 \qquad
 \langle Q^{\le C}_2\rangle^{\hat I}(a)
 =
-\Bigl(\bigoplus_{\mathbf x\in \mathbf{X}_a }\mathbf{x}^{(\mathbb{K})} \Bigr)\ominus S_{C+1}.
+S_1 \ominus S_{C+1}.
 \tag{$J_{=,\le}$}
 \]
 \begin{toappendix}
@@ -782,7 +778,7 @@ as required.
 \end{proof}
 \end{toappendix}
 
-\paragraph{Provenance of $Q_1^{\ge C}$.}
+\smallskip\noindent\textbf{\emph{When $\op$ is $\ge$ :}}
 From \eqref{eq:Q1-prov} with $\op = \ge$ and $U=\mathbf X_a$, write for each $W\subseteq U$
 \[
 A_W:=\bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} ,
@@ -816,8 +812,6 @@ Then we have shown
 \langle Q^{\ge C}_1\rangle^{\hat I}(a)=F_C(U).
 \tag{$PW_{\ge}$}
 \end{equation}
-
-\paragraph{Equality for $\ge C$.}
 We already showed for the join query that
 \[
 \langle Q^{\ge C}_2\rangle^{\hat I}(a)=S_C(U)
@@ -854,8 +848,7 @@ Thus $F_C(U)=S_C(U)$ for all $C\ge 1$, hence by \eqref{eq:PW_ge_equals_F} and $(
 \[
 \langle Q^{\ge C}_1\rangle^{\hat I}(a)=\langle Q^{\ge C}_2\rangle^{\hat I}(a).
 \]
-
-\paragraph{Equality for $=C$.}
+\smallskip\noindent\textbf{\emph{When $\op$ is $=$ :}}
 For each $n\in\mathbb N$ we have the boolean identity
 \[
 \chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1),
@@ -896,7 +889,7 @@ hence
 \]
 by $(J_{=,\le})$.
 
-\paragraph{Equality for $\le C$.}
+\smallskip\noindent\textbf{\emph{When $\op$ is $\le$:}}
 For $n\ge 1$ we have the boolean identity
 \[
 \chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1).
