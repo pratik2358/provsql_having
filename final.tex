@@ -240,7 +240,7 @@ induction hypothesis.
   For any binary query $q$, for any $C\in\mathbb{N}$, for $\op\in \{\leq,
   =,\geq\}$ consider the queries:
   \begin{align*}
-    Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q))\\
+    Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q)))\\
   Q^{\geq C}_2&=\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
     q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C+1)\land\#(2C)<\#(2C+2)}q)\\
 Q^{\leq C}_2&=q-Q_2^{\geq C+1}\\
@@ -271,25 +271,25 @@ Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
   \paragraph{Proof of (i)}
   For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing 
   that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative $m$-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
-    $\langle Q^{\op C}_1\rangle^{\hat I}\text{ and }\langle Q^{\op C}_2\rangle^{\hat I}$ apply the same relational algebra operators to the same subquery $q(R)$
+    $\langle Q^{\op C}_1\rangle^{\hat I}\text{ and }\langle Q^{\op C}_2\rangle^{\hat I}$ apply the same relational algebra operators to the same subquery $q$
     and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (HAVING) condition; all other operators are interpreted identically. Hence, it 
     suffices to show that for each group produced by
     the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with 
     that produced by the self-join query.
-Since \(q(R)\) is a binary query, every tuple in its output has the form
+Since \(q\) is a binary query, every tuple in its output has the form
 \((\#1,\#2)\).
 Fix a value \(a\) of attribute \(\#1\), arbitrarily.
 We define
 \[
-  \mathbf{X}_a \;=\; \{\, \mathbf{x}_p \mid (a,p) \in q(R) \,\}.
+  U \;=\; \{\, (a,\#2) \mid (a,\#2) \in q \,\}.
 \]
-  That is, \(\mathbf{X}_a\) is a finite set of aggregate contributing variables in \(q(R)\) corresponding to group-key \(a\).
-  Each variable \(\mathbf{x} \in \mathbf{X}_a\) carries a provenance annotation
-  \(\mathbf{x}^{(\mathbb{K})} \in \mathbb{K}\) and 
+  That is, \(U\) is a set (\textcolor{red}{We want it to be a multiset. For now I am just considering it to be a set}) of tuples in \(q\) corresponding to group-key \(a\).
+  Each \(u \in U\) has provenance 
+  \(\alpha_u \in \mathbb{K} \) and 
   contributes the value \(1 \in M(\mathbb{N},+,.)\) to the count aggregate.
 
-The provenance annotation of the output tuple corresponding
-  to group-key \(a\) depends exclusively on the variables in \(\mathbf{X}_a\).
+The provenance of the output tuple corresponding
+  to group-key \(a\) depends exclusively on the tuples in $U$.
 Tuples whose first attribute is different from \(a\) do not contribute to
 this group and are therefore irrelevant for the computation of its
 provenance.
@@ -299,38 +299,37 @@ Q^{\op C}_1
 =
 \Pi_{\#1}\bigl(
 \sigma_{\#2 \op C}(
-\gamma_{\#1}[1:+](q(R))
+  \gamma_{\#1}[1:+](q)
 )\bigr).
 \]
 For the group with key value $a$, the operator \(\gamma_{\#1}[1:+]\) produces a single aggregate
 \[
 \mathdutchcal{a}
 =
-  \bigoplus_{\substack{\mathcal{M} \\ \mathbf{x} \in \mathbf{X}_a}} (\mathbf{x}^{(\mathbb{K})}, 1)
+  \bigoplus_{\substack{\mathcal{M} \\ u \in U}} (\alpha_u,1)
 \in \mathcal M .
 \]
 Applying the selection \(\sigma_{\#2 \op C}\) corresponds to evaluating the
-aggregate-comparison predicate \([\mathdutchcal{u}_a \op C]\).
+aggregate-comparison predicate \([\mathdutchcal{a} \op C]\).
 By our possible-world semantics, the provenance annotation of the output
 tuple corresponding to group-key \(a\) is, 
 \begin{equation}\label{eq:Q1-prov}
 \langle Q^{\op C}_1 \rangle^{\hat I}(a)
 =
-  \bigoplus_{W \subseteq \mathbf{X}_a}
+  \bigoplus_{W \subseteq U}
 \Bigl(
-  \bigotimes_{\mathbf{x} \in W} \mathbf{x}^{(K)}
+  \bigotimes_{u\in W} \alpha_u
 \;\otimes\;
-\chi_{\op}(|W|,C)
+  (|W|\op C)
 \;\otimes\;
 \bigl(
-  \mathbb{1}_K \ominus \bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W} \mathbf{x}^{(K)}
-\bigr)
+  \mathbb{1}_\mathbb{K} \ominus \bigoplus_{u \in U \setminus W} \alpha_u \bigr)
 \Bigr).
 \end{equation}
 \\
-Fix a subset \(W \subseteq X_a\) such that $|W|\op C$. Let, 
+Fix a subset \(W \subseteq U\) such that $|W|\op C$. Let, 
 \[
-A=\bigotimes_{\mathbf{x}\in W}\mathbf{x}^{(\mathbb{K})} \; \text{and} \; B=\bigoplus_{\textbf{x}\in \textbf{X}_a \setminus W} \textbf{x}^{(\mathbb{K})}
+A=\bigotimes_{u\in U}\alpha_u \; \text{and} \; B=\bigoplus_{u\in U \setminus W} \alpha_u
 \]
 By distributivity of \(\otimes\) over \(\ominus\), 
 \[
@@ -339,27 +338,27 @@ By distributivity of \(\otimes\) over \(\ominus\),
 \]
 By distributivity of $\otimes$ over $\oplus$,
 \[
-A \otimes B = A \otimes \Bigl( \bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W} \mathbf{x}^{(\mathbb{K})}  \Bigr)=\bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W} A \otimes \mathbf{x}^{(\mathbb{K})}=\bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W}  \otimes_{\mathbf{x}\in W \cup \{\mathbf{x} \}} \mathbf{x}^{(\mathbb{K})}
+A \otimes B = A \otimes \Bigl( \bigoplus_{u \in U \setminus W} \alpha_u  \Bigr)=\bigoplus_{u \in U \setminus W} A \otimes \alpha_u=\bigoplus_{u\in U \setminus W}  \otimes_{w\in W \cup \{u \}} \alpha_w
 \]
 Therefore, 
 \[
 A \ominus (A\otimes B)
 =
-\bigotimes_{\mathbf{x} \in W} \mathbf{x}^{(\mathbb{K})}
+\bigotimes_{u\in W} \alpha_u
 \;\ominus\;
-\bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W}
-\otimes_{\mathbf{x} \in W \cup \{\mathbf{x}\}} \mathbf{x}^{(\mathbb{K})} .
+\bigoplus_{u \in U \setminus W}
+\otimes_{w \in W \cup \{u\}} \alpha_w .
 \]
 So, 
 \[
 \langle Q^{\op C}_1 \rangle^{\hat I}(a)
 =
-  \bigoplus_{\substack{W \subseteq \mathbf{X}_a, \\ |W| \op C}}
+  \bigoplus_{\substack{W \subseteq U, \\ |W| \op C}}
 \Bigl(
-\bigotimes_{\mathbf{x} \in W} \mathbf{x}^{(\mathbb{K})}
+\bigotimes_{u \in W} \alpha_u
 \;\ominus\;
-\bigoplus_{\mathbf{x} \in \mathbf{X}_a \setminus W}
-\otimes_{\mathbf{x} \in W \cup \{\mathbf{x}\}} \mathbf{x}^{(\mathbb{K})} 
+\bigoplus_{u \in U \setminus W}
+\otimes_{w \in W \cup \{u\}} \alpha_w 
 \Bigr)
 \]
 
