@@ -237,12 +237,12 @@ induction hypothesis.
 \end{corollary}
 
 \begin{theorem}
-  For any binary query $q$, for any $C\in\mathbb{N}$, for $\op\in \{\leq,
+  For any binary query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
   =,\geq\}$ consider the queries:
-  \begin{align*}
+\begin{align*}
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q)))\\
-  Q^{\geq C}_2&=\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
-    q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C+1)\land\#(2C)<\#(2C+2)}q)\\
+    Q^{\geq C}_2&=\begin{cases}\Pi_{\#1}(q) & \text{if } C=1,\\[1mm]\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
+    q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<\#(2C)}q) & \text{if }C\ge 2\end{cases}\\
     Q^{\leq C}_2&= Q^{\geq 1}_2-Q_2^{\geq C+1}\\
 Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
 \end{align*}
@@ -320,58 +320,43 @@ tuple corresponding to group-key \(a\) is,
 \Bigl(
   \bigotimes_{u\in W} \alpha_u
 \;\otimes\;
-  (|W|\op C)
+  [|W|\op C]
 \;\otimes\;
 \bigl(
   \mathbb{1}_\mathbb{K} \ominus \bigoplus_{u \in U \setminus W} \alpha_u \bigr)
 \Bigr).
 \end{equation}
 \\
-Fix a subset \(W \subseteq U\) such that $|W|\op C$. Let, 
+For each subset \(W \subseteq U\) such that $|W|\op C$. Let, 
 \[
-A=\bigotimes_{u\in U}\alpha_u \; \text{and} \; B=\bigoplus_{u\in U \setminus W} \alpha_u
+A_W:=\bigotimes_{w\in W}\alpha_w ,
+\qquad
+B_W:=\bigoplus_{w\in U\setminus W}\alpha_w .
 \]
-By distributivity of \(\otimes\) over \(\ominus\), 
+We define, 
 \[
-\langle Q^{\op C}_1 \rangle^{\hat I}(a)
-=A\ominus(A\otimes B)
+T_U(W)\ :=\ A_W\ \otimes\ \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\ \in \mathbb K.
 \]
-By distributivity of $\otimes$ over $\oplus$,
-\[
-A \otimes B = A \otimes \Bigl( \bigoplus_{u \in U \setminus W} \alpha_u  \Bigr)=\bigoplus_{u \in U \setminus W} A \otimes \alpha_u=\bigoplus_{u\in U \setminus W}  \otimes_{w\in W \cup \{u \}} \alpha_w
-\]
-Therefore, 
-\[
-A \ominus (A\otimes B)
+By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
+\begin{align*}
+T_U(W)
+  &= (A_W\otimes \mathbb{1}_{\mathbb{K}})\ominus (A_W\otimes B_W) \\
+  &= A_W\ominus\Bigl(A_W\otimes \bigoplus_{w\in U\setminus W}\alpha_w \Bigr) \\
+&= A_W\ominus \bigoplus_{w\in U\setminus W}(A_W\otimes \alpha_w ) \\
+&= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
+\end{align*}
+Since $[|W|\op C]=\mathbb{1}_\mathbb{K}$ iff for a fiven choice of $\op$, $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
+\begin{equation}\label{eq:pw_tw}
+\langle Q^{\ge C}_1\rangle^{\hat I}(a)
 =
-\bigotimes_{u\in W} \alpha_u
-\;\ominus\;
-\bigoplus_{u \in U \setminus W}
-\otimes_{w \in W \cup \{u\}} \alpha_w .
-\]
-So, 
-\[
-\langle Q^{\op C}_1 \rangle^{\hat I}(a)
-=
-  \bigoplus_{\substack{W \subseteq U, \\ |W| \op C}}
-\Bigl(
-\bigotimes_{u \in W} \alpha_u
-\;\ominus\;
-\bigoplus_{u \in U \setminus W}
-\otimes_{w \in W \cup \{u\}} \alpha_w 
-\Bigr)
-\]
-
+\bigoplus_{\substack{W\subseteq U\\|W|\op C}} T_U(W).
+\end{equation}
 \smallskip\noindent\emph{Provenance of the join queries:}
-For every $W\subseteq U $ define the monomial
-$
-A_W \;:=\; \bigotimes_{u\in W}\alpha_u .
-$
-For $C\ge 0$ put
+For every $W\subseteq U $ and $C\ge 0$ we define, 
 \[
 S_C \;:=\; \bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
 \quad
-(\text{with }S_0=\mathbb 1\text{ and }S_c=\mathbb 0\text{ if }C>|U|).
+(\text{with }S_0=\mathbb{1}_{\mathbb{K}}\text{ and }S_c=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
 \]
 Consider the query $Q^{\ge C}_2$.  A valuation contributing to the output
 tuple with key $a$ corresponds to choosing $C$ tuples from $q$ with first
@@ -536,7 +521,7 @@ Combining with \eqref{eq:AV-bound} yields
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{proof}
-\begin{lemma}[Recurrence for $F_C$]\label{lem:FC-recurrence}
+\begin{lemma}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.
 Write the natural order as $a\le b \iff a\oplus b=b$, and assume $\ominus$ satisfies
 residuation $x\ominus y\le z \iff x\le y\oplus z$.
@@ -662,7 +647,7 @@ F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\beta),
 \]
 as required.
 \end{proof}
-\begin{lemma}[Recurrence for $S_C$]\label{lem:SC-recurrence}
+\begin{lemma}[Recurrence for $S_C$]\label{lem:SC_recurrence}
   Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring such that $\otimes$ distributes over $\oplus$:
 \[
 r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b)\qquad(\forall r,a,b\in K).
@@ -779,35 +764,11 @@ as required.
 \end{toappendix}
 
 \smallskip\noindent\textbf{\emph{When $\op$ is $\ge$ :}}
-From \eqref{eq:Q1-prov} with $\op = \ge$ and $U=\mathbf X_a$, write for each $W\subseteq U$
-\[
-A_W:=\bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} ,
-\qquad
-B_W:=\bigoplus_{x\in U\setminus W}\mathbf{x}^{(\mathbb{K})} .
-\]
-We define, 
-\[
-T_U(W)\ :=\ A_W\ \otimes\ \bigl(\mathbb 1 \ominus B_W\bigr)\ \in \mathbb K.
-\]
-By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
-\begin{align*}
-T_U(W)
-&= (A_W\otimes \mathbb 1)\ominus (A_W\otimes B_W) \\
-&= A_W\ominus\Bigl(A_W\otimes \bigoplus_{x\in U\setminus W}\mathbf{x}^{(\mathbb{K})} \Bigr) \\
-&= A_W\ominus \bigoplus_{x\in U\setminus W}(A_W\otimes \mathbf{x}^{(\mathbb{K})} ) \\
-&= A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}}.
-\end{align*}
-Since $\chi_{\ge}(|W|,C)=\mathbb 1$ iff $|W|\ge C$ and $\mathbb 0$ otherwise, \eqref{eq:Q1-prov} becomes
-\[
-\langle Q^{\ge C}_1\rangle^{\hat I}(a)
-=
-\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
-\]
-Set
+From \eqref{eq:pw_tw} with $\op = \ge$ we set, 
 \[
 F_C(U)\ :=\ \bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
 \]
-Then we have shown
+Now, 
 \begin{equation}\label{eq:PW_ge_equals_F}
 \langle Q^{\ge C}_1\rangle^{\hat I}(a)=F_C(U).
 \tag{$PW_{\ge}$}
@@ -819,21 +780,20 @@ We already showed for the join query that
 S_C(U)=\bigoplus_{\substack{W\subseteq U\\|W|=C}}A_W.
 \tag{$J_{\ge}$}
 \]
-By Lemma~\ref{lem:FC-recurrence}, for any $u\in U$ with $U'=U\setminus\{u\}$ and $\beta=u^{(\mathbb{K})}$,
+By Lemma~\ref{lem:FC_recurrence}, for any $u\in U$ with $U'=U\setminus\{u\}$ and $\beta=\alpha_u$,
 and for all $C\ge 1$,
 \[
 F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\beta\bigr).
 \tag{R$_F$}
 \]
-By Lemma~\ref{lem:SC-recurrence}, the polynomials $S_C$ satisfy the same recurrence:
+By Lemma~\ref{lem:SC_recurrence}, $S_C(U)$ satisfy the same recurrence:
 \[
 S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr)
 \qquad(C\ge 1).
 \tag{R$_S$}
 \]
-
-We prove by induction on $n:=|U|$ that $F_C(U)=S_C(U)$ for all finite $U$ and all $C\ge 1$.
-If $n=0$ then $U=\varnothing$ and $F_C(\varnothing)=\mathbb 0=S_C(\varnothing)$ for $C\ge 1$
+We prove that $F_C(U)=S_C(U)$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$.
+If $|U|=0$ then $U=\varnothing$ and $F_C(\varnothing)=\mathbb 0=S_C(\varnothing)$ for $C\ge 1$
 (empty $\oplus$-sum).
 Assume $|U|>0$ and pick $u\in U$, let $U'=U\setminus\{u\}$.
 By the induction hypothesis, $F_C(U')=S_C(U')$ and $F_{C-1}(U')=S_{C-1}(U')$.
