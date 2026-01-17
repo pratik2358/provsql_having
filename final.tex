@@ -345,18 +345,18 @@ T_U(W)
 &= A_W\ominus \bigoplus_{w\in U\setminus W}(A_W\otimes \alpha_w ) \\
 &= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
 \end{align*}
-Since $[|W|\op C]=\mathbb{1}_\mathbb{K}$ iff for a given choice of $\op$, $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
+Since $[|W|\op C]=\mathbb{1}_\mathbb{K}$ iff for a fiven choice of $\op$, $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
 \begin{equation}\label{eq:pw_tw}
 \langle Q^{\ge C}_1\rangle^{\hat I}(a)
 =
 \bigoplus_{\substack{W\subseteq U\\|W|\op C}} T_U(W).
 \end{equation}
 \smallskip\noindent\emph{Provenance of the join queries:}
-For every $W\subseteq U $ and $C\ge 1$ we define, 
+For every $W\subseteq U $ and $C\ge 0$ we define, 
 \[
-S_C(U) \;:=\; \bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
+S_C \;:=\; \bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
 \quad
-(\text{with }S_C(U)=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
+(\text{with }S_0=\mathbb{1}_{\mathbb{K}}\text{ and }S_c=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
 \]
 Consider the query $Q^{\ge C}_2$.  A valuation contributing to the output
 tuple with key $a$ corresponds to choosing $C$ tuples from $q$ with first
@@ -370,7 +370,7 @@ Therefore
 =
 \bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
 =
-S_C(U).
+S_C.
 \tag{$J_{\ge}$}
 \]
 By definition,
@@ -383,15 +383,15 @@ Hence, using $(J_{\ge})$,
 \[
 \langle Q^{=C}_2\rangle^{\hat I}(a)
 =
-S_C(U) \ominus S_{C+1}(U),
+S_C \ominus S_{C+1},
 \qquad
 \langle Q^{\le C}_2\rangle^{\hat I}(a)
 =
-S_1(U) \ominus S_{C+1}(U).
+S_1 \ominus S_{C+1}.
 \tag{$J_{=,\le}$}
 \]
 \begin{toappendix}
-  \begin{lemma}\label{lem:monus-le-left}
+  \begin{lemma}\label{lem:x-y<=x}
 Let $(K,\oplus,\mathbb 0)$ be an idempotent commutative monoid, equipped with an
 operation $\ominus$ satisfying the residuation law: for all $x,y,z\in K$,
 \begin{equation}\label{eq:residuation-monus}
@@ -414,8 +414,8 @@ But $x\le y\oplus x$ holds because $x\oplus(y\oplus x)=(x\oplus x)\oplus y=x\opl
 Hence $x\ominus y\le x$.
 \end{proof}
 
-\begin{lemma}\label{lem:monus-join}
-Under the assumptions of Lemma~\ref{lem:monus-le-left}, for all $x,y\in K$,
+  \begin{lemma}\label{lem:x<=y+(x-y)}
+  Under the assumptions of Lemma~\ref{lem:x-y<=x}, for all $x,y\in K$,
 \[
   x \le y\oplus (x\ominus y).
 \]
@@ -437,10 +437,10 @@ Assume that $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\
 \begin{equation}\label{eq:residuation}
   x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
 \end{equation}
-Fix a finite set $U$ and elements $(\mathbf{x}^{(\mathbb{K})} )_{x\in U}\subseteq K$.
+  Fix a finite set $U$ and elements $(\alpha)_{x\in U}\in K$.
 For $W\subseteq U$ define
 \[
-  A_W := \bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} ,
+  A_W := \bigotimes_{x\in W}\alpha_x ,
   \qquad
   T_U(W) := A_W \ominus \bigoplus_{x\in U\setminus W} A_{W\cup\{x\}} .
 \]
@@ -478,11 +478,10 @@ Let
 \[
   Y := \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}} \in K.
 \]
-From \eqref{eq:residuation} we obtain the standard inequality
+  From Lemma~\ref{lem:x<=y+(x-y)} we obtain the standard inequality
 \begin{equation}\label{eq:M2-lemma1}
   X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in K,
 \end{equation}
-by instantiating \eqref{eq:residuation} with $z=X\ominus Y$ (since $X\ominus Y\le X\ominus Y$).
 Applying \eqref{eq:M2-lemma1} to $X=A_V$ gives
 \[
   A_V \le Y \oplus (A_V\ominus Y).
@@ -522,19 +521,19 @@ since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{proof}
 \begin{lemma}[Recurrence for $F_C$]\label{lem:FC_recurrence}
-Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent commutative $m$-semiring.
+Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.
 Write the natural order as $a\le b \iff a\oplus b=b$, and assume $\ominus$ satisfies
- $x\ominus y\le z \iff x\le y\oplus z$.
+residuation $x\ominus y\le z \iff x\le y\oplus z$.
 Assume moreover that $\otimes$ distributes over $\oplus$ and over $\ominus$, i.e.
 \[
 r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b),
 \qquad
 r\otimes(a\ominus b)=(r\otimes a)\ominus(r\otimes b).
 \]
-Fix a finite set $U$ and provenance $(\alpha)_{x\in U}\in K$.
+Fix a finite set $U$ and elements $(\mathbf{x}^{(\mathbb{K})} )_{x\in U}\subseteq K$.
 For $W\subseteq U$ define
 \[
-A_W:=\bigotimes_{x\in W}\alpha_x,
+A_W:=\bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} ,
 \qquad
 T_U(W):=A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}},
 \]
@@ -600,13 +599,13 @@ $x\ominus(y\oplus z)=(x\ominus y)\ominus z$, we get
 \begin{equation}\label{eq:TU-rewrite}
 T_U(W)
 =
-A_W\ominus\Bigl(\bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\bigr)\oplus(A_W\otimes\beta)\Bigr)
+A_W\ominus\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\oplus(A_W\otimes\beta)\Bigr)
 =
 T_{U'}(W)\ominus(A_W\otimes\beta).
 \end{equation}
 
-\smallskip\noindent\emph{Now we show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\beta)$.}
-By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$,
+\smallskip\noindent\emph{Show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\beta)$.}
+  By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$ (shown in Lemma~\ref{lem:x-y<=x}),
 we have $T_U(W)\le T_{U'}(W)$ for all $W\subseteq U'$.
 Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ yields $(I)\le F_C(U')$.
 Together with \eqref{eq:split-I-II} and \eqref{eq:II-simplifies}, this gives
@@ -616,7 +615,7 @@ F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\beta).
 
 \smallskip\noindent\emph{Show $F_C(U')\le F_C(U)$.}
 Fix $W\subseteq U'$ with $|W|\ge C$.
-By the inequality $x\le y\oplus(x\ominus y)$ applied to
+By the inequality $x\le y\oplus(x\ominus y)$ (shown in Lemma~\ref{lem:x<=y+(x-y)}) applied to
 $x=T_{U'}(W)$ and $y=A_W\otimes\beta$, and using \eqref{eq:TU-rewrite}, we get
 \begin{equation}\label{eq:TUprime-bound}
 T_{U'}(W)\le (A_W\otimes\beta)\oplus T_U(W).
@@ -637,7 +636,7 @@ so $A_W\otimes\beta\le F_C(U)$.
 Plugging these two bounds into \eqref{eq:TUprime-bound} yields $T_{U'}(W)\le F_C(U)$.
 Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ gives $F_C(U')\le F_C(U)$.
 
-\smallskip\noindent\emph{Conclude equality.}
+\smallskip\noindent\emph{The recurrence.}
 From \eqref{eq:leq-direction}, $F_C(U')\le F_C(U)$ and
 $F_{C-1}(U')\otimes\beta=(II)\le F_C(U)$, we obtain
 $F_C(U')\oplus(F_{C-1}(U')\otimes\beta)\le F_C(U)$.
@@ -652,10 +651,10 @@ as required.
 \[
 r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b)\qquad(\forall r,a,b\in K).
 \]
-Fix a finite set $U$ and a family $(\mathbf{x}^{(\mathbb{K})} )_{x\in U}\subseteq K$.
+Fix a finite set $U$ and a family $(\alpha)_{x\in U}\in K$.
 For $W\subseteq U$ define
 \[
-A_W:=\bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} 
+A_W:=\bigotimes_{x\in W}\alpha_x 
 \quad\text{(with the convention }A_\varnothing:=\mathbb 1\text{),}
 \]
 and for $C\in\mathbb N$ define
@@ -740,7 +739,7 @@ For each $W'\subseteq U'$ we have, by commutativity and associativity of $\otime
 \[
 A_{W'\cup\{u\}}
 =
-\Bigl(\bigotimes_{x\in W'}\mathbf{x}^{(\mathbb{K})} \Bigr)\otimes \alpha_u
+\Bigl(\bigotimes_{x\in W'}\alpha_x \Bigr)\otimes \alpha_u
 =
 A_{W'}\otimes \beta.
 \]
