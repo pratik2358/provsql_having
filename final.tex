@@ -192,6 +192,7 @@ For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of 
 \end{proposition}
 
 \section{Proof of Theorem~\ref{th:correctness}}\label{sec:proofoftheorem}
+We start by proving simple results that we would later need in the proof. We first show that in an $m$-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. 
 \begin{proposition}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
   Let $S$ be any m-semiring. $S$ is idempotent if and only if $\ominus$
@@ -284,6 +285,7 @@ Then
 where the second equality uses right-distributivity and the third uses the
 induction hypothesis.
 \end{proof}
+We now isolate two elementary inequalities on the residual charecterization of $\ominus$ and the natural order defined for commutativ $m-$semirings.
 \begin{proposition}
   Let $K_1, K_2$ be two m-semirings and $h: K_1\to K_2$ an m-semiring
   homomorphism. Then:
@@ -338,7 +340,7 @@ x \le y\oplus (x\ominus y),
 \]
 as required.
 \end{proof}
-
+Next, we state a bounding lemma that we later use in the proof to show that summing $T_U(W)$ over all $W\supseteq V$ always dominates the product $A_V$ for $V\subseteq U$. 
 \begin{lemma}\label{lem:upward-expansion}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring,
 and write the natural order as $a\le b \iff a\oplus b=b$.
@@ -387,7 +389,7 @@ Let
 \[
   Y := \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}} \in K.
 \]
-  From Lemma~\ref{lem:x<=y+(x-y)} we obtain the standard inequality
+From Lemma~\ref{lem:x<=y+(x-y)} we obtain the standard inequality
 \begin{equation}\label{eq:M2-lemma1}
   X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in K,
 \end{equation}
@@ -430,6 +432,7 @@ Combining with \eqref{eq:AV-bound} yields
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{proof}
+Next, we show the recurrences for $F_C$ and $S_C$.
 \begin{lemma}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.
 Write the natural order as $a\le b \iff a\oplus b=b$, and assume $\ominus$ satisfies
@@ -670,11 +673,9 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
 \]
 as required.
 \end{proof}
-
-\begin{proof}
-  \item 
-  \paragraph{Proof of (i)}
-  For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing 
+Finally we proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
+\paragraph{Proof of (i)}
+For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing 
   that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative $m$-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
     $\langle Q^{\op C}_1\rangle^{\hat I}\text{ and }\langle Q^{\op C}_2\rangle^{\hat I}$ apply the same relational algebra operators to the same subquery $q$
     and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (HAVING) condition; all other operators are interpreted identically. Hence, it 
@@ -900,12 +901,12 @@ Repeating the same lifting argument as above gives
 =
 \langle Q^{\ge 1}_1\rangle^{\hat I}(a)\ \ominus\ \langle Q^{\ge (C+1)}_1\rangle^{\hat I}(a).
 \]
-By the $\ge$-case, $\langle Q^{\ge 1}_1\rangle^{\hat I}(a)=S_1=\bigoplus_{x\in U}\mathbf{x}^{(\mathbb{K})} $ and
+By the $\ge$-case, $\langle Q^{\ge 1}_1\rangle^{\hat I}(a)=S_1=\bigoplus_{x\in U}\alpha_x $ and
 $\langle Q^{\ge (C+1)}_1\rangle^{\hat I}(a)=S_{C+1}$, hence
 \[
 \langle Q^{\le C}_1\rangle^{\hat I}(a)
 =
-\Bigl(\bigoplus_{x\in U}\mathbf{x}^{(\mathbb{K})} \Bigr)\ominus S_{C+1}
+\Bigl(\bigoplus_{x\in U}\alpha_x \Bigr)\ominus S_{C+1}
 =
 \langle Q^{\le C}_2\rangle^{\hat I}(a)
 \]
@@ -927,12 +928,9 @@ Therefore,
 \langle Q^{\op C}_1 \rangle^{\hat I}
 =
 \langle Q^{\op C}_2 \rangle^{\hat I}.
-\]
 \qed
-
-\end{proof}
-
-
+\]\paragraph{Proof of (ii)}
+\paragraph{Proof of (iii)}
 \input{algorithms}
 
 \section{Experiments}
