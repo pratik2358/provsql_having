@@ -126,7 +126,72 @@ $\chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \
 \end{cases}$
 \end{definition}
 \section{Results}
+We reason on the generality and correctness of the possible-world semantics we proposed for aggregate comparison predicates, by showing that our semantics agrees with that of standard JOIN equivalent queries for simple HAVING-COUNT queries. Concretely we show that if we restrict our domain of provenance annotations to a commutative $m-$semiring with two other algebraic constraints: additive idempotence and distributivity of $\otimes$ over $\ominus$, provenance evaluation using our possible-world semantics is equivalent to the provenance evaluated for the JOIN-based rewrtings of simple HABING-COUNT queries.
 
+\begin{theorem}\label{th:correctness}
+  For any binary query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
+  =,\geq\}$ consider the queries:
+\begin{align*}
+    Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q)))\\
+    Q^{\geq C}_2&=\begin{cases}\Pi_{\#1}(q) & \text{if } C=1,\\[1mm]\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
+    q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<\#(2C)}q) & \text{if }C\ge 2\end{cases}\\
+    Q^{\leq C}_2&= Q^{\geq 1}_2-Q_2^{\geq C+1}\\
+Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
+\end{align*}
+    Then:
+    \begin{compactenum}[(i)]
+      \item
+        For any commutative m-semiring $\mathbb{K}$ which is
+        idempotent and such that $\otimes$ is
+        distributive over $\ominus$, for any
+        $\mathbb{K}$-instance $\hat I$,
+        $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$.
+      \item There exists a commutative m-semiring $\mathbb{K}_1$ which is
+        idempotent but does
+        not have distributivity of $\otimes$ over $\ominus$, and a
+        $\mathbb{K}_1$-instance $\hat I_1$ such that
+        $\langle Q^{\op C}_1\rangle^{\hat I_1}\neq\langle Q^{\op C}_2\rangle^{\hat I_1}$.
+      \item There exists a commutative m-semiring $\mathbb{K}_2$ that has
+        distributivity of $\otimes$ over $\ominus$ but which is not
+        idempotent, and a
+        $\mathbb{K}_2$-instance $\hat I_2$ such that
+        $\langle Q^{\op C}_1\rangle^{\hat I_2}\neq\langle Q^{\op C}_2\rangle^{\hat I_2}$.
+    \end{compactenum}
+\end{theorem}
+\begin{proof}[Proof sketch]
+The two queries differ only in how they implement the \textsc{having} condition. So we may fix one group key value $a$ and compare the single provenance expression produced for that group; equality for every $a$ then implies equality of the full query results.
+
+  For simplicity, let us assume for now that $q$ has no duplicate tuple.For this fixed $a$, let $U$ be the finite collection of tuples of $q$ with first attribute $a$, with annotations $\alpha_u\in\mathbb K$. The query $Q^{\ge C}_2$ with strict self-join ordering predicate is designed to ``exhibit'' $C$ distinct tuples in the group: a satisfying valuation of these \textsc{join} conditions selects $C$ tuples (arranged by the strict inequalities in the join predicate), and the semantics contributes the product of their annotations. Summing over all satisfying valuations therefore yields the necessary provenance: the $\oplus$-sum of all products $A_W=\bigotimes_{u\in W}\alpha_u$ over $C$-element choices $W\subseteq U$. Call this expression $S_C(U)$.
+
+The possible-world semantics of the \textsc{having} predicate looks quite different at first: it sums over all subsets $W\subseteq U$ (possible worlds), keeps those with $|W|\ge C$, and multiplies by a factor enforcing that tuples outside $W$ are ``absent.'' Using distributivity of $\otimes$ over $\ominus$ and $\oplus$, the contribution associated with each $W$ can be rewritten in a normal form
+\[
+T_U(W)=A_W\ominus\bigoplus_{u\in U\setminus W}A_{W\cup\{u\}},
+\]
+so that the provenance becomes a single aggregated expression
+\[
+F_C(U)=\bigoplus_{|W|\ge C}T_U(W).
+\]
+Intuitively, $T_U(W)$ takes the monomial for choosing exactly the tuples in $W$ and removes away all one-step extensions of $W$, which is precisely what the ``absence'' factor is meant to enforce.
+
+The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looking constructions, if we pick any $u\in U$, write $U'=U\setminus\{u\}$, and $\beta=\alpha_u$, then both expressions split into two disjoint contributions: those worlds that do not use $u$, and those that do use $u$. This yields the same include/exclude recurrence for both  $F_C(U)$ and $S_C(U)$  (for all $C\ge 1$):
+\[
+\square_C(U)=\square_C(U')\ \oplus\ \bigl(\square_{C-1}(U')\otimes\beta\bigr).
+\]
+For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the interesting part: it relies residual characterization of $\ominus$ together with an $W$-expansion lemma ensuring that products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
+
+  Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. We show a full proof for this theorem in detail in Section~\ref{sec:proofoftheorem}.
+  \textcolor{red}{to do: write proofs for ii and iii}
+\end{proof}
+\begin{proposition}
+  For any binary query $q$, for any $C\in\mathbb{N}^*$, for $\op\in \{\leq,
+  =,\geq\}$, for any commutative $m$-semiring $\mathbb{K}$,
+  computing
+  $\langle Q^{\op C}\rangle^{\hat I}$ for the query
+\[    Q^{\op C}_1=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q(R))))
+\] over a $\mathbb{K}$-instance $\hat I$ is \complexity{\#P}-hard.
+\end{proposition}
+
+\section{Proof of Theorem~\ref{th:correctness}}\label{sec:proofoftheorem}
 \begin{proposition}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
   Let $S$ be any m-semiring. $S$ is idempotent if and only if $\ominus$
@@ -605,36 +670,7 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
 \]
 as required.
 \end{proof}
-\begin{theorem}
-  For any binary query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
-  =,\geq\}$ consider the queries:
-\begin{align*}
-    Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q)))\\
-    Q^{\geq C}_2&=\begin{cases}\Pi_{\#1}(q) & \text{if } C=1,\\[1mm]\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
-    q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<\#(2C)}q) & \text{if }C\ge 2\end{cases}\\
-    Q^{\leq C}_2&= Q^{\geq 1}_2-Q_2^{\geq C+1}\\
-Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
-\end{align*}
-    Then:
-    \begin{compactenum}[(i)]
-      \item
-        For any commutative m-semiring $\mathbb{K}$ which is
-        idempotent and such that $\otimes$ is
-        distributive over $\ominus$, for any
-        $\mathbb{K}$-instance $\hat I$,
-        $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$.
-      \item There exists a commutative m-semiring $\mathbb{K}_1$ which is
-        idempotent but does
-        not have distributivity of $\otimes$ over $\ominus$, and a
-        $\mathbb{K}_1$-instance $\hat I_1$ such that
-        $\langle Q^{\op C}_1\rangle^{\hat I_1}\neq\langle Q^{\op C}_2\rangle^{\hat I_1}$.
-      \item There exists a commutative m-semiring $\mathbb{K}_2$ that has
-        distributivity of $\otimes$ over $\ominus$ but which is not
-        idempotent, and a
-        $\mathbb{K}_2$-instance $\hat I_2$ such that
-        $\langle Q^{\op C}_1\rangle^{\hat I_2}\neq\langle Q^{\op C}_2\rangle^{\hat I_2}$.
-    \end{compactenum}
-\end{theorem}
+
 \begin{proof}
   \item 
   \paragraph{Proof of (i)}
@@ -896,14 +932,6 @@ Therefore,
 
 \end{proof}
 
-\begin{proposition}
-  For any binary query $q$, for any $C\in\mathbb{N}^*$, for $\op\in \{\leq,
-  =,\geq\}$, for any commutative $m$-semiring $\mathbb{K}$,
-  computing
-  $\langle Q^{\op C}\rangle^{\hat I}$ for the query
-\[    Q^{\op C}_1=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q(R))))
-\] over a $\mathbb{K}$-instance $\hat I$ is \complexity{\#P}-hard.
-\end{proposition}
 
 \input{algorithms}
 
