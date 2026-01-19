@@ -235,163 +235,7 @@ induction hypothesis.
   $\otimes$ over $\ominus$: the temporal semiring, the Bool[X] semiring,
   the Which[X] semiring, etc.
 \end{corollary}
-
-\begin{theorem}
-  For any binary query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
-  =,\geq\}$ consider the queries:
-\begin{align*}
-    Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q)))\\
-    Q^{\geq C}_2&=\begin{cases}\Pi_{\#1}(q) & \text{if } C=1,\\[1mm]\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
-    q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<\#(2C)}q) & \text{if }C\ge 2\end{cases}\\
-    Q^{\leq C}_2&= Q^{\geq 1}_2-Q_2^{\geq C+1}\\
-Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
-\end{align*}
-    Then:
-    \begin{compactenum}[(i)]
-      \item
-        For any commutative m-semiring $\mathbb{K}$ which is
-        idempotent and such that $\otimes$ is
-        distributive over $\ominus$, for any
-        $\mathbb{K}$-instance $\hat I$,
-        $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$.
-      \item There exists a commutative m-semiring $\mathbb{K}_1$ which is
-        idempotent but does
-        not have distributivity of $\otimes$ over $\ominus$, and a
-        $\mathbb{K}_1$-instance $\hat I_1$ such that
-        $\langle Q^{\op C}_1\rangle^{\hat I_1}\neq\langle Q^{\op C}_2\rangle^{\hat I_1}$.
-      \item There exists a commutative m-semiring $\mathbb{K}_2$ that has
-        distributivity of $\otimes$ over $\ominus$ but which is not
-        idempotent, and a
-        $\mathbb{K}_2$-instance $\hat I_2$ such that
-        $\langle Q^{\op C}_1\rangle^{\hat I_2}\neq\langle Q^{\op C}_2\rangle^{\hat I_2}$.
-    \end{compactenum}
-\end{theorem}
-\begin{proof}
-  \item 
-  \paragraph{Proof of (i)}
-  For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing 
-  that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative $m$-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
-    $\langle Q^{\op C}_1\rangle^{\hat I}\text{ and }\langle Q^{\op C}_2\rangle^{\hat I}$ apply the same relational algebra operators to the same subquery $q$
-    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (HAVING) condition; all other operators are interpreted identically. Hence, it 
-    suffices to show that for each group produced by
-    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with 
-    that produced by the self-join query.
-Since \(q\) is a binary query, every tuple in its output has the form
-\((\#1,\#2)\).
-Fix a value \(a\) of attribute \(\#1\), arbitrarily.
-We define
-\[
-  U \;=\; \{\, (a,\#2) \mid (a,\#2) \in q \,\}.
-\]
-  That is, \(U\) is a set (\textcolor{red}{We want it to be a multiset. For now I am just considering it to be a set}) of tuples in \(q\) corresponding to group-key \(a\).
-  Each \(u \in U\) has provenance 
-  \(\alpha_u \in \mathbb{K} \) and 
-  contributes the value \(1 \in M(\mathbb{N},+,.)\) to the count aggregate.
-
-The provenance of the output tuple corresponding
-  to group-key \(a\) depends exclusively on the tuples in $U$.
-Tuples whose first attribute is different from \(a\) do not contribute to
-this group and are therefore irrelevant for the computation of its
-provenance.
-Consider the query
-\[
-Q^{\op C}_1
-=
-\Pi_{\#1}\bigl(
-\sigma_{\#2 \op C}(
-  \gamma_{\#1}[1:+](q)
-)\bigr).
-\]
-For the group with key value $a$, the operator \(\gamma_{\#1}[1:+]\) produces a single aggregate
-\[
-\mathdutchcal{a}
-=
-  \bigoplus_{\substack{\mathcal{M} \\ u \in U}} (\alpha_u,1)
-\in \mathcal M .
-\]
-Applying the selection \(\sigma_{\#2 \op C}\) corresponds to evaluating the
-aggregate-comparison predicate \([\mathdutchcal{a} \op C]\).
-By our possible-world semantics, the provenance annotation of the output
-tuple corresponding to group-key \(a\) is, 
-\begin{equation}\label{eq:Q1-prov}
-\langle Q^{\op C}_1 \rangle^{\hat I}(a)
-=
-  \bigoplus_{W \subseteq U}
-\Bigl(
-  \bigotimes_{u\in W} \alpha_u
-\;\otimes\;
-  [|W|\op C]
-\;\otimes\;
-\bigl(
-  \mathbb{1}_\mathbb{K} \ominus \bigoplus_{u \in U \setminus W} \alpha_u \bigr)
-\Bigr).
-\end{equation}
-\\
-For each subset \(W \subseteq U\) such that $|W|\op C$. Let, 
-\[
-A_W:=\bigotimes_{w\in W}\alpha_w ,
-\qquad
-B_W:=\bigoplus_{w\in U\setminus W}\alpha_w .
-\]
-We define, 
-\[
-T_U(W)\ :=\ A_W\ \otimes\ \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\ \in \mathbb K.
-\]
-By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
-\begin{align*}
-T_U(W)
-  &= (A_W\otimes \mathbb{1}_{\mathbb{K}})\ominus (A_W\otimes B_W) \\
-  &= A_W\ominus\Bigl(A_W\otimes \bigoplus_{w\in U\setminus W}\alpha_w \Bigr) \\
-&= A_W\ominus \bigoplus_{w\in U\setminus W}(A_W\otimes \alpha_w ) \\
-&= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
-\end{align*}
-Since $[|W|\op C]=\mathbb{1}_\mathbb{K}$ iff for a fiven choice of $\op$, $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
-\begin{equation}\label{eq:pw_tw}
-\langle Q^{\ge C}_1\rangle^{\hat I}(a)
-=
-\bigoplus_{\substack{W\subseteq U\\|W|\op C}} T_U(W).
-\end{equation}
-\smallskip\noindent\emph{Provenance of the join queries:}
-For every $W\subseteq U $ and $C\ge 0$ we define, 
-\[
-S_C \;:=\; \bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
-\quad
-(\text{with }S_0=\mathbb{1}_{\mathbb{K}}\text{ and }S_c=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
-\]
-Consider the query $Q^{\ge C}_2$.  A valuation contributing to the output
-tuple with key $a$ corresponds to choosing $C$ tuples from $q$ with first
-attribute $a$ and strictly increasing second attributes (due to the chain of
-join conditions $\#2<\#4<\cdots$). This corresponds to choosing a
-$C$-element subset $W\subseteq U$, and 
-$\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
-Therefore
-\[
-\langle Q^{\ge C}_2\rangle^{\hat I}(a)
-=
-\bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
-=
-S_C.
-\tag{$J_{\ge}$}
-\]
-By definition,
-\[
-Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2,
-\qquad
-Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2,
-\]
-Hence, using $(J_{\ge})$,
-\[
-\langle Q^{=C}_2\rangle^{\hat I}(a)
-=
-S_C \ominus S_{C+1},
-\qquad
-\langle Q^{\le C}_2\rangle^{\hat I}(a)
-=
-S_1 \ominus S_{C+1}.
-\tag{$J_{=,\le}$}
-\]
-\begin{toappendix}
-  \begin{lemma}\label{lem:x-y<=x}
+\begin{lemma}\label{lem:x-y<=x}
 Let $(K,\oplus,\mathbb 0)$ be an idempotent commutative monoid, equipped with an
 operation $\ominus$ satisfying the residuation law: for all $x,y,z\in K$,
 \begin{equation}\label{eq:residuation-monus}
@@ -482,6 +326,7 @@ Let
 \begin{equation}\label{eq:M2-lemma1}
   X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in K,
 \end{equation}
+by instantiating \eqref{eq:residuation} with $z=X\ominus Y$ (since $X\ominus Y\le X\ominus Y$).
 Applying \eqref{eq:M2-lemma1} to $X=A_V$ gives
 \[
   A_V \le Y \oplus (A_V\ominus Y).
@@ -530,10 +375,10 @@ r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b),
 \qquad
 r\otimes(a\ominus b)=(r\otimes a)\ominus(r\otimes b).
 \]
-Fix a finite set $U$ and elements $(\mathbf{x}^{(\mathbb{K})} )_{x\in U}\subseteq K$.
+Fix a finite set $U$ and elements $(\alpha)_{x\in U}\in K$.
 For $W\subseteq U$ define
 \[
-A_W:=\bigotimes_{x\in W}\mathbf{x}^{(\mathbb{K})} ,
+A_W:=\bigotimes_{x\in W}\alpha_x,
 \qquad
 T_U(W):=A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}},
 \]
@@ -760,7 +605,165 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
 \]
 as required.
 \end{proof}
-\end{toappendix}
+\begin{theorem}
+  For any binary query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
+  =,\geq\}$ consider the queries:
+\begin{align*}
+    Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma_{\#1}[1:+](q)))\\
+    Q^{\geq C}_2&=\begin{cases}\Pi_{\#1}(q) & \text{if } C=1,\\[1mm]\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
+    q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<\#(2C)}q) & \text{if }C\ge 2\end{cases}\\
+    Q^{\leq C}_2&= Q^{\geq 1}_2-Q_2^{\geq C+1}\\
+Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
+\end{align*}
+    Then:
+    \begin{compactenum}[(i)]
+      \item
+        For any commutative m-semiring $\mathbb{K}$ which is
+        idempotent and such that $\otimes$ is
+        distributive over $\ominus$, for any
+        $\mathbb{K}$-instance $\hat I$,
+        $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$.
+      \item There exists a commutative m-semiring $\mathbb{K}_1$ which is
+        idempotent but does
+        not have distributivity of $\otimes$ over $\ominus$, and a
+        $\mathbb{K}_1$-instance $\hat I_1$ such that
+        $\langle Q^{\op C}_1\rangle^{\hat I_1}\neq\langle Q^{\op C}_2\rangle^{\hat I_1}$.
+      \item There exists a commutative m-semiring $\mathbb{K}_2$ that has
+        distributivity of $\otimes$ over $\ominus$ but which is not
+        idempotent, and a
+        $\mathbb{K}_2$-instance $\hat I_2$ such that
+        $\langle Q^{\op C}_1\rangle^{\hat I_2}\neq\langle Q^{\op C}_2\rangle^{\hat I_2}$.
+    \end{compactenum}
+\end{theorem}
+\begin{proof}
+  \item 
+  \paragraph{Proof of (i)}
+  For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing 
+  that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative $m$-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
+    $\langle Q^{\op C}_1\rangle^{\hat I}\text{ and }\langle Q^{\op C}_2\rangle^{\hat I}$ apply the same relational algebra operators to the same subquery $q$
+    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (HAVING) condition; all other operators are interpreted identically. Hence, it 
+    suffices to show that for each group produced by
+    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with 
+    that produced by the self-join query.
+Since \(q\) is a binary query, every tuple in its output has the form
+\((\#1,\#2)\).
+Fix a value \(a\) of attribute \(\#1\), arbitrarily.
+
+\smallskip\noindent\emph{Note: }\textit{For simplicity, we assume set semantics, i.e, $q$ produces no duplicate output tuples. In this setting, for a fixed group key $a$ selecting $C$ tuples whose second attributes form a strict join chain is the same as requiring the existence of $C-$ distinct tuples in the group. The same proof idea can be extended to multiset-semantics by treating duplicate tuples as distinct tuple occurences (e.g. by indexing inside groups) and refining the strict-ordering predicate in the join chain with this new tie-breaking attribute so that it is possible to select distinct tuple occurences with equal second attributes in increasing order.}
+
+We define
+\[
+  U \;=\; \{\, (a,\#2) \mid (a,\#2) \in q \,\}.
+\]
+  That is, \(U\) is a set of tuples in \(q\) corresponding to group-key \(a\).
+  Each \(u \in U\) has provenance 
+  \(\alpha_u \in \mathbb{K} \) and 
+  contributes the value \(1 \in M(\mathbb{N},+,.)\) to the count aggregate.
+
+\smallskip\noindent\emph{Note: }\textit{Again, for multiset-semantics $U$ is to be defined as a finite index set of tuple-occurences of tuples in $q$ for a particular group-key. And each $u\in U $ will have provenance $\alpha_u\in\mathbb{K}$}
+
+The provenance of the output tuple corresponding
+  to group-key \(a\) depends exclusively on the tuples in $U$.
+Tuples whose first attribute is different from \(a\) do not contribute to
+this group and are therefore irrelevant for the computation of its
+provenance.
+Consider the query
+\[
+Q^{\op C}_1
+=
+\Pi_{\#1}\bigl(
+\sigma_{\#2 \op C}(
+  \gamma_{\#1}[1:+](q)
+)\bigr).
+\]
+For the group with key value $a$, the operator \(\gamma_{\#1}[1:+]\) produces a single aggregate
+\[
+\mathdutchcal{a}
+=
+  \bigoplus_{\substack{\mathcal{M} \\ u \in U}} (\alpha_u,1)
+\in \mathcal M .
+\]
+Applying the selection \(\sigma_{\#2 \op C}\) corresponds to evaluating the
+aggregate-comparison predicate \([\mathdutchcal{a} \op C]\).
+By our possible-world semantics, the provenance annotation of the output
+tuple corresponding to group-key \(a\) is, 
+\begin{equation}\label{eq:Q1-prov}
+\langle Q^{\op C}_1 \rangle^{\hat I}(a)
+=
+  \bigoplus_{W \subseteq U}
+\Bigl(
+  \bigotimes_{u\in W} \alpha_u
+\;\otimes\;
+  [|W|\op C]
+\;\otimes\;
+\bigl(
+  \mathbb{1}_\mathbb{K} \ominus \bigoplus_{u \in U \setminus W} \alpha_u \bigr)
+\Bigr).
+\end{equation}
+\\
+For each subset \(W \subseteq U\) such that $|W|\op C$. Let, 
+\[
+A_W:=\bigotimes_{w\in W}\alpha_w ,
+\qquad
+B_W:=\bigoplus_{w\in U\setminus W}\alpha_w .
+\]
+We define, 
+\[
+T_U(W)\ :=\ A_W\ \otimes\ \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\ \in \mathbb K.
+\]
+By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
+\begin{align*}
+T_U(W)
+  &= (A_W\otimes \mathbb{1}_{\mathbb{K}})\ominus (A_W\otimes B_W) \\
+  &= A_W\ominus\Bigl(A_W\otimes \bigoplus_{w\in U\setminus W}\alpha_w \Bigr) \\
+&= A_W\ominus \bigoplus_{w\in U\setminus W}(A_W\otimes \alpha_w ) \\
+&= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
+\end{align*}
+Since $[|W|\op C]=\mathbb{1}_\mathbb{K}$ iff for a fiven choice of $\op$, $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
+\begin{equation}\label{eq:pw_tw}
+\langle Q^{\ge C}_1\rangle^{\hat I}(a)
+=
+\bigoplus_{\substack{W\subseteq U\\|W|\op C}} T_U(W).
+\end{equation}
+\smallskip\noindent\emph{Provenance of the join queries:}
+For every $W\subseteq U $ and $C\ge 0$ we define, 
+\[
+S_C \;:=\; \bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
+\quad
+(\text{with }S_0=\mathbb{1}_{\mathbb{K}}\text{ and }S_c=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
+\]
+Consider the query $Q^{\ge C}_2$.  A valuation contributing to the output
+tuple with key $a$ corresponds to choosing $C$ tuples from $q$ with first
+attribute $a$ and strictly increasing second attributes (due to the chain of
+join conditions $\#2<\#4<\cdots$). This corresponds to choosing a
+$C$-element subset $W\subseteq U$, and 
+$\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
+Therefore
+\[
+\langle Q^{\ge C}_2\rangle^{\hat I}(a)
+=
+\bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
+=
+S_C.
+\tag{$J_{\ge}$}
+\]
+By definition,
+\[
+Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2,
+\qquad
+Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2,
+\]
+Hence, using $(J_{\ge})$,
+\[
+\langle Q^{=C}_2\rangle^{\hat I}(a)
+=
+S_C \ominus S_{C+1},
+\qquad
+\langle Q^{\le C}_2\rangle^{\hat I}(a)
+=
+S_1 \ominus S_{C+1}.
+\tag{$J_{=,\le}$}
+\]
 
 \smallskip\noindent\textbf{\emph{When $\op$ is $\ge$ :}}
 From \eqref{eq:pw_tw} with $\op = \ge$ we set, 
