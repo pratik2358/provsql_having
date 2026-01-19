@@ -179,8 +179,7 @@ The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looki
 \]
 For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the interesting part: it relies residual characterization of $\ominus$ together with an $W$-expansion lemma ensuring that products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
 
-  Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. We show a full proof for this theorem in detail in Section~\ref{sec:proofoftheorem}.
-  \textcolor{red}{to do: write proofs for ii and iii}
+  Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. We show a full proof for this theorem in detail in Section~\ref{sec:proofoftheorem}; we also discuss there how the argument extends to multiset semantics.  \textcolor{red}{to do: write proofs for ii and iii}
 \end{proof}
 \begin{proposition}
   For any binary query $q$, for any $C\in\mathbb{N}^*$, for $\op\in \{\leq,
