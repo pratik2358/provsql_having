@@ -310,13 +310,18 @@ induction hypothesis.
 \end{proof}
 We now isolate two elementary inequalities on the residual charecterization of $\ominus$ and the natural order defined for commutativ $m-$semirings.
 \begin{proposition}
-  Let $K_1, K_2$ be two m-semirings and $h: K_1\to K_2$ an m-semiring
+  Let $\mathbb{K}_1, \mathbb{K}_2$ be two m-semirings and $h:
+  \mathbb{K}_1\to \mathbb{K}_2$ an \emph{injective} m-semiring
   homomorphism. Then:
     \begin{compactenum}[(i)]
-      \item If $\mathbb{K}_1$ is idempotent, then $\mathbb{K}_2$ is
+    \item
+      \lean{SemiringWithMonus}{idempotent_of_injective_homomorphism_idempotent}
+      If $\mathbb{K}_2$ is idempotent, then $\mathbb{K}_1$ is
         idempotent.
-      \item If $\otimes$ is distributive over $\ominus$ in $K_1$, the same
-        is true in~$\mathbb{K}_2$.
+      \item
+        \lean{SemiringWithMonus}{mul_sub_left_of_injective_homomorphism_mul_sub_left}
+        If $\otimes$ is left-distributive over $\ominus$ in $\mathbb{K}_2$, the same
+        is true in~$\mathbb{K}_1$.
     \end{compactenum}
 \end{proposition}
 
