@@ -19,7 +19,7 @@
 \SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
 \DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
 \newcommand{\dq}[1]{\text{\enquote{#1}}}
-\newcommand{\op}{\hspace{0.1cm}\mathsf{\star}\hspace{0.1cm}}
+\newcommand{\op}{\mathbin{\mathsf{\star}}}
 \makeatletter
 \newcommand{\bigplus}{%
   \DOTSB\mathop{\mathpalette\mattos@bigplus\relax}\slimits@
@@ -42,6 +42,8 @@
 with Monus}
 
 \renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\le}{\leqslant}
+\renewcommand{\ge}{\geqslant}
 \renewcommand{\leq}{\leqslant}
 \renewcommand{\geq}{\geqslant}
 
@@ -61,7 +63,7 @@ with Monus}
 \SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
 \DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
 
-\makeatletter
+\newcommand{\pierre}[1]{{\color{magenta}[\textbf{Pierre:} #1]}}
 
 
 \usepackage[appendix=append]{apxproof}
@@ -75,41 +77,55 @@ with Monus}
 \input{table_semirings}
 
 \section{Semantics}
-Extending on the algebra over annotated 
-relations presented in ***  by 
-adding a new predicate form that allows 
-comparison between aggregations we fill the semantics gap that 
+Extending on the algebra over annotated
+relations presented in ***  by
+adding a new predicate form that allows
+comparison between aggregations we fill the semantics gap that
 was noted and left for future work.
 \paragraph{Setup.}
-Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an 
-added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an 
-additive monoid of aggregate values. Let $*:K\times M \mapsto K$ be a scalar action of $M$ on $K$, such that for $a \in K, b \in M$, 
-$a * b = a \times b \in K$.
-We fix a finite set $\mathbf{X}$ of variables. Each $\mathbf{x}\in\mathbf{X}$ have provenance annotations in $K$ and values in $M$ 
-given by a semimodule ($K\times M$, say $\mathcal{M}$) map 
+Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an
+added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an
+additive monoid of aggregate values. Let $*:K\times M \mapsto K$ be a scalar action of $M$ on $K$, such that for $a \in K, b \in M$,
+$a * b \in K$.
+We fix a finite set $\mathbf{X}$ of variables. Each $\mathbf{x}\in\mathbf{X}$ have provenance annotations in $K$ and values in $M$
+given by a semimodule ($K\times M$, say $\mathcal{M}$) map
 \[
 \mathfrak{Z}:\mathbf{X}\rightarrow \mathcal{M}\; \text{and} \quad \mathfrak{Z}^{(K)}(\mathbf{x})=\mathbf{x}^{(K)}, \; \mathfrak{Z}^{(M)}(\mathbf{x})=\mathbf{x}^{(M)}
 \]
-An aggregation $\mathdutchcal{a}$ is defined by an indicator function 
+An aggregation $\mathdutchcal{a}$ is defined by an indicator function
 $I_\mathdutchcal{a}:\mathbf{X}\rightarrow \{0,1\}$
-on variables from $\mathbf{X}$ that participate in the aggregation as 
+on variables from $\mathbf{X}$ that participate in the aggregation as
 \[
 \mathdutchcal{a} = {\bigoplus_\mathcal{M}}_{\mathbf{x}\in \mathrm{supp}(\mathdutchcal{a})}(\mathbf{x}^{(K)},\mathbf{x}^{(M)})
 \]
-where, 
-$\mathrm{supp}(\mathdutchcal{a})=\{\,\mathbf{x} \mid I_\mathdutchcal{a}(\mathbf{x})=1 \,\}$ and 
-$\bigoplus_{\mathcal{M}}$ is a formal $\mathcal{M}-$sum over 
+where,
+$\mathrm{supp}(\mathdutchcal{a})=\{\,\mathbf{x} \mid I_\mathdutchcal{a}(\mathbf{x})=1 \,\}$ and
+$\bigoplus_{\mathcal{M}}$ is a formal $\mathcal{M}-$sum over
 variables $\mathbf{x}$ involved in the aggregation.
 A possible world is represented by a subset $W\subseteq\mathbf{X}$.
-\begin{definition}[Possible-world Semantics]\label{def:pw_semantics}
-For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as, 
+
+\pierre{What precedes need to be made more formal (e.g., there should be
+  a formal definition of a semiring with~$\delta$, and of a semimodule,
+  probably in the previous section; this
+  is important, for example for now it is not really explained how an
+  aggregation is defined -- a formal sum is not an element of a
+semimodule; we should talk about semimodule elements of a given specific
+form, or have a normal form for semimodule elements.)}
+
+\begin{definition}[Possible-World Semantics]\label{def:pw_semantics}
+  \pierre{Every definition needs to be self-contained, and not depend on
+    external variables; so we should say something like ``For any
+    m-semiring $K$, for any additive monoid $M$, for any finite set of variables
+  $\mathbf{X}$\dots'''}
+
+For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as,
 \[
-[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K 
+[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K
 \]
-such that,
+as:
 \begin{multline*}
-[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathrm{op}}=
-\bigoplus_{W} 
+[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\op}=
+\bigoplus_{W\subseteq\mathbf{X}}
 \Biggl(
   \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(K)} \Bigr)
 \otimes
@@ -118,13 +134,19 @@ such that,
   \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \;\oplus\; \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\Biggr)
 \Biggr)
 \end{multline*}
-where,
-$\chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)=
+where, for any two elements $a, b\in M$,
+$\chi_{\op}(a,b)
+=
 \begin{cases}
-\mathbb{1}_K & \text{if } {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}\;\mathit{op}\;{\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)},\\
+\mathbb{1}_K & \text{if } a\op b\\
 \mathbb{0}_K & \text{otherwise.}
 \end{cases}$
 \end{definition}
+
+\pierre{We need to use these definitions to actually define a semantics
+for the $\sigma$ operator when one of the column is the result of an
+aggregation.}
+
 \section{Results}
 We reason on the generality and correctness of the possible-world semantics we proposed for aggregate comparison predicates, by showing that our semantics agrees with that of standard JOIN equivalent queries for simple HAVING-COUNT queries. Concretely we show that if we restrict our domain of provenance annotations to a commutative $m-$semiring with two other algebraic constraints: additive idempotence and distributivity of $\otimes$ over $\ominus$, provenance evaluation using our possible-world semantics is equivalent to the provenance evaluated for the JOIN-based rewritings of simple HAVING-COUNT queries.
 
@@ -191,7 +213,9 @@ For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of 
 \end{proposition}
 \textcolor{red}{Cannot say this for any $\mathbb{K}$. Counter example $\mathbb{B}$}
 \section{Proof of Theorem~\ref{th:correctness}}\label{sec:proofoftheorem}
-We start by proving simple results that we would later need in the proof. We first show that in an $m$-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. 
+\pierre{The first few results are really properties of m-semirings, we
+should put them in the preliminaries.}
+We start by proving simple results that we would later need in the proof. We first show that in an $m$-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
 \begin{proposition}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
   Let $S$ be any m-semiring. $S$ is idempotent if and only if $\ominus$
@@ -303,6 +327,7 @@ We now isolate two elementary inequalities on the residual charecterization of $
   the Which[X] semiring, etc.
 \end{corollary}
 \begin{lemma}\label{lem:x-y<=x}
+  \pierre{We should directly refer to the definition of an m-semiring.}
 Let $(K,\oplus,\mathbb 0)$ be an idempotent commutative monoid, equipped with an
 operation $\ominus$ satisfying the residuation law: for all $x,y,z\in K$,
 \begin{equation}\label{eq:residuation-monus}
@@ -326,6 +351,7 @@ Hence $x\ominus y\le x$.
 \end{proof}
 
   \begin{lemma}\label{lem:x<=y+(x-y)}
+    \pierre{Same.}
   Under the assumptions of Lemma~\ref{lem:x-y<=x}, for all $x,y\in K$,
 \[
   x \le y\oplus (x\ominus y).
@@ -340,7 +366,7 @@ x \le y\oplus (x\ominus y),
 \]
 as required.
 \end{proof}
-Next, we state a bounding lemma that we later use in the proof to show that summing $T_U(W)$ over all $W\supseteq V$ always dominates the product $A_V$ for $V\subseteq U$. 
+Next, we state a bounding lemma that we later use in the proof to show that summing $T_U(W)$ over all $W\supseteq V$ always dominates the product $A_V$ for $V\subseteq U$.
 \begin{lemma}\label{lem:upward-expansion}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring,
 and write the natural order as $a\le b \iff a\oplus b=b$.
@@ -507,7 +533,7 @@ Fix $W\subseteq U'$. Since $U\setminus W=(U'\setminus W)\cup\{u\}$, we have
 =
 \Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\Bigr)\oplus (A_W\otimes\beta).
 \]
-Using 
+Using
 $x\ominus(y\oplus z)=(x\ominus y)\ominus z$, we get
 \begin{equation}\label{eq:TU-rewrite}
 T_U(W)
@@ -567,7 +593,7 @@ r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b)\qquad(\forall r,a,b\in K).
 Fix a finite set $U$ and a family $(\alpha)_{x\in U}\in K$.
 For $W\subseteq U$ define
 \[
-A_W:=\bigotimes_{x\in W}\alpha_x 
+A_W:=\bigotimes_{x\in W}\alpha_x
 \quad\text{(with the convention }A_\varnothing:=\mathbb 1\text{),}
 \]
 and for $C\in\mathbb N$ define
@@ -675,12 +701,12 @@ as required.
 \end{proof}
 Finally we proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
 \paragraph{Proof of (i)}
-For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing 
+For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing
   that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative $m$-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
     $\langle Q^{\op C}_1\rangle^{\hat I}\text{ and }\langle Q^{\op C}_2\rangle^{\hat I}$ apply the same relational algebra operators to the same subquery $q$
-    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (HAVING) condition; all other operators are interpreted identically. Hence, it 
+    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (HAVING) condition; all other operators are interpreted identically. Hence, it
     suffices to show that for each group produced by
-    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with 
+    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with
     that produced by the self-join query.
 Since \(q\) is a binary query, every tuple in its output has the form
 \((\#1,\#2)\).
@@ -693,8 +719,8 @@ We define
   U \;=\; \{\, (a,\#2) \mid (a,\#2) \in q \,\}.
 \]
   That is, \(U\) is a set of tuples in \(q\) corresponding to group-key \(a\).
-  Each \(u \in U\) has provenance 
-  \(\alpha_u \in \mathbb{K} \) and 
+  Each \(u \in U\) has provenance
+  \(\alpha_u \in \mathbb{K} \) and
   contributes the value \(1 \in M(\mathbb{N},+,.)\) to the count aggregate.
 
 \smallskip\noindent\emph{Note: }\textit{Again, for multiset-semantics $U$ is to be defined as a finite index set of tuple-occurences of tuples in $q$ for a particular group-key. And each $u\in U $ will have provenance $\alpha_u\in\mathbb{K}$}
@@ -723,7 +749,7 @@ For the group with key value $a$, the operator \(\gamma_{\#1}[1:+]\) produces a 
 Applying the selection \(\sigma_{\#2 \op C}\) corresponds to evaluating the
 aggregate-comparison predicate \([\mathdutchcal{a} \op C]\).
 By our possible-world semantics, the provenance annotation of the output
-tuple corresponding to group-key \(a\) is, 
+tuple corresponding to group-key \(a\) is,
 \begin{equation}\label{eq:Q1-prov}
 \langle Q^{\op C}_1 \rangle^{\hat I}(a)
 =
@@ -738,13 +764,13 @@ tuple corresponding to group-key \(a\) is,
 \Bigr).
 \end{equation}
 \\
-For each subset \(W \subseteq U\) such that $|W|\op C$. Let, 
+For each subset \(W \subseteq U\) such that $|W|\op C$. Let,
 \[
 A_W:=\bigotimes_{w\in W}\alpha_w ,
 \qquad
 B_W:=\bigoplus_{w\in U\setminus W}\alpha_w .
 \]
-We define, 
+We define,
 \[
 T_U(W)\ :=\ A_W\ \otimes\ \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\ \in \mathbb K.
 \]
@@ -763,7 +789,7 @@ Since $[|W|\op C]=\mathbb{1}_\mathbb{K}$ iff for a fiven choice of $\op$, $|W|\o
 \bigoplus_{\substack{W\subseteq U\\|W|\op C}} T_U(W).
 \end{equation}
 \smallskip\noindent\emph{Provenance of the join queries:}
-For every $W\subseteq U $ and $C\ge 0$ we define, 
+For every $W\subseteq U $ and $C\ge 0$ we define,
 \[
 S_C \;:=\; \bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
 \quad
@@ -773,7 +799,7 @@ Consider the query $Q^{\ge C}_2$.  A valuation contributing to the output
 tuple with key $a$ corresponds to choosing $C$ tuples from $q$ with first
 attribute $a$ and strictly increasing second attributes (due to the chain of
 join conditions $\#2<\#4<\cdots$). This corresponds to choosing a
-$C$-element subset $W\subseteq U$, and 
+$C$-element subset $W\subseteq U$, and
 $\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
 Therefore
 \[
@@ -803,11 +829,11 @@ S_1 \ominus S_{C+1}.
 \]
 
 \smallskip\noindent\textbf{\emph{When $\op$ is $\ge$ :}}
-From \eqref{eq:pw_tw} with $\op = \ge$ we set, 
+From \eqref{eq:pw_tw} with $\op = \ge$ we set,
 \[
 F_C(U)\ :=\ \bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
 \]
-Now, 
+Now,
 \begin{equation}\label{eq:PW_ge_equals_F}
 \langle Q^{\ge C}_1\rangle^{\hat I}(a)=F_C(U).
 \tag{$PW_{\ge}$}
