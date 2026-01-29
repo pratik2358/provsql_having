@@ -311,17 +311,25 @@ induction hypothesis.
 We now isolate two elementary inequalities on the residual charecterization of $\ominus$ and the natural order defined for commutativ $m-$semirings.
 \begin{proposition}
   Let $\mathbb{K}_1, \mathbb{K}_2$ be two m-semirings and $h:
-  \mathbb{K}_1\to \mathbb{K}_2$ an \emph{injective} m-semiring
+  \mathbb{K}_1\to \mathbb{K}_2$ a m-semiring
   homomorphism. Then:
     \begin{compactenum}[(i)]
     \item
       \lean{SemiringWithMonus}{idempotent_of_injective_homomorphism_idempotent}
-      If $\mathbb{K}_2$ is idempotent, then $\mathbb{K}_1$ is
-        idempotent.
+      If $h$ is injective and $\mathbb{K}_2$ idempotent, then so is
+      $\mathbb{K}_1$.
+      \item
+        \lean{SemiringWithMonus}{idempotent_of_surjective_homomorphism_idempotent}
+      If $h$ is surjective and $\mathbb K_1$ idempotent, then so is
+      $\mathbb K_2$.
       \item
         \lean{SemiringWithMonus}{mul_sub_left_of_injective_homomorphism_mul_sub_left}
-        If $\otimes$ is left-distributive over $\ominus$ in $\mathbb{K}_2$, the same
+        If $h$ is injective and $\otimes$ is left-distributive over $\ominus$ in $\mathbb{K}_2$, the
         is true in~$\mathbb{K}_1$.
+        \item
+        \lean{SemiringWithMonus}{mul_sub_left_of_surjective_homomorphism_mul_sub_left}
+        If $h$ is surjective and $\otimes$ is left-distributive over $\ominus$ in $\mathbb{K}_1$, the
+        is true in~$\mathbb{K}_2$.
     \end{compactenum}
 \end{proposition}
 
