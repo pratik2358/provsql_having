@@ -109,16 +109,16 @@ by using the Algorithm~\ref{alg:probability}.
     \STATE \hspace{1em} \textbf{return} $p$
 
     \STATE $P_{\star C} \gets \mathbf{0}$
-    \IF {$\star == \ge$}
+    \IF {$\star \: =\: \ge$}
       \FORALL{$S \subseteq A^{(K)}$ such that $|S| = C$}
         \STATE $P_{\star C} \gets P_{\star C} \oplus \textsc{ProdSet}(S)$
       \ENDFOR
-    \ELSIF {$\star == \le$}
+    \ELSIF {$\star \: =\: \le$}
       \FORALL{$S \subseteq A^{(K)}$ such that $|S| = n-C$}
         \STATE $S' \gets \{\bar{x}\mid x\in S\}$
         \STATE $P_{\star C} \gets P_{\star C} \oplus \textsc{ProdSet}(S')$
       \ENDFOR
-    \ELSIF  {$\star == =$}      
+    \ELSIF  {$\star \: =\: =$}      
       \STATE $P_{\le C} \gets \mathrm{Prov}(\texttt{COUNT}(\Box))\le C$
       \STATE $P_{\ge C} \gets \mathrm{Prov}(\texttt{COUNT}(\Box))\ge C$
       \STATE $P_{\star C} \gets P_{\ge C} \otimes P_{\le C}$
