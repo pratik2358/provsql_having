@@ -96,10 +96,10 @@ by using the Algorithm~\ref{alg:probability}.
 
 \begin{algorithm}
   \label{alg:count-prov-comparisons}
-  \caption{Provenance for \texttt{COUNT(*)} comparisons}
+  \caption{Optimised provenance for \texttt{COUNT} aggregate comparisons: $\mathrm{Prov}(\texttt{COUNT}(\Box)\star C$)}
   \begin{algorithmic}[1]
-    \REQUIRE Support set $A=\{a_1,\dots,a_n\}$ of tuple annotations; threshold $m$
-    \ENSURE $\mathrm{Prov}(\texttt{COUNT(*)} \ge m)$, $\mathrm{Prov}(\texttt{COUNT(*)} \le m)$, $\mathrm{Prov}(\texttt{COUNT(*)} = m)$
+    \REQUIRE dictionary $A\leftarrow \mathrm{supp}(\texttt{COUNT}(\Box))$
+    \ENSURE $\mathrm{Prov}(\texttt{COUNT}(\Box) \star C)$
 
     \STATE \textbf{Function} $\textsc{ProdSet}(S)$
     \STATE \hspace{1em} $p \gets \mathbf{1}$
@@ -108,19 +108,21 @@ by using the Algorithm~\ref{alg:probability}.
     \ENDFOR
     \STATE \hspace{1em} \textbf{return} $p$
 
-    \STATE $P_{\ge m} \gets \mathbf{0}$
-    \FORALL{$S \subseteq A$ such that $|S| = m$}
-      \STATE $P_{\ge m} \gets P_{\ge m} \oplus \textsc{ProdSet}(S)$
-    \ENDFOR
-
-    \STATE $P_{\le m} \gets \mathbf{0}$
-    \FORALL{$S \subseteq A$ such that $|S| = n-m$}
-      \STATE $S' \gets \{\bar{x}\mid x\in S\}$
-      \STATE $P_{\le m} \gets P_{\le m} \oplus \textsc{ProdSet}(S')$
-    \ENDFOR
-
-    \STATE $P_{=m} \gets P_{\ge m} \otimes P_{\le m}$
-
-    \STATE \RETURN $(P_{\ge m}, P_{\le m}, P_{=m})$
+    \STATE $P_{\star C} \gets \mathbf{0}$
+    \IF {$\star == \ge$}
+      \FORALL{$S \subseteq A^{(K)}$ such that $|S| = C$}
+        \STATE $P_{\star C} \gets P_{\star C} \oplus \textsc{ProdSet}(S)$
+      \ENDFOR
+    \ELSIF {$\star == \le$}
+      \FORALL{$S \subseteq A^{(K)}$ such that $|S| = n-C$}
+        \STATE $S' \gets \{\bar{x}\mid x\in S\}$
+        \STATE $P_{\star C} \gets P_{\star C} \oplus \textsc{ProdSet}(S')$
+      \ENDFOR
+    \ELSIF  {$\star == =$}      
+      \STATE $P_{\le C} \gets \mathrm{Prov}(\texttt{COUNT}(\Box))\le C$
+      \STATE $P_{\ge C} \gets \mathrm{Prov}(\texttt{COUNT}(\Box))\ge C$
+      \STATE $P_{\star C} \gets P_{\ge C} \otimes P_{\le C}$
+    \ENDIF
+    \STATE \RETURN $P_{\star C}$
   \end{algorithmic}
 \end{algorithm}
