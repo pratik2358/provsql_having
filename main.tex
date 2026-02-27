@@ -1,5 +1,5 @@
-\documentclass{scrartcl}
-\usepackage[left=1cm, right=1cm]{geometry}
+\documentclass[anonymous,a4paper,UKenglish]{lipics-v2021}
+
 \usepackage{amssymb,amsfonts,amsmath,amsthm}
 \usepackage{paralist}
 \usepackage{graphicx}
@@ -8,8 +8,9 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{booktabs}
-\usepackage[pdfborder={0 0 0}]{hyperref}
-\usepackage{xcolor}
+\usepackage[sort,compress]{cite}
+
+\author{Anonymous}{Anonymous}{}{}{}
 
 \usepackage{pifont}
 \newcommand{\ok}{\text{\color{green!50!black}\ding{51}}}
@@ -38,7 +39,7 @@
 }
 \newcommand{\llbracket}{[\![}
 \newcommand{\rrbracket}{]\!]}
-\title{On the Semantics of the Provenance of HAVING queries in Semirings
+\title{Semantics and Implementation of the Provenance of HAVING Queries in Semirings
 with Monus}
 
 \renewcommand{\epsilon}{\varepsilon}
@@ -46,14 +47,6 @@ with Monus}
 \renewcommand{\ge}{\geqslant}
 \renewcommand{\leq}{\leqslant}
 \renewcommand{\geq}{\geqslant}
-
-\newtheorem{corollary}{Corollary}
-\newtheorem{proposition}{Proposition}
-\newtheorem{theorem}{Theorem}
-\newtheorem*{remark}{Remark}
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\newtheorem{lemma}{Lemma}
 
 \newcommand\complexity[1]{\textsf{\upshape #1}}
 
@@ -70,11 +63,19 @@ with Monus}
 \begin{document}
 \maketitle
 
+\ccsdesc{Theory of computation~Data provenance}
+\ccsdesc{Information systems~Data provenance}
+\ccsdesc{Theory of computation~Incomplete, inconsistent, and uncertain databases}
+\ccsdesc{Information systems~Database query processing}
+
+\keywords{Data provenance, probabilistic database, aggregate query, query
+processing}
+
+\input{abstract}
+
 \input{introduction}
 
-\section{Preliminaries}
-
-\input{table_semirings}
+\input{preliminaries}
 
 \section{Semantics}
 Extending on the algebra over annotated
@@ -975,5 +976,8 @@ Therefore,
 \section{Experiments}
 
 \section{Conclusion}
+
+\bibliographystyle{plainurl}
+\bibliography{ref}
 
 \end{document}
