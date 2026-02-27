@@ -1,6 +1,7 @@
 \documentclass[anonymous,a4paper,UKenglish]{lipics-v2021}
 
 \usepackage{amssymb,amsfonts,amsmath,amsthm}
+\usepackage{minted}
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage[bb=boondox]{mathalfa}
@@ -8,6 +9,8 @@
 \usepackage{algorithmic}
 \usepackage{booktabs}
 \usepackage[sort,compress]{cite}
+
+\newcommand{\fakesql}[1]{\texttt{\textcolor{green!45!black}{\bfseries #1}}}
 
 \author{Anonymous}{Anonymous}{}{}{}
 
@@ -57,6 +60,7 @@ with Monus}
 
 \newcommand{\pierre}[1]{{\color{magenta}[\textbf{Pierre:} #1]}}
 
+\newcommand{\sql}{\mintinline{sql}}
 
 \usepackage[appendix=append]{apxproof}
 \begin{document}

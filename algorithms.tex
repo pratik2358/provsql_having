@@ -130,3 +130,22 @@ by using the Algorithm~\ref{alg:probability}.
     \STATE \RETURN $P_{\star C}$
   \end{algorithmic}
 \end{algorithm}
+
+\begin{proposition}
+  The provenance of HAVING queries of the following forms can be computed
+  in polynomial time in data complexity:
+  \begin{itemize}
+    \item \sql{MIN(a)}${}\op c$,
+    \sql{MAX(a)}${}\op c$,
+\fakesql{PICKFIRST}\texttt{(a)}${}\op c$
+      with
+      $\op\in\{<,\leq,=,\geq,>,\neq\}$ for any arbitrary m-semiring;
+    \item \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for $k$ a fixed constant, in absorptive
+      m-semirings;
+\item \sql{SUM(a) >= }$c$ and \sql{SUM(a) > }$c$ with $c\geq 0$ when for every value $a$
+  of the attribute \texttt{a}, $\frac ca\leq k$ where $k\geq 0$ is a fixed constant, in absorptive
+      m-semirings;
+    \item \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for $k$ a fixed
+      constant, in arbitrary m-semirings.
+  \end{itemize}
+\end{proposition}
