@@ -1,0 +1,17 @@
+\begin{abstract}
+The semiring framework and its extensions are at the basis of a rich collection of theoretical
+results and implementations for provenance tracking of database queries.
+Many real-world queries use aggregation and conditions on the aggregate
+values.
+Support for such queries has been proposed by introducing semimodule
+elements as aggregate values and formal comparisons between aggregate values as tuple
+annotations, which is outside the semiring framework. In this work, we
+show how to introduce a semantics for the provenance of such queries in
+arbitrary semirings with monus, without the need for additional
+operators. This semantics is shown to be compatible with the natural
+join-based semantics of \textsf{HAVING COUNT(*)} queries, as long as the
+semiring satisfies idempotence and distributivity of times over monus. We
+derive algorithms for this semantics and show that they can be
+implemented within the ProvSQL provenance tracking system with viable
+performance on a real-world dataset for probabilistic query evaluation.
+\end{abstract}

@@ -1,10 +1,14 @@
-\section{Implementation}
-Using our semantics, we obtain the expression $[u\oslash v]$. Without loss of generality, 
-for every constant value of the aggregation expression $v=C$, we can rewrite this expression 
-as $[u\oslash C]_{\mathrm{op}}$. We now present a dynamic programming algorithm~\ref{alg:dp_subsets} to compute the set of subsets 
-that satisfy the condition imposed by the operator $\mathrm{op}\in\{=,>,<,\ge,\le\}$ with 
-respect to the constant $C$. Using this set of subsets, we can compute the probability of 
-$[u\oslash C]_{\mathrm{op}}$ 
+\section{Algorithms}
+\label{sec:algorithms}
+
+\pierre{2 pages}
+
+Using our semantics, we obtain the expression $[u\oslash v]$. Without loss of generality,
+for every constant value of the aggregation expression $v=C$, we can rewrite this expression
+as $[u\oslash C]_{\mathrm{op}}$. We now present a dynamic programming algorithm~\ref{alg:dp_subsets} to compute the set of subsets
+that satisfy the condition imposed by the operator $\mathrm{op}\in\{=,>,<,\ge,\le\}$ with
+respect to the constant $C$. Using this set of subsets, we can compute the probability of
+$[u\oslash C]_{\mathrm{op}}$
 by using the Algorithm~\ref{alg:probability}.
 \begin{algorithm}
   \label{alg:dp_subsets}
@@ -118,7 +122,7 @@ by using the Algorithm~\ref{alg:probability}.
         \STATE $S' \gets \{\bar{x}\mid x\in S\}$
         \STATE $P_{\star C} \gets P_{\star C} \oplus \textsc{ProdSet}(S')$
       \ENDFOR
-    \ELSIF  {$\star \: =\: =$}      
+    \ELSIF  {$\star \: =\: =$}
       \STATE $P_{\le C} \gets \mathrm{Prov}(\texttt{COUNT}(\Box))\le C$
       \STATE $P_{\ge C} \gets \mathrm{Prov}(\texttt{COUNT}(\Box))\ge C$
       \STATE $P_{\star C} \gets P_{\ge C} \otimes P_{\le C}$

@@ -1,0 +1,72 @@
+\section{Semantics}
+\pierre{1 page}
+
+Extending on the algebra over annotated
+relations presented in ***  by
+adding a new predicate form that allows
+comparison between aggregations we fill the semantics gap that
+was noted and left for future work.
+\paragraph{Setup.}
+Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an
+added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an
+additive monoid of aggregate values. Let $*:K\times M \mapsto K$ be a scalar action of $M$ on $K$, such that for $a \in K, b \in M$,
+$a * b \in K$.
+We fix a finite set $\mathbf{X}$ of variables. Each $\mathbf{x}\in\mathbf{X}$ have provenance annotations in $K$ and values in $M$
+given by a semimodule ($K\times M$, say $\mathcal{M}$) map
+\[
+\mathfrak{Z}:\mathbf{X}\rightarrow \mathcal{M}\; \text{and} \quad \mathfrak{Z}^{(K)}(\mathbf{x})=\mathbf{x}^{(K)}, \; \mathfrak{Z}^{(M)}(\mathbf{x})=\mathbf{x}^{(M)}
+\]
+An aggregation $\mathdutchcal{a}$ is defined by an indicator function
+$I_\mathdutchcal{a}:\mathbf{X}\rightarrow \{0,1\}$
+on variables from $\mathbf{X}$ that participate in the aggregation as
+\[
+\mathdutchcal{a} = {\bigoplus_\mathcal{M}}_{\mathbf{x}\in \mathrm{supp}(\mathdutchcal{a})}(\mathbf{x}^{(K)},\mathbf{x}^{(M)})
+\]
+where,
+$\mathrm{supp}(\mathdutchcal{a})=\{\,\mathbf{x} \mid I_\mathdutchcal{a}(\mathbf{x})=1 \,\}$ and
+$\bigoplus_{\mathcal{M}}$ is a formal $\mathcal{M}-$sum over
+variables $\mathbf{x}$ involved in the aggregation.
+A possible world is represented by a subset $W\subseteq\mathbf{X}$.
+
+\pierre{What precedes need to be made more formal (e.g., there should be
+  a formal definition of a semiring with~$\delta$, and of a semimodule,
+  probably in the previous section; this
+  is important, for example for now it is not really explained how an
+  aggregation is defined -- a formal sum is not an element of a
+semimodule; we should talk about semimodule elements of a given specific
+form, or have a normal form for semimodule elements.)}
+
+\begin{definition}[Possible-World Semantics]\label{def:pw_semantics}
+  \pierre{Every definition needs to be self-contained, and not depend on
+    external variables; so we should say something like ``For any
+    m-semiring $K$, for any additive monoid $M$, for any finite set of variables
+  $\mathbf{X}$\dots'''}
+
+For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as,
+\[
+[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K
+\]
+as:
+\begin{multline*}
+[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\op}=
+\bigoplus_{W\subseteq\mathbf{X}}
+\Biggl(
+  \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(K)} \Bigr)
+\otimes
+  \chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)
+\;\otimes\;\\
+  \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \;\oplus\; \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\Biggr)
+\Biggr)
+\end{multline*}
+where, for any two elements $a, b\in M$,
+$\chi_{\op}(a,b)
+=
+\begin{cases}
+\mathbb{1}_K & \text{if } a\op b\\
+\mathbb{0}_K & \text{otherwise.}
+\end{cases}$
+\end{definition}
+
+\pierre{We need to use these definitions to actually define a semantics
+for the $\sigma$ operator when one of the column is the result of an
+aggregation.}
