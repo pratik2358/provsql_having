@@ -8,3 +8,38 @@ comparison operator, makes sense for some specific provenance
 frameworks (such as Boolean provenance), but there is no
 clear semantics of how these comparison operators should
 be implemented for arbitrary m-semirings.
+
+We provide the following contributions in this paper:
+\begin{itemize}
+\item We introduce a new semantics for the provenance of HAVING queries
+  (i.e., of queries involving selection on an aggregate value) in any
+  arbitrary commutative m-semiring and for any aggregate
+  function (not necessarily commutative or based on a monoid).
+
+\item We show that this semantics coincides with a natural JOIN-based
+  semantics for COUNT(*) HAVING queries, in the case where the m-semiring
+  is idempotent and $\otimes$ distributes over $\ominus$. This is in
+  particular the case in the Boolean semiring, which implies that our
+  semantics is compatible with probabilistic query evaluation.
+
+\item We provide a characterization of most commutative m-semirings
+  studied in the literature, which for each a formal proof in the Lean
+  assistant of the validity of their definition (including the $\ominus$
+  operator) as well as whether they are idempotent and have
+  distributivity of $\otimes$ over $\ominus$. This is important as this
+  fixes wrong claims made in previous papers \cite{Geerts,limitations}.
+
+\item We provide algorithms implementing our semantics: a general
+  algorithm based on possible-world enumeration; algorithms specialized
+  for COUNT, SUM, MIN, and MAX aggregation operators; and optimizations
+  thereof to obtain a lower parameterized complexity for some comparison
+  operators and some m-semirings (especially, absorptive ones).
+
+\item We implement these algorithms within the ProvSQL
+  provenance-tracking extension of PostgreSQL, and explain the relevant
+  implementation issues.
+
+\item We describe experiments which show
+  the viability of the approach on a real-world database, including for probabilistic
+  query evaluation.
+\end{itemize}
