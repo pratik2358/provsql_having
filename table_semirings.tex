@@ -1,22 +1,33 @@
 \begin{table}
- \centering\begin{tabular}{rccc}
+  \begin{tabular}{rl@{}c@{\hspace*{.5em}}c@{\hspace*{.5em}}c}
 \toprule
-&\bfseries idempotent&\bfseries absorptive&\bfseries $\otimes$ distr.\ over
-$\ominus$\\
+\bfseries M-Semiring&
+\bfseries Definition of $a\ominus b$&
+\bfseries Idempotent&
+\bfseries Absorptive&
+\bfseries $\otimes$ distr.\ over $\ominus$\\
 \midrule
 $\mathbb{B}$ \lean{Semirings/Bool}{instSemiringWithMonusBool}&
+$a\land\lnot b$&
 \ok\ \lean{Semirings/Bool}{Bool.idempotent}&
 \ok\ \lean{Semirings/Bool}{Bool.absorptive}&
 \ok\ \lean{Semirings/Bool}{Bool.mul_sub_left_distributive}\\
 $\mathbb{B}[X]$ \lean{Semirings/BoolFunc}{instSemiringWithMonusBoolFunc}&
+$\nu\mapsto a(\nu)\land\lnot b(\nu)$&
 \ok\ \lean{Semirings/BoolFunc}{BoolFunc.idempotent}&
 \ok\ \lean{Semirings/BoolFunc}{BoolFunc.absorptive}&
 \ok\ \lean{Semirings/BoolFunc}{BoolFunc.mul_sub_left_distributive}\\
 $\mathrm{Why}[X]$ \lean{Semirings/Why}{instSemiringWithMonusWhy}&
+$a\setminus b$&
 \ok\ \lean{Semirings/Why}{Why.idempotent}&
 \ko\ \lean{Semirings/Why}{Why.not_absorptive}&
 \ko\ \lean{Semirings/Why}{Why.not_mul_sub_left_distributive}\\
 $\mathrm{Which}[X]$ \lean{Semirings/Which}{instSemiringWithMonusWhich}&
+\(\begin{cases}
+  \bot&\text{if $a=\bot\lor a\subseteq b$}\\[-.4em]
+  a&\text{if $a\neq\bot\land b=\bot$}\\[-.4em]
+  a\setminus b&\text{otherwise}
+\end{cases}\)&
 \ok\ \lean{Semirings/Which}{Which.idempotent}&
 \ko\ \lean{Semirings/Which}{Which.not_absorptive}&
 \ko\ \lean{Semirings/Which}{Which.not_mul_sub_left_distributive}\\
@@ -24,34 +35,39 @@ $\mathrm{Which}[X]$ \lean{Semirings/Which}{instSemiringWithMonusWhich}&
 %\ok\ \phantom{\lean{Semirings/Temporal}{Temporal.idempotent}}&
 %\ok\ \phantom{\lean{Semirings/Temporal}{Temporal.absorptive}}&
 %\ok\ \phantom{\lean{Semirings/Why}{Why.mul_sub_left_distributive}}\\
-$\mathbb{T}$
-\lean{Semirings/Tropical}{instSemiringWithMonusTropicalWithTopNat}&
+Tropical \lean{Semirings/Tropical}{instSemiringWithMonusTropicalWithTopNat}&
+if $a\geq b$ then $+\infty$ else $a$&
 \ok\ \lean{Semirings/Tropical}{Tropical.idempotent}&
 \ok\ \lean{Semirings/Tropical}{TropicalN.absorptive}&
 \ok\ \lean{Semirings/Tropical}{TropicalN.mul_sub_left_distributive}\\
-$\mathbb{V}$
+Viterbi
 \lean{Semirings/Viterbi}{Viterbi.instSemiringWithMonus}&
+if $a\leq b$ then $0$ else $a$&
 \ok\ \lean{Semirings/Viterbi}{Viterbi.idempotent}&
 \ok\ \lean{Semirings/Viterbi}{Viterbi.absorptive}&
 \ok\ \lean{Semirings/Viterbi}{Viterbi.mul_sub_left_distributive}\\
-$\mathrm{TVL}, \mathbb{S}$ \lean{Semirings/MinMax}{instSemiringWithMonusMaxMinTVL}&
+Security \lean{Semirings/MinMax}{instSemiringWithMonusMaxMinTVL}&
+if $a\geq b$ then $\top$ else $a$&
 \ok\ \lean{Semirings/MinMax}{MinMax.idempotent}&
 \ok\ \lean{Semirings/MinMax}{MinMax.absorptive}&
 \ko\ \lean{Semirings/MinMax}{TVL.not_mul_sub_left_distributive}\\
 $\mathbb{N}$ \lean{Semirings/Nat}{instSemiringWithMonusNat}&
+$\max(a-b, 0)$&
 \ko\ \lean{Semirings/Nat}{Nat.not_idempotent}&
 \ko\ \lean{Semirings/Nat}{Nat.not_absorptive}&
 \ok\ \lean{Semirings/Nat}{Nat.mul_sub_left_distributive}\\
 $\mathbb{N}[X]$ \lean{Semirings/How}{instSemiringWithMonusMvPolynomialNat}&
+\(\sum_{\text{$M$}}\max(\mathrm{c}_M(A)-\mathrm{c}_M(b), 0)M\)&
 \ko\ \lean{Semirings/How}{How.not_idempotent}&
 \ko\ \lean{Semirings/How}{How.not_absorptive}&
 \ko\ \lean{Semirings/How}{How.not_mul_sub_left_distributive}\\
 $\textrm{\L ukasiewicz}$ \lean{Semirings/Lukasiewicz}{instSemiringWithMonusLukasiewicz}&
+if $a\leq b$ then $0$ else $a$&
 \ok\ \lean{Semirings/Lukasiewicz}{Lukasiewicz.idempotent}&
 \ok\ \lean{Semirings/Lukasiewicz}{Lukasiewicz.absorptive}&
 \ok\ \lean{Semirings/Lukasiewicz}{Lukasiewicz.mul_sub_left_distributive}\\
 \bottomrule
 \end{tabular}
-\caption{Properties of common (commutative) m-semirings}
+\caption{Properties of common commutative m-semirings}
 \label{tab:semirings}
 \end{table}
