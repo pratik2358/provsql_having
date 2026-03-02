@@ -12,7 +12,41 @@
   \item Aggregate queries, arbitrary aggregate functions
 \end{itemize}
 
+We first recall the definition of semirings and m-semirings, and give examples of such
+structures. We also recall the definition of annotated relations and queries,
+and how to evaluate queries on annotated relations. Finally, we recall the
+definition of aggregate queries and their semantics.
+
+\begin{definition}[Semiring]
+  A \emph{semiring} is a tuple $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
+  \begin{itemize}
+    \item $(\mathbb K,\oplus,\mathbb 0)$ is a commutative monoid and $(\mathbb K,\otimes,\mathbb 1)$ is a (not necessarily commutative) monoid;
+    \item $\otimes$ distributes over $\oplus$: $\forall~a,b,c\in K$, $a\otimes (b\oplus c) = (a\otimes b)\oplus (a\otimes c)$ and $(a\oplus b)\otimes c = (a\otimes c)\oplus (b\otimes c)$;
+    \item $\mathbb 0$ is an annihilator for $\otimes$: $\forall a\in K$, $a\otimes \mathbb 0 = \mathbb 0 \otimes a = \mathbb 0$.
+  \end{itemize}
+\end{definition}
+
+\begin{example}\label{ex:semirings}
+  Some example semirings are:
+  \begin{itemize}
+    \item The counting semiring $\mathbb N$: $(\mathbb N,+,\times,0,1)$.
+    \item The Boolean semiring $\mathbb B$: $(\{\top,\bot\},\lor,\land,\bot,\top)$.
+    \item The Why-provenance semiring over a set of variables $X$: $({2^2}^X,\cup,\Cup,\emptyset,\{\emptyset\})$ where $\Cup$ is defined as follows: $A\Cup B := \{a\cup b \mid a\in A, b\in B\}$.
+  \end{itemize}
+\end{example}
+
+We extend the defintion of semiring with a monus operation $\ominus$:
+\begin{definition}[m-semiring]
+  An \emph{m-semiring} is a tuple $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ where $\ominus: \mathbb K\times \mathbb K\to \mathbb K$ is a binary operation, such that $\forall a,b,c\in\mathbb K$:
+  \begin{itemize}
+    \item $a\oplus(b\ominus a) = b\oplus(a\ominus b)$;
+    \item $(a\ominus b)\ominus c = a\ominus(b\oplus c)$; and
+    \item $a\ominus a = \mathbb 0\ominus a=\mathbb 0$. 
+  \end{itemize}
+\end{definition}
 \input{table_semirings}
+
+For the semirings in Example~\ref{ex:semirings}, the monus operation $\ominus$ is defined as follows. For $\mathbb N$, $a\ominus b = \max(a-b,0)$. For $\mathbb B$, $a\ominus b = a\land \lnot b$. For the Why-provenance semiring, $A\ominus B = A\setminus B$.
 
 We show that in an $m$-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
 
