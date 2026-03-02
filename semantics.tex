@@ -1,11 +1,49 @@
 \section{Semantics}
 \pierre{1 page}
+With the annotation structure $\mathbb{K}=(K,\oplus,\otimes,\mathbb{0},\mathbb{1},\ominus,\delta)$
+as discussed in the preliminaries we fix a data domain~$\mathcal{V}$. For any set~$S$, we write $\Bag(S)$ for the set of finite multisets over $S$. 
+\begin{definition}[Aggregate function]
+  An aggregate function is an arbitrary function  $f:\Bag(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
+\end{definition}
+\begin{definition}[Comparison operator]
+  For any $\op\in\{=,\neq,<,\leq,>,\geq\}$ defined for a domain $\mathcal{A}$, we define
+\[
+\chi_{\op}:\mathcal{A}\times\mathcal{A}\to K,
+\qquad
+  \chi_{\op}(a,b)\defeq
+\begin{cases}
+  \mathbb{1}\in \mathbb{K} & \text{if } a\ \op \ b,\\
+  \mathbb{0} \in \mathbb{K} & \text{otherwise.}
+\end{cases}
+\]
+where $\mathbb{K}$ is any commutative $m-$semiring.
+\end{definition}
+Our goal is to add support to HAVING-like queries in ProvSQL by extending the semiring-provenance semantics of \emph{selection} with possible-world semantics for \emph{selection}s whose predicates 
+involve boolean combinations of comparisons between results of arbitrary aggregate functions.
+TO achieve this, we first introduce \emph{aggregate comparison atoms} in \emph{selection} conditions. 
+\begin{definition}[Aggregate comparison atoms]
+  Fix $k\in \mathbb{N}$ and a subquery $q\in \RA_k$.
+  For distinct grouping indices $(i_j)_{1\leq j\leq m}$ s.t. $1\leq i_j \leq k$ and any grouping query:
+  \[
+Q \ \defeq\ \gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q)
+\]
+aggregate-comparison atoms are expressions of one of the forms
+\[
+(t:f)\ \op\ (t':f'),
+\qquad
+(t:f)\ \op\ c,
+\]
+where $t,t'$ are terms of max-index $\le k$, $f,f'$ are aggregate functions with common output domain~$\mathcal{A}$,
+$c\in\mathcal{A}$, and $\op\in\{=,\neq,<,\le,>,\ge\}$ and for well-formedness must only appear inside a 
+selection condition $\phi$ of queries of the form $\sigma_{\phi}(Q)$.
+\end{definition}
 
-Extending on the algebra over annotated
-relations presented in ***  by
-adding a new predicate form that allows
-comparison between aggregations we fill the semantics gap that
-was noted and left for future work.
+
+
+
+
+
+
 \paragraph{Setup.}
 Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an
 added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an
