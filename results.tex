@@ -56,7 +56,98 @@ For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of 
 
   Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple.
 \end{proof}
+We state a bounding lemma that we later use in the proof to show that summing $T_U(W)$ over all $W\supseteq V$ always dominates the product $A_V$ for $V\subseteq U$.
+\begin{lemma}\label{lem:upward-expansion}
+Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring,
+and write the natural order as $a\le b \iff a\oplus b=b$.
+Assume that $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in K$,
+\begin{equation}\label{eq:residuation}
+  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
+\end{equation}
+  Fix a finite set $U$ and elements $(\alpha)_{x\in U}\in K$.
+For $W\subseteq U$ define
+\[
+  A_W := \bigotimes_{x\in W}\alpha_x ,
+  \qquad
+  T_U(W) := A_W \ominus \bigoplus_{x\in U\setminus W} A_{W\cup\{x\}} .
+\]
+Then for every $V\subseteq U$,
+\begin{equation}\label{eq:upward-expansion}
+  A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
+\end{equation}
+\end{lemma}
 
+\begin{proof}
+We prove \eqref{eq:upward-expansion} by induction on $d:=|U\setminus V|$.
+
+\smallskip\noindent
+\textbf{Base case ($d=0$).}
+Then $V=U$. Since $U\setminus U=\varnothing$ and $\bigoplus_{\varnothing}(\cdot)=\mathbb 0$,
+\[
+  T_U(U)=A_U\ominus \mathbb 0.
+\]
+We claim $A_U\ominus\mathbb 0=A_U$. Indeed, by \eqref{eq:residuation}, for any $z\in K$,
+\[
+  A_U\ominus\mathbb 0 \le z \iff A_U \le \mathbb 0\oplus z = z,
+\]
+so $A_U\ominus\mathbb 0$ is the greatest element below $A_U$, hence equals $A_U$.
+Therefore,
+\[
+  \bigoplus_{\substack{W:\;U\subseteq W\subseteq U}} T_U(W)=T_U(U)=A_U=A_V,
+\]
+and \eqref{eq:upward-expansion} holds.
+
+\smallskip\noindent
+\textbf{Inductive step.}
+Assume $d>0$ and that \eqref{eq:upward-expansion} holds for all pairs $(U,V')$
+with $V\subsetneq V'\subseteq U$ and $|U\setminus V'|<d$.
+Let
+\[
+  Y := \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}} \in K.
+\]
+From Lemma~\ref{lem:x<=y+(x-y)} we obtain the standard inequality
+\begin{equation}\label{eq:M2-lemma1}
+  X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in K,
+\end{equation}
+by instantiating \eqref{eq:residuation} with $z=X\ominus Y$ (since $X\ominus Y\le X\ominus Y$).
+Applying \eqref{eq:M2-lemma1} to $X=A_V$ gives
+\[
+  A_V \le Y \oplus (A_V\ominus Y).
+\]
+By definition of $T_U(V)$ we have $A_V\ominus Y = T_U(V)$, hence
+\begin{equation}\label{eq:AV-bound}
+  A_V \le T_U(V)\ \oplus\ \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}}.
+\end{equation}
+
+For each $x\in U\setminus V$ set $V_x:=V\cup\{x\}$. Then $|U\setminus V_x|=d-1$,
+so the induction hypothesis yields
+\[
+  A_{V_x}\le \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W).
+\]
+Taking the $\oplus$-sum over all $x\in U\setminus V$ and using monotonicity of $\oplus$,
+\[
+  \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}}
+  =
+  \bigoplus_{x\in U\setminus V} A_{V_x}
+  \le
+  \bigoplus_{x\in U\setminus V}\ \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W).
+\]
+Every $W$ appearing on the right satisfies $V\subseteq V_x\subseteq W\subseteq U$, hence $V\subseteq W\subseteq U$.
+Therefore, using associativity/commutativity/idempotence of $\oplus$ to ignore duplicates and reorder summands,
+\[
+  \bigoplus_{x\in U\setminus V}\ \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W)
+  \le
+  \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
+\]
+Combining with \eqref{eq:AV-bound} yields
+\[
+  A_V \le T_U(V)\ \oplus\ \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)
+  =
+  \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W),
+\]
+since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
+This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
+\end{proof}
 Next, we show the recurrences for $F_C$ and $S_C$.
 \begin{lemma}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.

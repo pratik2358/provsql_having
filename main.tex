@@ -9,9 +9,12 @@
 \usepackage{algorithmic}
 \usepackage{booktabs}
 \usepackage[sort,compress]{cite}
-
 \newcommand{\fakesql}[1]{\texttt{\textcolor{green!45!black}{\bfseries #1}}}
 
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\mset}[1]{\{\!\{\,#1\,\}\!\}}
+\newcommand{\ansem}[2]{\llbracket #2 \rrbracket_{#1}}
+\newcommand{\RA}{\mathsf{RA}}
 \author{Anonymous}{Anonymous}{}{}{}
 
 \usepackage{pifont}
@@ -63,6 +66,10 @@ with Monus}
 \newcommand{\sql}{\mintinline{sql}}
 
 \usepackage[appendix=append]{apxproof}
+\newtheoremrep{theorem}{Theorem}
+\newtheoremrep{proposition}[theorem]{Proposition}
+\newtheoremrep{corollary}[theorem]{Corollary}
+\newtheoremrep{lemma}[theorem]{Lemma}
 \begin{document}
 \maketitle
 
