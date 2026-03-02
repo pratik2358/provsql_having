@@ -35,7 +35,7 @@ definition of aggregate queries and their semantics.
   \end{itemize}
 \end{example}
 
-We extend the defintion of semiring with a monus operation $\ominus$:
+We extend the definition of semiring with a monus operation $\ominus$:
 \begin{definition}[m-semiring]
   An \emph{m-semiring} is a tuple $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ where $\ominus: \mathbb K\times \mathbb K\to \mathbb K$ is a binary operation, such that $\forall a,b,c\in\mathbb K$:
   \begin{itemize}
@@ -44,9 +44,20 @@ We extend the defintion of semiring with a monus operation $\ominus$:
     \item $a\ominus a = \mathbb 0\ominus a=\mathbb 0$. 
   \end{itemize}
 \end{definition}
+
+For the semirings in Example~\ref{ex:semirings}, the monus operation $\ominus$ is defined as follows: for $\mathbb N$ $a\ominus b = \max(a-b,0)$, for $\mathbb B$ $a\ominus b = a\land \lnot b$, and for the Why-provenance semiring  $A\ominus B = A\setminus B$.
+
+Some semirings have additional properties. We list the main properties that will be useful for our results:
+\begin{itemize}
+  \item \textbf{Commutativity of $\otimes$}: $\forall a,b\in \mathbb K$, $a\otimes b = b\otimes a$.
+  \item \textbf{Idempotence}: $\forall a\in \mathbb K$, $a\oplus a = a$.
+  \item \textbf{Absorptivity} $\forall a\in \mathbb K$, $a\oplus (a\otimes b) = a\oplus (b\otimes a)=a$.
+  \item \textbf{Right distributivity of $\ominus$ over $\oplus$}: $\forall a,b,c\in \mathbb K$, $(a\oplus b)\ominus c = (a\ominus c)\oplus (b\ominus c)$.
+\end{itemize}
+
 \input{table_semirings}
 
-For the semirings in Example~\ref{ex:semirings}, the monus operation $\ominus$ is defined as follows. For $\mathbb N$, $a\ominus b = \max(a-b,0)$. For $\mathbb B$, $a\ominus b = a\land \lnot b$. For the Why-provenance semiring, $A\ominus B = A\setminus B$.
+Table~\ref{tab:semirings} summarize the $\oplus$ operator and whether they respect the properties listed above for the semirings in Example~\ref{ex:semirings} and some additional ones.
 
 We show that in an $m$-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
 

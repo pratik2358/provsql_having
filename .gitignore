@@ -24,6 +24,7 @@ main.synctex.gz
 *.mtc
 *.mtc1
 *.out
+*.vtc
 *.synctex.gz
 *.pygtex
 *.pygstyle
