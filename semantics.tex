@@ -1,7 +1,7 @@
 \section{Semantics}
 \pierre{1 page}
-With the annotation structure $\mathbb{K}=(K,\oplus,\otimes,\mathbb{0},\mathbb{1},\ominus,\delta)$
-as discussed in the preliminaries we fix a data domain~$\mathcal{V}$. For any set~$S$, we write $\Bag(S)$ for the set of finite multisets over $S$. 
+For our semantics we fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our 
+annotation structure, as discussed in the preliminaries, along with a finite data domain~$\mathcal{V}$. For any set~$S$, we write $\Bag(S)$ for the set of finite multisets over $S$. 
 \begin{definition}[Aggregate function]
   An aggregate function is an arbitrary function  $f:\Bag(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
 \end{definition}
@@ -20,7 +20,7 @@ where $\mathbb{K}$ is any commutative $m-$semiring.
 \end{definition}
 Our goal is to add support to HAVING-like queries in ProvSQL by extending the semiring-provenance semantics of \emph{selection} with possible-world semantics for \emph{selection}s whose predicates 
 involve boolean combinations of comparisons between results of arbitrary aggregate functions.
-TO achieve this, we first introduce \emph{aggregate comparison atoms} in \emph{selection} conditions. 
+To achieve this, we first introduce \emph{aggregate comparison atoms} in \emph{selection} conditions. 
 \begin{definition}[Aggregate comparison atoms]
   Fix $k\in \mathbb{N}$ and a subquery $q\in \RA_k$.
   For distinct grouping indices $(i_j)_{1\leq j\leq m}$ s.t. $1\leq i_j \leq k$ and any grouping query:
@@ -44,28 +44,6 @@ selection condition $\phi$ of queries of the form $\sigma_{\phi}(Q)$.
 
 
 
-\paragraph{Setup.}
-Let $(K,\oplus,\otimes,\mathbb{0}_K,\mathbb{1}_K,\delta,\ominus)$ be an m-semiring of annotations with an
-added $\delta$ operation and, $(M,+_M,\mathbb{0}_M)$ be an
-additive monoid of aggregate values. Let $*:K\times M \mapsto K$ be a scalar action of $M$ on $K$, such that for $a \in K, b \in M$,
-$a * b \in K$.
-We fix a finite set $\mathbf{X}$ of variables. Each $\mathbf{x}\in\mathbf{X}$ have provenance annotations in $K$ and values in $M$
-given by a semimodule ($K\times M$, say $\mathcal{M}$) map
-\[
-\mathfrak{Z}:\mathbf{X}\rightarrow \mathcal{M}\; \text{and} \quad \mathfrak{Z}^{(K)}(\mathbf{x})=\mathbf{x}^{(K)}, \; \mathfrak{Z}^{(M)}(\mathbf{x})=\mathbf{x}^{(M)}
-\]
-An aggregation $\mathdutchcal{a}$ is defined by an indicator function
-$I_\mathdutchcal{a}:\mathbf{X}\rightarrow \{0,1\}$
-on variables from $\mathbf{X}$ that participate in the aggregation as
-\[
-\mathdutchcal{a} = {\bigoplus_\mathcal{M}}_{\mathbf{x}\in \mathrm{supp}(\mathdutchcal{a})}(\mathbf{x}^{(K)},\mathbf{x}^{(M)})
-\]
-where,
-$\mathrm{supp}(\mathdutchcal{a})=\{\,\mathbf{x} \mid I_\mathdutchcal{a}(\mathbf{x})=1 \,\}$ and
-$\bigoplus_{\mathcal{M}}$ is a formal $\mathcal{M}-$sum over
-variables $\mathbf{x}$ involved in the aggregation.
-A possible world is represented by a subset $W\subseteq\mathbf{X}$.
-
 \pierre{What precedes need to be made more formal (e.g., there should be
   a formal definition of a semiring with~$\delta$, and of a semimodule,
   probably in the previous section; this
@@ -73,6 +51,7 @@ A possible world is represented by a subset $W\subseteq\mathbf{X}$.
   aggregation is defined -- a formal sum is not an element of a
 semimodule; we should talk about semimodule elements of a given specific
 form, or have a normal form for semimodule elements.)}
+\rjok{currently doing this}
 
 \begin{definition}[Possible-World Semantics]\label{def:pw_semantics}
   \pierre{Every definition needs to be self-contained, and not depend on
@@ -108,3 +87,4 @@ $\chi_{\op}(a,b)
 \pierre{We need to use these definitions to actually define a semantics
 for the $\sigma$ operator when one of the column is the result of an
 aggregation.}
+

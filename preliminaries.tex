@@ -18,7 +18,7 @@ and how to evaluate queries on annotated relations. Finally, we recall the
 definition of aggregate queries and their semantics.
 
 \begin{definition}[Semiring]
-  A \emph{semiring} is a tuple $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
+  A \emph{semiring} is an algebraic structure denoted by $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
   \begin{itemize}
     \item $(\mathbb K,\oplus,\mathbb 0)$ is a commutative monoid and $(\mathbb K,\otimes,\mathbb 1)$ is a (not necessarily commutative) monoid;
     \item $\otimes$ distributes over $\oplus$: $\forall~a,b,c\in K$, $a\otimes (b\oplus c) = (a\otimes b)\oplus (a\otimes c)$ and $(a\oplus b)\otimes c = (a\otimes c)\oplus (b\otimes c)$;
@@ -37,7 +37,7 @@ definition of aggregate queries and their semantics.
 
 We extend the definition of semiring with a monus operation $\ominus$:
 \begin{definition}[m-semiring]
-  An \emph{m-semiring} is a tuple $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ where $\ominus: \mathbb K\times \mathbb K\to \mathbb K$ is a binary operation, such that $\forall a,b,c\in\mathbb K$:
+  An \emph{m-semiring}, denoted by $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$, is a semiring equipped with a binary operation $\ominus: \mathbb K\times \mathbb K\to \mathbb K$, such that $\forall a,b,c\in\mathbb K$:
   \begin{itemize}
     \item $a\oplus(b\ominus a) = b\oplus(a\ominus b)$;
     \item $(a\ominus b)\ominus c = a\ominus(b\oplus c)$; and
