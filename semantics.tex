@@ -1,18 +1,18 @@
 \section{Semantics}
 \pierre{1 page}
 For our semantics we fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our 
-annotation structure, as discussed in the preliminaries, along with a finite data domain~$\mathcal{V}$. For any set~$S$, we write $\Bag(S)$ for the set of finite multisets over $S$. 
+annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$. For any set $S$, we write $\Bag(S)$ for the set of finite multisets over $S$. 
 \begin{definition}[Aggregate Function]
   An aggregate function is an arbitrary function  $f:\Bag(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
 \end{definition}
 \begin{definition}[Comparison Operator]
   For any $\op\in\{=,\neq,<,\leq,>,\geq\}$ defined for a domain $\mathcal{A}$, we define
 \[
-\chi_{\op}:\mathcal{A}\times\mathcal{A}\to K,
+  \chi_{\op}:\mathcal{A}\times\mathcal{A}\to \mathbb{K},
 \qquad
   \chi_{\op}(a,b)\defeq
 \begin{cases}
-  \mathbb{1}\in \mathbb{K} & \text{if } a\ \op \ b,\\
+  \mathbb{1}\in \mathbb{K} & \text{if } a \op b,\\
   \mathbb{0} \in \mathbb{K} & \text{otherwise.}
 \end{cases}
 \]
@@ -25,13 +25,13 @@ To achieve this, we first introduce \emph{aggregate comparison atoms} in \emph{s
   Fix $k\in \mathbb{N}$ and a subquery $q\in \RA_k$.
   For distinct grouping indices $(i_j)_{1\leq j\leq m}$ s.t. $1\leq i_j \leq k$ and any grouping query:
   \[
-Q \ \defeq\ \gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q)
+Q\defeq\gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q)
 \]
 aggregate-comparison atoms are expressions of one of the forms
 \[
-(t:f)\ \op\ (t':f'),
-\qquad
-(t:f)\ \op\ c,
+(t:f) \op (t':f')
+\;or\;
+(t:f) \op c
 \]
 where $t,t'$ are terms of max-index $\le k$, $f,f'$ are aggregate functions with common output domain~$\mathcal{A}$,
 $c\in\mathcal{A}$, and $\op\in\{=,\neq,<,\le,>,\ge\}$ and for well-formedness must only appear inside a 
@@ -39,8 +39,20 @@ selection condition $\psi$ of queries of the form $\sigma_{\psi}(Q)$.
 \end{definition}
 
 \begin{definition}[Possible World]
+Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, define
+the multiset of occurences of tuples involved as:
+\[
+U^{\hat I}_{q,\vec v} \defeq \mset{\, (u,\alpha)\in \angsem{\hat I}{q} \Big| (u_{i_1},\dots,u_{i_m})=\vec v \,}.
+\]
+A \emph{possible-world} for $\vec v$ is any $W\subseteq_{\mathrm{bag}} U^{\hat I}_{q,\vec v}\, ,$ i.e, any $W$ over
+$\mathcal V^k\times K$ such that $\forall(u,\alpha)$, $W(u,\alpha) \le U^{\hat I}_{q,\vec v}(u,\alpha)$.
 \end{definition}
-
+\begin{definition}[Possible World Semantics for Annotations]
+\end{definition}
+\begin{definition}[Aggregate Bags]
+\end{definition}
+\begin{definition}[Selection with Aggregate Comparisons]
+\end{definition}
 
 
 
