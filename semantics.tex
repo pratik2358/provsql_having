@@ -21,7 +21,7 @@ where $\mathbb{K}$ is any commutative $m-$semiring.
 Our goal is to add support to HAVING-like queries in ProvSQL by extending the semiring-provenance semantics of \emph{selection} with possible-world semantics for \emph{selection}s whose predicates 
 involve boolean combinations of comparisons between results of arbitrary aggregate functions.
 To achieve this, we first introduce \emph{aggregate comparison atoms} in \emph{selection} conditions. 
-\begin{definition}[Aggregate Comparison Atoms]
+\begin{definition}[Aggregate Comparison Atoms]\label{def:agg_comp_atoms}
   Fix $k\in \mathbb{N}$ and a subquery $q\in \RA_k$.
   For distinct grouping indices $(i_j)_{1\leq j\leq m}$ s.t. $1\leq i_j \leq k$ and any grouping query:
   \[
@@ -64,11 +64,80 @@ Let $t$ be a term of max-index $\le k$ and $\hat I$ a $\mathbb{K}$-instance.
 \vals_t(W) \defeq \mset{\, t(u) \mid (u,\alpha)\in W\,}
 \]
 \end{definition}
-\begin{definition}[Selection with Aggregate Comparisons]
+\begin{definition}[Semantics of Selection Predicate]
+Fix a $\mathbb K$-instance $\hat I$  and let $q\in \RA_k$.
+A \emph{selection predicate} $\psi$ over arity $k$ induces a function
+$\predsem{\hat I}{q}{\psi} : \mathcal V^k \to K$,
+defined by recursion on~$\psi$ as follows:
+
+\smallskip\noindent
+For each atomic comparison, fix $\op\in\{=,\neq,<,\le,>,\ge\}$ with $R_{\op}\subseteq \mathcal V\times \mathcal V$, a  
+binary relation (possibly partial) on $\mathcal V$.
+We assume that atomic comparisons are well-defined: whenever an atomic comparison between terms of 
+max-index $\leq k$,
+  $t\op t'$ (or $t\op c \text{ where } c\in \mathcal V $) is evaluated on $u\in\mathcal V^k$, $t(u)$ and $t'(u)$ (or $c$) must lie in the domain on 
+which $\op$ is defined.
+For an atomic comparison $\psi$ of the form $t\op t'$ (resp.\ $t\op c$ with $c\in\mathcal V$),
+we write $\psi(u)$ for the truth value defined by
+\[
+\psi(u)\text{ holds}\Longleftrightarrow (t(u),t'(u))\in R_{\op}
+\qquad
+(\text{resp. }(t(u),c)\in R_{\op}).
+\]
+If $\psi$ is of such an atomic form:
+\[
+\predsem{\hat I}{q}{\psi}(u)\defeq
+\begin{cases}
+\mathbb 1 & \text{if }\psi(u)\text{ holds,}\\
+\mathbb 0 & \text{otherwise.}
+\end{cases}
+\]
+
+If $q$ is of the form $\gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q')\in \RA_{k=m+n}$ 
+with $q'\in\RA_{k'}$ and distinct grouping indices $(i_j)_{1\le j\le m}$ such that $1\le i_j\le k'$.
+  An aggregate-comparison atom is either $(t:f)\ \op\ (t':f')$ or $(t:f)\ \op\ c$ with $c\in\mathcal V$ and max-index of $t,t'$ being $\leq k'$,
+and is only well-formed inside a selection on $q$ (Definition~\ref{def:agg_comp_atoms}).
+
+For $u=(\vec v,a_1,\dots,a_n)\in\mathcal V^{m+n}$ ,
+write $\vec v=(v_1,\dots,v_m)$ for the group key.
+
+\smallskip\noindent
+For $\psi = (t:f) \op (t':f')$,
+\[
+\predsem{\hat I}{q}{\psi}(u)\defeq
+\bigoplus_{W\msubseteq U^{\hat I}_{q',\vec v}}
+\Bigl(
+\ann^{\hat I}_{q',\vec v}(W)\otimes
+\chi_{\op}\bigl(f(\vals_t(W)),\ f'(\vals_{t'}(W))\bigr)
+\Bigr).
+\]
+
+\smallskip\noindent
+For $\psi = (t:f) \op c$,
+\[
+\predsem{\hat I}{q}{\psi}(u)\defeq
+\bigoplus_{W\msubseteq U^{\hat I}_{q',\vec v}}
+\Bigl(
+\ann^{\hat I}_{q',\vec v}(W)\otimes
+\chi_{\op}\bigl(f(\vals_t(W)),\ c\bigr)
+\Bigr).
+\]
+
+\smallskip\noindent
+Now, for $u\in\mathcal V^k$, let $\psi_1$ and $\psi_2$ be arbitrary selection predicates. Then:
+\[
+\predsem{\hat I}{q}{\psi_1\land \psi_2}(u)\defeq
+\predsem{\hat I}{q}{\psi_1}(u)\otimes \predsem{\hat I}{q}{\psi_2}(u),
+\]
+\[
+\predsem{\hat I}{q}{\psi_1\lor \psi_2}(u)\defeq
+\predsem{\hat I}{q}{\psi_1}(u)\oplus \predsem{\hat I}{q}{\psi_2}(u).
+\]
+\[
+\predsem{\hat I}{q}{\neg \psi}(u)\defeq \mathbb 1 \ominus \predsem{\hat I}{q}{\psi}(u).
+\]
 
 \end{definition}
-
-
 
 
 \pierre{What precedes need to be made more formal (e.g., there should be
@@ -80,38 +149,39 @@ semimodule; we should talk about semimodule elements of a given specific
 form, or have a normal form for semimodule elements.)}
 \rjok{currently doing this}
 
-\begin{definition}[Possible-World Semantics]\label{def:pw_semantics}
-  \pierre{Every definition needs to be self-contained, and not depend on
-    external variables; so we should say something like ``For any
-    m-semiring $K$, for any additive monoid $M$, for any finite set of variables
-  $\mathbf{X}$\dots'''}
+% \begin{definition}[Possible-World Semantics]\label{def:pw_semantics}
+%   \pierre{Every definition needs to be self-contained, and not depend on
+%     external variables; so we should say something like ``For any
+%     m-semiring $K$, for any additive monoid $M$, for any finite set of variables
+%   $\mathbf{X}$\dots'''}
 
-For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as,
-\[
-[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K
-\]
-as:
-\begin{multline*}
-[\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\op}=
-\bigoplus_{W\subseteq\mathbf{X}}
-\Biggl(
-  \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(K)} \Bigr)
-\otimes
-  \chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)
-\;\otimes\;\\
-  \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \;\oplus\; \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\Biggr)
-\Biggr)
-\end{multline*}
-where, for any two elements $a, b\in M$,
-$\chi_{\op}(a,b)
-=
-\begin{cases}
-\mathbb{1}_K & \text{if } a\op b\\
-\mathbb{0}_K & \text{otherwise.}
-\end{cases}$
-\end{definition}
+% For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as,
+% \[
+% [\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K
+% \]
+% as:
+% \begin{multline*}
+% [\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\op}=
+% \bigoplus_{W\subseteq\mathbf{X}}
+% \Biggl(
+%   \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(K)} \Bigr)
+% \otimes
+%   \chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)
+% \;\otimes\;\\
+%   \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \;\oplus\; \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\Biggr)
+% \Biggr)
+% \end{multline*}
+% where, for any two elements $a, b\in M$,
+% $\chi_{\op}(a,b)
+% =
+% \begin{cases}
+% \mathbb{1}_K & \text{if } a\op b\\
+% \mathbb{0}_K & \text{otherwise.}
+% \end{cases}$
+% \end{definition}
 
 \pierre{We need to use these definitions to actually define a semantics
 for the $\sigma$ operator when one of the column is the result of an
 aggregation.}
+\rjok{done}
 
