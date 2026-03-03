@@ -38,20 +38,34 @@ $c\in\mathcal{A}$, and $\op\in\{=,\neq,<,\le,>,\ge\}$ and for well-formedness mu
 selection condition $\psi$ of queries of the form $\sigma_{\psi}(Q)$.
 \end{definition}
 
-\begin{definition}[Possible World]
+\begin{definition}[Possible-World]
 Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, define
 the multiset of occurences of tuples involved as:
 \[
 U^{\hat I}_{q,\vec v} \defeq \mset{\, (u,\alpha)\in \angsem{\hat I}{q} \Big| (u_{i_1},\dots,u_{i_m})=\vec v \,}.
 \]
-A \emph{possible-world} for $\vec v$ is any $W\subseteq_{\mathrm{bag}} U^{\hat I}_{q,\vec v}\, ,$ i.e, any $W$ over
+A \emph{possible-world} for $\vec v$ is any $W\msubseteq U^{\hat I}_{q,\vec v}\, ,$ i.e, any $W$ over
 $\mathcal V^k\times K$ such that $\forall(u,\alpha)$, $W(u,\alpha) \le U^{\hat I}_{q,\vec v}(u,\alpha)$.
 \end{definition}
-\begin{definition}[Possible World Semantics for Annotations]
+\begin{definition}[Possible World Semantics]
+  Let $\hat I$ be a $\mathbb{K}$-instance. Fix $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v\in\mathcal{V}^m$. For any \emph{possible-world} $W\msubseteq U^{\hat I}_{q,\vec v}$, we define it's $\mathbb{K}-$annotation as:
+\[
+\ann^{\hat I}_{q,\vec v}(W) \defeq
+\Bigl( \bigotimes_{(u,\alpha)\in W}\alpha \Bigr)
+ \otimes
+\Bigl( \mathbb{1} \ominus \bigoplus_{(u,\alpha)\in U^{\hat I}_{q,\vec v}\msetminus W}\alpha \Bigr).
+\]
+(Empty $\otimes$-products equal $\mathbb{1}$; empty $\oplus$-sums equal $\mathbb{0}$.)
 \end{definition}
 \begin{definition}[Aggregate Bags]
+Let $t$ be a term of max-index $\le k$ and $\hat I$ a $\mathbb{K}$-instance.
+  For a possibble-world $W\msubseteq U^{\hat I}_{q,\vec v}$, define the \emph{induced multiset of values} $\in \Bag(\mathcal{V})$ as:
+\[
+\vals_t(W) \defeq \mset{\, t(u) \mid (u,\alpha)\in W\,}
+\]
 \end{definition}
 \begin{definition}[Selection with Aggregate Comparisons]
+
 \end{definition}
 
 
