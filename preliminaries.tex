@@ -39,7 +39,7 @@ definition of aggregate queries and their semantics.
 
 We extend the definition of semiring with a monus operation $\ominus$:
 \begin{definition}[m-semiring]
-  An \emph{m-semiring}, denoted by $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$, is a semiring equipped with a binary operation $\ominus: \mathbb K\times \mathbb K\to \mathbb K$, such that $\forall a,b,c\in\mathbb K$:
+  An \emph{m-semiring}, or \emph{semiring with monus}, denoted by $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$, is a semiring equipped with a binary operation $\ominus: \mathbb K\times \mathbb K\to \mathbb K$, such that $\forall a,b,c\in\mathbb K$:
   \begin{itemize}
     \item $a\oplus(b\ominus a) = b\oplus(a\ominus b)$;
     \item $(a\ominus b)\ominus c = a\ominus(b\oplus c)$; and
@@ -47,7 +47,7 @@ We extend the definition of semiring with a monus operation $\ominus$:
   \end{itemize}
 \end{definition}
 
-Semirings can have other properties, such as:
+Additionally to the properties of their definitions, semirings may have other properties. Useful ones are:
 \begin{itemize}
   \item \textbf{Commutativity of $\otimes$}: $\forall a,b\in \mathbb K$, $a\otimes b = b\otimes a$.
   \item \textbf{Idempotence}: $\forall a\in \mathbb K$, $a\oplus a = a$.
@@ -57,8 +57,13 @@ Semirings can have other properties, such as:
 
 \input{table_semirings}
 
-Table~\ref{tab:semirings} summarizes definition of the $\ominus$ operator and the above properties for the semirings in Example~\ref{ex:semirings} and some additional ones,  such as the Boolean function semiring, the tropical semiring, the Viterbi semiring and the \L ukasiewicz semiring. 
-All semirings are commutative. We note that only the Boolean, Boolean function, Tropical, Viterbi and \L ukasiewicz semirings are idempotent, absorptive and right-distributive. These properties will be important for the semantics of \sql{HAVING} queries. 
+Table~\ref{tab:semirings} summarizes the definitions of the $\ominus$ operator and the above properties for the semirings in Example~\ref{ex:semirings} and some additional ones,  such as the Boolean function semiring, the tropical semiring, the Viterbi semiring and the \L ukasiewicz semiring. 
+All semirings are commutative. We note that only the Boolean, Boolean function, Tropical, Viterbi and \L ukasiewicz semirings are idempotent, absorptive and right-distributive. These properties will be important for the semantics of \sql{HAVING} queries.
+
+For aggregate queries, an useful notion is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and, (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$. Intuitively, the $\delta$ is used to capture the semantics of the existence of the results of an aggregation.
+\sil{I'm actually not sure about this. Should we define it the table for each semiring instead? (for semiring having $\delta(x)=x$)}
+
+In the following, we refer exclusively commutative semirings of the form $(\mathbb K,\oplus,\otimes,\ominus,\delta,\mathbb 0,\mathbb 1)$, i.e., \emph{commutative $\delta$-semirings with monus}.
 
 \paragraph*{Useful results on m-semirings.} We discuss now some additional results on m-semirings that we use later. In particular, we show that in an m-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. We also show that homomorphisms between m-semirings preserve these properties. 
 \begin{propositionrep}
@@ -212,4 +217,8 @@ x \le y\oplus (x\ominus y),
 \]
 as required.
 \end{appendixproof}
+
+\subsection{Annotated relations and semantics}
+
+\sil{\textbf{TODO}, stopped here}
 
