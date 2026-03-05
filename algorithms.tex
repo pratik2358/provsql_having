@@ -2,211 +2,52 @@
 \label{sec:algorithms}
 
 \pierre{2 pages}
-% \begin{algorithm}
-%   \label{alg:dp_subsets}
-%   \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\op}$ (covers $=,>,<,\ge,\le$)}
-%   \begin{algorithmic}[1]
-%     \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$, a constant $C \in M$, and an operator $\op\in\{=,>,<,\ge,\le\}$
-%     \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \op\ C$
-
-%     \IF{$\op\in\{>,\ge\}$}
-%       \STATE $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$ \COMMENT{max possible sum}
-%       \STATE $J \gets T$
-%     \ELSIF{$\op=<$}
-%       \STATE $J \gets C-1$
-%     \ELSE
-%       \STATE $J \gets C$ \COMMENT{$\op\in\{=,\le\}$}
-%     \ENDIF
-
-%     \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$
-%     \FOR{$j \gets 1$ \TO $J$}
-%       \STATE $dp[j] \leftarrow \emptyset$
-%     \ENDFOR
-
-%     \FOR{$i \gets 1$ \TO $|A|$}
-%       \STATE $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$
-%       \FOR{$j \gets J, J-1, \dots, w$}
-%         \STATE $p \gets j - w$
-%         \IF{$dp[p] \neq \emptyset$}
-%           \FORALL{$S \in dp[p]$}
-%             \STATE append $S \cup \{g\}$ to $dp[j]$
-%           \ENDFOR
-%         \ENDIF
-%       \ENDFOR
-%     \ENDFOR
-
-%     \IF{$\op = =$}
-%       \STATE $\mathcal{R} \leftarrow dp[C]$
-%     \ELSIF{$\op = >$}
-%       \STATE $\mathcal{R} \leftarrow \bigcup_{j=C+1}^{J} dp[j]$
-%     \ELSIF{$\op = <$}
-%       \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$
-%     \ELSIF{$\op = \ge$}
-%       \STATE $\mathcal{R} \leftarrow \bigcup_{j=C}^{J} dp[j]$
-%     \ELSE % \op=\le
-%       \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C} dp[j]$
-%     \ENDIF
-
-%     \STATE \RETURN $\mathcal{R}$
-%   \end{algorithmic}
-% \end{algorithm}
+In this section we describe specialized procedures for evaluating the possible-world
+contributions of aggregate comparison-atoms inside $\predsem{\hat I}{q}{\psi}$.
 
 
-% \begin{algorithm}
-%   \label{alg:probability}
-%   \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_{\op}$}
-%   \begin{algorithmic}[1]
-%     \REQUIRE dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, constant $C\in M$, operator $\op$, and probabilities $p(g)$ for all $g\in\mathcal{G}$
-%     \ENSURE $\Pr\big([\mathdutchcal{u}\oslash C]_{\op}\big)$
-%     \STATE $\mathcal{R} \gets \textsc{DP-Subsets}(A,C,\op)$ \COMMENT{Algorithm above}
-%     \STATE $P \gets 0$
-%     \FORALL{$S \in \mathcal{R}$}
-%       \STATE $\pi \gets 1$
-%       \FORALL{$g \in \mathcal{G}$}
-%         \IF{$g \in S$}
-%           \STATE $\pi \gets \pi \cdot p(g)$
-%         \ELSE
-%           \STATE $\pi \gets \pi \cdot (1 - p(g))$
-%         \ENDIF
-%       \ENDFOR
-%       \STATE $P \gets P + \pi$
-%     \ENDFOR
-%     \STATE \RETURN $P$
-%   \end{algorithmic}
-% \end{algorithm}
+\smallskip\noindent
+In the implementation, ProvSQL represents multiset semantics using \emph{tuple occurrences} carrying globally unique
+provenance identifiers(UUIDs). We maintain a uniqueness-invariant that for every intermediate query result
+$\angsem{\hat I}{q}$, no pair $(u,\alpha)$ occurs twice: duplicates of the same value tuple $u$ are represented
+as distinct occurrences with different annotations $\alpha$. Under this invariant, the multiset
+$U^{\hat I}_{q',\vec v}$ of group-member occurrences can be treated as a finite \emph{set} of occurrences, and
+possible worlds are ordinary subsets $W\subseteq U^{\hat I}_{q',\vec v}$. This does not change the semantics:
+multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced
+aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
-% % \begin{table}[hbt]
-% %   \centering
-% %   \begin{tabular}{cc}
-% %     \toprule
-% %     operator & $\mathcal{R}$\\
-% %     \midrule
-% %     $=$ & $dp[C]$\\
-% %     $>$ & $\bigcup_{j=C+1}^{T} dp[j]$\\
-% %     $<$ & $\bigcup_{j=1}^{C-1} dp[j]$\\
-% %     $\geq$ & $\bigcup_{j=C}^{T} dp[j]$\\
-% %     $\leq$ & $\bigcup_{j=1}^{C} dp[j]$\\
-% %     \bottomrule
-% %   \end{tabular}
-% % \end{table}
+\smallskip\noindent
+All algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group-member
+occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} subquery $q'$. Accordingly, any term $t$
+handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the
+arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
-% \begin{algorithm}
-%   \label{alg:count-prov-comparisons}
-%   \caption{Optimised provenance for \texttt{COUNT} aggregate comparisons: $\mathrm{Prov}(\texttt{COUNT}(\Box)\star C$)}
-%   \begin{algorithmic}[1]
-%     \REQUIRE dictionary $A\leftarrow \mathrm{supp}(\texttt{COUNT}(\Box))$
-%     \ENSURE $\mathrm{Prov}(\texttt{COUNT}(\Box) \star C)$
+\smallskip\noindent
+Algorithm~\ref{alg:sum_dp} is a
+main dynamic-programming procedure for bounded-range $\mathrm{SUM}$ atoms.it enumerates (or can be used to aggregate over) those worlds
+$W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$ satisfies the comparison with the
+constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding
+$\chi_{\op}$-gated possible-world sum in the semantics of aggregate-comparison atoms.
+By taking $t=1$, this algorithm works also
+bounded-range $\mathrm{COUNT}$ atoms; but for $\mathrm{COUNT}$
+aggregates we additionally provide a dedicated routine exploiting the 
+unit-weight sum structure in a purey combinatorial fashion. SImilarly, or
+$\mathrm{MIN}$/$\mathrm{MAX}$ aggregates we use ordering-based strategies that avoid full world enumeration.
+As a fallback for aggregate functions or predicates not covered by the specialized cases, we revert to
+brute-force enumeration of worlds $W\subseteq U^{\hat I}_{q',\vec v}$.
 
-%     \STATE \textbf{Function} $\textsc{ProdSet}(S)$
-%     \STATE \hspace{1em} $p \gets \mathbf{1}$
-%     \FORALL{$x \in S$}
-%       \STATE \hspace{1em} $p \gets p \otimes x$
-%     \ENDFOR
-%     \STATE \hspace{1em} \textbf{return} $p$
-
-%     \STATE $P_{\star C} \gets \mathbf{0}$
-%     \IF {$\star \: =\: \ge$}
-%       \FORALL{$S \subseteq A^{(K)}$ such that $|S| = C$}
-%         \STATE $P_{\star C} \gets P_{\star C} \oplus \textsc{ProdSet}(S)$
-%       \ENDFOR
-%     \ELSIF {$\star \: =\: \le$}
-%       \FORALL{$S \subseteq A^{(K)}$ such that $|S| = n-C$}
-%         \STATE $S' \gets \{\bar{x}\mid x\in S\}$
-%         \STATE $P_{\star C} \gets P_{\star C} \oplus \textsc{ProdSet}(S')$
-%       \ENDFOR
-%     \ELSIF  {$\star \: =\: =$}
-%       \STATE $P_{\le C} \gets \mathrm{Prov}(\texttt{COUNT}(\Box))\le C$
-%       \STATE $P_{\ge C} \gets \mathrm{Prov}(\texttt{COUNT}(\Box))\ge C$
-%       \STATE $P_{\star C} \gets P_{\ge C} \otimes P_{\le C}$
-%     \ENDIF
-%     \STATE \RETURN $P_{\star C}$
-%   \end{algorithmic}
-% \end{algorithm}
-
-\begin{proposition}
-  The provenance of HAVING queries of the following forms can be computed
-  in polynomial time in data complexity:
-  \begin{itemize}
-    \item \sql{MIN(a)}${}\op c$,
-    \sql{MAX(a)}${}\op c$,
-\fakesql{PICKFIRST}\texttt{(a)}${}\op c$
-      with
-      $\op\in\{<,\leq,=,\geq,>,\neq\}$ for any arbitrary m-semiring;
-    \item \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for $k$ a fixed constant, in absorptive
-      m-semirings;
-\item \sql{SUM(a) >= }$c$ and \sql{SUM(a) > }$c$ with $c\geq 0$ when for every value $a$
-  of the attribute \texttt{a}, $\frac ca\leq k$ where $k\geq 0$ is a fixed constant, in absorptive
-      m-semirings;
-    \item \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for $k$ a fixed
-      constant, in arbitrary m-semirings.
-  \end{itemize}
-\end{proposition}
-
-% \begin{algorithm}
-%   \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\op}$ (covers $=,>,<,\ge,\le$)}
-%   \label{alg:dp_subsets}
-
-%   \Input{a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$, a constant $C \in M$, and an operator $\op\in\{=,>,<,\ge,\le\}$}
-%   \Output{a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \op\ C$}
-
-%   \If{$\op\in\{>,\ge\}$}{
-%     $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$\tcp*[r]{max possible sum}
-%     $J \gets T$\;
-%   }
-%   \ElseIf{$\op=<$}{
-%     $J \gets C-1$\;
-%   }
-%   \Else{
-%     $J \gets C$\tcp*[r]{$\op\in\{=,\le\}$}
-%   }
-
-%   Initialize $dp[0] \leftarrow \{\emptyset\}$\;
-%   \For{$j \gets 1$ \KwTo $J$}{
-%     $dp[j] \leftarrow \emptyset$\;
-%   }
-
-%   \For{$i \gets 1$ \KwTo $|A|$}{
-%     $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$\;
-%     \For{$j \gets J, J-1, \dots, w$}{
-%       $p \gets j - w$\;
-%       \If{$dp[p] \neq \emptyset$}{
-%         \ForEach{$S \in dp[p]$}{
-%           append $S \cup \{g\}$ to $dp[j]$\;
-%         }
-%       }
-%     }
-%   }
-
-%   \If{$\op = =$}{
-%     $\mathcal{R} \leftarrow dp[C]$\;
-%   }
-%   \ElseIf{$\op = >$}{
-%     $\mathcal{R} \leftarrow \bigcup_{j=C+1}^{J} dp[j]$\;
-%   }
-%   \ElseIf{$\op = <$}{
-%     $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$\;
-%   }
-%   \ElseIf{$\op = \ge$}{
-%     $\mathcal{R} \leftarrow \bigcup_{j=C}^{J} dp[j]$\;
-%   }
-%   \Else{
-%     $\mathcal{R} \leftarrow \bigcup_{j=1}^{C} dp[j]$\;
-%   }
-
-%   \Return $\mathcal{R}$\;
-% \end{algorithm}
+\smallskip\noindent
 
 \begin{algorithm}
-  \tcp{\textcolor{red}{We need to redefine $x$ in this case to maintain uniformity with the paper.}}
-  \caption{DP algorithm for $\mathdutchcal{u}\op C$ ($\op \in =,>,<,\ge,\le$) with bounded range and prefix-sum pruning}
-  \label{alg:dp_subsets}
+  \caption{DP algorithm for $\mathrm{SUM}(t)\ \op\ C$ at a fixed group key $\vec v$}
+  \label{alg:sum_dp}
 
-  \Input{a dictionary $A$ of tuples involved and $\mathbb{K}$-annotations, a constant $C \in M$, and an operator $\op\in\{=,>,<,\ge,\le\}$}
-  \Output{a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \op\ C$}
+  \Input{a finite set of group-member occurrences $U^{\hat I}_{q',\vec v}$, a term $t$ of max-index $\le k$ such that $t(u)\in\NN \forall (u,\alpha)\in U^{\hat I}_{q',\vec v}$ , a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le\}$}
+  \Output{a list $\mathcal W$ of worlds $W\subseteq U^{\hat I}_{q',\vec v}$ such that $\sum_{(u,\alpha)\in W} t(u)\ \op\ C$}
 
   \BlankLine
-  $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$\tcp*[r]{max reachable sum}
-
+  Represent $U^{\hat I}_{q',\vec v}$ as a finite list of distinct occurrences $\big((u_i,\alpha_i)\big)_{1\le i\le N}$\;
+  $T \gets \sum_{i=1}^{N} t(u_i)$
   \If{$\op\in\{>,\ge\}$}{
     $J \gets T$\;
   }
@@ -214,8 +55,7 @@
     $J \gets \min(C-1,\ T)$\;
   }
   \Else{
-    $J \gets \min(C,\ T)$\tcp*[r]{$\op\in\{=,\le\}$}
-  }
+    $J \gets \min(C,\ T)$  }
 
   \BlankLine
   Initialize $dp[0] \leftarrow \{\emptyset\}$\;
@@ -224,18 +64,18 @@
   }
 
   \BlankLine
-  $\mathrm{pref\_sum} \gets 0$\tcp*[r]{prefix-sum pruning state}
+  $\mathrm{pref\_sum} \gets 0$\;
 
-  \For{$i \gets 1$ \KwTo $|A|$}{
-    $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$\;
+  \For{$i \gets 1$ \KwTo $N$}{
+    $w \gets t(u_i)$\;
     $\mathrm{pref\_sum} \gets \mathrm{pref\_sum} + w$\;
-    $j_{\max} \gets \min(J,\ \mathrm{pref\_sum})$\tcp*[r]{max reachable sum at step $i$}
+    $j_{\max} \gets \min(J,\ \mathrm{pref\_sum})$\;
 
     \For{$j \gets j_{\max}, j_{\max}-1, \dots, w$}{
       $p \gets j - w$\;
       \If{$dp[p] \neq \emptyset$}{
         \ForEach{$S \in dp[p]$}{
-          append $S \cup \{g\}$ to $dp[j]$\;
+          append $S \cup \{(u_i,\alpha_i)\}$ to $dp[j]$\;
         }
       }
     }
@@ -243,48 +83,23 @@
 
   \BlankLine
   \If{$\op = =$}{
-    $\mathcal{R} \leftarrow dp[C]$\;
+    $\mathcal W \leftarrow dp[C]$\;
   }
   \ElseIf{$\op = >$}{
-    $\mathcal{R} \leftarrow \bigcup_{j=C+1}^{J} dp[j]$\;
+    $\mathcal W \leftarrow \bigcup_{j=C+1}^{J} dp[j]$\;
   }
   \ElseIf{$\op = <$}{
-    $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$\;
+    $\mathcal W \leftarrow \bigcup_{j=0}^{C-1} dp[j]$\;
   }
   \ElseIf{$\op = \ge$}{
-    $\mathcal{R} \leftarrow \bigcup_{j=C}^{J} dp[j]$\;
+    $\mathcal W \leftarrow \bigcup_{j=C}^{J} dp[j]$\;
   }
   \Else{
-    $\mathcal{R} \leftarrow \bigcup_{j=1}^{C} dp[j]$\;
+    $\mathcal W \leftarrow \bigcup_{j=0}^{C} dp[j]$\;
   }
 
-  \Return $\mathcal{R}$\;
+  \Return $\mathcal W$\;
 \end{algorithm}
-
-\begin{algorithm}
-  \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_{\op}$}
-  \label{alg:probability}
-
-  \Input{dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, constant $C\in M$, operator $\op$, and probabilities $p(g)$ for all $g\in\mathcal{G}$}
-  \Output{$\Pr\big([\mathdutchcal{u}\oslash C]_{\op}\big)$}
-
-  $\mathcal{R} \gets \textsc{DP-Subsets}(A,C,\op)$\tcp*[r]{Algorithm above}
-  $P \gets 0$\;
-  \ForEach{$S \in \mathcal{R}$}{
-    $\pi \gets 1$\;
-    \ForEach{$g \in \mathcal{G}$}{
-      \If{$g \in S$}{
-        $\pi \gets \pi \cdot p(g)$\;
-      }
-      \Else{
-        $\pi \gets \pi \cdot (1 - p(g))$\;
-      }
-    }
-    $P \gets P + \pi$\;
-  }
-  \Return $P$\;
-\end{algorithm}
-
 \begin{algorithm}
   \caption{Optimised provenance for \texttt{COUNT} aggregate comparisons: $\mathrm{Prov}(\texttt{COUNT}(\Box)\star C$)}
   \label{alg:count-prov-comparisons}

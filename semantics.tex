@@ -154,20 +154,38 @@ Now, for $u\in\mathcal V^k$, let $\psi_1$ and $\psi_2$ be arbitrary selection pr
 \begin{definition}[Provenance for HAVING-like queries]Let $\hat I$ be a $\mathbb K$-instance, let $k\in\NN$, let $q\in\RA_k$, and let $\psi$ be
 a well-formed selection predicate over arity $k$.
 We define:
+% \[
+% \angsem{\hat I}{\sigma_\psi(q)} \defeq
+% \mset{\, (u,\alpha\otimes \predsem{\hat I}{q}{\psi}(u)) \mid (u,\alpha)\in \angsem{\hat I}{q}\,}.
+% \]
+% 
 \[
 \angsem{\hat I}{\sigma_\psi(q)} \defeq
-\mset{\, (u,\alpha\otimes \predsem{\hat I}{q}{\psi}(u)) \mid (u,\alpha)\in \angsem{\hat I}{q}\,}.
+\begin{cases}
+\mset{\, (u,\alpha\otimes \predsem{\hat I}{q}{\psi}(u)) \mid (u,\alpha)\in \angsem{\hat I}{q}\,}
+& \text{if $\psi$ contains no aggregate-comparison atom,}\\[1ex]
+\mset{\, (u,\predsem{\hat I}{q}{\psi}(u)) \mid (u,\alpha)\in \angsem{\hat I}{q}\,}
+& \text{otherwise.}
+\end{cases}
 \]
 \end{definition}
 
-\pierre{What precedes need to be made more formal (e.g., there should be
-  a formal definition of a semiring with~$\delta$, and of a semimodule,
-  probably in the previous section; this
-  is important, for example for now it is not really explained how an
-  aggregation is defined -- a formal sum is not an element of a
-semimodule; we should talk about semimodule elements of a given specific
-form, or have a normal form for semimodule elements.)}
-\rjok{currently doing this}
+\smallskip\noindent\emph{Note:}
+For any aggregate comparison atom, if $U^{\hat I}_{q',\vec v}=\emptyset$ then every output
+tuple $u$ with group key $\vec v$, we have $\predsem{\hat I}{q}{\theta}(u)=\mathbb 0$. 
+Since the possible-world semantics 
+ranges over non-empty worlds only. 
+So multiplying the possible world provenance 
+expression with $\alpha$( which is a $\delta(\cdot)$-type provenance expression to enforce group existence) is redundant. 
+
+% \pierre{What precedes need to be made more formal (e.g., there should be
+%   a formal definition of a semiring with~$\delta$, and of a semimodule,
+%   probably in the previous section; this
+%   is important, for example for now it is not really explained how an
+%   aggregation is defined -- a formal sum is not an element of a
+% semimodule; we should talk about semimodule elements of a given specific
+% form, or have a normal form for semimodule elements.)}
+% \rjok{done}
 
 % \begin{definition}[Possible-World Semantics]\label{def:pw_semantics}
 %   \pierre{Every definition needs to be self-contained, and not depend on
@@ -200,8 +218,8 @@ form, or have a normal form for semimodule elements.)}
 % \end{cases}$
 % \end{definition}
 
-\pierre{We need to use these definitions to actually define a semantics
-for the $\sigma$ operator when one of the column is the result of an
-aggregation.}
-\rjok{done}
+% \pierre{We need to use these definitions to actually define a semantics
+% for the $\sigma$ operator when one of the column is the result of an
+% aggregation.}
+% \rjok{done}
 
