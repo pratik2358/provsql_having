@@ -1,17 +1,63 @@
 \section{Introduction}
 \pierre{1.5 pages}
 
-Nested aggregations are an important feature to
-have in a practical system. Basic support of nested aggregation
-is already implemented in ProvSQL. However, there is an
-important semantics issue: the approach presented in the
-literature for supporting nested aggregation, which adds a
-comparison operator, makes sense for some specific provenance
-frameworks (such as Boolean provenance), but there is no
-clear semantics of how these comparison operators should
-be implemented for arbitrary m-semirings.
+As phrased by Peter Buneman, Sanjeev Khanna and Wang-Chiew Tan, data
+provenance is information on ``where a piece of data came from and the
+process by which it arrived in the database'' \cite{bunemankt01}. Data
+provenance has numerous applications, in particular with respect to
+understandability, reproducibility, and quality management of a
+data-handling process \cite{herschel2017survey}. A particular form of
+data provenance, the so-called \emph{Boolean provenance}
+\cite{senellart2017provenance}, sometimes also called lineage
+\cite{suciu2011probabilistic} is also used as a basis for query
+evaluation in probabilistic databases in the \emph{intensional}
+\cite{jha2010bridging} approach to probabilistic query evaluation.
 
-We provide the following contributions in this paper:
+A particular rich framework for data provenance, especially in the
+setting of relational databases, has been that of \emph{provenance
+semirings} \cite{green2007provenance} on \emph{annotated relations},
+i.e., relations with an extra attribute storing the provenance, which gives a semantics of
+positive relational algebra operators in terms of elements of an arbitrary
+semiring. Different choices of this semiring lead to different forms of
+provenance. This has been further extended to other settings and to other
+classes of queries,
+notably to queries with the difference operator \cite{geerts2010database}
+by adding a \emph{monus}~$\ominus$ operator to the semiring, and to queries
+involving grouping and aggregation \cite{amsterdamer2011provenance} by
+introducing an additional $\delta$ operator for grouping as well as, more
+importantly, the ability to turn data values into elements of a
+semimodule to reflect the result of an aggregation operation.
+
+The next step is naturally to define a semantics for queries involving
+selections on the result of an aggregation value, i.e., \sql{HAVING}
+queries using the name of the corresponding SQL clause. This was done
+elegantly in~\cite{amsterdamer2011provenance} by adding an additional
+\emph{comparison operator} to the semiring, which encodes the selection as a comparison of
+semimodule elements within the annotation of a tuple. This has, however,
+the downside of requiring an ad-hoc definition of such a comparison
+operator for each combination of a semiring and aggregation monoid.
+
+Provenance tracking systems on top of regular database management systems
+have been built, usually based on query rewriting to construct the
+annotations, notably GProM \cite{bahareh2018gprom} and ProvSQL
+\cite{senellart2018provsql,sen2026provsql}. However, in part because it
+is unclear what semantics should be given to the comparison operator,
+aggregation support in such systems has been partial
+\cite{bahareh2018gprom} or limited to terminal aggregation
+\cite{senellart2018provsql}. At best, systems wishing to faithfully
+follow the approach of \cite{amsterdamer2011provenance} stop at
+constructing abstract formulas involving this comparison operator
+\cite{pintor2025dbms}, but do not provide concrete semiring elements.
+
+In contrast, most semirings used for data provenance (see
+Section~\ref{sec:preliminaries}) -- though not all
+semirings~\cite{amarilli2016example} -- can be equipped in a unique way
+with a monus operator. This paper leverages this observation to provide
+an implementable semantics for the comparison operator (and therefore for \sql{HAVING}
+queries) in arbitrary commutative semirings with monus (or
+\emph{m-semirings}
+for short). In more detail, we provide the following
+contributions:
 \begin{itemize}
 \item We introduce a new semantics for the provenance of HAVING queries
   (i.e., of queries involving selection on an aggregate value) in any
