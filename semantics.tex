@@ -1,5 +1,16 @@
 \section{Semantics}
 \pierre{1 page}
+In the Tannen et alsemimodule approach, provenance for aggregation is made algebraically unifrm and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states like AVG via (SUM,COUNT)). 
+
+\smallskip\noindent
+In our possible-world (PW) semantics, we never need an algebraic lifting of the aggregate function. For each world (subset of tuples in the group), we evaluate the aggregate as an arbitrary function on the multiset of values and then restrict the world’s provenance annotation by the satisfiabilityu of the comparison. Thus any SQL aggregate function (avg, median/percentile, array/json aggregates, custom UDAFs, etc.) can be handled in the same semantic template. However we do lose algebraic compositionality and no longer produce provenance of an aggregate as a semimodule element.
+
+\smallskip\noindent
+The semimodule approach gives us a symbolic semimodule element for an aggregate (when the lifting exists). But once you start doing nonlinear operations (division, products of aggregates, conditional expressions, nested expressions like (avg(x)+median(y))/max(z)), there is no generic, compositional way to interpret these operations on semimodule expressions without imposing extra algebraic structure or adding ad hoc rules.
+Also, we lose provenance  explanations for  comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism.
+Our  semantics naturally supports arbitrary arithmetic over aggregates in HAVING-like conditions: arithmetic is evaluated on the  aggregate values per world, then provenance for the tuples which make the compaqrison true are accumulated.
+
+\smallskip\noindent
 For our semantics we fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our 
 annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$. For any set $S$, we write $\Bag(S)$ for the set of finite multisets over $S$. 
 \begin{definition}[Aggregate Function]
