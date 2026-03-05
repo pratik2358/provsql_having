@@ -5,8 +5,9 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage[bb=boondox]{mathalfa}
-\usepackage{algorithm}
-\usepackage{algorithmic}
+% \usepackage{algorithm}
+% \usepackage{algorithmic}
+\usepackage[linesnumbered,algoruled,commentsnumbered,boxruled]{algorithm2e}
 \usepackage{booktabs}
 \usepackage[sort,compress]{cite}
 \newcommand{\fakesql}[1]{\texttt{\textcolor{green!45!black}{\bfseries #1}}}
@@ -83,6 +84,13 @@ with Monus}
 \newcommand{\ann}{\mathrm{ann}}
 \newcommand{\vals}{\mathrm{vals}}
 \newcommand{\defeq}{\mathrel{\mathop:}=}
+
+\RestyleAlgo{boxed}
+\SetAlgoCaptionSeparator{:}
+\DontPrintSemicolon
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Output}
+\SetKwProg{Fn}{Function}{}{}
 
 \begin{document}
 \maketitle
