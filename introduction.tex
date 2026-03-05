@@ -1,7 +1,5 @@
 \section{Introduction}
-\pierre{1.5 pages}
-
-As phrased by Peter Buneman, Sanjeev Khanna and Wang-Chiew Tan, data
+As phrased by Peter Buneman, Sanjeev Khanna, and Wang-Chiew Tan, data
 provenance is information on ``where a piece of data came from and the
 process by which it arrived in the database'' \cite{bunemankt01}. Data
 provenance has numerous applications, in particular with respect to
@@ -16,7 +14,8 @@ evaluation in probabilistic databases in the \emph{intensional}
 A particular rich framework for data provenance, especially in the
 setting of relational databases, has been that of \emph{provenance
 semirings} \cite{green2007provenance} on \emph{annotated relations},
-i.e., relations with an extra attribute storing the provenance, which gives a semantics of
+i.e., relations with an extra attribute storing the provenance, which
+assigns a semantics to
 positive relational algebra operators in terms of elements of an arbitrary
 semiring. Different choices of this semiring lead to different forms of
 provenance. This has been further extended to other settings and to other
@@ -26,7 +25,7 @@ by adding a \emph{monus}~$\ominus$ operator to the semiring, and to queries
 involving grouping and aggregation \cite{amsterdamer2011provenance} by
 introducing an additional $\delta$ operator for grouping as well as, more
 importantly, the ability to turn data values into elements of a
-semimodule to reflect the result of an aggregation operation.
+\emph{semimodule} to reflect the result of an aggregation operation.
 
 The next step is naturally to define a semantics for queries involving
 selections on the result of an aggregation value, i.e., \sql{HAVING}
@@ -35,10 +34,12 @@ elegantly in~\cite{amsterdamer2011provenance} by adding an additional
 \emph{comparison operator} to the semiring, which encodes the selection as a comparison of
 semimodule elements within the annotation of a tuple. This has, however,
 the downside of requiring an ad-hoc definition of such a comparison
-operator for each combination of a semiring and aggregation monoid.
+operator for each combination of a semiring and aggregation monoid, in
+addition to restricting the approach to aggregate functions that are
+associative and commutative.
 
 Provenance tracking systems on top of regular database management systems
-have been built, usually based on query rewriting to construct the
+have been successfully implemented, usually based on query rewriting to construct the
 annotations, notably GProM \cite{bahareh2018gprom} and ProvSQL
 \cite{senellart2018provsql,sen2026provsql}. However, in part because it
 is unclear what semantics should be given to the comparison operator,
@@ -46,48 +47,63 @@ aggregation support in such systems has been partial
 \cite{bahareh2018gprom} or limited to terminal aggregation
 \cite{senellart2018provsql}. At best, systems wishing to faithfully
 follow the approach of \cite{amsterdamer2011provenance} stop at
-constructing abstract formulas involving this comparison operator
+constructing abstract formulas involving the comparison operator
 \cite{pintor2025dbms}, but do not provide concrete semiring elements.
 
 In contrast, most semirings used for data provenance (see
 Section~\ref{sec:preliminaries}) -- though not all
 semirings~\cite{amarilli2016example} -- can be equipped in a unique way
-with a monus operator. This paper leverages this observation to provide
-an implementable semantics for the comparison operator (and therefore for \sql{HAVING}
-queries) in arbitrary commutative semirings with monus (or
-\emph{m-semirings}
-for short). In more detail, we provide the following
+with a monus operator, making semirings with monus (or \emph{m-semirings}
+for short), despite their limitations \cite{amsterdamer2011limitations}
+which we will discuss further,
+a usable provenance framework. For this reason, m-semirings were chosen
+as the annotation framework
+to show an analogue of Codd's theorem of the equivalence between the relational
+calculus and the relational algebra on annotated relations
+\cite{badia2025codd}.
+
+This paper leverages m-semirings as provenance annotation framework to provide
+an implementable semantics for the comparison operator from
+\cite{amsterdamer2011provenance} (and therefore for \sql{HAVING}
+queries) \emph{in arbitrary commutative
+m-semirings}. In more detail, we provide the following
 contributions:
 \begin{itemize}
-\item We introduce a new semantics for the provenance of HAVING queries
-  (i.e., of queries involving selection on an aggregate value) in any
-  arbitrary commutative m-semiring and for any aggregate
-  function (not necessarily commutative or based on a monoid).
-
-\item We show that this semantics coincides with a natural JOIN-based
-  semantics for COUNT(*) HAVING queries, in the case where the m-semiring
-  is idempotent and $\otimes$ distributes over $\ominus$. This is in
-  particular the case in the Boolean semiring, which implies that our
-  semantics is compatible with probabilistic query evaluation.
-
 \item We provide a characterization of most commutative m-semirings
-  studied in the literature, which for each a formal proof in the Lean
+  studied in the literature, with for each of them a formal proof in the Lean
   assistant of the validity of their definition (including the $\ominus$
   operator) as well as whether they are idempotent and have
   distributivity of $\otimes$ over $\ominus$. This is important as this
-  fixes wrong claims made in previous papers \cite{geerts2010database,amsterdamer2011limitations}.
+  fixes wrong claims made in previous papers
+  \cite{geerts2010database,amsterdamer2011limitations}.
+  (Section~\ref{sec:preliminaries})
+
+  \item We introduce a new semantics for the provenance of \sql{HAVING} queries
+  in any
+  arbitrary commutative m-semiring and for any aggregate
+  function (not necessarily commutative or based on a monoid). (Section
+  \ref{sec:semantics})
+
+\item We show that this semantics coincides with a natural \sql{JOIN}-based
+  semantics for \sql{HAVING} queries involving the \sql{COUNT(*)}
+  aggregate, in the case where the m-semiring
+  is idempotent and $\otimes$ distributes over $\ominus$. This is in
+  particular the case in the Boolean function semiring, which implies that our
+  semantics is compatible with probabilistic query evaluation. (Section
+  \ref{sec:results})
 
 \item We provide algorithms implementing our semantics: a general
   algorithm based on possible-world enumeration; algorithms specialized
-  for COUNT, SUM, MIN, and MAX aggregation operators; and optimizations
+  for common aggregate functions such as \sql{COUNT}, \sql{SUM},
+  \sql{MIN}, and \sql{MAX}; and optimizations
   thereof to obtain a lower parameterized complexity for some comparison
-  operators and some m-semirings (especially, absorptive ones).
+  operators and some m-semirings (especially, absorptive ones). (Section
+  \ref{sec:algorithms})
 
 \item We implement these algorithms within the ProvSQL
   provenance-tracking extension of PostgreSQL, and explain the relevant
   implementation issues.
-
-\item We describe experiments which show
+We present experiments which show
   the viability of the approach on a real-world database, including for probabilistic
-  query evaluation.
+  query evaluation. (Section \ref{sec:implementation_experiments}).
 \end{itemize}
