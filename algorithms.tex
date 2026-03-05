@@ -23,18 +23,21 @@ handled by these procedures is evaluated on tuples produced by $q'$, and its max
 arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
 \smallskip\noindent
-Algorithm~\ref{alg:sum_dp} is a
-main dynamic-programming procedure for bounded-range $\mathrm{SUM}$ atoms.it enumerates (or can be used to aggregate over) those worlds
-$W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$ satisfies the comparison with the
+Algorithm~\ref{alg:sum_dp} is a dynamic-programming procedure for bounded-range $\mathrm{SUM}(t)*C$ atoms. It enumerates those worlds
+$W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$(i.e. $\SUM(t)$) satisfies the comparison with the
 constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding
-$\chi_{\op}$-gated possible-world sum in the semantics of aggregate-comparison atoms.
+$\chi_{\op}$-ensured possible-world sum in the semantics of aggregate comparison atoms.
 By taking $t=1$, this algorithm works also
-bounded-range $\mathrm{COUNT}$ atoms; but for $\mathrm{COUNT}$
+bounded-range $\mathrm{COUNT}(t)\op C$ atoms; but for $\mathrm{COUNT}$
 aggregates we additionally provide a dedicated routine exploiting the 
-unit-weight sum structure in a purey combinatorial fashion. SImilarly, or
+unit-weight sum structure in a purey combinatorial fashion. Similarly, for
 $\mathrm{MIN}$/$\mathrm{MAX}$ aggregates we use ordering-based strategies that avoid full world enumeration.
 As a fallback for aggregate functions or predicates not covered by the specialized cases, we revert to
-brute-force enumeration of worlds $W\subseteq U^{\hat I}_{q',\vec v}$.
+brute-force enumeration of non-empty worlds $W\subseteq U^{\hat I}_{q',\vec v}$. 
+
+\smallskip\noindent
+These algorithms can be used to evaluate provenance for the other type of aggregate comparison atoms where there is a comparison between two different aggregates by evaluating one of the aggrgeate into a constant value first. Correctness of these algorithms are shown in the appendix.(\rjok{to do})
+
 
 \smallskip\noindent
 
