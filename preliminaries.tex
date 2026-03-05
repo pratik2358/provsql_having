@@ -62,7 +62,7 @@ All semirings are commutative. We note that only the Boolean, Boolean function, 
 
 For aggregate queries, an useful notion is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and, (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$. Intuitively, the $\delta$ is used to capture the semantics of the existence of the results of an aggregation.
 \sil{I'm actually not sure about this. Should we define it the table for each semiring instead? (for semiring having $\delta(x)=x$)}
-
+\rjok{for semirings with $\delta(x)=x \text{ for } x\neq0$ these two properties are still satisfied. so it is okay i guess.}
 In the following, we refer exclusively commutative semirings of the form $(\mathbb K,\oplus,\otimes,\ominus,\delta,\mathbb 0,\mathbb 1)$, i.e., \emph{commutative $\delta$-semirings with monus}.
 
 \paragraph*{Useful results on m-semirings.} We discuss now some additional results on m-semirings that we use later. In particular, we show that in an m-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. We also show that homomorphisms between m-semirings preserve these properties. 
