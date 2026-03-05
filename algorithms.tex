@@ -30,8 +30,9 @@ constant $C$, i.e., precisely the worlds contributing nonzero weight to the corr
 $\chi_{\op}$-gated possible-world sum in the semantics of aggregate-comparison atoms.
 By taking $t=1$, this algorithm works also for
 bounded-range $\mathrm{COUNT}$ atoms; but for $\mathrm{COUNT}$
-aggregates we additionally provide a dedicated routine exploiting the 
-unit-weighted sum structure in a purely combinatorial fashion. Similarly, for $\mathrm{MIN}$/$\mathrm{MAX}$ aggregates we use ordering-based strategies that avoid full world enumeration.
+aggregates we additionally provide a dedicated algorithm (Algorithm~\ref{alg:count-prov-comparisons}) exploiting the 
+unit-weighted sum structure in a purely combinatorial fashion. Similarly, for $\mathrm{MIN}$/$\mathrm{MAX}$ aggregates 
+we use ordering-based strategies that avoid full world enumeration.
 As a fallback for aggregate functions or predicates not covered by the specialized cases, we revert to
 brute-force enumeration of worlds $W\subseteq U^{\hat I}_{q',\vec v}$.
 
@@ -88,13 +89,13 @@ brute-force enumeration of worlds $W\subseteq U^{\hat I}_{q',\vec v}$.
     $\mathcal W \leftarrow \bigcup_{j=C+1}^{J} dp[j]$\;
   }
   \ElseIf{$\op = <$}{
-    $\mathcal W \leftarrow \bigcup_{j=0}^{C-1} dp[j]$\;
+    $\mathcal W \leftarrow \bigcup_{j=1}^{C-1} dp[j]$\;
   }
   \ElseIf{$\op = \ge$}{
     $\mathcal W \leftarrow \bigcup_{j=C}^{J} dp[j]$\;
   }
   \Else{
-    $\mathcal W \leftarrow \bigcup_{j=0}^{C} dp[j]$\;
+    $\mathcal W \leftarrow \bigcup_{j=1}^{C} dp[j]$\;
   }
 
   \Return $\mathcal W$\;
