@@ -2,28 +2,20 @@
 \label{sec:algorithms}
 
 \pierre{2 pages}
-
-Using our semantics, we obtain the expression $[u\oslash v]$. Without loss of generality,
-for every constant value of the aggregation expression $v=C$, we can rewrite this expression
-as $[u\oslash C]_{\mathrm{op}}$. We now present a dynamic programming algorithm~\ref{alg:dp_subsets} to compute the set of subsets
-that satisfy the condition imposed by the operator $\mathrm{op}\in\{=,>,<,\ge,\le\}$ with
-respect to the constant $C$. Using this set of subsets, we can compute the probability of
-$[u\oslash C]_{\mathrm{op}}$
-by using the Algorithm~\ref{alg:probability}.
 % \begin{algorithm}
 %   \label{alg:dp_subsets}
-%   \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\mathrm{op}}$ (covers $=,>,<,\ge,\le$)}
+%   \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\op}$ (covers $=,>,<,\ge,\le$)}
 %   \begin{algorithmic}[1]
-%     \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$, a constant $C \in M$, and an operator $\mathrm{op}\in\{=,>,<,\ge,\le\}$
-%     \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \mathrm{op}\ C$
+%     \REQUIRE a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$, a constant $C \in M$, and an operator $\op\in\{=,>,<,\ge,\le\}$
+%     \ENSURE a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \op\ C$
 
-%     \IF{$\mathrm{op}\in\{>,\ge\}$}
+%     \IF{$\op\in\{>,\ge\}$}
 %       \STATE $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$ \COMMENT{max possible sum}
 %       \STATE $J \gets T$
-%     \ELSIF{$\mathrm{op}=<$}
+%     \ELSIF{$\op=<$}
 %       \STATE $J \gets C-1$
 %     \ELSE
-%       \STATE $J \gets C$ \COMMENT{$\mathrm{op}\in\{=,\le\}$}
+%       \STATE $J \gets C$ \COMMENT{$\op\in\{=,\le\}$}
 %     \ENDIF
 
 %     \STATE Initialize $dp[0] \leftarrow \{\emptyset\}$
@@ -43,15 +35,15 @@ by using the Algorithm~\ref{alg:probability}.
 %       \ENDFOR
 %     \ENDFOR
 
-%     \IF{$\mathrm{op} = =$}
+%     \IF{$\op = =$}
 %       \STATE $\mathcal{R} \leftarrow dp[C]$
-%     \ELSIF{$\mathrm{op} = >$}
+%     \ELSIF{$\op = >$}
 %       \STATE $\mathcal{R} \leftarrow \bigcup_{j=C+1}^{J} dp[j]$
-%     \ELSIF{$\mathrm{op} = <$}
+%     \ELSIF{$\op = <$}
 %       \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$
-%     \ELSIF{$\mathrm{op} = \ge$}
+%     \ELSIF{$\op = \ge$}
 %       \STATE $\mathcal{R} \leftarrow \bigcup_{j=C}^{J} dp[j]$
-%     \ELSE % \mathrm{op}=\le
+%     \ELSE % \op=\le
 %       \STATE $\mathcal{R} \leftarrow \bigcup_{j=1}^{C} dp[j]$
 %     \ENDIF
 
@@ -62,11 +54,11 @@ by using the Algorithm~\ref{alg:probability}.
 
 % \begin{algorithm}
 %   \label{alg:probability}
-%   \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_{\mathrm{op}}$}
+%   \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_{\op}$}
 %   \begin{algorithmic}[1]
-%     \REQUIRE dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, constant $C\in M$, operator $\mathrm{op}$, and probabilities $p(g)$ for all $g\in\mathcal{G}$
-%     \ENSURE $\Pr\big([\mathdutchcal{u}\oslash C]_{\mathrm{op}}\big)$
-%     \STATE $\mathcal{R} \gets \textsc{DP-Subsets}(A,C,\mathrm{op})$ \COMMENT{Algorithm above}
+%     \REQUIRE dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, constant $C\in M$, operator $\op$, and probabilities $p(g)$ for all $g\in\mathcal{G}$
+%     \ENSURE $\Pr\big([\mathdutchcal{u}\oslash C]_{\op}\big)$
+%     \STATE $\mathcal{R} \gets \textsc{DP-Subsets}(A,C,\op)$ \COMMENT{Algorithm above}
 %     \STATE $P \gets 0$
 %     \FORALL{$S \in \mathcal{R}$}
 %       \STATE $\pi \gets 1$
@@ -150,32 +142,96 @@ by using the Algorithm~\ref{alg:probability}.
 %   \end{itemize}
 % \end{proposition}
 
+% \begin{algorithm}
+%   \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\op}$ (covers $=,>,<,\ge,\le$)}
+%   \label{alg:dp_subsets}
+
+%   \Input{a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$, a constant $C \in M$, and an operator $\op\in\{=,>,<,\ge,\le\}$}
+%   \Output{a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \op\ C$}
+
+%   \If{$\op\in\{>,\ge\}$}{
+%     $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$\tcp*[r]{max possible sum}
+%     $J \gets T$\;
+%   }
+%   \ElseIf{$\op=<$}{
+%     $J \gets C-1$\;
+%   }
+%   \Else{
+%     $J \gets C$\tcp*[r]{$\op\in\{=,\le\}$}
+%   }
+
+%   Initialize $dp[0] \leftarrow \{\emptyset\}$\;
+%   \For{$j \gets 1$ \KwTo $J$}{
+%     $dp[j] \leftarrow \emptyset$\;
+%   }
+
+%   \For{$i \gets 1$ \KwTo $|A|$}{
+%     $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$\;
+%     \For{$j \gets J, J-1, \dots, w$}{
+%       $p \gets j - w$\;
+%       \If{$dp[p] \neq \emptyset$}{
+%         \ForEach{$S \in dp[p]$}{
+%           append $S \cup \{g\}$ to $dp[j]$\;
+%         }
+%       }
+%     }
+%   }
+
+%   \If{$\op = =$}{
+%     $\mathcal{R} \leftarrow dp[C]$\;
+%   }
+%   \ElseIf{$\op = >$}{
+%     $\mathcal{R} \leftarrow \bigcup_{j=C+1}^{J} dp[j]$\;
+%   }
+%   \ElseIf{$\op = <$}{
+%     $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$\;
+%   }
+%   \ElseIf{$\op = \ge$}{
+%     $\mathcal{R} \leftarrow \bigcup_{j=C}^{J} dp[j]$\;
+%   }
+%   \Else{
+%     $\mathcal{R} \leftarrow \bigcup_{j=1}^{C} dp[j]$\;
+%   }
+
+%   \Return $\mathcal{R}$\;
+% \end{algorithm}
+
 \begin{algorithm}
-  \caption{DP algorithm for $[\mathdutchcal{u}\oslash C]_{\mathrm{op}}$ (covers $=,>,<,\ge,\le$)}
+  \tcp{\textcolor{red}{We need to redefine $x$ in this case to maintain uniformity with the paper.}}
+  \caption{DP algorithm for $\mathdutchcal{u}\op C$ ($\op \in =,>,<,\ge,\le$) with bounded range and prefix-sum pruning}
   \label{alg:dp_subsets}
 
-  \Input{a dictionary $A \leftarrow \mathrm{supp}(\mathdutchcal{u})$, a constant $C \in M$, and an operator $\mathrm{op}\in\{=,>,<,\ge,\le\}$}
-  \Output{a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \mathrm{op}\ C$}
+  \Input{a dictionary $A$ of tuples involved and $\mathbb{K}$-annotations, a constant $C \in M$, and an operator $\op\in\{=,>,<,\ge,\le\}$}
+  \Output{a list $\mathcal{R}$ of subsets of $A$, s.t.\ $\forall R \in \mathcal{R}$, $\ \sum_{\mathbf{x}\in R}\mathbf{x}^{(M)}\ \op\ C$}
 
-  \If{$\mathrm{op}\in\{>,\ge\}$}{
-    $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$\tcp*[r]{max possible sum}
+  \BlankLine
+  $T \gets \sum_{\mathbf{x}\in A}\mathbf{x}^{(M)}$\tcp*[r]{max reachable sum}
+
+  \If{$\op\in\{>,\ge\}$}{
     $J \gets T$\;
   }
-  \ElseIf{$\mathrm{op}=<$}{
-    $J \gets C-1$\;
+  \ElseIf{$\op=<$}{
+    $J \gets \min(C-1,\ T)$\;
   }
   \Else{
-    $J \gets C$\tcp*[r]{$\mathrm{op}\in\{=,\le\}$}
+    $J \gets \min(C,\ T)$\tcp*[r]{$\op\in\{=,\le\}$}
   }
 
+  \BlankLine
   Initialize $dp[0] \leftarrow \{\emptyset\}$\;
   \For{$j \gets 1$ \KwTo $J$}{
     $dp[j] \leftarrow \emptyset$\;
   }
 
+  \BlankLine
+  $\mathrm{pref\_sum} \gets 0$\tcp*[r]{prefix-sum pruning state}
+
   \For{$i \gets 1$ \KwTo $|A|$}{
     $w \gets A^{(M)}[i]$, $g \gets A^{(K)}[i]$\;
-    \For{$j \gets J, J-1, \dots, w$}{
+    $\mathrm{pref\_sum} \gets \mathrm{pref\_sum} + w$\;
+    $j_{\max} \gets \min(J,\ \mathrm{pref\_sum})$\tcp*[r]{max reachable sum at step $i$}
+
+    \For{$j \gets j_{\max}, j_{\max}-1, \dots, w$}{
       $p \gets j - w$\;
       \If{$dp[p] \neq \emptyset$}{
         \ForEach{$S \in dp[p]$}{
@@ -185,16 +241,17 @@ by using the Algorithm~\ref{alg:probability}.
     }
   }
 
-  \If{$\mathrm{op} = =$}{
+  \BlankLine
+  \If{$\op = =$}{
     $\mathcal{R} \leftarrow dp[C]$\;
   }
-  \ElseIf{$\mathrm{op} = >$}{
+  \ElseIf{$\op = >$}{
     $\mathcal{R} \leftarrow \bigcup_{j=C+1}^{J} dp[j]$\;
   }
-  \ElseIf{$\mathrm{op} = <$}{
+  \ElseIf{$\op = <$}{
     $\mathcal{R} \leftarrow \bigcup_{j=1}^{C-1} dp[j]$\;
   }
-  \ElseIf{$\mathrm{op} = \ge$}{
+  \ElseIf{$\op = \ge$}{
     $\mathcal{R} \leftarrow \bigcup_{j=C}^{J} dp[j]$\;
   }
   \Else{
@@ -205,13 +262,13 @@ by using the Algorithm~\ref{alg:probability}.
 \end{algorithm}
 
 \begin{algorithm}
-  \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_{\mathrm{op}}$}
+  \caption{Probability computation for $[\mathdutchcal{u}\oslash C]_{\op}$}
   \label{alg:probability}
 
-  \Input{dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, constant $C\in M$, operator $\mathrm{op}$, and probabilities $p(g)$ for all $g\in\mathcal{G}$}
-  \Output{$\Pr\big([\mathdutchcal{u}\oslash C]_{\mathrm{op}}\big)$}
+  \Input{dictionary $A\leftarrow\mathrm{supp}(\mathdutchcal{u})$, constant $C\in M$, operator $\op$, and probabilities $p(g)$ for all $g\in\mathcal{G}$}
+  \Output{$\Pr\big([\mathdutchcal{u}\oslash C]_{\op}\big)$}
 
-  $\mathcal{R} \gets \textsc{DP-Subsets}(A,C,\mathrm{op})$\tcp*[r]{Algorithm above}
+  $\mathcal{R} \gets \textsc{DP-Subsets}(A,C,\op)$\tcp*[r]{Algorithm above}
   $P \gets 0$\;
   \ForEach{$S \in \mathcal{R}$}{
     $\pi \gets 1$\;
