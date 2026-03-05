@@ -24,15 +24,14 @@ arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
 \smallskip\noindent
 Algorithm~\ref{alg:sum_dp} is a
-main dynamic-programming procedure for bounded-range $\mathrm{SUM}$ atoms.it enumerates (or can be used to aggregate over) those worlds
+dynamic-programming procedure for bounded-range $\mathrm{SUM}$ atoms.it enumerates (or can be used to aggregate over) those worlds
 $W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$ satisfies the comparison with the
 constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding
 $\chi_{\op}$-gated possible-world sum in the semantics of aggregate-comparison atoms.
-By taking $t=1$, this algorithm works also
+By taking $t=1$, this algorithm works also for
 bounded-range $\mathrm{COUNT}$ atoms; but for $\mathrm{COUNT}$
 aggregates we additionally provide a dedicated routine exploiting the 
-unit-weight sum structure in a purey combinatorial fashion. SImilarly, or
-$\mathrm{MIN}$/$\mathrm{MAX}$ aggregates we use ordering-based strategies that avoid full world enumeration.
+unit-weighted sum structure in a purely combinatorial fashion. Similarly, for $\mathrm{MIN}$/$\mathrm{MAX}$ aggregates we use ordering-based strategies that avoid full world enumeration.
 As a fallback for aggregate functions or predicates not covered by the specialized cases, we revert to
 brute-force enumeration of worlds $W\subseteq U^{\hat I}_{q',\vec v}$.
 
