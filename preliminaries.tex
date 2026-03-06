@@ -3,9 +3,6 @@
 \pierre{3 pages}
 
 \begin{itemize}
-  \item Semirings, examples of Semirings
-  \item Properties of semirings
-  \item Table of semirings, with explanations
   \item Annotated relations, running example
   \item Queries, syntax and basics of semantics,
     linking to \cite{sen2026provsql} for the whole definitions
@@ -47,7 +44,14 @@ We extend the definition of semiring with a monus operation $\ominus$:
   \end{itemize}
 \end{definition}
 
-Additionally to the properties of their definitions, semirings may have other properties. Useful ones are:
+An alternative definition of m-semiring is as a semiring equipped with a binary operation $\ominus$ satisfying the following residuation law:
+\begin{equation}\label{eq:residuation-monus}
+  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z,
+\end{equation}
+where $\le$ is the natural order $a\le b \iff a\oplus b=b$. 
+This of course implies that m-semirings are naturally ordered.
+
+Additionally to the their definition, semirings may have other properties. Useful ones are:
 \begin{itemize}
   \item \textbf{Commutativity of $\otimes$}: $\forall a,b\in \mathbb K$, $a\otimes b = b\otimes a$.
   \item \textbf{Idempotence}: $\forall a\in \mathbb K$, $a\oplus a = a$.
@@ -60,9 +64,11 @@ Additionally to the properties of their definitions, semirings may have other pr
 Table~\ref{tab:semirings} summarizes the definitions of the $\ominus$ operator and the above properties for the semirings in Example~\ref{ex:semirings} and some additional ones,  such as the Boolean function semiring, the tropical semiring, the Viterbi semiring and the \L ukasiewicz semiring. 
 All semirings are commutative. We note that only the Boolean, Boolean function, Tropical, Viterbi and \L ukasiewicz semirings are idempotent, absorptive and right-distributive. These properties will be important for the semantics of \sql{HAVING} queries.
 
-For aggregate queries, an useful notion is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and, (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$. Intuitively, the $\delta$ is used to capture the semantics of the existence of the results of an aggregation.
-\sil{I'm actually not sure about this. Should we define it the table for each semiring instead? (for semiring having $\delta(x)=x$)}
-\rjok{for semirings with $\delta(x)=x \text{ for } x\neq0$ these two properties are still satisfied. so it is okay i guess.}
+For aggregate queries, an useful notion is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and, (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$. 
+Intuitively, the $\delta$ is used to capture the semantics of the existence of the results of an aggregation.
+%\sil{I'm actually not sure about this. Should we define it the table for each semiring instead? (for semiring having $\delta(x)=x$)}
+%\rjok{for semirings with $\delta(x)=x \text{ for } x\neq0$ these two properties are still satisfied. so it is okay i guess.}
+
 In the following, we refer exclusively commutative semirings of the form $(\mathbb K,\oplus,\otimes,\ominus,\delta,\mathbb 0,\mathbb 1)$, i.e., \emph{commutative $\delta$-semirings with monus}.
 
 \paragraph*{Useful results on m-semirings.} We discuss now some additional results on m-semirings that we use later. In particular, we show that in an m-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. We also show that homomorphisms between m-semirings preserve these properties. 
@@ -181,15 +187,10 @@ induction hypothesis.
     \end{enumerate}
 \end{proposition}
 
-Finally, we isolate two elementary inequalities on the residual characterization of $\ominus$ and the natural order defined for commutative $m-$semirings. \sil{Fix by moving the residual characterization after the defintion of monus}
+Finally, we isolate two elementary inequalities on the residual characterization of $\ominus$ and the natural order defined for commutative $m-$semirings. 
 \begin{lemmarep}\label{lem:x-y<=x}
-  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring, where $\ominus$ satisfies the residuation law: 
-\begin{equation}\label{eq:residuation-monus}
-  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z,
-\end{equation}
-where $\le$ is the natural order $a\le b \iff a\oplus b=b$.
-
-Then $\forall x,y\in \mathbb K$, $x\ominus y \le x$.
+  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring. 
+  Then $\forall x,y\in \mathbb K$, $x\ominus y \le x$.
 \end{lemmarep}
 
 \begin{appendixproof}
@@ -203,10 +204,8 @@ Hence $x\ominus y\le x$.
 \end{appendixproof}
 
 \begin{lemmarep}\label{lem:x<=y+(x-y)}
-  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring, where $\ominus$ satisfies the residuation law in Equation~\eqref{eq:residuation-monus}.
-
+  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring. 
   Then $\forall x,y\in \mathbb K$, $x \le y\oplus (x\ominus y)$.
-
 \end{lemmarep}
 
 \begin{appendixproof}
