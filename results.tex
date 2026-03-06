@@ -649,6 +649,34 @@ Therefore,
 \]
 
 \pierre{Add proofs of parts ii and iii}
+\begin{proof}
+\paragraph{Proof of (ii)}
+We show that there exists a $\mathbb{K}$-instance $\hat I$ such that 
+$\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ccc}
+\toprule
+Groups & Annotations & value \\ \midrule
+$g_1$ & $t_1$ & 1 \\
+$g_1$ & $t_2$ & 2\\
+$g_1$ & $t_3$ & 3\\
+$g_2$ & $t_4$ & 4\\
+\bottomrule
+\end{tabular}
+\caption{Groups and annotations}
+\label{tab:group_table}
+\end{table}
+
+We consider a query $q$ that returns groups which have 2 tuples. From the relation
+shown in Table~\ref{tab:group_table}, the provenance of the group $g_1$ following our semantics is 
+$(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)$.
+
+The provenance of the same group $g_1$ following the self-join query is $(t_1 \otimes t_2) \oplus (t_1 \otimes t_3) \oplus (t_2 \otimes t_3)$.
+
+In $\mathbb{N}$-semiring, the first provenance evaluates to 0 while the second evaluates to $11$.
+\end{proof}
 
 \begin{proposition}
 There exists Boolean HAVING queries such that determining whether the provenance of these
