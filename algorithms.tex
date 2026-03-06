@@ -45,9 +45,13 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
   \caption{Enumeration of valid worlds for $(t:\mathrm{SUM}) \op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
 
-  \Input{a finite set of group-member occurrences $U^{\hat I}_{q',\vec v}$, a term $t$ of max-index $\le k$ such that $t(u)\in\NN \; \forall (u,\alpha)\in U^{\hat I}_{q',\vec v}$ , a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le\}$}
+  \Input{a finite set of group-member occurrences $U^{\hat I}_{q',\vec v}$, a term $t$ of max-index $\le k$ such that $t(u)\in\NN \; \forall (u,\alpha)\in U^{\hat I}_{q',\vec v}$ , a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
   \Output{a list $\mathcal W$ of worlds $\emptyset\neq W\subseteq U^{\hat I}_{q',\vec v}$ such that $\sum_{(u,\alpha)\in W} t(u)\ \op\ C$}
-
+  \BlankLine
+  \Fn{\textsc{SumDP}$(U^{\hat I}_{q',\vec v},t,C,\op)$}{
+  \If{$\op = \neq$}{
+    \Return $\textsc{SumDP}(U^{\hat I}_{q',\vec v},t,C,<) \cup \textsc{SumDP}(U^{\hat I}_{q',\vec v},t,C,>)$\;
+  }
   \BlankLine
   Represent $U^{\hat I}_{q',\vec v}$ as a finite list of distinct occurrences $\big((u_i,\alpha_i)\big)_{1\le i\le N}$\;
   $T \gets \sum_{i=1}^{N} t(u_i)$
@@ -102,6 +106,7 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
   }
 
   \Return $\mathcal W$\;
+  }
 \end{algorithm}
 
 \begin{algorithm}
