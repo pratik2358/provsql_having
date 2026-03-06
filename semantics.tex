@@ -17,6 +17,8 @@ annotation structure, as discussed in the preliminaries, along with a finite dat
 \begin{definition}[Aggregate Function]
   An aggregate function is an arbitrary function  $f:\Bag(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
 \end{definition}
+
+
 \begin{definition}[Comparison Operator]
   For any $\op\in\{=,\neq,<,\leq,>,\geq\}$ defined for a domain $\mathcal{A}$, we define
 \[
@@ -59,6 +61,37 @@ U^{\hat I}_{q,\vec v} \defeq \mset{\, (u,\alpha)\in \angsem{\hat I}{q} \Big| (u_
 A \emph{possible-world} for $\vec v$ is any $W\msubseteq U^{\hat I}_{q,\vec v}\, ,$ i.e, any $W$ over
 $\mathcal V^k\times K$ such that $\forall(u,\alpha)$, $W(u,\alpha) \le U^{\hat I}_{q,\vec v}(u,\alpha)$.
 \end{definition}
+\begin{definition}[Semantics for aggregation]
+Fix $k\in\NN$, $q\in\RA_k$, and distinct grouping indices $(i_j)_{1\le j\le m}$ with $1\le i_j\le k$.
+Let $t_1,\dots,t_n$ be terms of max-index $\le k$ and let $f_\ell:\Bag(\mathcal V)\to\mathcal A_\ell$
+be arbitrary aggregate functions for $1\le \ell\le n$.
+
+For any $\mathbb K$-instance $\hat I$, define
+\[
+\angsem{\hat I}{\gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q)}
+\defeq
+\Big\{\,
+(\vec v,\ a_1,\dots,a_n,\ \delta(\beta)\otimes \sigma^{\hat I}_{q,\vec v})
+\ \Big|\ 
+(\vec v,\beta)\in\angsem{\hat I}{\epsilon(\Pi_{\# i_1,\dots,\# i_m}(q))}
+\,\Big\},
+\]
+where $\vec v=(v_1,\dots,v_m)$ and:
+\[
+U^{\hat I}_{q,\vec v}\defeq \mset{\, (u,\alpha)\in \angsem{\hat I}{q}\mid (u_{i_1},\dots,u_{i_m})=\vec v\,},
+\]
+\[
+a_\ell\defeq f_\ell(\vals_{t_\ell}(U^{\hat I}_{q,\vec v}))\in\mathcal A_\ell\qquad(1\le \ell\le n),
+\]
+and
+\[
+\sigma^{\hat I}_{q,\vec v}\defeq
+\bigoplus_{\substack{W\msubseteq U^{\hat I}_{q,\vec v}\\ W\neq\emptyset\\
+\forall \ell\in\{1,\dots,n\}\ f_\ell(\vals_{t_\ell}(W))=a_\ell}}
+\ann^{\hat I}_{q,\vec v}(W)\in\mathbb K.
+\]
+\end{definition}
+
 \begin{definition}[Possible World Semantics]
   Let $\hat I$ be a $\mathbb{K}$-instance. Fix $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v\in\mathcal{V}^m$. For any \emph{possible-world} $W\msubseteq U^{\hat I}_{q,\vec v}$, we define it's $\mathbb{K}-$annotation as:
 \[
