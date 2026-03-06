@@ -40,7 +40,6 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
 
 
 \smallskip\noindent
-
 \begin{algorithm}
   \caption{Enumeration of valid worlds for $(t:\mathrm{SUM}) \op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
@@ -54,7 +53,10 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
   }
   \BlankLine
   Represent $U^{\hat I}_{q',\vec v}$ as a finite list of distinct occurrences $\big((u_i,\alpha_i)\big)_{1\le i\le N}$\;
-  $T \gets \sum_{i=1}^{N} t(u_i)$
+  $T \gets \sum_{i=1}^{N} t(u_i)$\;
+  \If{$(\op = = \textbf{ and } C > T)$ \textbf{or} $(\op = > \textbf{ and } C \ge T)$ \textbf{or} $(\op = \ge \textbf{ and } C > T)$ \textbf{or} $(\op = < \textbf{ and } C = 0)$}{
+    \Return $\emptyset$\;
+  }
   \If{$\op\in\{>,\ge\}$}{
     $J \gets T$\;
   }
@@ -62,7 +64,8 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
     $J \gets \min(C-1,\ T)$\;
   }
   \Else{
-    $J \gets \min(C,\ T)$  }
+    $J \gets \min(C,\ T)$\;
+  }
 
   \BlankLine
   Initialize $dp[0] \leftarrow \{\emptyset\}$\;
@@ -81,8 +84,9 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
     \For{$j \gets j_{\max}, j_{\max}-1, \dots, w$}{
       $p \gets j - w$\;
       \If{$dp[p] \neq \emptyset$}{
-        \ForEach{$S \in dp[p]$}{
-          append $S \cup \{(u_i,\alpha_i)\}$ to $dp[j]$\;
+        let $s \gets |dp[p]|$\;
+        \For{$r \gets 1$ \KwTo $s$}{
+          append $dp[p][r] \cup \{(u_i,\alpha_i)\}$ to $dp[j]$\;
         }
       }
     }
@@ -96,18 +100,21 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
     $\mathcal W \leftarrow \bigcup_{j=C+1}^{J} dp[j]$\;
   }
   \ElseIf{$\op = <$}{
-    $\mathcal W \leftarrow \bigcup_{j=1}^{C-1} dp[j]$\;
+    $\mathcal W \leftarrow \bigcup_{j=0}^{C-1} dp[j]$\;
   }
   \ElseIf{$\op = \ge$}{
     $\mathcal W \leftarrow \bigcup_{j=C}^{J} dp[j]$\;
   }
   \Else{
-    $\mathcal W \leftarrow \bigcup_{j=1}^{C} dp[j]$\;
+    $\mathcal W \leftarrow \bigcup_{j=0}^{C} dp[j]$\;
   }
+
+  $\mathcal W \leftarrow \mathcal W \setminus \{\emptyset\}$\;
 
   \Return $\mathcal W$\;
   }
 \end{algorithm}
+
 
 \begin{algorithm}
   \caption{Enumeration of valid worlds for $(t:\mathrm{COUNT}) \op C$ at a fixed group key $\vec v$}
