@@ -1,16 +1,19 @@
 \section{Implementation and Experiments}
 \label{sec:implementation_experiments}
 \pierre{2 pages}
-\begin{figure}
+\begin{figure}[t]
     \centering
-    \includegraphics[width=\textwidth]{plots/prov_only_times.pdf}
-    \caption{Query execution time (including provenance computation) comparison between our semantics and join based semantics for COUNT queries.}
-    \label{fig:prov_only_times}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{plots/prob_comp_times.pdf}
-    \caption{Probability computation time comparison between our semantics and join based semantics for COUNT queries.}
-    \label{fig:prob_comp_times}
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/prov_only_times.pdf}
+        \caption{Query execution time (including provenance computation) comparison between \sql{HAVING} and \sql{JOIN} based semantics for \sql{COUNT(*)>=k} queries.}
+        \label{fig:prov_only_times}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/prob_comp_times.pdf}
+        \caption{Probability computation time comparison between \sql{HAVING} and \sql{JOIN} based semantics for \sql{COUNT(*)>=k} queries.}
+        \label{fig:prob_comp_times}
+    \end{minipage}
 \end{figure}
