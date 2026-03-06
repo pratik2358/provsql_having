@@ -114,8 +114,240 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
   \Return $\mathcal W$\;
   }
 \end{algorithm}
+\begin{theorem}[Correctness of Algorithm~\ref{alg:sum_dp}]\label{thm:sumdp-correct}
+Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
+Let $U\defeq U^{\hat I}_{q',\vec v}$ and represent it as a finite list of distinct occurrences
+$((u_i,\alpha_i))_{1\le i\le N}$.
+Let $t$ be a term of max-index $\le k$ such that $t(u_i)\in\NN$ for all $1\le i\le N$.
+Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
+Let $\mathcal W$ be the output of Algorithm~\ref{alg:sum_dp} on input $(U,t,C,\op)$.
+Then
+\[
+\mathcal W
+=
+\{\,W\subseteq U\mid W\neq\emptyset,\sum_{(u,\alpha)\in W}t(u)\op C\,\}.
+\]
+\end{theorem}
 
+\begin{proof}
+Write
+\[
+T\defeq \sum_{i=1}^N t(u_i).
+\]
 
+\smallskip\noindent\textbf{Case $\op=\neq$.}
+If $\op=\neq$, the algorithm returns
+\[
+\textsc{SumDP}(U,t,C,<)\cup\textsc{SumDP}(U,t,C,>).
+\]
+By the correctness proved below for $\op\in\{<,>\}$, this equals
+\[
+\{\,W\subseteq U\mid W\neq\emptyset,\sum_{(u,\alpha)\in W}t(u)<C\,\}
+\cup
+\{\,W\subseteq U\mid W\neq\emptyset,\sum_{(u,\alpha)\in W}t(u)>C\,\}.
+\]
+Since for every integer $x$ one has $x\neq C$ iff $x<C$ or $x>C$, the latter union is exactly
+\[
+\{\,W\subseteq U\mid W\neq\emptyset,\sum_{(u,\alpha)\in W}t(u)\neq C\,\}.
+\]
+Hence the theorem holds for $\op=\neq$.
+
+\smallskip\noindent
+The remainder of the proof establishes correctness for $\op\in\{=,>,<,\ge,\le\}$.
+
+\smallskip\noindent\textbf{Early-return cases.}
+The algorithm returns $\emptyset$ in the following scenarios:
+\begin{itemize}
+\item if $\op$ is $=$ and $C>T$;
+\item if $\op$ is $>$ and $C\ge T$;
+\item if $\op$ is $\ge$ and $C>T$;
+\item if $\op$ is $<$ and $C=0$.
+\end{itemize}
+If $\op$ is $=$ and $C>T$, then every world $W\subseteq U$ satisfies
+\[
+\sum_{(u,\alpha)\in W} t(u)\le \sum_{i=1}^N t(u_i)=T<C,
+\]
+so no world has sum $C$.
+
+If $\op$ is $>$ and $C\ge T$, then every world $W\subseteq U$ satisfies
+\[
+\sum_{(u,\alpha)\in W} t(u)\le T\le C,
+\]
+so no world has sum strictly greater than $C$.
+
+If $\op$ is $\ge$ and $C>T$, then again every world has sum at most $T<C$, so no world has sum at least $C$.
+
+If $\op$ is $<$ and $C=0$, since all values $t(u_i)$ lie in $\NN$, every world has nonnegative sum; hence no world has sum $<0$.
+
+Therefore, in each early-return case, the algorithm correctly outputs $\emptyset$.
+
+\smallskip\noindent\textbf{DP invariant.}
+We can safely assume from now on that none of the early-return cases occur.
+For $0\le i\le N$, let
+\[
+U_i\defeq \{(u_1,\alpha_1),\dots,(u_i,\alpha_i)\},
+\]
+with $U_0=\emptyset$.
+For $0\le i\le N$ and $j\ge 0$, define
+\[
+\mathcal D_i(j)\defeq
+\{\,W\subseteq U_i\mid \sum_{(u,\alpha)\in W} t(u)=j\,\}.
+\]
+We claim that after completing the outer-loop iteration with index $i$,
+for every $j\in\{0,\dots,J\}$,
+\begin{equation}\label{eq:sumdp-invariant}
+dp[j]=\mathcal D_i(j).
+\end{equation}
+
+We prove this by induction on $i$.
+
+\smallskip\noindent\emph{Base case $i=0$.}
+The algorithm initializes
+\[
+dp[0]=\{\emptyset\}
+\qquad\text{and}\qquad
+dp[j]=\emptyset \text{ for } 1\le j\le J.
+\]
+Since $U_0=\emptyset$, the only subset of $U_0$ is $\emptyset$, and its sum is $0$.
+Thus
+\[
+\mathcal D_0(0)=\{\emptyset\}
+\qquad\text{and}\qquad
+\mathcal D_0(j)=\emptyset \text{ for } j\ge 1.
+\]
+Hence \eqref{eq:sumdp-invariant} holds for $i=0$.
+
+\smallskip\noindent\emph{Inductive step.}
+Assume \eqref{eq:sumdp-invariant} holds after iteration $i-1$, for some $1\le i\le N$.
+Fix $j\in\{0,\dots,J\}$.
+We show that after iteration $i$, one has $dp[j]=\mathcal D_i(j)$.
+
+We now establish two cases.
+
+\smallskip\noindent\underline{Case 1: $j<t(u_i)$.}
+The inner loop does not update $dp[j]$, since the loop runs only for indices
+\[
+j=j_{\max},j_{\max}-1,\dots,t(u_i).
+\]
+Hence after iteration $i$, the value of $dp[j]$ is unchanged, so by the induction hypothesis
+\[
+dp[j]=\mathcal D_{i-1}(j).
+\]
+Further, no subset of $U_i$ containing $(u_i,\alpha_i)$ can have sum $j$, because such a subset has sum at least
+\[
+t(u_i)>j,
+\]
+and all summands are nonnegative. Therefore every world in $\mathcal D_i(j)$ must avoid $(u_i,\alpha_i)$, so
+\[
+\mathcal D_i(j)=\mathcal D_{i-1}(j).
+\]
+Consequently,
+\[
+dp[j]=\mathcal D_i(j).
+\]
+
+\smallskip\noindent\underline{Case 2: $j\ge t(u_i)$.}
+A subset $W\subseteq U_i$ satisfies
+\[
+\sum_{(u,\alpha)\in W} t(u)=j
+\]
+iff exactly one of the following two disjoint possibilities holds:
+\begin{itemize}
+\item $(u_i,\alpha_i)\notin W$, in which case $W\subseteq U_{i-1}$ and
+\[
+W\in \mathcal D_{i-1}(j);
+\]
+\item $(u_i,\alpha_i)\in W$, in which case
+\[
+W=W'\cup\{(u_i,\alpha_i)\}
+\]
+for a unique subset $W'\subseteq U_{i-1}$ satisfying
+\[
+\sum_{(u,\alpha)\in W'} t(u)=j-t(u_i),
+\]
+that is,
+\[
+W'\in \mathcal D_{i-1}(j-t(u_i)).
+\]
+\end{itemize}
+
+By the induction hypothesis, before processing occurrence $i$ we have
+\[
+dp[j]=\mathcal D_{i-1}(j)
+\qquad\text{and}\qquad
+dp[j-t(u_i)]=\mathcal D_{i-1}(j-t(u_i)).
+\]
+During the update for this fixed $j$, the algorithm sets
+\[
+p\gets j-t(u_i),
+\qquad
+s\gets |dp[p]|.
+\]
+It then appends
+\[
+dp[p][r]\cup\{(u_i,\alpha_i)\}
+\qquad (1\le r\le s)
+\]
+to $dp[j]$.
+
+Thus the worlds added to $dp[j]$ are exactly those obtained by adding $(u_i,\alpha_i)$ to the worlds that were already present in $dp[p]$ before any append operation at this $j$.
+Since, by the I.H, those pre-existing worlds are exactly the elements of $\mathcal D_{i-1}(j-t(u_i))$, the algorithm adds exactly the worlds in
+\[
+\{\,W'\cup\{(u_i,\alpha_i)\}\mid W'\in \mathcal D_{i-1}(j-t(u_i))\,\}.
+\]
+
+$s=|dp[p]|$ is essential when $t(u_i)=0$, for then $p=j$.
+In that situation the algorithm appends new worlds to $dp[j]$ while scanning from $dp[j]$, but it scans only the first $s$ entries, i.e. exactly those worlds that were present before the append operations started.
+Hence each world in $\mathcal D_{i-1}(j)$ contributes exactly one extended world containing $(u_i,\alpha_i)$, and none of the newly appended worlds is reused again during the same update.
+
+Therefore, after iteration $i$, the content of $dp[j]$ is exactly:
+\begin{itemize}
+\item all worlds in $\mathcal D_{i-1}(j)$, corressponding to the case $(u_i,\alpha_i)\notin W$;
+\item together with all worlds of the form $W'\cup\{(u_i,\alpha_i)\}$ for
+$W'\in\mathcal D_{i-1}(j-t(u_i))$, corresponding to the case $(u_i,\alpha_i)\in W$.
+\end{itemize}
+By the disjoint case analysis above, this is precisely $\mathcal D_i(j)$.
+Thus
+\[
+dp[j]=\mathcal D_i(j).
+\]
+
+Since both cases have been established, \eqref{eq:sumdp-invariant} holds after iteration $i$.
+This completes the proof by induction.
+
+Hence, after the outer loop terminates, for every $j\in\{0,\dots,J\}$,
+\[
+dp[j]
+=
+\{\,W\subseteq U\mid \sum_{(u,\alpha)\in W}t(u)=j\,\}.
+\]
+
+\smallskip\noindent\textbf{Selecting satisfying worlds.}
+The algorithm forms $\mathcal W$ as a union of those $dp[j]$ whose index $j$ satisfies the comparison with $C$:
+\begin{itemize}
+\item if $\op$ is $=$, it takes $dp[C]$;
+\item if $\op$ is $>$, it takes $\bigcup_{j=C+1}^{J} dp[j]$;
+\item if $\op$ is $<$, it takes $\bigcup_{j=0}^{C-1} dp[j]$;
+\item if $\op$ is $\ge$, it takes $\bigcup_{j=C}^{J} dp[j]$;
+\item if $\op$ is $\le$, it takes $\bigcup_{j=0}^{C} dp[j]$.
+\end{itemize}
+By the characterization of $dp[j]$ proved above, each such union is exactly the set of worlds
+$W\subseteq U$ whose sum satisfies
+\[
+\sum_{(u,\alpha)\in W} t(u)\op C.
+\]
+The only possible extra world is $\emptyset$, which belongs to $dp[0]$ and may therefore appear whenever the selected range contains $0$.
+The algorithm thomits it by setting
+\[
+\mathcal W\gets \mathcal W\setminus \{\emptyset\}.
+\]
+It follows that the final output is exactly
+\[
+\{\,W\subseteq U\mid W\neq\emptyset,\sum_{(u,\alpha)\in W} t(u)\op C\,\}.
+\]
+
+This establishes the correctness.
+\end{proof}
 \begin{algorithm}
   \caption{Enumeration of valid worlds for $(t:\mathrm{COUNT}) \op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
