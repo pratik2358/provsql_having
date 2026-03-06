@@ -219,6 +219,12 @@ as required.
 
 \subsection{Annotated relations and semantics}
 
-\sil{\textbf{TODO}, stopped here}
+In this paper, we use the notion of annotated relations detailed in \cite{sen2026provsql}(Sec IV), defined as follows.
+Given an algebraic stucture $\mathbb K$ and a set of $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of values (which can be either $\mathcal V$ or an extension of it) a $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb K}$ is multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb K$ of the form $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$. 
+We call $\alpha$ the annotation of the tuple $u$.
 
-\sil{Refer to the ICDE paper, say that a relation is a multi-set of annotated tuples, which can also be some other kinds of values; see beginning of subsec A (semiring). We reuse the semantics, except aggregates and selection of aggregates/ This was only defined when aggregation was the last operator, and we define a selection operator when comparing aggregate with constants or aggregate with aggregate.}
+A $\mathbb K$-instance, denoted as $\hat I$, over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
+
+The extended relational algebra semantics of \cite{sen2026provsql}  is defined over $\mathbb K$-instances where $\mathbb K$ is a semiring.
+In \cite{sen2026provsql}, aggregation queries were defined only when aggregation was the last operator of the query. 
+In this paper, we extend the semantics of the selection operator to the case where selection is applied to aggregate expressions (\sql{HAVING} conditions), either by comparing an aggregate with a constant or an aggregate with an aggregate.
