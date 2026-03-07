@@ -1,9 +1,38 @@
 \section{Implementation and Experiments}
 \label{sec:implementation_experiments}
 \pierre{2 pages}
+\subsection{Implementation}
+We implemented the algorithms described in Section~\ref{sec:algorithms} in ProvSQL with some added optimizations for 
+improving performance. Our implementation targets \sql{SUM}, \sql{COUNT}, \sql{MIN}, \sql{MAX}, \sql{AVG} and \fakesql{PICKFIRST} with specialized optimizations for \sql{SUM} and \sql{COUNT}.
 
-We implemented our semantics in \textsc{ProvSQL} and evaluated 
-it on a probabilistic image-retrieval database. Following the method 
+\smallskip\noindent
+\emph{\textbf{Optimizations}} For aggregate comparisons involving \sql{SUM} we deal with impossible-world cases as established in Algorithm~\ref{alg:sum_dp} itself. In a similar fashion the following predicates are detected early on as universally true:
+\begin{itemize}
+  \item \sql{SUM > C} and $C < 0$
+  \item \sql{SUM >= C} and $C \leq 0$
+  \item \sql{SUM < C} and $C > T$
+  \item \sql{SUM <= C} and $C \geq T$
+\end{itemize}
+For these cases we skip DP computation and compute fallback to a brute-force enumeration of possible worlds. 
+Instead of allocating DP up to the comparison constant $C$, the maximum tracked sum $J$ is defined in an optimized way (lines 8-13 in ALgorithm~\ref{alg:sum_dp}) to prevent unnecessarily large DP tables when $C$ is much larger than reachable sums.
+We also eliminate iterations over sums that are not yet reachable at a particular DP-iteration, reducing early-stage DP cost. For negative tuple values, we resort to exhaustive enumeration of possible worlds.
+For absorptive semirings if \sql{SUM} in a possible-world already satisfies a monotone comparison ($\ge, >$) , further supersets of the world are not enumerated because under absorption, supersets of satisfying worlds do not contribute new information.
+
+\smallskip\noindent
+Similarly, for \sql{COUNT >= m} or \sql{COUNT > m} under absorptive semirings, instead of enumerating all subsets of size at least $m$ only subsets of size exactly $m$ are generated.
+Further if every non-empty world satisfies the comparison predicate and the semiring is absorptive, the set of all worlds is replaced with singleton worlds representing an upward closure via minimal worlds.
+
+\smallskip\noindent
+\emph{\textbf{Simplifications}} While constructing semiring provenance expressions multiplication by $\mathbb 1$ and addition of $\mathbb 0$ is omitted to reduce clutter.
+In absorptive semirings with monotone comparisons for \sql{MAX} with $>\text{ or }\geq$
+and for \sql{MIN} with $<\text{ or }\leq$ missing-tuples factor is suppressed when they do not affect minimal satisfying worlds.
+
+\smallskip\noindent
+The presented optimizations preserve correctness under possible-world semantics and semiring evaluation while significantly reducing world enumeration times and provenance expression size.
+
+
+\subsection{Experiments}
+To test our implementation we ran experiments on a probabilistic image-retrieval database. Following the method 
 in~\cite{yunus2025using}, the database is built from object-detection 
 output over the COCO 2017~\cite{lin2014microsoft} dataset: for each 
 image, YOLOv5~\cite{ultralytics2021yolov5} detects objects, 

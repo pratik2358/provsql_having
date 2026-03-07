@@ -633,7 +633,9 @@ by $(J_{=,\le})$.
 Since the equalities hold for each group key $a$, we conclude
 $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ for
 $\op\in\{\ge,=,\le\}$.
-\paragraph{Conclusion.}
+
+\smallskip\noindent
+\emph{\textbf{Conclusion.}}
 Comparing the expressions obtained for
 \(\langle Q^{\op C}_1 \rangle^{\hat I}(a)\) and
 \(\langle Q^{\op C}_2 \rangle^{\hat I}(a)\),
@@ -648,54 +650,42 @@ Therefore,
 \qed
 \]
 
-\pierre{Add proofs of parts ii and iii}
-\begin{proof}
+%\pierre{Add proofs of parts ii and iii}\rjok{done}
+
 \paragraph{Proof of (ii)}
+\begin{proof}
 We show that there exists a $\mathbb{K}$-instance $\hat I$ such that 
 $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{ccc}
-\toprule
-Groups & Annotations \\ \midrule
-$g_1$ & $t_1$ \\
-$g_1$ & $t_2$ \\
-$g_1$ & $t_3$ \\
-$g_2$ & $t_4$ \\
-\bottomrule
-\end{tabular}
-\caption{Groups and annotations}
-\label{tab:group_table}
-\end{table}
-
-We show that there exists a $\mathbb{K}$-instance $\hat I$ such that $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
-We consider a query $q$ that returns groups which have 2 tuples. From the relation
-shown in Table~\ref{tab:group_table}, the provenance of the group $g_1$ following our semantics is 
-$(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)$.
-
-We consider the why-semiring provenance of $t_1, t_2, t_3$ are respectively $\{\{a\}\}, \{\{b\}\}, \{\emptyset\}$.
-Now we consider the why-semiring provenance of the group $g_1$. The provenance of the group $g_1$ following our 
-semantics is 
+Fix $C=2$ and $\op= \; =$.
+Since these queries are equivalent, both of them return groups which have 2 tuples. Say, in a certain $\hat I$ the result of the pre-aggregation subquery $q$ can form a valid group with group-key $u$ with $\mathbb K$-annotations $t_1,t_2,\text{ and }t_3$.
+Then,
+\[
+  \langle Q^{= 2}_1\rangle^{\hat I}=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
+\]
+Fix a why-semiring valuation of $t_1, t_2, t_3$: $\{\{a\}\}, \{\{b\}\}, \{\emptyset\}$.
+So,
 \begin{align*}
+  &\langle Q^{= 2}_1\rangle^{\hat I}(u)=\\
   &((\{\{a\}\}\Cup \{\{b\}\})\Cup(\{\emptyset\}\setminus \{\emptyset\})) \cup ((\{\{a\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{b\}\})) \\ 
   &\cup((\{\{b\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{a\}\}))\\
   =&(\{\{a\}\}\Cup \{\{b\}\}\Cup \emptyset) \cup (\{\{a\}\}\Cup \{\emptyset\}) \cup (\{\{b\}\}\Cup \{\emptyset\})\\
   =&\{\{a\},\{b\}\}
 \end{align*}
 
-Now following the join semantics the provenance becomes:
+But,
 \begin{align*}
+  &\langle Q^{= 2}_2\rangle^{\hat I}(u)=\\
   &(\{\{a\}\}\Cup\{\{b\}\})\cup(\{\{a\}\}\Cup\{\emptyset\})\cup(\{\{b\}\}\Cup\{\emptyset\})\\
   =&\{\{a, b\}\} \cup \{\{a\}\} \cup \{\{b\}\}\\
   =&\{\{a\}, \{b\}, \{a, b\}\}
 \end{align*}
-
+Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
 \end{proof}
 
-\begin{proof}
 \paragraph{Proof of (iii)}
-We refer to the same relation shown in Table~\ref{tab:group_table} as in the proof of (ii). 
+\begin{proof}
+
+
 The provenance of the same group $g_1$ following the self-join query is $(t_1 \otimes t_2) \oplus (t_1 \otimes t_3) \oplus (t_2 \otimes t_3)$.
 
 In $\mathbb{N}$-semiring, the first provenance evaluates to 0 while the second evaluates to $3$.

@@ -9,10 +9,10 @@ contributions of aggregate comparison-atoms inside $\predsem{\hat I}{q}{\psi}$.
 \smallskip\noindent
 In the implementation, ProvSQL represents multiset semantics using \emph{tuple occurrences} carrying globally unique
 provenance identifiers(UUIDs). We maintain a uniqueness-invariant that for every intermediate query result
-$\angsem{\hat I}{q}$, no pair $(u,\alpha)$ occurs twice: duplicates of the same value tuple $u$ are represented
+$\angsem{\hat I}{q}$, no pair $(u,\alpha)$ occurs twice: duplicates of the same value-tuple $u$ are represented
 as distinct occurrences with different annotations $\alpha$. Under this invariant, the multiset
-$U^{\hat I}_{q',\vec v}$ of group-member occurrences can be treated as a finite \emph{set} of occurrences, and
-possible worlds are ordinary subsets $W\subseteq U^{\hat I}_{q',\vec v}$. This does not change the semantics:
+of group-member occurrences can be treated as a finite \emph{set} of occurrences, and
+possible worlds are then ordinary subsets. This does not change the semantics:
 multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced
 aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
