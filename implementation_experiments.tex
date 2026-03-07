@@ -18,6 +18,8 @@ We compare our \sql{HAVING}-based semantics with the equivalent
 self-\sql{JOIN} rewriting for predicates of the form \sql{COUNT(*) >= k}. 
 We present the queries used in Appendix~\ref{sec:appendix_impl_experiments}.
 \begin{toappendix}
+\section{Implementation and Experiments}
+\subsection{Experiment Codes}
 \label{sec:appendix_impl_experiments}
 \begin{minted}[fontsize=\small, breaklines, linenos]{sql}
 SELECT img, sr_boolexpr(provenance()) AS prov
