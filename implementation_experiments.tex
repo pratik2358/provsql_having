@@ -3,9 +3,10 @@
 \pierre{2 pages}
 
 We implemented our semantics in \textsc{ProvSQL} and evaluated 
-it on a probabilistic image-retrieval database. The database is 
-built from object-detection output over the COCO 2017~\cite{lin2014microsoft} 
-dataset: for each image, YOLOv5~\cite{ultralytics2021yolov5} detects objects, 
+it on a probabilistic image-retrieval database. Following the method 
+in~\cite{yunus2025using}, the database is built from object-detection 
+output over the COCO 2017~\cite{lin2014microsoft} dataset: for each 
+image, YOLOv5~\cite{ultralytics2021yolov5} detects objects, 
 and each detected object is stored as one tuple in relation \sql{dataset} with 
 a unique identifier \sql{id}, the image identifier \sql{img}, the object 
 class \sql{obj}, and a probability derived from the detector 
@@ -54,10 +55,10 @@ different costs: symbolic provenance generation, and probability evaluation.
 
 Figure~\ref{fig:prov_only_times} reports query time including provenance 
 construction. For smaller values of $k$, the \sql{HAVING} semantics is slower 
-than the self-\sql{JOIN} rewriting, but with increasing $k$, the \sql{HAVING} semantics performs
-visibly faster. This is expected, since the rewriting requires $k$ aliases of the base 
-relation and produces increasingly expensive intermediate join results, 
-whereas the direct semantics works at the group level. Figure~\ref{fig:prob_comp_times} 
+than the self-\sql{JOIN} rewriting, but with increasing $k$, the \sql{HAVING} 
+semantics performs visibly faster. This is expected, since the rewriting requires 
+$k$ aliases of the base relation and produces increasingly expensive intermediate 
+join results, whereas the direct semantics works at the group level. Figure~\ref{fig:prob_comp_times} 
 reports probability evaluation time. The performance gap between the 
 \sql{HAVING} semantics and the self-\sql{JOIN} rewriting becomes more prominent with
 increasing $k$. \textcolor{red}{Need to report reason.}
