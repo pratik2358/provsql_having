@@ -1,16 +1,81 @@
 \section{Implementation and Experiments}
 \label{sec:implementation_experiments}
 \pierre{2 pages}
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{plots/prov_only_times.pdf}
-    \caption{Query execution time (including provenance computation) comparison between our semantics and join based semantics for COUNT queries.}
-    \label{fig:prov_only_times}
-\end{figure}
 
-\begin{figure}
+We implemented our semantics in \textsc{ProvSQL} and evaluated 
+it on a probabilistic image-retrieval database. Following the method 
+in~\cite{yunus2025using}, the database is built from object-detection 
+output over the COCO 2017~\cite{lin2014microsoft} dataset: for each 
+image, YOLOv5~\cite{ultralytics2021yolov5} detects objects, 
+and each detected object is stored as one tuple in relation \sql{dataset} with 
+a unique identifier \sql{id}, the image identifier \sql{img}, the object 
+class \sql{obj}, and a probability derived from the detector 
+confidence score. These object annotations are treated as independent 
+probabilistic facts. The database contains $119,359$ images and $579,123$ 
+object annotations.
+
+We compare our \sql{HAVING}-based semantics with the equivalent 
+self-\sql{JOIN} rewriting for predicates of the form \sql{COUNT(*) >= k}. 
+We present the queries used in Appendix~\ref{sec:appendix_impl_experiments}.
+\begin{toappendix}
+\label{sec:appendix_impl_experiments}
+\begin{minted}[fontsize=\small, breaklines, linenos]{sql}
+SELECT img, sr_boolexpr(provenance()) AS prov
+FROM dataset
+WHERE obj = c
+GROUP BY img
+HAVING COUNT(obj) >= k;
+\end{minted}
+
+For probability evaluation, we use use \sql{probability_evaluate(provenance())} 
+instead of \sql{sr_boolexpr(provenance())}.
+
+The equivalent self-\sql{JOIN} rewriting used in the comparison is:
+
+\begin{minted}[fontsize=\small, breaklines, linenos]{sql}
+SELECT img, provenance()
+FROM (
+  SELECT DISTINCT d1.img
+  FROM dataset d1
+  JOIN dataset d2
+    ON d2.img = d1.img AND d2.obj = c AND d2.id > d1.id
+  ...
+  JOIN dataset dk
+    ON dk.img = d1.img AND dk.obj = c AND dk.id > d{k-1}.id
+  WHERE d1.obj = c
+) AS t;
+\end{minted}
+\end{toappendix}
+Both approaches use the same probabilistic backend, and the 
+comparison isolates the effect of the query formulation itself.
+For each threshold $k$, every query was executed $20$ times. 
+We report query execution time (including provenance construction 
+time) and probability evaluation time separately, since they capture 
+different costs: symbolic provenance generation, and probability evaluation.
+
+Figure~\ref{fig:prov_only_times} reports query time including provenance 
+construction. For smaller values of $k$, the \sql{HAVING} semantics is slower 
+than the self-\sql{JOIN} rewriting, but with increasing $k$, the \sql{HAVING} 
+semantics performs visibly faster. This is expected, since the rewriting requires 
+$k$ aliases of the base relation and produces increasingly expensive intermediate 
+join results, whereas the direct semantics works at the group level. Figure~\ref{fig:prob_comp_times} 
+reports probability evaluation time. The performance gap between the 
+\sql{HAVING} semantics and the self-\sql{JOIN} rewriting becomes more prominent with
+increasing $k$. \textcolor{red}{Need to report reason.}
+
+\begin{figure}[t]
     \centering
-    \includegraphics[width=\textwidth]{plots/prob_comp_times.pdf}
-    \caption{Probability computation time comparison between our semantics and join based semantics for COUNT queries.}
-    \label{fig:prob_comp_times}
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/prov_only_times.pdf}
+        \caption{Query execution time (including provenance computation) comparison between \sql{HAVING} and \sql{JOIN} based semantics for \sql{COUNT(*)>=k} queries.}
+        \label{fig:prov_only_times}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/prob_comp_times.pdf}
+        \caption{Probability computation time comparison between \sql{HAVING} and \sql{JOIN} based semantics for \sql{COUNT(*)>=k} queries.}
+        \label{fig:prob_comp_times}
+    \end{minipage}
 \end{figure}
