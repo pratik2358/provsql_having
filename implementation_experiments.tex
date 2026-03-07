@@ -14,9 +14,21 @@ confidence score. These object annotations are treated as independent
 probabilistic facts. The database contains $119,359$ images and $579,123$ 
 object annotations.
 
-We compare our \sql{HAVING}-based semantics with the equivalent 
-self-\sql{JOIN} rewriting for predicates of the form \sql{COUNT(*) >= k}. 
-We present the queries used in Appendix~\ref{sec:appendix_impl_experiments}.
+\smallskip\noindent
+We compare execution times in ProvSQL for: (i) provenance tracking and, (ii) probability computation 
+of a \sql{HAVING} query with comparisons of the form \sql{COUNT(*) >= k} that uses our possible-world semantics against an equivalent self-\sql{JOIN} version that defaults to the \sql{JOIN} semantics.
+In our experiments we vary the scalar $k$ of the queries from 1 to 10.
+The query along with its \sql{JOIN}-rewite is presented in the Appendix~\ref{sec:appendix_impl_experiments}.
+
+\smallskip\noindent
+Figure~\ref{fig:prov_only_times} reports query execution times for provenance evaluation. We test our 
+possible-world semantics with the \sql{HAVING} version of the query. In its execution a provenance circuit is created which introduces a \emph{comparison gate} for the aggregate comparison and later a  call to the \texttt{sr\_boolexpr} semiring UDF on the circuit triggers our possible-world semantics which we implemented at a semiring-level. For smaller values of $k$, provenance evaluation using our possible-world semantics is slower 
+than that of the \sql{JOIN} version. However with increasing $k$, provenance evaluation using possible world-semantics is considerably faster. This is expected, since the rewriting requires 
+$k$ aliases of the base relation and produces increasingly expensive intermediate 
+join tables. In comparison, execution time(s) for provenance evaluation using our possible-world semantics is almost constant with varying $k$ in the query.
+
+\smallskip\noindent
+We observe similar result in Figure~\ref{fig:prob_comp_times} for probability computation, except that, execution times for probability computation using possible-world semantics is linear with varying $k$. For the equivalent \sql{JOIN} query, performance is unpredictable: linear till $k=6$ and exponential thereafter.\rjok{wait for experiments to finish}. 
 \begin{toappendix}
 \section{Implementation and Experiments}
 \subsection{Experiment Codes}
@@ -47,23 +59,8 @@ FROM (
   WHERE d1.obj = c
 ) AS t;
 \end{minted}
-\end{toappendix}
-Both approaches use the same probabilistic backend, and the 
-comparison isolates the effect of the query formulation itself.
-For each threshold $k$, every query was executed $20$ times. 
-We report query execution time (including provenance construction 
-time) and probability evaluation time separately, since they capture 
-different costs: symbolic provenance generation, and probability evaluation.
-
-Figure~\ref{fig:prov_only_times} reports query time including provenance 
-construction. For smaller values of $k$, the \sql{HAVING} semantics is slower 
-than the self-\sql{JOIN} rewriting, but with increasing $k$, the \sql{HAVING} 
-semantics performs visibly faster. This is expected, since the rewriting requires 
-$k$ aliases of the base relation and produces increasingly expensive intermediate 
-join results, whereas the direct semantics works at the group level. Figure~\ref{fig:prob_comp_times} 
-reports probability evaluation time. The performance gap between the 
-\sql{HAVING} semantics and the self-\sql{JOIN} rewriting becomes more prominent with
-increasing $k$. \textcolor{red}{Need to report reason.}
+\end{toappendix} 
+We use the same probabilistic backend (D4) in ProvSQL, for both the queries. For each $k$, every query was executed $20$ times on a 12th Gen Intel(R) Core(TM) i7-12700 machine running Ubuntu 22.04 using ProvSQL as an extension to Postgres 18 with shared buffer size limited to 128MB.  
 
 \begin{figure}[t]
     \centering
