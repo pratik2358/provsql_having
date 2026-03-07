@@ -1,24 +1,26 @@
 \section{Semantics}
 \label{sec:semantics}
 \pierre{1 page}
-In the Tannen et alsemimodule approach, provenance for aggregation is made algebraically unifrm and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states like AVG via (SUM,COUNT)).
+In the Tannen et al semimodule approach \rjok{cite tannen}, provenance for aggregation is made algebraically uniform and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states like AVG via (SUM,COUNT)).
 
 \smallskip\noindent
-In our possible-world (PW) semantics, we never need an algebraic lifting of the aggregate function. For each world (subset of tuples in the group), we evaluate the aggregate as an arbitrary function on the multiset of values and then restrict the world’s provenance annotation by the satisfiabilityu of the comparison. Thus any SQL aggregate function (avg, median/percentile, array/json aggregates, custom UDAFs, etc.) can be handled in the same semantic template. However we do lose algebraic compositionality and no longer produce provenance of an aggregate as a semimodule element.
-
+In this section we give a general possible-world semantics for selection predicates involving comparisons between aggregates. We observe that, in this semantics  we do not need an algebraic lifting of the aggregate function. For each possible subset of tuples in an aggregate-group (which we call a possible world), we evaluate the aggregate as an arbitrary function on the multiset of values and then restrict the world’s provenance annotation by the satisfiability of the comparison. Thus any SQL aggregate function (avg, median/percentile, array/json aggregates, custom UDAFs, etc.) can be handled in the same semantic template.
 \smallskip\noindent
-The semimodule approach gives us a symbolic semimodule element for an aggregate (when the lifting exists). But once you start doing nonlinear operations (division, products of aggregates, conditional expressions, nested expressions like (avg(x)+median(y))/max(z)), there is no generic, compositional way to interpret these operations on semimodule expressions without imposing extra algebraic structure or adding ad hoc rules.
-Also, we lose provenance  explanations for  comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism.
-Our  semantics naturally supports arbitrary arithmetic over aggregates in HAVING-like conditions: arithmetic is evaluated on the  aggregate values per world, then provenance for the tuples which make the compaqrison true are accumulated.
+\rjok{cite tannen}The semimodule approach gives us a symbolic semimodule element for an aggregate (when the lifting exists). But once we start doing nonlinear arbitrary operations (division, products of aggregates, conditional expressions, nested expressions like (avg(x)+median(y))/max(z)), there is no generic way to interpret these operations on semimodule expressions without imposing extra algebraic structure or adding ad hoc rules.
+Also, we lose explanations for  comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism.
+Our semantics naturally support arbitrary arithmetic over arbitrary aggregate functions in \sql{HAVING}-like conditions: arithmetic is evaluated on the aggregate values per world, then provenance for the tuples which make the comparison true are accumulated.
 
 \smallskip\noindent
 For our semantics we fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our
 annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$. For any set $S$, we write $\Bag(S)$ for the set of finite multisets over $S$.
-\begin{definition}[Aggregate Function]
-  An aggregate function is an arbitrary function  $f:\Bag(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
+
+\smallskip\noindent
+First we introduce the notion of an arbitrary aggregate function.
+\begin{definition}[Arbitrary Aggregate Function]
+  An arbitrary aggregate function is a function  $f:\Bag(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
 \end{definition}
-
-
+Note that monoid aggregate functions (like \sql{SUM}, \sql{COUNT}, etc.) can be (and are ) treated as arbitrary aggregate functions in our semantics for \sql{HAVING}-like queries.
+For comparing the result of two such aggregates we now define a comparison operator $\op$.
 \begin{definition}[Comparison Operator]
   For any $\op\in\{=,\neq,<,\leq,>,\geq\}$ defined for a domain $\mathcal{A}$, we define
 \[
@@ -32,25 +34,21 @@ annotation structure, as discussed in the preliminaries, along with a finite dat
 \]
 where $\mathbb{K}$ is any commutative $m-$semiring.
 \end{definition}
-Our goal is to add support to HAVING-like queries in ProvSQL by extending the semiring-provenance semantics of \emph{selection} with possible-world semantics for \emph{selection}s whose predicates
+Our goal is to add support to \sql{HAVING}-like queries in ProvSQL by extending the semiring-provenance semantics of \emph{selection} with possible-world semantics for \emph{selection}s whose predicates
 involve boolean combinations of comparisons between results of arbitrary aggregate functions.
-To achieve this, we first introduce \emph{aggregate comparison atoms} in \emph{selection} conditions.
+We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions.
 \begin{definition}[Aggregate Comparison Atoms]\label{def:agg_comp_atoms}
-  Fix $k\in \mathbb{N}$ and a subquery $q\in \RA_k$.
-  For distinct grouping indices $(i_j)_{1\leq j\leq m}$ s.t. $1\leq i_j \leq k$ and any grouping query:
-  \[
-Q\defeq\gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q)
-\]
-aggregate-comparison atoms are expressions of one of the forms
+ Aggregate-comparison atoms are expressions of one of the forms
 \[
 (t:f) \op (t':f')
 \;or\;
 (t:f) \op c
 \]
 where $t,t'$ are terms of max-index $\le k$, $f,f'$ are aggregate functions with common output domain~$\mathcal{A}$,
-$c\in\mathcal{A}$, and $\op\in\{=,\neq,<,\le,>,\ge\}$ and for well-formedness must only appear inside a
-selection condition $\psi$ of queries of the form $\sigma_{\psi}(Q)$.
+$c\in\mathcal{A}$, and $\op\in\{=,\neq,<,\le,>,\ge\}$ and appear inside a
+selection condition $\psi$ of queries.
 \end{definition}
+\rjok{removed GROUP-BY scoping constraint for agg-comp-atoms because they always and only appear inside selection conditions of a HAVING-like query.}
 
 \begin{definition}[Possible-World]
 Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, define
@@ -60,36 +58,6 @@ U^{\hat I}_{q,\vec v} \defeq \mset{\, (u,\alpha)\in \angsem{\hat I}{q} \Big| (u_
 \]
 A \emph{possible-world} for $\vec v$ is any $W\msubseteq U^{\hat I}_{q,\vec v}\, ,$ i.e, any $W$ over
 $\mathcal V^k\times K$ such that $\forall(u,\alpha)$, $W(u,\alpha) \le U^{\hat I}_{q,\vec v}(u,\alpha)$.
-\end{definition}
-\begin{definition}[Semantics for aggregation]
-Fix $k\in\NN$, $q\in\RA_k$, and distinct grouping indices $(i_j)_{1\le j\le m}$ with $1\le i_j\le k$.
-Let $t_1,\dots,t_n$ be terms of max-index $\le k$ and let $f_\ell:\Bag(\mathcal V)\to\mathcal A_\ell$
-be arbitrary aggregate functions for $1\le \ell\le n$.
-
-For any $\mathbb K$-instance $\hat I$, define
-\[
-\angsem{\hat I}{\gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q)}
-\defeq
-\Big\{\,
-(\vec v,\ a_1,\dots,a_n,\ \delta(\beta)\otimes \sigma^{\hat I}_{q,\vec v})
-\ \Big|\ 
-(\vec v,\beta)\in\angsem{\hat I}{\epsilon(\Pi_{\# i_1,\dots,\# i_m}(q))}
-\,\Big\},
-\]
-where $\vec v=(v_1,\dots,v_m)$ and:
-\[
-U^{\hat I}_{q,\vec v}\defeq \mset{\, (u,\alpha)\in \angsem{\hat I}{q}\mid (u_{i_1},\dots,u_{i_m})=\vec v\,},
-\]
-\[
-a_\ell\defeq f_\ell(\vals_{t_\ell}(U^{\hat I}_{q,\vec v}))\in\mathcal A_\ell\qquad(1\le \ell\le n),
-\]
-and
-\[
-\sigma^{\hat I}_{q,\vec v}\defeq
-\bigoplus_{\substack{W\msubseteq U^{\hat I}_{q,\vec v}\\ W\neq\emptyset\\
-\forall \ell\in\{1,\dots,n\}\ f_\ell(\vals_{t_\ell}(W))=a_\ell}}
-\ann^{\hat I}_{q,\vec v}(W)\in\mathbb K.
-\]
 \end{definition}
 
 \begin{definition}[Possible World Semantics]
@@ -137,12 +105,12 @@ If $\psi$ is of such an atomic form:
 \mathbb 0 & \text{otherwise.}
 \end{cases}
 \]
-
+\smallskip\noindent
 If $q$ is of the form $\gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q')\in \RA_{k=m+n}$
-with $q'\in\RA_{k'}$ and distinct grouping indices $(i_j)_{1\le j\le m}$ such that $1\le i_j\le k'$.
-  An aggregate-comparison atom is either $(t:f)\ \op\ (t':f')$ or $(t:f)\ \op\ c$ with $c\in\mathcal V$ and max-index of $t,t'$ being $\leq k'$,
-and is only well-formed inside a selection on $q$ (Definition~\ref{def:agg_comp_atoms}).
+with $q'\in\RA_{k'}$ and distinct grouping indices $(i_j)_{1\le j\le m}$ such that $1\le i_j\le k'$, 
+consider aggregate-comparison atom(s): $(t:f)\ \op\ (t':f')$ or $(t:f)\ \op\ c$ with $c\in\mathcal V$ and max-index of $t,t'$ being $\leq k'$.
 
+\smallskip\noindent
 For $u=(\vec v,a_1,\dots,a_n)\in\mathcal V^{m+n}$ ,
 write $\vec v=(v_1,\dots,v_m)$ for the group key.
 
@@ -150,7 +118,7 @@ write $\vec v=(v_1,\dots,v_m)$ for the group key.
 For $\psi = (t:f) \op (t':f')$,
 \[
 \predsem{\hat I}{q}{\psi}(u)\defeq
-\bigoplus_{W\msubseteq U^{\hat I}_{q',\vec v}}
+  \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
 \Bigl(
 \ann^{\hat I}_{q',\vec v}(W)\otimes
 \chi_{\op}\bigl(f(\vals_t(W)),\ f'(\vals_{t'}(W))\bigr)
@@ -161,7 +129,7 @@ For $\psi = (t:f) \op (t':f')$,
 For $\psi = (t:f) \op c$,
 \[
 \predsem{\hat I}{q}{\psi}(u)\defeq
-\bigoplus_{W\msubseteq U^{\hat I}_{q',\vec v}}
+  \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
 \Bigl(
 \ann^{\hat I}_{q',\vec v}(W)\otimes
 \chi_{\op}\bigl(f(\vals_t(W)),\ c\bigr)
