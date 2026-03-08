@@ -225,6 +225,6 @@ We call $\alpha$ the annotation of the tuple $u$.
 
 A $\mathbb K$-instance, denoted as $\hat I$, over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
 
-The extended relational algebra semantics of \cite{sen2026provsql}  is defined over $\mathbb K$-instances where $\mathbb K$ is a semiring.
+The extended relational algebra semantics for a query $q$ \cite{sen2026provsql}, denoted as $\predsem{\hat I}{q}{\cdot}$   is defined over $\mathbb K$-instances where $\mathbb K$ is a semiring.
 In \cite{sen2026provsql}, aggregation queries were defined only when aggregation was the last operator of the query. 
 In this paper, we extend the semantics of the selection operator to the case where selection is applied to aggregate expressions (\sql{HAVING} conditions), either by comparing an aggregate with a constant or an aggregate with an aggregate.

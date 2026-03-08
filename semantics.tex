@@ -1,25 +1,27 @@
 \section{Semantics}
 \label{sec:semantics}
 \pierre{1 page}
-In the semimodule approach presented in~\cite{amsterdamer2011provenance}, provenance for aggregation is made algebraically uniform and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states like AVG via (SUM,COUNT)).
+In the semimodule approach presented in~\cite{amsterdamer2011provenance}, provenance for aggregation is made algebraically uniform and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. 
+This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states such as AVG via SUM and COUNT).
 
-\smallskip\noindent
-In this section we give a general possible-world semantics for selection predicates involving comparisons between aggregates. We observe that, in this semantics  we do not need an algebraic lifting of the aggregate function. For each possible subset of tuples in an aggregate-group (which we call a possible world), we evaluate the aggregate as an arbitrary function on the multiset of values and then restrict the world’s provenance annotation by the satisfiability of the comparison. Thus any SQL aggregate function (avg, median/percentile, array/json aggregates, custom UDAFs, etc.) can be handled in the same semantic template.
+\sil{I find this paragraph a bit too verbose.}
+In this section we give a general possible-world semantics for selection predicates involving comparisons between aggregates. 
+We observe that, in this semantics  we do not need an algebraic lifting of the aggregate function. For each possible subset of tuples in an aggregate-group (which we call a possible world), we evaluate the aggregate as an arbitrary function on the multiset of values and then restrict the world’s provenance annotation by the satisfiability of the comparison. 
+Thus any SQL aggregate function (avg, median/percentile, array/json aggregates, custom UDAFs, etc.) can be handled in the same semantic template.
 The semimodule approach~\cite{amsterdamer2011provenance} for aggregate comparisons gives us a symbolic semimodule element for an aggregate (when the lifting exists). But once we start doing nonlinear arbitrary operations (division, products of aggregates, conditional expressions, nested expressions like (avg(x)+median(y))/max(z)), there is no generic way to interpret these operations on semimodule expressions without imposing extra algebraic structure or adding ad hoc rules.
 Also, we lose explanations for  comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism.
 Our semantics naturally support arbitrary arithmetic over arbitrary aggregate functions in \sql{HAVING}-like conditions: arithmetic is evaluated on the aggregate values per world, then provenance for the tuples which make the comparison true are accumulated.
 
-\smallskip\noindent
-For our semantics we fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our
+We fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our
 annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$. For any set $S$, we write $\Bag(S)$ for the set of finite multisets over $S$.
 
 \smallskip\noindent
-First we introduce the notion of an arbitrary aggregate function.
+First we introduce the notion of an arbitrary aggregate function:
 \begin{definition}[Arbitrary Aggregate Function]
   An arbitrary aggregate function is a function  $f:\Bag(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
 \end{definition}
-Note that monoid aggregate functions (like \sql{SUM}, \sql{COUNT}, etc.) can be (and are ) treated as arbitrary aggregate functions in our semantics for \sql{HAVING}-like queries.
-For comparing the result of two such aggregates we now define a comparison operator $\op$.
+Note that monoid aggregate functions (like \sql{SUM}, \sql{COUNT}, etc.) can also be treated as arbitrary aggregate functions in our semantics for \sql{HAVING}-like queries.
+For comparing the result of two aggregates we now define a comparison operator $\op$.
 \begin{definition}[Comparison Operator]
   For any $\op\in\{=,\neq,<,\leq,>,\geq\}$ defined for a domain $\mathcal{A}$, we define
 \[
