@@ -653,7 +653,7 @@ Therefore,
 %\pierre{Add proofs of parts ii and iii}\rjok{done}
 
 \paragraph{Proof of (ii)}
-\begin{proof}
+\begin{proof}\label{proof:proof_2}
 We show that there exists a $\mathbb{K}$-instance $\hat I$ such that 
 $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
 Fix $C=2$ and $\op= \; =$.
@@ -661,6 +661,10 @@ Since these queries are equivalent, both of them return groups which have 2 tupl
 Then,
 \[
   \langle Q^{= 2}_1\rangle^{\hat I}=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
+\]
+and,
+\[
+  \langle Q^{= 2}_2\rangle^{\hat I}=(t_1 \otimes t_2)\oplus (t_1 \otimes t_3)\oplus (t_2 \otimes t_3)
 \]
 Fix a why-semiring valuation of $t_1, t_2, t_3$: $\{\{a\}\}, \{\{b\}\}, \{\emptyset\}$.
 So,
@@ -684,15 +688,27 @@ Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat
 
 \paragraph{Proof of (iii)}
 \begin{proof}
+We consider a similar setting as mentioned in Proof~\ref{proof:proof_2} but with 
+$\mathbb{N}$-semiring valuation of $t_1, t_2, t_3$: $1, 1, 1$.
+\begin{align*}
+  &\langle Q^{= 2}_1\rangle^{\hat I}(u)=\\
+  &((1\times 1)\times(1- 1)) + ((1\times 1)\times(1-1)) + ((1\times 1)\times(1-1))\\
+  =& 0 + 0 + 0 \\
+  =& 0
+\end{align*}
 
-
-The provenance of the same group $g_1$ following the self-join query is $(t_1 \otimes t_2) \oplus (t_1 \otimes t_3) \oplus (t_2 \otimes t_3)$.
-
-In $\mathbb{N}$-semiring, the first provenance evaluates to 0 while the second evaluates to $3$.
+But,
+\begin{align*}
+  &\langle Q^{= 2}_2\rangle^{\hat I}(u)=\\
+  &(1\times1)+(1\times 1)+(1\times 1)\\
+  =& 1 + 1 + 1 \\
+  =& 3
+\end{align*}
+Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
 \end{proof}
 
 \begin{proposition}
-There exists Boolean HAVING queries such that determining whether the provenance of these
+There exist Boolean HAVING queries such that determining whether the provenance of these
 queries in the $\mathbb{N}$ (respectively, $\mathbb{B}[X]$) is $0$
 (respectively, $\bot$) is NP-complete.
 \end{proposition}
