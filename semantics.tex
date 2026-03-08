@@ -13,7 +13,8 @@ Also, we lose explanations for  comparisons on aggregates, because atomic aggreg
 Our semantics naturally support arbitrary arithmetic over arbitrary aggregate functions in \sql{HAVING}-like conditions: arithmetic is evaluated on the aggregate values per world, then provenance for the tuples which make the comparison true are accumulated.
 
 We fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our
-annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$. For any set $S$, we write $\Bag(S)$ for the set of finite multisets over $S$.
+annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$.
+For any set $S$, we write $\Bag(S)$ for the set of finite multisets over $S$.
 
 \smallskip\noindent
 First we introduce the notion of an arbitrary aggregate function:
