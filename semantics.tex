@@ -7,12 +7,14 @@ This lifting is canonical only for aggregates with the right algebraic structure
 Thus, the semimodule approach of~\cite{amsterdamer2011provenance} for aggregate comparisons gives us a symbolic semimodule element for an aggregate for cases allowing this lifting. 
 However, the semimodule approach fails for arbitrary operations: division, products of aggregates, conditional expressions, nested expressions e.g., \sql{AVG(x)+MEDIAN(y))/MAX(z)}.
 There is no generic approach to apply these operations on semimodule expressions without imposing extra algebraic structures or adding ad hoc rules.
+Moreover, they lose explanations for comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism. 
+\sil{I don't understand the previous sentence.}
+\rjok{is it okay now?}
 
 In this section we give a general \emph{possible world semantics} for selection predicates involving comparisons between aggregates.
 This semantics does not need an algebraic lifting of the aggregate function.
 Instead, for each possible subset of tuples, called a \emph{possible world}, in an aggregate group we evaluate the aggregate as an arbitrary function on the multiset of values and then restrict the world's provenance annotation to the satisfying cases only.
 Thus any SQL aggregate function (average, median/percentile, array/JSON aggregates, custom UDFs, etc.) can be handled in this semantics.
-Also, we lose explanations for  comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism. \sil{I don't understand the previous sentence.}
 Our semantics naturally support arbitrary arithmetic over arbitrary aggregate functions in \sql{HAVING}-like conditions; they are evaluated on the aggregate values in each possible world, and then the provenance is accumulated only for the tuples for which the comparison is true.
 
 We fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our

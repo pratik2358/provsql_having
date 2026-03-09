@@ -39,7 +39,7 @@ In this proof we are going to dilute some naming conventions used in our semanti
 
 Let us assume for now that $q$ has no duplicate tuple. For this fixed $a$, let $U$ be the finite collection of tuples of $q$ with first attribute $a$, with annotations $\alpha_u\in\mathbb K$. The query $Q^{\ge C}_2$ with strict self-join ordering predicate is designed to ``exhibit'' $C$ distinct tuples in the group: a satisfying valuation of these \textsc{join} conditions selects $C$ tuples (arranged by the strict inequalities in the join predicate), and the semantics contributes the product of their annotations. Summing over all satisfying valuations therefore yields the necessary provenance: the $\oplus$-sum of all products $\bigotimes_{u\in W}\alpha_u$( say $A_W$) over $C$-element choices $W\subseteq U$. Call this expression $S_C(U)$.
 
-The possible-world semantics of the \textsc{having} predicate looks quite different at first: it sums over all subsets $W\subseteq U$ (possible worlds), keeps those with $|W|\ge C$, and multiplies by a factor enforcing that tuples outside $W$ are ``absent.'' Using distributivity of $\otimes$ over $\ominus$ and $\oplus$, the contribution associated with each $W$ can be rewritten in a normal form
+The possible-world semantics of the \textsc{having} predicate looks quite different at first: it sums over all subsets $W\subseteq U$ (possible worlds), keeps those with $|W|\ge C$, and multiplies by a factor enforcing that tuples outside $W$ are "absent". Using distributivity of $\otimes$ over $\ominus$ and $\oplus$, the contribution associated with each $W$ can be rewritten in a normal form
 \[
 T_U(W)=A_W\ominus\bigoplus_{u\in U\setminus W}A_{W\cup\{u\}},
 \]
@@ -47,17 +47,17 @@ so that the provenance becomes,
 \[
 F_C(U)=\bigoplus_{|W|\ge C}T_U(W).
 \]
-Intuitively, $T_U(W)$ takes the monomial for choosing exactly the tuples in $W$ and removes away all one-step extensions of $W$, which is precisely what the ``absence'' factor is meant to enforce.
+Intuitively, $T_U(W)$ takes the monomial for choosing exactly the tuples in $W$ and removes away all one-step extensions of $W$, which is precisely what the "absence" factor is meant to enforce.
 
 The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looking constructions, if we pick any $u\in U$, write $U'=U\setminus\{u\}$, and $\beta=\alpha_u$, then both expressions split into two disjoint contributions: those worlds that do not use $u$, and those that do use $u$. This yields the same include/exclude recurrence for both  $F_C(U)$ and $S_C(U)$  (for all $C\ge 1$):
 \[
 \square_C(U)=\square_C(U')\ \oplus\ \bigl(\square_{C-1}(U')\otimes\beta\bigr).
 \]
-For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the interesting part: it relies residual characterization of $\ominus$ together with an $W$-expansion lemma ensuring that products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
+For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the non-trivial part: it relies on the algebraic properties of $\ominus$ together with a bounding lemma: products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
 
 Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and show counterexamples. 
 \end{proof}
-For the proof of part (i) we first state a bounding lemma that we will use to establish a recurrence for the possible-world provenance expression.
+For the proof of part (i) we first state the bounding lemma that we will use to establish a recurrence for the possible-world provenance expression.
 \begin{lemmarep}\label{lem:upward-expansion}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring,
 and write the natural order as $a\le b \iff a\oplus b=b$.
