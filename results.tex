@@ -35,15 +35,15 @@ Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
     \end{enumerate}
 \end{theorem}
 \begin{proof}[Proof sketch]
-The two queries differ only in how they implement the \textsc{having} condition. So we may fix one group key value $a$ and compare the single provenance expression produced for that group; equality for every $a$ then implies equality of the full query results.
+In this proof we are going to dilute some naming conventions used in our semantics for brevity. Further for simplicity we assume set semantics and later explain how our arguments can be extended to multiset semantics. The two queries $Q^{\op C}_1$ and $Q^{\op C}_2$  differ only in how they implement the \textsc{having} condition. So let us fix one group key value $a$ and compare the single provenance expression produced for that group; equality for every $a$ then implies equality of the full query results.
 
-  For simplicity, let us assume for now that $q$ has no duplicate tuple.For this fixed $a$, let $U$ be the finite collection of tuples of $q$ with first attribute $a$, with annotations $\alpha_u\in\mathbb K$. The query $Q^{\ge C}_2$ with strict self-join ordering predicate is designed to ``exhibit'' $C$ distinct tuples in the group: a satisfying valuation of these \textsc{join} conditions selects $C$ tuples (arranged by the strict inequalities in the join predicate), and the semantics contributes the product of their annotations. Summing over all satisfying valuations therefore yields the necessary provenance: the $\oplus$-sum of all products $A_W=\bigotimes_{u\in W}\alpha_u$ over $C$-element choices $W\subseteq U$. Call this expression $S_C(U)$.
+Let us assume for now that $q$ has no duplicate tuple. For this fixed $a$, let $U$ be the finite collection of tuples of $q$ with first attribute $a$, with annotations $\alpha_u\in\mathbb K$. The query $Q^{\ge C}_2$ with strict self-join ordering predicate is designed to ``exhibit'' $C$ distinct tuples in the group: a satisfying valuation of these \textsc{join} conditions selects $C$ tuples (arranged by the strict inequalities in the join predicate), and the semantics contributes the product of their annotations. Summing over all satisfying valuations therefore yields the necessary provenance: the $\oplus$-sum of all products $\bigotimes_{u\in W}\alpha_u$( say $A_W$) over $C$-element choices $W\subseteq U$. Call this expression $S_C(U)$.
 
 The possible-world semantics of the \textsc{having} predicate looks quite different at first: it sums over all subsets $W\subseteq U$ (possible worlds), keeps those with $|W|\ge C$, and multiplies by a factor enforcing that tuples outside $W$ are ``absent.'' Using distributivity of $\otimes$ over $\ominus$ and $\oplus$, the contribution associated with each $W$ can be rewritten in a normal form
 \[
 T_U(W)=A_W\ominus\bigoplus_{u\in U\setminus W}A_{W\cup\{u\}},
 \]
-so that the provenance becomes a single aggregated expression
+so that the provenance becomes, 
 \[
 F_C(U)=\bigoplus_{|W|\ge C}T_U(W).
 \]
@@ -55,10 +55,10 @@ The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looki
 \]
 For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the interesting part: it relies residual characterization of $\ominus$ together with an $W$-expansion lemma ensuring that products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
 
-  Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple.
+Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and establish counterexamples. 
 \end{proof}
-We state a bounding lemma that we later use in the proof to show that summing $T_U(W)$ over all $W\supseteq V$ always dominates the product $A_V$ for $V\subseteq U$.
-\begin{lemma}\label{lem:upward-expansion}
+We now state a bounding lemma that we will later use in the proof to show that summing $T_U(W)$ over all $W\supseteq V$ always dominates the product $A_V$ for $V\subseteq U$.
+\begin{lemmarep}\label{lem:upward-expansion}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring,
 and write the natural order as $a\le b \iff a\oplus b=b$.
 Assume that $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in K$,
@@ -76,9 +76,9 @@ Then for every $V\subseteq U$,
 \begin{equation}\label{eq:upward-expansion}
   A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
 \end{equation}
-\end{lemma}
+\end{lemmarep}
 
-\begin{proof}
+\begin{appendixproof}
 We prove \eqref{eq:upward-expansion} by induction on $d:=|U\setminus V|$.
 
 \smallskip\noindent
@@ -148,10 +148,10 @@ Combining with \eqref{eq:AV-bound} yields
 \]
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
-\end{proof}
+\end{appendixproof}
 Next, we show the recurrences for $F_C$ and $S_C$.
-\begin{lemma}[Recurrence for $F_C$]\label{lem:FC_recurrence}
-Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.
+\begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
+Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.
 Write the natural order as $a\le b \iff a\oplus b=b$, and assume $\ominus$ satisfies
 residuation $x\ominus y\le z \iff x\le y\oplus z$.
 Assume moreover that $\otimes$ distributes over $\oplus$ and over $\ominus$, i.e.
@@ -176,9 +176,9 @@ Then for all $C\in\mathbb N$ with $C\ge 1$,
 \[
 F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\beta\bigr).
 \]
-\end{lemma}
+\end{lemmarep}
 
-\begin{proof}
+\begin{appendixproof}
 Fix $u\in U$, set $U':=U\setminus\{u\}$ and $\beta:=\alpha_u$, and let $C\ge 1$.
 Split  $F_C(U)$ according to whether $u\in W$:
 \begin{equation}\label{eq:split-I-II}
@@ -275,9 +275,9 @@ Together with \eqref{eq:leq-direction}, this yields
 F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\beta),
 \]
 as required.
-\end{proof}
-\begin{lemma}[Recurrence for $S_C$]\label{lem:SC_recurrence}
-  Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring such that $\otimes$ distributes over $\oplus$:
+\end{appendixproof}
+\begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
+  Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring such that $\otimes$ distributes over $\oplus$:
 \[
 r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b)\qquad(\forall r,a,b\in K).
 \]
@@ -298,9 +298,9 @@ Then for every $C\ge 1$,
 \[
 S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr).
 \]
-\end{lemma}
+\end{lemmarep}
 
-\begin{proof}
+\begin{appendixproof}
 Fix $C\ge 1$ and $u\in U$, and write $U=U'\cup\{u\}$ with $U'=U\setminus\{u\}$.
 
 Define two index families:
@@ -389,7 +389,7 @@ Finally, combining \eqref{eq:split-SC}, \eqref{eq:A-part}, and \eqref{eq:B-part}
 S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
 \]
 as required.
-\end{proof}
+\end{appendixproof}
 Finally we proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
 \paragraph*{Proof of (i)}
 For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$ by showing
