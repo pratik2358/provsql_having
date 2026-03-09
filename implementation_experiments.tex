@@ -45,10 +45,10 @@ object annotations.
 
 \smallskip\noindent
 We compare execution times in ProvSQL for: (i) provenance tracking and, (ii) probability computation 
-of a \sql{HAVING} query with comparisons of the form \sql{COUNT(*) >= k} that uses our possible-world semantics against an equivalent self-\sql{JOIN} version that defaults to the \sql{JOIN} semantics.
-In our experiments we vary the scalar $k$ of the queries from 1 to 10.
+of a \sql{HAVING} query with comparisons of the form \sql{COUNT(*) >= k} to find images with at least $k$ refrigerators
+ that uses our possible-world semantics against an equivalent self-\sql{JOIN} version that defaults to the \sql{JOIN} semantics.
+In our experiments we vary the scalar $k$ of the queries from 1 to 9.
 The query along with its \sql{JOIN}-rewite is presented in the Appendix~\ref{sec:appendix_impl_experiments}.
-\sil{What was the object you were looking for?}
 
 \smallskip\noindent
 Figure~\ref{fig:prov_only_times} reports query execution times for provenance evaluation. We test our 
