@@ -58,7 +58,9 @@ In comparison, execution times for provenance evaluation using our possible-worl
 
 We observe similar result in Figure~\ref{fig:prob_comp_times} for probability computation. 
 In this case, execution times for probability computation using possible-world semantics is linear with varying $k$.
-For the equivalent \sql{JOIN} query, performance is unpredictable: linear until $k=6$ and exponential thereafter.\rjok{wait for experiments to finish}.\sil{We have to talk about this.}
+For the equivalent \sql{JOIN} query, performance is unpredictable: linear until $k=6$ and exponential thereafter.\rjok{wait for experiments to finish}.\sil{We have to talk about this. We use the same probabilistic backend (D4) in ProvSQL, for both the queries. For each $k$, every query was executed $20$ times on a 12th Gen Intel(R) Core(TM) i7-12700 machine running Ubuntu 22.04 using ProvSQL as an extension to Postgres 18 with shared buffer size limited to 128MB.  
+
+.}
 
 \begin{toappendix}
 \section{Implementation and Experiments}
