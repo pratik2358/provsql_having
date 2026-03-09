@@ -220,11 +220,13 @@ as required.
 \subsection{Annotated relations and semantics}
 
 In this paper, we use the notion of annotated relations detailed in \cite{sen2026provsql}(Sec.\ IV), defined as follows.
-Given an algebraic stucture $\mathbb K$ and a set of $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of values (which can be either $\mathcal V$ or an extension of it) a $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb K}$ is multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb K$ of the form $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$. 
+Given an algebraic structure $\mathbb K$ and a set of $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of values (which can be either $\mathcal V$ or an extension of it) a $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb K}$ is a multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb K$ of the form $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$. 
 We call $\alpha$ the annotation of the tuple $u$.
 
-A $\mathbb K$-instance, denoted as $\hat I$, over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
+A $\mathbb K$-instance, denoted as $\hat I$, over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$. 
+We consider, instead of attribute name, their \emph{positional index}, denoted by $\#i$ for $i\in \mathbb N^*$.
+A \emph{term} is then an expression involving values from $\mathcal V$ and positional indices, and the \emph{max-index} of a term is the largest positional index appearing in it ($0$ if none appear).
 
-The extended relational algebra semantics for an arbitrary selection predicate $\psi$ over a query $q\in \RA_k$ \cite{sen2026provsql}, denoted as $\predsem{\hat I}{q}{\cdot}$  is defined as an induced function $\predsem{\hat I}{q}{\psi}:\mathcal V^k \rightarrow \mathbb K$ on $\psi$ over arity $k$. \sil{Add about positional indexing, term, and max-index.}
-In \cite{sen2026provsql}, aggregation queries were defined only when aggregation was the last operator of the query. 
+The extended relational algebra semantics for a query $q$ over annotated relations, denoted as $\predsem{\hat I}{}{q}$, is defined for each operator of the relational algebra over $\mathbb K$-relations \cite{sen2026provsql}.
+There, semantics of aggregation queries were defined only when aggregation was the last operator of the query.
 In this paper, we extend the semantics of the selection operator to the case where selection is applied to aggregate expressions (\sql{HAVING} conditions), either by comparing an aggregate with a constant or an aggregate with an aggregate.
