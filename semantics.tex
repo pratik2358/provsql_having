@@ -1,28 +1,30 @@
 \section{Semantics}
 \label{sec:semantics}
 \pierre{1 page}
-In the semimodule approach presented in~\cite{amsterdamer2011provenance}, provenance for aggregation is made algebraically uniform and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. 
-This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states such as AVG via SUM and COUNT).
 
-\sil{I find this paragraph a bit too verbose.}
-In this section we give a general possible-world semantics for selection predicates involving comparisons between aggregates. 
-We observe that, in this semantics  we do not need an algebraic lifting of the aggregate function. For each possible subset of tuples in an aggregate-group (which we call a possible world), we evaluate the aggregate as an arbitrary function on the multiset of values and then restrict the world’s provenance annotation by the satisfiability of the comparison. 
-Thus any SQL aggregate function (avg, median/percentile, array/json aggregates, custom UDAFs, etc.) can be handled in the same semantic template.
-The semimodule approach~\cite{amsterdamer2011provenance} for aggregate comparisons gives us a symbolic semimodule element for an aggregate (when the lifting exists). But once we start doing nonlinear arbitrary operations (division, products of aggregates, conditional expressions, nested expressions like (avg(x)+median(y))/max(z)), there is no generic way to interpret these operations on semimodule expressions without imposing extra algebraic structure or adding ad hoc rules.
-Also, we lose explanations for  comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism.
-Our semantics naturally support arbitrary arithmetic over arbitrary aggregate functions in \sql{HAVING}-like conditions: arithmetic is evaluated on the aggregate values per world, then provenance for the tuples which make the comparison true are accumulated.
+In the semimodule approach presented in~\cite{amsterdamer2011provenance}, provenance for aggregation is made algebraically uniform and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. 
+This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states such as \sql{AVG} via \sql{SUM} and \sql{COUNT}).
+Thus, the semimodule approach of~\cite{amsterdamer2011provenance} for aggregate comparisons gives us a symbolic semimodule element for an aggregate for cases allowing this lifting. 
+However, the semimodule approach fails for arbitrary operations: division, products of aggregates, conditional expressions, nested expressions e.g., \sql{AVG(x)+MEDIAN(y))/MAX(z)}.
+There is no generic approach to apply these operations on semimodule expressions without imposing extra algebraic structures or adding ad hoc rules.
+
+In this section we give a general \emph{possible world semantics} for selection predicates involving comparisons between aggregates.
+This semantics does not need an algebraic lifting of the aggregate function.
+Instead, for each possible subset of tuples, called a \emph{possible world}, in an aggregate group we evaluate the aggregate as an arbitrary function on the multiset of values and then restrict the world's provenance annotation to the satisfying cases only.
+Thus any SQL aggregate function (average, median/percentile, array/JSON aggregates, custom UDFs, etc.) can be handled in this semantics.
+Also, we lose explanations for  comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism. \sil{I don't understand the previous sentence.}
+Our semantics naturally support arbitrary arithmetic over arbitrary aggregate functions in \sql{HAVING}-like conditions; they are evaluated on the aggregate values in each possible world, and then the provenance is accumulated only for the tuples for which the comparison is true.
 
 We fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our
 annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$.
 For any set $S$, we write $\Bag(S)$ for the set of finite multisets over $S$.
 
-\smallskip\noindent
 First we introduce the notion of an arbitrary aggregate function:
 \begin{definition}[Arbitrary Aggregate Function]
   An arbitrary aggregate function is a function  $f:\Bag(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
 \end{definition}
-Note that monoid aggregate functions (like \sql{SUM}, \sql{COUNT}, etc.) can also be treated as arbitrary aggregate functions in our semantics for \sql{HAVING}-like queries.
-For comparing the result of two aggregates we now define a comparison operator $\op$.
+Note that monoid aggregate functions (\sql{SUM}, \sql{COUNT}, etc.) can also be treated as arbitrary aggregate functions in our semantics.
+For comparing the result of two aggregates we define a comparison operator $\op$:
 \begin{definition}[Comparison Operator]
   For any $\op\in\{=,\neq,<,\leq,>,\geq\}$ defined for a domain $\mathcal{A}$, we define
 \[
@@ -31,14 +33,13 @@ For comparing the result of two aggregates we now define a comparison operator $
   \chi_{\op}(a,b)\defeq
 \begin{cases}
   \mathbb{1}\in \mathbb{K} & \text{if } a \op b,\\
-  \mathbb{0} \in \mathbb{K} & \text{otherwise.}
+  \mathbb{0} \in \mathbb{K} & \text{otherwise},
 \end{cases}
 \]
 where $\mathbb{K}$ is any commutative $m-$semiring.
 \end{definition}
-Our goal is to add support to \sql{HAVING}-like queries in ProvSQL by extending the semiring-provenance semantics of \emph{selection} with possible-world semantics for \emph{selection}s whose predicates
-involve boolean combinations of comparisons between results of arbitrary aggregate functions.
-We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions.
+Our goal is to add support to \sql{HAVING}-like queries in ProvSQL by extending the semiring-provenance semantics of \emph{selection} with possible-world semantics for \emph{selection}s whose predicates involve boolean combinations of comparisons between results of arbitrary aggregate functions.
+We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions:
 \begin{definition}[Aggregate Comparison Atoms]\label{def:agg_comp_atoms}
  Aggregate-comparison atoms are expressions of one of the forms
 \[
@@ -50,7 +51,7 @@ where $t,t'$ are terms of max-index $\le k$, $f,f'$ are aggregate functions with
 $c\in\mathcal{A}$, and $\op\in\{=,\neq,<,\le,>,\ge\}$ and appear inside a
 selection condition $\psi$ of queries.
 \end{definition}
-\rjok{removed GROUP-BY scoping constraint for agg-comp-atoms because they always and only appear inside selection conditions of a HAVING-like query.}
+%\rjok{removed GROUP-BY scoping constraint for agg-comp-atoms because they always and only appear inside selection conditions of a HAVING-like query.}
 
 \begin{definition}[Possible-World]
 Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, define
