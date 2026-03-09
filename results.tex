@@ -55,9 +55,9 @@ The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looki
 \]
 For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the interesting part: it relies residual characterization of $\ominus$ together with an $W$-expansion lemma ensuring that products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
 
-Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and establish counterexamples. 
+Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and show counterexamples. 
 \end{proof}
-We now state a bounding lemma that we will later use in the proof to show that summing $T_U(W)$ over all $W\supseteq V$ always dominates the product $A_V$ for $V\subseteq U$.
+For the proof of part (i) we first state a bounding lemma that we will use to establish a recurrence for the possible-world provenance expression.
 \begin{lemmarep}\label{lem:upward-expansion}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring,
 and write the natural order as $a\le b \iff a\oplus b=b$.
@@ -149,7 +149,7 @@ Combining with \eqref{eq:AV-bound} yields
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{appendixproof}
-Next, we show the recurrences for $F_C$ and $S_C$.
+Using Lemma~\ref{lem:upward-expansion} together with the algebraic properties of $\ominus $ we now establish a recurrence for the possibe-world provenance expression. 
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.
 Write the natural order as $a\le b \iff a\oplus b=b$, and assume $\ominus$ satisfies
@@ -276,6 +276,7 @@ F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\beta),
 \]
 as required.
 \end{appendixproof}
+Next, we formalize a standard recurrence for the \sql{JOIN}-based provenance expression, by splitting $|C|$-sized subsets of $U$ depending on the inclusion of a fixed $u\in U$.
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
   Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring such that $\otimes$ distributes over $\oplus$:
 \[
