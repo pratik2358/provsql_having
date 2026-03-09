@@ -7,9 +7,7 @@ This lifting is canonical only for aggregates with the right algebraic structure
 Thus, the semimodule approach of~\cite{amsterdamer2011provenance} for aggregate comparisons gives us a symbolic semimodule element for an aggregate for cases allowing this lifting. 
 However, the semimodule approach fails for arbitrary operations: division, products of aggregates, conditional expressions, nested expressions e.g., \sql{AVG(x)+MEDIAN(y))/MAX(z)}.
 There is no generic approach to apply these operations on semimodule expressions without imposing extra algebraic structures or adding ad hoc rules.
-Moreover, they lose explanations for comparisons on aggregates, because atomic aggregate comparisons are treated itself as semimodule elements which are only evaluated after fixing the lifting homomorphism. 
-\sil{I don't understand the previous sentence.}
-\rjok{is it okay now?}
+Moreover, the semimodule approach loses the semantics of the provenance in case where the comparison does not hold; this is not the case for our possible world semantics.
 
 In this section we give a general \emph{possible world semantics} for selection predicates involving comparisons between aggregates.
 This semantics does not need an algebraic lifting of the aggregate function.
