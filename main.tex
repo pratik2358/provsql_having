@@ -2,20 +2,16 @@
 
 \usepackage{minted}
 \usepackage{graphicx}
+\usepackage{xcolor}
 \usepackage[bb=boondox]{mathalfa}
 
-% lAngle/rAngle, from fdsymbol.sty, without other definitions
-\makeatletter
-\DeclareSymbolFont{delimiters}{U}{FdSymbolF}{m}{n}
-\newcommand\fdsy@DeclareDelimiter[4]{%
-  \if\relax\noexpand#1\let#1\undefined\fi
-  \DeclareMathDelimiter{#1}{#2}{#3}{#4}{#3}{#4}%
-}
-\newcommand\fdsy@DeclareOpen[3]{\fdsy@DeclareDelimiter{#1}{\mathopen}{#2}{#3}}
-\newcommand\fdsy@DeclareClose[3]{\fdsy@DeclareDelimiter{#1}{\mathclose}{#2}{#3}}
-\fdsy@DeclareOpen{\lAngle}{delimiters}{"92}
-\fdsy@DeclareClose{\rAngle}{delimiters}{"98}
-\makeatother
+% The annoying following lines are necessary to prevent fdsymbol, needed
+% for \lAngle/\rAngle, to break other math alphabets
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+\SetMathAlphabet{\mathcal}{bold}{OMS}{cmsy}{b}{n}
+\def\DeclareMathAlphabet#1#2#3#4#5{\relax}
+\def\SetMathAlphabet#1#2#3#4#5#6{\relax}
+\usepackage{fdsymbol}
 
 \usepackage[linesnumbered,algoruled,commentsnumbered,boxruled,noend]{algorithm2e}
 \usepackage{booktabs}
