@@ -12,7 +12,7 @@ without \sql{HAVING}).
 
 \paragraph*{M-Semirings}
 
-\begin{definition}[Semiring]
+\begin{definition} \label{def:semiring}
   A \emph{semiring} is an algebraic structure $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
   \begin{itemize}
     \item $(\mathbb K,\oplus,\mathbb 0)$ is a commutative monoid and $(\mathbb K,\otimes,\mathbb 1)$ is a (not necessarily commutative) monoid;
@@ -33,11 +33,10 @@ without \sql{HAVING}).
 We extend the definition of semiring with a monus operation $\ominus$;
 note that this definition, when possible, uniquely defines such an
 operation:
-\begin{definition}[m-semiring]
+\begin{definition} \label{def:m-semiring}
   Let $(\mathbb K, \oplus, \otimes, \mathbb 0, \mathbb 1)$ be a semiring.
-  For $a, b, c\in\mathbb K$, define
-$\leq$ as
-$a\le b \iff a\oplus b=b$; if $\leq$ is an order relation, it is called
+  For $a, b\in\mathbb K$, define
+$a\le b$ as $\exists c\in\mathbb K, b = a\oplus c$; if $\leq$ is an order relation, it is called
 the \emph{natural order} of the semiring, and the semiring is said to be
 \emph{naturally ordered}. Note that $\leq$ is always a
 pre-order, but not always antisymmetric. An m-semiring
@@ -100,160 +99,141 @@ ensure its validity, allows
 to fix in a definitive way a
 few erroneous statements in the literature: \cite{geerts2010database} had
 wrongly claimed that the tropical semiring over reals could not be equipped with a
-$\ominus$; \cite{amsterdamer2011provenance} wrongly claimed that
+$\ominus$; \cite{amsterdamer2011limitations} wrongly claimed that
 both $\mathbb{N}[X]$ and Why[$X$] had a $\otimes$ distributive over $\ominus$
-(called Axiom A13 in \cite{amsterdamer2011provenance}). We stress that it
-is important to have clean, formally proven definitions and properties
-for such elementary building blocks of data provenance, and that this is
-a contribution of this work.
+(called Axiom A13 in \cite{amsterdamer2011provenance}). We stress that
+errors are bound to happen given some counter-intuitive properties of
+these elementary building blocks of data provenance, and that it
+is important to have clean, formally proven definitions and properties,
+which is one of the contributions of this work.
 
-For aggregate queries, an useful notion is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and, (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$.
-Intuitively, the $\delta$ is used to capture the semantics of the existence of the results of an aggregation.
-%\sil{I'm actually not sure about this. Should we define it the table for each semiring instead? (for semiring having $\delta(x)=x$)}
-%\rjok{for semirings with $\delta(x)=x \text{ for } x\neq0$ these two properties are still satisfied. so it is okay i guess.}
+For queries with grouping and aggregation, an additional useful notion
+\cite{amsterdamer2011provenance} is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$.
+Intuitively, $\delta$ is used to capture the semantics of the
+existence of a group. For reasons we will explain later on, we fix the
+definition of $\delta$ to be $\delta(x)=x$ in
+idempotent semirings (in which $\mathbb 1\oplus\dots\oplus\mathbb
+1=\mathbb 1$); and $\delta(x)=\mathbb 1$ for all $x\neq\mathbb 0$ in
+non-idempotent semirings.
 
-In the following, we refer exclusively commutative semirings of the form $(\mathbb K,\oplus,\otimes,\ominus,\delta,\mathbb 0,\mathbb 1)$, i.e., \emph{commutative $\delta$-semirings with monus}.
-
-\paragraph**{Useful results on m-semirings.} We discuss now some additional results on m-semirings that we use later. In particular, we show that in an m-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. We also show that homomorphisms between m-semirings preserve these properties.
-\begin{propositionrep}
+\paragraph*{Useful results on m-semirings} We discuss now some
+additional results on m-semirings that we use later. First we show that idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
+\begin{propositionrep}\label{prop:idempotent_iff_add_monus}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
-  Let $S$ be any m-semiring. $S$ is idempotent if and only if $\ominus$
-  is right-distributive over~$\oplus$ in $S$.
+  An m-semiring $\mathbb K$ is idempotent if and only if $\ominus$
+  is right-distributive over~$\oplus$ in $\mathbb K$, i.e., iff $\forall a, b,
+c\in\mathbb K, (a\oplus b)\ominus c=(a\ominus c)\oplus (b\ominus c)$.
 \end{propositionrep}
 \begin{appendixproof}
+  We show both implications.
+
   \textbf{($\Rightarrow$)}
   \lean{SemiringWithMonus}{add_monus_of_idempotent}
-  Assume S to be additively idempotent. Define a preorder $\leq$ such that,
-  if $a\leq b$ then $\exists x,\; a\oplus x=b$.
-  So, $a \oplus b = a \oplus (a \oplus x)=(a\oplus a)\oplus x=a \oplus x = b$. \\$\therefore a\leq b \implies a\oplus b=b$.
-  \\Conversely, if $a\oplus b = b$, choose $x=b$. And trivially, $a\oplus x =a\oplus b=b$
-  $\implies a \leq b$.
-  \\$\therefore a\leq b \iff a \oplus b =b$. Therefore, $(S,\leq)$ is indeed a partial order and $\oplus$ is monotone under $\leq$.
-  \\Now, $\forall u, a \leq u$ and $b \leq u$
-  \\ $a \oplus u = u$ and $b\oplus u =u$.
-  \\But, $a\leq a \oplus b$ and $b \leq a \oplus b$
-  \\$\therefore a \oplus b $ is the least such $u$ for which $a\leq u $ and $b \leq u$.
-  So, $\oplus$ is the join of a semilattice of $(S,\leq)$.
+  Assume $\mathbb K$ to be idempotent.
 
-  \paragraph*{i.}
-  By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus z$,
-  $a\leq a\oplus b\leq c \oplus ((a\oplus b)\ominus c) \implies a\ominus c\leq (a\oplus b)\ominus c$.
-  Similarly, $b\ominus c\leq (a\oplus b)\ominus c$.
-  \\$\therefore (a\ominus c)\oplus (b\ominus c) \leq (a\oplus b) \ominus c$
-  \paragraph*{ii.} We have $a\leq c \oplus (a\ominus c)$ and $b\leq c\oplus (b\ominus c)$. So, $a\oplus b \leq c\oplus c \oplus (a\ominus c) \oplus (b\ominus c)$.
-  By idempotence of $\oplus$,  $a\oplus b \leq c \oplus (a\ominus c) \oplus (b\ominus c)$.
-\\$\therefore $ $(a\oplus b) \ominus c \leq (a\ominus c)\oplus (b\ominus c) $, by definition of monus.
- \\ From \textbf{i.} \& \textbf{ii.}
-  $$\boxed{(a\oplus b) \ominus c = (a\ominus c)\oplus (b\ominus c)}$$
+  Consider $a,b \in\mathbb K$ such as $a\leq b$. Then $\exists c, a+c=b$.
+  So $a \oplus b = a \oplus (a \oplus c)=(a\oplus a)\oplus c=a \oplus c = b$.
+  Conversely, if $a\oplus b = b$, we trivially have $a\leq b$.
+
+  Now consider an element $u\in\mathbb K$ such that $a \leq u$ and $b
+  \leq u$, i.e.,
+  $a \oplus u = u$ and $b\oplus u =u$. Observe that $a\oplus b\oplus
+  u=a\oplus u=u$, so that $a\oplus b\leq u$.
+
+  But since $a\leq a \oplus b$ and $b \leq a \oplus b$,
+  $a \oplus b $ is the least such $u$ for which $a\leq u $ and $b \leq u$.
+  In other words, $\oplus$ is the join of the semilattice $(\mathbb K,\leq)$.
+
+  \medskip
+  We show $(a\oplus b)\ominus c=(a\ominus c)\oplus (b\ominus c)$ by
+  showing both inequalities.
+
+  (i) By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus
+  z$. Note that $a\leq a\oplus b$ and $a\oplus b\leq c \oplus ((a\oplus
+  b)\ominus c)$ by applying the residuation law to the inequality
+  $(a\oplus b)\ominus c\leq (a\oplus b)\ominus c$. This means $a\leq
+  c\oplus((a\oplus b)\ominus c)$ which implies $a\ominus c\leq (a\oplus b)\ominus c$.
+  Similarly, $b\ominus c\leq (a\oplus b)\ominus c$. By using the fact
+  that $\oplus$ is the join, we get
+  $(a\ominus c)\oplus (b\ominus c) \leq (a\oplus b) \ominus c$.
+
+  (ii) We have $a\leq c \oplus (a\ominus c)$ and $b\leq c\oplus (b\ominus c)$. So, $a\oplus b \leq c\oplus c \oplus (a\ominus c) \oplus (b\ominus c)$.
+  By idempotence of $\oplus$,  $a\oplus b \leq c \oplus (a\ominus c)
+  \oplus (b\ominus c)$, or by the residuation law
+$(a\oplus b) \ominus c \leq (a\ominus c)\oplus (b\ominus c) $.
+
+\bigskip
 \textbf{($\Leftarrow$)}
   \lean{SemiringWithMonus}{idempotent_of_add_monus}
-Assume that $\ominus$ of S is right-distributive:
-\[
-  (a\oplus b)\ominus c
-  = (a\ominus c)\oplus(b\ominus c)\;\forall a,b,c\in S.
-\]
-
-For any arbitrary $a\in S$ substitute $b=a$ and $c=a$:
+  Assume that $\ominus$ is right-distributive over $\oplus$.
+For any arbitrary $a\in \mathbb K$, we thus have:
 \[
   (a\oplus a)\ominus a
   = (a\ominus a)\oplus(a\ominus a).
 \]
-Since $a\ominus a=0$, the right-hand side is $0$. And $(a\oplus a)\ominus a = 0\implies a\oplus a\leq a$ by definition of monus.
-  But, trivially $a\le a\oplus a$, so antisymmetry of $(S,\leq)$ gives $a\oplus a=a$.
-  Thus, $$\boxed{a \oplus a=a, \; \forall a\in S}$$
-\smallskip
-Both sides, prove the equivalence.
+Since $a\ominus a=\mathbb 0$, the right-hand side is $\mathbb 0$. And
+$(a\oplus a)\ominus a = \mathbb 0\implies a\oplus a\leq a$ by the
+residuation law.
+  But, trivially, $a\le a\oplus a$ so the antisymmetry of $(\mathbb K,\leq)$ gives $a\oplus a=a$.
+  Thus, \(\forall a\in\mathbb K, a \oplus a=a.\)
 \end{appendixproof}
-% This is wrong but why?
-%\begin{proposition}
-%   Let $K_1, K_2$ be two m-semirings and $h: K_1\to K_2$ a semiring
-%   homomorphism. Then $h$ is an m-semiring homomorphism.
-% \end{proposition}
-\begin{corollaryrep}[Right-distributivity of $\ominus$ over finite $\oplus$-sums]\label{lem:finite-add-monus}
-Let \((\mathbb K,\oplus,\otimes,\ominus,\mathbb{0},\mathbb{1})\) be an
-m-semiring in which \(\ominus\) is right-distributive over \(\oplus\).
-
-Then for every \(n \ge 1\) and \(\forall a_1,\dots,a_n,c \in K\),
-\[
-\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
+\begin{corollaryrep}\label{lem:finite-add-monus}
+Let \(\mathbb K\) be an
+idempotent
+m-semiring.
+Then \(\forall n \ge 1\) and \(\forall a_1,\dots,a_n,c \in K\),
+\(
+\left(\bigoplus_{i=1}^n a_i\right)\ominus c
 =
 \bigoplus_{i=1}^n (a_i \ominus c).
-\]
+\)
 \end{corollaryrep}
 
 \begin{appendixproof}
 We proceed by induction on \(n \ge 1\).
 
 For \(n=1\), the identity is trivial.
-For \(n=2\), the statement is exactly the assumed right-distributivity law:
-\[
-(a_1 \oplus a_2)\ominus c = (a_1\ominus c)\oplus(a_2\ominus c).
-\]
 
-Assume the identity holds for \(n-1\).
+Assume the identity holds for \(n-1\geq 1\).
 Then
-\[
-\begin{aligned}
+\begin{align*}
 \Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
 &= \Bigl(\bigl(\bigoplus_{i=1}^{n-1} a_i\bigr)\oplus a_n\Bigr)\ominus c \\
 &= \Bigl(\bigoplus_{i=1}^{n-1} a_i\Bigr)\ominus c \;\oplus\; (a_n\ominus c) \\
 &= \bigoplus_{i=1}^{n-1} (a_i\ominus c) \;\oplus\; (a_n\ominus c)
 = \bigoplus_{i=1}^n (a_i\ominus c),
-\end{aligned}
-\]
-where the second equality uses right-distributivity and the third uses the
+\end{align*}
+where the second equality uses
+Proposition~\ref{prop:idempotent_iff_add_monus} and the third uses the
 induction hypothesis.
 \end{appendixproof}
 
-\sil{Remove this?}
-\begin{proposition}
-  Let $\mathbb{K}_1, \mathbb{K}_2$ be two m-semirings and $h:
-  \mathbb{K}_1\to \mathbb{K}_2$ a m-semiring
-  homomorphism. Then:
-    \begin{enumerate}[(i)]
-    \item
-      \lean{SemiringWithMonus}{idempotent_of_injective_homomorphism_idempotent}
-      If $h$ is injective and $\mathbb{K}_2$ idempotent, then so is
-      $\mathbb{K}_1$.
-      \item
-        \lean{SemiringWithMonus}{idempotent_of_surjective_homomorphism_idempotent}
-      If $h$ is surjective and $\mathbb K_1$ idempotent, then so is
-      $\mathbb K_2$.
-      \item
-        \lean{SemiringWithMonus}{mul_sub_left_of_injective_homomorphism_mul_sub_left}
-        If $h$ is injective and $\otimes$ is left-distributive over $\ominus$ in $\mathbb{K}_2$, the
-        is true in~$\mathbb{K}_1$.
-        \item
-        \lean{SemiringWithMonus}{mul_sub_left_of_surjective_homomorphism_mul_sub_left}
-        If $h$ is surjective and $\otimes$ is left-distributive over $\ominus$ in $\mathbb{K}_1$, the
-        is true in~$\mathbb{K}_2$.
-    \end{enumerate}
-\end{proposition}
-
-Finally, we isolate two elementary inequalities on the residual characterization of $\ominus$ and the natural order defined for commutative $m-$semirings.
+Finally, we isolate two elementary inequalities on the residual
+characterization of $\ominus$ in m-semirings.
 \begin{lemmarep}\label{lem:x-y<=x}
-  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring.
-  Then $\forall x,y\in \mathbb K$, $x\ominus y \le x$.
+  \lean{SemiringWithMonus}{monus_le}
+  In any m-semiring $\mathbb K$,
+$\forall x,y\in \mathbb K$, $x\ominus y \le x$.
 \end{lemmarep}
 
 \begin{appendixproof}
-By \eqref{eq:residuation-monus} with $z=x$, we have
+  By the residuation law (see Definition~\ref{def:m-semiring}) with $z=x$, we have
 \[
 x\ominus y \le x \quad\Longleftrightarrow\quad x \le y\oplus x.
 \]
-But $x\le y\oplus x$ holds because $x\oplus(y\oplus x)=(x\oplus x)\oplus y=x\oplus y=y\oplus x$
-(using associativity, commutativity and idempotence of $\oplus$).
-Hence $x\ominus y\le x$.
+But $x\le y\oplus x$ holds by definition of $\leq$ (and commutativity of
+$\oplus$).
 \end{appendixproof}
 
 \begin{lemmarep}\label{lem:x<=y+(x-y)}
-  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring.
-  Then $\forall x,y\in \mathbb K$, $x \le y\oplus (x\ominus y)$.
+  \lean{SemiringWithMonus}{le_plus_monus}
+  In any m-semiring $\mathbb K$,
+  $\forall x,y\in \mathbb K$, $x \le y\oplus (x\ominus y)$.
 \end{lemmarep}
 
 \begin{appendixproof}
-Apply \eqref{eq:residuation-monus} with $z=x\ominus y$:
-since $x\ominus y\le x\ominus y$ holds trivially, \eqref{eq:residuation-monus} yields
+  Apply the residuation law (see Definition \ref{def:m-semiring}) with $z=x\ominus y$:
+since $x\ominus y\le x\ominus y$ holds trivially, we obtain
 \[
 x \le y\oplus (x\ominus y),
 \]
@@ -262,14 +242,31 @@ as required.
 
 \paragraph*{Annotated relations and semantics}
 
-In this paper, we use the notion of annotated relations detailed in \cite{sen2026provsql}(Sec.\ IV), defined as follows.
-Given an algebraic structure $\mathbb K$ and a set of $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of values (which can be either $\mathcal V$ or an extension of it) a $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb K}$ is a multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb K$ of the form $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$.
+We use the notion of annotated relations initially introduced in
+\cite{green2007provenance}, relying on the setting (in particular where
+relations are multiset of tuples) and definitions introduced in detail in
+\cite[Section IV]{sen2026provsql}.
+In short, if $\mathcal{V}$ if the (usually infinite countable) set of
+data values used within regular relations, given a commutative m-semiring
+$\mathbb K$ and a set $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of
+values (which can be either $\mathcal V$ or an extension of it) a
+$\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb
+K}$ is a multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb
+K$ which we usually denote $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$.
 We call $\alpha$ the annotation of the tuple $u$.
 
-A $\mathbb K$-instance, denoted as $\hat I$, over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
-We consider, instead of attribute name, their \emph{positional index}, denoted by $\#i$ for $i\in \mathbb N^*$.
+A $\mathbb K$-instance, usually denoted as $\hat I$ over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
+We consider, instead of attribute names, their \emph{positional index}, denoted by $\#i$ for $i\in \mathbb N^*$.
 A \emph{term} is then an expression involving values from $\mathcal V$ and positional indices, and the \emph{max-index} of a term is the largest positional index appearing in it ($0$ if none appear).
 
-The extended relational algebra semantics for a query $q$ over annotated relations, denoted as $\predsem{\hat I}{}{q}$, is defined for each operator of the relational algebra over $\mathbb K$-relations \cite{sen2026provsql}.
-There, semantics of aggregation queries were defined only when aggregation was the last operator of the query.
-In this paper, we extend the semantics of the selection operator to the case where selection is applied to aggregate expressions (\sql{HAVING} conditions), either by comparing an aggregate with a constant or an aggregate with an aggregate.
+The semantics of a query $q$ over annotated relations, denoted as
+$\angsem{\hat I}{q}$, is defined in \cite{sen2026provsql} over $\mathbb
+K$-relations for each operator of the relational
+algebra extended with a grouping and aggregation operator inspired from
+\cite{DBLP:journals/tcs/Libkin03}.
+There, semantics of aggregation queries were defined only for
+\emph{terminal aggregation}, i.e., when aggregation is the last operator of the query.
+In this paper, we extend the semantics of the selection operator to the
+case where selection is applied to aggregate expressions (\sql{HAVING}
+conditions), either by comparing an aggregate with a constant or two
+aggregates with each other.

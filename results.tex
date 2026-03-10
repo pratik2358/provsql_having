@@ -43,7 +43,7 @@ The possible-world semantics of the \textsc{having} predicate looks quite differ
 \[
 T_U(W)=A_W\ominus\bigoplus_{u\in U\setminus W}A_{W\cup\{u\}},
 \]
-so that the provenance becomes, 
+so that the provenance becomes,
 \[
 F_C(U)=\bigoplus_{|W|\ge C}T_U(W).
 \]
@@ -55,7 +55,7 @@ The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looki
 \]
 For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the non-trivial part: it relies on the algebraic properties of $\ominus$ together with a bounding lemma: products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
 
-Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and show counterexamples. 
+Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and show counterexamples.
 \end{proof}
 For the proof of part (i) we first state the bounding lemma that we will use to establish a recurrence for the possible-world provenance expression.
 \begin{lemmarep}\label{lem:upward-expansion}
@@ -149,7 +149,7 @@ Combining with \eqref{eq:AV-bound} yields
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{appendixproof}
-Using Lemma~\ref{lem:upward-expansion} together with the algebraic properties of $\ominus $ we now establish a recurrence for the possibe-world provenance expression. 
+Using Lemma~\ref{lem:upward-expansion} together with the algebraic properties of $\ominus $ we now establish a recurrence for the possibe-world provenance expression.
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring.
 Write the natural order as $a\le b \iff a\oplus b=b$, and assume $\ominus$ satisfies
@@ -433,13 +433,13 @@ Q^{\op C}_1
 \]
 For the group with key value $a$, the operator \(\gamma_{\#1}[1:+]\) produces a single aggregate
 \[
-\mathdutchcal{a}
+\mathcal{a}
 =
   \bigoplus_{\substack{\mathcal{M} \\ u \in U}} (\alpha_u,1)
 \in \mathcal M .
 \]
 Applying the selection \(\sigma_{\#2 \op C}\) corresponds to evaluating the
-aggregate-comparison predicate \([\mathdutchcal{a} \op C]\).
+aggregate-comparison predicate \([\mathcal{a} \op C]\).
 By our possible-world semantics, the provenance annotation of the output
 tuple corresponding to group-key \(a\) is,
 \begin{equation}\label{eq:Q1-prov}
@@ -655,7 +655,7 @@ Therefore,
 
 \paragraph*{Proof of (ii)}
 \begin{proof}\label{proof:proof_2}
-We show that there exists a $\mathbb{K}$-instance $\hat I$ such that 
+We show that there exists a $\mathbb{K}$-instance $\hat I$ such that
 $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
 Fix $C=2$ and $\op= \; =$.
 Since these queries are equivalent, both of them return groups which have 2 tuples. Say, in a certain $\hat I$ the result of the pre-aggregation subquery $q$ can form a valid group with group-key $u$ with $\mathbb K$-annotations $t_1,t_2,\text{ and }t_3$.
@@ -671,7 +671,7 @@ Fix a why-semiring valuation of $t_1, t_2, t_3$: $\{\{a\}\}, \{\{b\}\}, \{\empty
 So,
 \begin{align*}
   &\langle Q^{= 2}_1\rangle^{\hat I}(u)=\\
-  &((\{\{a\}\}\Cup \{\{b\}\})\Cup(\{\emptyset\}\setminus \{\emptyset\})) \cup ((\{\{a\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{b\}\})) \\ 
+  &((\{\{a\}\}\Cup \{\{b\}\})\Cup(\{\emptyset\}\setminus \{\emptyset\})) \cup ((\{\{a\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{b\}\})) \\
   &\cup((\{\{b\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{a\}\}))\\
   =&(\{\{a\}\}\Cup \{\{b\}\}\Cup \emptyset) \cup (\{\{a\}\}\Cup \{\emptyset\}) \cup (\{\{b\}\}\Cup \{\emptyset\})\\
   =&\{\{a\},\{b\}\}
@@ -689,7 +689,7 @@ Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat
 
 \paragraph*{Proof of (iii)}
 \begin{proof}
-We consider a similar setting as mentioned in Proof~\ref{proof:proof_2} but with 
+We consider a similar setting as mentioned in Proof~\ref{proof:proof_2} but with
 $\mathbb{N}$-semiring valuation of $t_1, t_2, t_3$: $1, 1, 1$.
 \begin{align*}
   &\langle Q^{= 2}_1\rangle^{\hat I}(u)=\\
