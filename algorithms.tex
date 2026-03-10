@@ -2,43 +2,28 @@
 \label{sec:algorithms}
 
 \pierre{2 pages}
-In this section we describe specialized procedures for evaluating the valid possible-worlds
-for aggregate comparison-atoms inside a selection predicate.
 
-\smallskip\noindent
-In the implementation, ProvSQL represents multiset semantics using \emph{tuple occurrences} carrying globally unique
-provenance identifiers(UUIDs). We maintain a uniqueness-invariant that for every intermediate query result
-$\angsem{\hat I}{q}$, no pair $(u,\alpha)$ occurs twice: duplicates of the same value-tuple $u$ are represented
-as distinct occurrences with different annotations $\alpha$. Under this invariant, the multiset
-of group-member occurrences can be treated as a finite \emph{set} of occurrences, and
-possible worlds are then ordinary subsets. This does not change the semantics:
-multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced
-aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
+In this section we describe specialized procedures for evaluating the valid possible-worlds for selections involving aggregate comparisons.
 
-\smallskip\noindent
-All algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group-member
-occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} subquery $q'$. Accordingly, any term $t$
-handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the
-arity of $q'$ (denoted by $k$ in the algorithms for readability).
+ProvSQL implements multiset semantics, using \emph{tuple occurrences} carrying globally unique provenance identifiers (UUIDs).
+We maintain a uniqueness invariant for every intermediate query result $\angsem{\hat I}{q}$: no pair $(u,\alpha)$ occurs twice, meaning that duplicates of the same value-tuple $u$ are represented as distinct occurrences with different annotations $\alpha$.
+Under this invariant, the multiset of group member occurrences can be treated as a finite \emph{set}, and possible worlds are then ordinary subsets.
+This does not change our semantics: multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
-\smallskip\noindent
-Algorithm~\ref{alg:sum_dp} is a dynamic-programming procedure for bounded-range $\mathrm{SUM}(t)*C$ atoms. It enumerates those worlds
-$W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$(i.e. $\SUM(t)$) satisfies the comparison with the
-constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding
-$\chi_{\op}$-ensured possible-world sum in the semantics of aggregate comparison atoms.
-By taking $t=1$, this algorithm works also
-bounded-range $\mathrm{COUNT}(t)\op C$ atoms; but for $\mathrm{COUNT}$
-aggregates we additionally provide a dedicated algorithm exploiting the 
-unit-weight sum structure. Similarly, for
-$\mathrm{MIN}$/$\mathrm{MAX}$ aggregates we use ordering-based strategies that avoid full world enumeration.
-As a fallback for aggregate functions or predicates not covered by the specialized cases, we revert to
-brute-force enumeration of non-empty worlds $W\subseteq U^{\hat I}_{q',\vec v}$. 
+All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} subquery $q'$.
+Accordingly, any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
-\smallskip\noindent
-These algorithms can be used to evaluate provenance for the other type of aggregate comparison atoms where there is a comparison between two different aggregates by evaluating one of the aggrgeate into a constant value first. 
+For bounded range comparisons of the form $\mathrm{SUM}(t)\op C$, a dynamic programming procedure is presented in Algorithm~\ref{alg:sum_dp}.
+It enumerates the possible worlds $W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$(i.e. $\SUM(t)$) satisfies the comparison with the constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding $\chi_{\op}$-ensured possible-world sum in the semantics of aggregate comparison atoms.
 
+The algorithm works also for the special case where $t=1$, i.e., bounded range $\mathrm{COUNT}(t)\op C$ comparisons.
+However, for this case we can use a more efficient enumeration, exploiting the unit-weight sum structure of $\mathrm{COUNT}$ aggregates, as shown in Algorithm~\ref{alg:count_enum}.
+Similarly, for $\mathrm{MIN}$/$\mathrm{MAX}$ aggregates we can use strategies based on ordering the possible aggregate values that avoid full world enumeration, and only listing the worlds that are under or over the threshold $C$ as needed.
 
-\smallskip\noindent
+For aggregate functions or predicates not covered by the specialized cases, reverting to
+brute-force enumeration of non-empty worlds $W\subseteq U^{\hat I}_{q',\vec v}$ will always give the correct answer by our semantics.
+The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. \sil{Do we need to list all possible constants for the second aggregate?}
+
 \begin{algorithm}
   \caption{Enumeration of valid worlds for $(t:\mathrm{SUM}) \op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
@@ -113,6 +98,8 @@ These algorithms can be used to evaluate provenance for the other type of aggreg
   \Return $\mathcal W$\;
   }
 \end{algorithm}
+
+Both algorithms are correct by the following two theorems.
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:sum_dp}]\label{thm:sumdp-correct}
 Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
 Let $U\defeq U^{\hat I}_{q',\vec v}$ and represent it as a finite list of distinct occurrences
@@ -558,6 +545,7 @@ In every case, the resulting  $\mathcal W$ is exactly
 This establishes correctness.
 \end{appendixproof}
 
+Some important cases of aggregate comparisons can be evaluated in polynomial time:
 \begin{proposition}
   The provenance of HAVING queries of the following forms can be computed
   in polynomial time in data complexity:

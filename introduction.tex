@@ -18,13 +18,13 @@ i.e., relations with an extra attribute storing the provenance, which
 assigns a semantics to
 positive relational algebra operators in terms of elements of an arbitrary
 semiring. Different choices of this semiring lead to different forms of
-provenance. This has been further extended to other settings and to other
+provenance. This has been further extended to other settings and
 classes of queries,
 notably to queries with the difference operator \cite{geerts2010database}
 by adding a \emph{monus}~$\ominus$ operator to the semiring, and to queries
 involving grouping and aggregation \cite{amsterdamer2011provenance} by
-introducing an additional $\delta$ operator for grouping as well as, more
-importantly, the ability to turn data values into elements of a
+introducing an additional $\delta$ operator for grouping as well as
+the ability to turn data values into elements of a
 \emph{semimodule} to reflect the result of an aggregation operation.
 
 The next step is naturally to define a semantics for queries involving
@@ -32,7 +32,7 @@ selections on the result of an aggregation value, i.e., \sql{HAVING}
 queries using the name of the corresponding SQL clause. This was done
 elegantly in~\cite{amsterdamer2011provenance} by adding an additional
 \emph{comparison operator} to the semiring, which encodes the selection as a comparison of
-semimodule elements within the annotation of a tuple. This has, however,
+semimodule elements within the annotation of a tuple. This has
 the downside of requiring an ad-hoc definition of such a comparison
 operator for each combination of a semiring and aggregation monoid, in
 addition to restricting the approach to aggregate functions that are
@@ -66,12 +66,11 @@ This paper leverages m-semirings as provenance annotation framework to provide
 an implementable semantics for the comparison operator from
 \cite{amsterdamer2011provenance} (and therefore for \sql{HAVING}
 queries) \emph{in arbitrary commutative
-m-semirings}. In more detail, we provide the following
-contributions:
+m-semirings}. In more detail:
 \begin{itemize}
 \item We provide a characterization of most commutative m-semirings
   studied in the literature, with for each of them a formal proof in the Lean
-  assistant of the validity of their definition (including the $\ominus$
+  proof assistant of the validity of their definition (including the $\ominus$
   operator) as well as whether they are idempotent and have
   distributivity of $\otimes$ over $\ominus$. This is important as this
   fixes wrong claims made in previous papers
@@ -107,3 +106,11 @@ We present experiments which show
   the viability of the approach on a real-world database, including for probabilistic
   query evaluation. (Section \ref{sec:implementation_experiments}).
 \end{itemize}
+
+Hyperlinks to an anonymized repository of formal statements and proofs in
+Lean are identified with \leanmain{} throughout
+Section~\ref{sec:preliminaries}. The code of the implementation described
+in Section~\ref{sec:implementation_experiments} will be made available
+once double-blind requirements are removed. Because of lack of space,
+most proofs and some additional details are relegated to an
+\hyperref[appendix]{Appendix}.

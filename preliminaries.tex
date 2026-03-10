@@ -1,23 +1,19 @@
 \section{Preliminaries}\label{sec:preliminaries}
 
-\pierre{3 pages}
+\begin{toappendix}
+  \label{appendix}
+\end{toappendix}
 
-\begin{itemize}
-  \item Annotated relations, running example
-  \item Queries, syntax and basics of semantics,
-    linking to \cite{sen2026provsql} for the whole definitions
-  \item Aggregate queries, arbitrary aggregate functions
-\end{itemize}
+We start about preliminaries about (m-)semirings, annotated relations,
+and extended relational algebra queries; we refer to
+\cite{sen2026provsql} for a full description of the semantics of
+extended relational algebra queries with terminal aggregation (i.e.,
+without \sql{HAVING}).
 
-\subsection{Semirings}\label{sec:semirings}
-
-We first recall the definition of semirings and m-semirings, and give examples of such
-structures. We also recall the definition of annotated relations and queries,
-and how to evaluate queries on annotated relations. Finally, we recall the
-definition of aggregate queries and their semantics.
+\paragraph*{M-Semirings}
 
 \begin{definition}[Semiring]
-  A \emph{semiring} is an algebraic structure denoted by $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
+  A \emph{semiring} is an algebraic structure $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
   \begin{itemize}
     \item $(\mathbb K,\oplus,\mathbb 0)$ is a commutative monoid and $(\mathbb K,\otimes,\mathbb 1)$ is a (not necessarily commutative) monoid;
     \item $\otimes$ distributes over $\oplus$: $\forall~a,b,c\in K$, $a\otimes (b\oplus c) = (a\otimes b)\oplus (a\otimes c)$ and $(a\oplus b)\otimes c = (a\otimes c)\oplus (b\otimes c)$;
@@ -34,44 +30,91 @@ definition of aggregate queries and their semantics.
   \end{itemize}
 \end{example}
 
-We extend the definition of semiring with a monus operation $\ominus$:
+We extend the definition of semiring with a monus operation $\ominus$;
+note that this definition, when possible, uniquely defines such an
+operation:
 \begin{definition}[m-semiring]
-  An \emph{m-semiring}, or \emph{semiring with monus}, denoted by $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$, is a semiring equipped with a binary operation $\ominus: \mathbb K\times \mathbb K\to \mathbb K$, such that $\forall a,b,c\in\mathbb K$:
-  \begin{itemize}
-    \item $a\oplus(b\ominus a) = b\oplus(a\ominus b)$;
-    \item $(a\ominus b)\ominus c = a\ominus(b\oplus c)$; and
-    \item $a\ominus a = \mathbb 0\ominus a=\mathbb 0$. 
-  \end{itemize}
+  Let $(\mathbb K, \oplus, \otimes, \mathbb 0, \mathbb 1)$ be a semiring.
+  For $a, b, c\in\mathbb K$, define
+$\leq$ as
+$a\le b \iff a\oplus b=b$; if $\leq$ is an order relation, it is called
+the \emph{natural order} of the semiring, and the semiring is said to be
+\emph{naturally ordered}. Note that $\leq$ is always a
+pre-order, but not always antisymmetric. An m-semiring
+is defined as a naturally ordered semiring in which we can introduce an
+operation $\ominus$ satisfying the \emph{residuation law}:
+\(
+  x\ominus y \le z \iff x \le y\oplus z
+  \).
 \end{definition}
 
-An alternative definition of m-semiring is as a semiring equipped with a binary operation $\ominus$ satisfying the following residuation law:
-\begin{equation}\label{eq:residuation-monus}
-  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z,
-\end{equation}
-where $\le$ is the natural order $a\le b \iff a\oplus b=b$. 
-This of course implies that m-semirings are naturally ordered.
+Not all semirings are naturally ordered, and it is possible to construct
+a naturally ordered semiring where a $\ominus$ cannot be introduced
+\cite{amarilli2016example}.
+An m-semiring $(\mathbb K, \oplus, \otimes, \ominus, \mathbb 0, \mathbb
+1)$ satisfies some basic properties, for $a, b, c\in\mathbb K$:
+  \begin{itemize}
+    \item \lean{SemiringWithMonus}{add_monus}
+      $a\oplus(b\ominus a) = b\oplus(a\ominus b)$;
+    \item \lean{SemiringWithMonus}{monus_add}
+      $(a\ominus b)\ominus c = a\ominus(b\oplus c)$;
+    \item \lean{SemiringWithMonus}{monus_self}
+      \lean{SemiringWithMonus}{zero_monus} $a\ominus a = \mathbb 0\ominus a=\mathbb 0$.
+  \end{itemize}
 
-Additionally to the their definition, semirings may have other properties. Useful ones are:
+Additionally to the their definition, m-semirings may have other properties. Useful ones are:
 \begin{itemize}
   \item \textbf{Commutativity of $\otimes$}: $\forall a,b\in \mathbb K$, $a\otimes b = b\otimes a$.
-  \item \textbf{Idempotence}: $\forall a\in \mathbb K$, $a\oplus a = a$.
-  \item \textbf{Absorptivity} $\forall a\in \mathbb K$, $a\oplus (a\otimes b) = a\oplus (b\otimes a)=a$.
-  \item \textbf{Right distributivity of $\ominus$ over $\oplus$}: $\forall a,b,c\in \mathbb K$, $(a\oplus b)\ominus c = (a\ominus c)\oplus (b\ominus c)$.
+  \item \textbf{Idempotence}: \lean{SemiringWithMonus}{idempotent} $\forall a\in \mathbb K$, $a\oplus a = a$.
+  \item \textbf{Absorptivity} \lean{SemiringWithMonus}{absorptive} $\forall a\in \mathbb K$, $\mathbb 1 \oplus a = \mathbb 1$.
+  \item \textbf{Distributivity of $\otimes$ over $\ominus$}:
+    \lean{SemiringWithMonus}{mul_sub_left_distributive} $\forall a,b,c\in
+    \mathbb K$, $a\otimes (b\ominus c) = (a\otimes b) \ominus (a\otimes
+    c)$.
 \end{itemize}
 
 \input{table_semirings}
 
-Table~\ref{tab:semirings} summarizes the definitions of the $\ominus$ operator and the above properties for the semirings in Example~\ref{ex:semirings} and some additional ones,  such as the Boolean function semiring, the tropical semiring, the Viterbi semiring and the \L ukasiewicz semiring. 
-All semirings are commutative. We note that only the Boolean, Boolean function, Tropical, Viterbi and \L ukasiewicz semirings are idempotent, absorptive and right-distributive. These properties will be important for the semantics of \sql{HAVING} queries.
+In this work, we restrict to \emph{commutative} semirings, which is
+actually the setting of most works on data provenance
+\cite{green2007provenance,geerts2010database}, though not of
+\cite{sen2026provsql}.
+All semirings from Example~\ref{ex:semirings} are commutative
+and can be extended to m-semirings; this is also the case for almost all
+semirings that have been used in works about data provenance.
+Table~\ref{tab:semirings} summarizes the definitions of the $\ominus$
+operator and whether they satisfy the three other properties above for
+the semirings in Example~\ref{ex:semirings}, along with the Boolean
+function semiring \cite{green2007provenance,senellart2017provenance}, the
+Which[$X$] or \emph{lineage} semiring \cite{green2017provenance}, the tropical semiring \cite{green2007provenance}, the Viterbi semiring
+\cite{green2017provenance}, the security or access control semiring
+\cite{green2017provenance}, the $\mathbb{N}[X]$ or How[$X$] semiring
+\cite{green2007provenance} and the \L ukasiewicz semiring
+\cite{gradel2005provenance}.
+We note that only the Boolean, Boolean function, Tropical, Viterbi and \L
+ukasiewicz semirings are idempotent, absorptive and have $\otimes$
+distributive over~$\ominus$.
+These properties will be important for the semantics of \sql{HAVING}
+queries. Note that this table, along with the formal Lean proofs that
+ensure its validity, allows
+to fix in a definitive way a
+few erroneous statements in the literature: \cite{geerts2010database} had
+wrongly claimed that the tropical semiring over reals could not be equipped with a
+$\ominus$; \cite{amsterdamer2011provenance} wrongly claimed that
+both $\mathbb{N}[X]$ and Why[$X$] had a $\otimes$ distributive over $\ominus$
+(called Axiom A13 in \cite{amsterdamer2011provenance}). We stress that it
+is important to have clean, formally proven definitions and properties
+for such elementary building blocks of data provenance, and that this is
+a contribution of this work.
 
-For aggregate queries, an useful notion is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and, (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$. 
+For aggregate queries, an useful notion is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and, (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$.
 Intuitively, the $\delta$ is used to capture the semantics of the existence of the results of an aggregation.
 %\sil{I'm actually not sure about this. Should we define it the table for each semiring instead? (for semiring having $\delta(x)=x$)}
 %\rjok{for semirings with $\delta(x)=x \text{ for } x\neq0$ these two properties are still satisfied. so it is okay i guess.}
 
 In the following, we refer exclusively commutative semirings of the form $(\mathbb K,\oplus,\otimes,\ominus,\delta,\mathbb 0,\mathbb 1)$, i.e., \emph{commutative $\delta$-semirings with monus}.
 
-\paragraph*{Useful results on m-semirings.} We discuss now some additional results on m-semirings that we use later. In particular, we show that in an m-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. We also show that homomorphisms between m-semirings preserve these properties. 
+\paragraph**{Useful results on m-semirings.} We discuss now some additional results on m-semirings that we use later. In particular, we show that in an m-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. We also show that homomorphisms between m-semirings preserve these properties.
 \begin{propositionrep}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
   Let $S$ be any m-semiring. $S$ is idempotent if and only if $\ominus$
@@ -92,12 +135,12 @@ In the following, we refer exclusively commutative semirings of the form $(\math
   \\$\therefore a \oplus b $ is the least such $u$ for which $a\leq u $ and $b \leq u$.
   So, $\oplus$ is the join of a semilattice of $(S,\leq)$.
 
-  \paragraph{i.}
+  \paragraph*{i.}
   By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus z$,
   $a\leq a\oplus b\leq c \oplus ((a\oplus b)\ominus c) \implies a\ominus c\leq (a\oplus b)\ominus c$.
   Similarly, $b\ominus c\leq (a\oplus b)\ominus c$.
   \\$\therefore (a\ominus c)\oplus (b\ominus c) \leq (a\oplus b) \ominus c$
-  \paragraph{ii.} We have $a\leq c \oplus (a\ominus c)$ and $b\leq c\oplus (b\ominus c)$. So, $a\oplus b \leq c\oplus c \oplus (a\ominus c) \oplus (b\ominus c)$.
+  \paragraph*{ii.} We have $a\leq c \oplus (a\ominus c)$ and $b\leq c\oplus (b\ominus c)$. So, $a\oplus b \leq c\oplus c \oplus (a\ominus c) \oplus (b\ominus c)$.
   By idempotence of $\oplus$,  $a\oplus b \leq c \oplus (a\ominus c) \oplus (b\ominus c)$.
 \\$\therefore $ $(a\oplus b) \ominus c \leq (a\ominus c)\oplus (b\ominus c) $, by definition of monus.
  \\ From \textbf{i.} \& \textbf{ii.}
@@ -187,9 +230,9 @@ induction hypothesis.
     \end{enumerate}
 \end{proposition}
 
-Finally, we isolate two elementary inequalities on the residual characterization of $\ominus$ and the natural order defined for commutative $m-$semirings. 
+Finally, we isolate two elementary inequalities on the residual characterization of $\ominus$ and the natural order defined for commutative $m-$semirings.
 \begin{lemmarep}\label{lem:x-y<=x}
-  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring. 
+  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring.
   Then $\forall x,y\in \mathbb K$, $x\ominus y \le x$.
 \end{lemmarep}
 
@@ -204,7 +247,7 @@ Hence $x\ominus y\le x$.
 \end{appendixproof}
 
 \begin{lemmarep}\label{lem:x<=y+(x-y)}
-  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring. 
+  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring.
   Then $\forall x,y\in \mathbb K$, $x \le y\oplus (x\ominus y)$.
 \end{lemmarep}
 
@@ -217,14 +260,16 @@ x \le y\oplus (x\ominus y),
 as required.
 \end{appendixproof}
 
-\subsection{Annotated relations and semantics}
+\paragraph*{Annotated relations and semantics}
 
 In this paper, we use the notion of annotated relations detailed in \cite{sen2026provsql}(Sec.\ IV), defined as follows.
-Given an algebraic stucture $\mathbb K$ and a set of $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of values (which can be either $\mathcal V$ or an extension of it) a $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb K}$ is multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb K$ of the form $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$. 
+Given an algebraic structure $\mathbb K$ and a set of $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of values (which can be either $\mathcal V$ or an extension of it) a $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb K}$ is a multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb K$ of the form $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$.
 We call $\alpha$ the annotation of the tuple $u$.
 
 A $\mathbb K$-instance, denoted as $\hat I$, over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
+We consider, instead of attribute name, their \emph{positional index}, denoted by $\#i$ for $i\in \mathbb N^*$.
+A \emph{term} is then an expression involving values from $\mathcal V$ and positional indices, and the \emph{max-index} of a term is the largest positional index appearing in it ($0$ if none appear).
 
-The extended relational algebra semantics for an arbitrary selection predicate $\psi$ over a query $q\in \RA_k$ \cite{sen2026provsql}, denoted as $\predsem{\hat I}{q}{\cdot}$  is defined as an induced function $\predsem{\hat I}{q}{\psi}:\mathcal V^k \rightarrow \mathbb K$ on $\psi$ over arity $k$. \sil{Add about positional indexing, term, and max-index.}
-In \cite{sen2026provsql}, aggregation queries were defined only when aggregation was the last operator of the query. 
+The extended relational algebra semantics for a query $q$ over annotated relations, denoted as $\predsem{\hat I}{}{q}$, is defined for each operator of the relational algebra over $\mathbb K$-relations \cite{sen2026provsql}.
+There, semantics of aggregation queries were defined only when aggregation was the last operator of the query.
 In this paper, we extend the semantics of the selection operator to the case where selection is applied to aggregate expressions (\sql{HAVING} conditions), either by comparing an aggregate with a constant or an aggregate with an aggregate.
