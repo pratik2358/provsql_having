@@ -35,9 +35,8 @@ note that this definition, when possible, uniquely defines such an
 operation:
 \begin{definition} \label{def:m-semiring}
   Let $(\mathbb K, \oplus, \otimes, \mathbb 0, \mathbb 1)$ be a semiring.
-  For $a, b, c\in\mathbb K$, define
-$\leq$ as
-$a\le b \iff a\oplus b=b$; if $\leq$ is an order relation, it is called
+  For $a, b\in\mathbb K$, define
+$a\le b$ as $\exists c\in\mathbb K, b = a\oplus c$; if $\leq$ is an order relation, it is called
 the \emph{natural order} of the semiring, and the semiring is said to be
 \emph{naturally ordered}. Note that $\leq$ is always a
 pre-order, but not always antisymmetric. An m-semiring
@@ -119,55 +118,64 @@ non-idempotent semirings.
 
 \paragraph*{Useful results on m-semirings.} We discuss now some
 additional results on m-semirings that we use later. First we show that idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
-\begin{propositionrep}
+\begin{propositionrep}\label{prop:idempotent_iff_add_monus}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
   An m-semiring $\mathbb K$ is idempotent if and only if $\ominus$
-  is right-distributive over~$\oplus$ in $S$, i.e., iff $\forall a, b,
-c\in\mathbb K, (a\oplus b)\ominus c=(a\ominus c)+(b\ominus c)$.
+  is right-distributive over~$\oplus$ in $\mathbb K$, i.e., iff $\forall a, b,
+c\in\mathbb K, (a\oplus b)\ominus c=(a\ominus c)\oplus (b\ominus c)$.
 \end{propositionrep}
 \begin{appendixproof}
+  We show both implications.
+
   \textbf{($\Rightarrow$)}
   \lean{SemiringWithMonus}{add_monus_of_idempotent}
-  Assume S to be additively idempotent. Define a preorder $\leq$ such that,
-  if $a\leq b$ then $\exists x,\; a\oplus x=b$.
-  So, $a \oplus b = a \oplus (a \oplus x)=(a\oplus a)\oplus x=a \oplus x = b$. \\$\therefore a\leq b \implies a\oplus b=b$.
-  \\Conversely, if $a\oplus b = b$, choose $x=b$. And trivially, $a\oplus x =a\oplus b=b$
-  $\implies a \leq b$.
-  \\$\therefore a\leq b \iff a \oplus b =b$. Therefore, $(S,\leq)$ is indeed a partial order and $\oplus$ is monotone under $\leq$.
-  \\Now, $\forall u, a \leq u$ and $b \leq u$
-  \\ $a \oplus u = u$ and $b\oplus u =u$.
-  \\But, $a\leq a \oplus b$ and $b \leq a \oplus b$
-  \\$\therefore a \oplus b $ is the least such $u$ for which $a\leq u $ and $b \leq u$.
-  So, $\oplus$ is the join of a semilattice of $(S,\leq)$.
+  Assume $\mathbb K$ to be idempotent.
 
-  \paragraph*{i.}
-  By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus z$,
-  $a\leq a\oplus b\leq c \oplus ((a\oplus b)\ominus c) \implies a\ominus c\leq (a\oplus b)\ominus c$.
-  Similarly, $b\ominus c\leq (a\oplus b)\ominus c$.
-  \\$\therefore (a\ominus c)\oplus (b\ominus c) \leq (a\oplus b) \ominus c$
-  \paragraph*{ii.} We have $a\leq c \oplus (a\ominus c)$ and $b\leq c\oplus (b\ominus c)$. So, $a\oplus b \leq c\oplus c \oplus (a\ominus c) \oplus (b\ominus c)$.
-  By idempotence of $\oplus$,  $a\oplus b \leq c \oplus (a\ominus c) \oplus (b\ominus c)$.
-\\$\therefore $ $(a\oplus b) \ominus c \leq (a\ominus c)\oplus (b\ominus c) $, by definition of monus.
- \\ From \textbf{i.} \& \textbf{ii.}
-  $$\boxed{(a\oplus b) \ominus c = (a\ominus c)\oplus (b\ominus c)}$$
+  Consider $a,b \in\mathbb K$ such as $a\leq b$. Then $\exists c, a+c=b$.
+  So $a \oplus b = a \oplus (a \oplus c)=(a\oplus a)\oplus c=a \oplus c = b$.
+  Conversely, if $a\oplus b = b$, we trivially have $a\leq b$.
+
+  Now consider an element $u\in\mathbb K$ such that $a \leq u$ and $b
+  \leq u$, i.e.,
+  $a \oplus u = u$ and $b\oplus u =u$. Observe that $a\oplus b\oplus
+  u=a\oplus u=u$, so that $a\oplus b\leq u$.
+
+  But since $a\leq a \oplus b$ and $b \leq a \oplus b$,
+  $a \oplus b $ is the least such $u$ for which $a\leq u $ and $b \leq u$.
+  In other words, $\oplus$ is the join of the semilattice $(\mathbb K,\leq)$.
+
+  \medskip
+  We show $(a\oplus b)\ominus c=(a\ominus c)\oplus (b\ominus c)$ by
+  showing both inequalities.
+
+  (i) By definition of monus : $x \ominus y \leq z \iff x \leq y \oplus
+  z$. Note that $a\leq a\oplus b$ and $a\oplus b\leq c \oplus ((a\oplus
+  b)\ominus c)$ by applying the residuation law to the inequality
+  $(a\oplus b)\ominus c\leq (a\oplus b)\ominus c$. This means $a\leq
+  c\oplus((a\oplus b)\ominus c)$ which implies $a\ominus c\leq (a\oplus b)\ominus c$.
+  Similarly, $b\ominus c\leq (a\oplus b)\ominus c$. By using the fact
+  that $\oplus$ is the join, we get
+  $(a\ominus c)\oplus (b\ominus c) \leq (a\oplus b) \ominus c$.
+
+  (ii) We have $a\leq c \oplus (a\ominus c)$ and $b\leq c\oplus (b\ominus c)$. So, $a\oplus b \leq c\oplus c \oplus (a\ominus c) \oplus (b\ominus c)$.
+  By idempotence of $\oplus$,  $a\oplus b \leq c \oplus (a\ominus c)
+  \oplus (b\ominus c)$, or by the residuation law
+$(a\oplus b) \ominus c \leq (a\ominus c)\oplus (b\ominus c) $.
+
+\bigskip
 \textbf{($\Leftarrow$)}
   \lean{SemiringWithMonus}{idempotent_of_add_monus}
-Assume that $\ominus$ of S is right-distributive:
-\[
-  (a\oplus b)\ominus c
-  = (a\ominus c)\oplus(b\ominus c)\;\forall a,b,c\in S.
-\]
-
-For any arbitrary $a\in S$ substitute $b=a$ and $c=a$:
+  Assume that $\ominus$ is right-distributive over $\oplus$.
+For any arbitrary $a\in \mathbb K$, we thus have:
 \[
   (a\oplus a)\ominus a
   = (a\ominus a)\oplus(a\ominus a).
 \]
-Since $a\ominus a=0$, the right-hand side is $0$. And $(a\oplus a)\ominus a = 0\implies a\oplus a\leq a$ by definition of monus.
-  But, trivially $a\le a\oplus a$, so antisymmetry of $(S,\leq)$ gives $a\oplus a=a$.
-  Thus, $$\boxed{a \oplus a=a, \; \forall a\in S}$$
-\smallskip
-Both sides, prove the equivalence.
+Since $a\ominus a=\mathbb 0$, the right-hand side is $\mathbb 0$. And
+$(a\oplus a)\ominus a = \mathbb 0\implies a\oplus a\leq a$ by the
+residuation law.
+  But, trivially, $a\le a\oplus a$ so the antisymmetry of $(\mathbb K,\leq)$ gives $a\oplus a=a$.
+  Thus, \(\forall a\in\mathbb K, a \oplus a=a.\)
 \end{appendixproof}
 \begin{corollaryrep}\label{lem:finite-add-monus}
 Let \(\mathbb K\) be an
@@ -185,30 +193,26 @@ Then \(\forall n \ge 1\) and \(\forall a_1,\dots,a_n,c \in K\),
 We proceed by induction on \(n \ge 1\).
 
 For \(n=1\), the identity is trivial.
-For \(n=2\), the statement is exactly the assumed right-distributivity law:
-\[
-(a_1 \oplus a_2)\ominus c = (a_1\ominus c)\oplus(a_2\ominus c).
-\]
 
 Assume the identity holds for \(n-1\).
 Then
-\[
-\begin{aligned}
+\begin{align*}
 \Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
 &= \Bigl(\bigl(\bigoplus_{i=1}^{n-1} a_i\bigr)\oplus a_n\Bigr)\ominus c \\
 &= \Bigl(\bigoplus_{i=1}^{n-1} a_i\Bigr)\ominus c \;\oplus\; (a_n\ominus c) \\
 &= \bigoplus_{i=1}^{n-1} (a_i\ominus c) \;\oplus\; (a_n\ominus c)
 = \bigoplus_{i=1}^n (a_i\ominus c),
-\end{aligned}
-\]
-where the second equality uses right-distributivity and the third uses the
+\end{align*}
+where the second equality uses
+Proposition~\ref{prop:idempotent_iff_add_monus} and the third uses the
 induction hypothesis.
 \end{appendixproof}
 
 Finally, we isolate two elementary inequalities on the residual
-characterization of $\ominus$ in idempotent commutative m-semirings.
+characterization of $\ominus$ in m-semirings.
 \begin{lemmarep}\label{lem:x-y<=x}
-  In an idempotent commutative m-semiring $\mathbb K$,
+  \lean{SemiringWithMonus}{monus_le}
+  In any m-semiring $\mathbb K$,
 $\forall x,y\in \mathbb K$, $x\ominus y \le x$.
 \end{lemmarep}
 
@@ -217,12 +221,12 @@ $\forall x,y\in \mathbb K$, $x\ominus y \le x$.
 \[
 x\ominus y \le x \quad\Longleftrightarrow\quad x \le y\oplus x.
 \]
-But $x\le y\oplus x$ holds because $x\oplus(y\oplus x)=(x\oplus x)\oplus y=x\oplus y=y\oplus x$
-(using associativity, commutativity and idempotence of $\oplus$).
-Hence $x\ominus y\le x$.
+But $x\le y\oplus x$ holds by definition of $\leq$ (and commutativity of
+$\oplus$).
 \end{appendixproof}
 
 \begin{lemmarep}\label{lem:x<=y+(x-y)}
+  \lean{SemiringWithMonus}{le_plus_monus}
   In any m-semiring $\mathbb K$,
   $\forall x,y\in \mathbb K$, $x \le y\oplus (x\ominus y)$.
 \end{lemmarep}
