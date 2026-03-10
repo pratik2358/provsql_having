@@ -1,12 +1,22 @@
 \documentclass[anonymous,a4paper,UKenglish]{lipics-v2021}
 
-\usepackage{amssymb,amsfonts,amsmath,amsthm}
 \usepackage{minted}
 \usepackage{graphicx}
-\usepackage{xcolor}
 \usepackage[bb=boondox]{mathalfa}
-% \usepackage{algorithm}
-% \usepackage{algorithmic}
+
+% lAngle/rAngle, from fdsymbol.sty, without other definitions
+\makeatletter
+\DeclareSymbolFont{delimiters}{U}{FdSymbolF}{m}{n}
+\newcommand\fdsy@DeclareDelimiter[4]{%
+  \if\relax\noexpand#1\let#1\undefined\fi
+  \DeclareMathDelimiter{#1}{#2}{#3}{#4}{#3}{#4}%
+}
+\newcommand\fdsy@DeclareOpen[3]{\fdsy@DeclareDelimiter{#1}{\mathopen}{#2}{#3}}
+\newcommand\fdsy@DeclareClose[3]{\fdsy@DeclareDelimiter{#1}{\mathclose}{#2}{#3}}
+\fdsy@DeclareOpen{\lAngle}{delimiters}{"92}
+\fdsy@DeclareClose{\rAngle}{delimiters}{"98}
+\makeatother
+
 \usepackage[linesnumbered,algoruled,commentsnumbered,boxruled,noend]{algorithm2e}
 \usepackage{booktabs}
 \usepackage[sort,compress]{cite}
@@ -17,10 +27,8 @@
 \newcommand{\ansem}[2]{\llbracket #2 \rrbracket_{#1}}
 \newcommand{\llangle}{\langle\mkern-5mu\langle}
 \newcommand{\rrangle}{\rangle\mkern-5mu\rangle}
-\newcommand{\angsem}[2]{\llangle #2\rrangle^{#1}}
-\newcommand{\llanglep}{\Bigl\langle\mkern-9mu\Bigl\langle}
-\newcommand{\rranglep}{\Bigr\rangle\mkern-9mu\Bigr\rangle}
-\newcommand{\predsem}[3]{\llanglep #3\rranglep^{#1}_{#2}}
+\newcommand{\angsem}[2]{\lAngle #2\rAngle^{#1}}
+\newcommand{\predsem}[3]{\lAngle #3\rAngle^{#1}_{#2}}
 \newcommand{\RA}{\mathsf{RA}}
 \newcommand{\SUM}{\mathrm{SUM}}
 \author{Anonymous}{Anonymous}{}{}{}
@@ -29,29 +37,14 @@
 \newcommand{\ok}{\text{\color{green!50!black}\ding{51}}}
 \newcommand{\ko}{\text{\color{red!50!black}\ding{55}}}
 
-\DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
-\SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
-\DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
 \newcommand{\dq}[1]{\text{\enquote{#1}}}
 \newcommand{\op}{\mathbin{\mathsf{\star}}}
 \makeatletter
-\newcommand{\bigplus}{%
-  \DOTSB\mathop{\mathpalette\mattos@bigplus\relax}\slimits@
-}
-\newcommand\mattos@bigplus[2]{%
-  \vcenter{\hbox{%
-    \sbox\z@{$#1\sum$}%
-    \resizebox{!}{0.9\dimexpr\ht\z@+\dp\z@}{\raisebox{\depth}{$\m@th#1+$}}%
-  }}%
-  \vphantom{\sum}%
-}
 \newcommand{\mline}[1]{%
   \begin{multiline}
     #1
   \end{multiline}
 }
-\newcommand{\llbracket}{[\![}
-\newcommand{\rrbracket}{]\!]}
 \title{Semantics and Implementation of the Provenance of HAVING Queries in Semirings
 with Monus}
 
@@ -65,10 +58,6 @@ with Monus}
 
 \newcommand\leanmain{\href{https://anonymousprovenance.github.io/Provenance.html}{\fbox{\includegraphics[height=.6em]{lean}}}}
 \newcommand\lean[2]{\href{https://anonymousprovenance.github.io/Provenance/#1.html\##2}{\fbox{\includegraphics[height=.6em]{lean}}}}
-
-\DeclareMathAlphabet{\mathdutchcal}{U}{dutchcal}{m}{n}
-\SetMathAlphabet{\mathdutchcal}{bold}{U}{dutchcal}{b}{n}
-\DeclareMathAlphabet{\mathdutchbcal}{U}{dutchcal}{b}{n}
 
 \newcommand{\pierre}[1]{{\color{magenta}[\textbf{Pierre:} #1]}}
 \newcommand{\sil}[1]{{\color{teal}[\textbf{Silviu:} #1]}}

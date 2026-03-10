@@ -99,7 +99,7 @@ ensure its validity, allows
 to fix in a definitive way a
 few erroneous statements in the literature: \cite{geerts2010database} had
 wrongly claimed that the tropical semiring over reals could not be equipped with a
-$\ominus$; \cite{amsterdamer2011provenance} wrongly claimed that
+$\ominus$; \cite{amsterdamer2011limitations} wrongly claimed that
 both $\mathbb{N}[X]$ and Why[$X$] had a $\otimes$ distributive over $\ominus$
 (called Axiom A13 in \cite{amsterdamer2011provenance}). We stress that
 errors are bound to happen given some counter-intuitive properties of
@@ -116,7 +116,7 @@ idempotent semirings (in which $\mathbb 1\oplus\dots\oplus\mathbb
 1=\mathbb 1$); and $\delta(x)=\mathbb 1$ for all $x\neq\mathbb 0$ in
 non-idempotent semirings.
 
-\paragraph*{Useful results on m-semirings.} We discuss now some
+\paragraph*{Useful results on m-semirings} We discuss now some
 additional results on m-semirings that we use later. First we show that idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
 \begin{propositionrep}\label{prop:idempotent_iff_add_monus}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
@@ -194,7 +194,7 @@ We proceed by induction on \(n \ge 1\).
 
 For \(n=1\), the identity is trivial.
 
-Assume the identity holds for \(n-1\).
+Assume the identity holds for \(n-1\geq 1\).
 Then
 \begin{align*}
 \Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
@@ -242,14 +242,31 @@ as required.
 
 \paragraph*{Annotated relations and semantics}
 
-In this paper, we use the notion of annotated relations detailed in \cite{sen2026provsql}(Sec.\ IV), defined as follows.
-Given an algebraic structure $\mathbb K$ and a set of $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of values (which can be either $\mathcal V$ or an extension of it) a $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb K}$ is a multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb K$ of the form $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$.
+We use the notion of annotated relations initially introduced in
+\cite{green2007provenance}, relying on the setting (in particular where
+relations are multiset of tuples) and definitions introduced in detail in
+\cite[Section IV]{sen2026provsql}.
+In short, if $\mathcal{V}$ if the (usually infinite countable) set of
+data values used within regular relations, given a commutative m-semiring
+$\mathbb K$ and a set $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of
+values (which can be either $\mathcal V$ or an extension of it) a
+$\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb
+K}$ is a multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb
+K$ which we usually denote $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$.
 We call $\alpha$ the annotation of the tuple $u$.
 
-A $\mathbb K$-instance, denoted as $\hat I$, over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
-We consider, instead of attribute name, their \emph{positional index}, denoted by $\#i$ for $i\in \mathbb N^*$.
+A $\mathbb K$-instance, usually denoted as $\hat I$ over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
+We consider, instead of attribute names, their \emph{positional index}, denoted by $\#i$ for $i\in \mathbb N^*$.
 A \emph{term} is then an expression involving values from $\mathcal V$ and positional indices, and the \emph{max-index} of a term is the largest positional index appearing in it ($0$ if none appear).
 
-The extended relational algebra semantics for a query $q$ over annotated relations, denoted as $\predsem{\hat I}{}{q}$, is defined for each operator of the relational algebra over $\mathbb K$-relations \cite{sen2026provsql}.
-There, semantics of aggregation queries were defined only when aggregation was the last operator of the query.
-In this paper, we extend the semantics of the selection operator to the case where selection is applied to aggregate expressions (\sql{HAVING} conditions), either by comparing an aggregate with a constant or an aggregate with an aggregate.
+The semantics of a query $q$ over annotated relations, denoted as
+$\angsem{\hat I}{q}$, is defined in \cite{sen2026provsql} over $\mathbb
+K$-relations for each operator of the relational
+algebra extended with a grouping and aggregation operator inspired from
+\cite{DBLP:journals/tcs/Libkin03}.
+There, semantics of aggregation queries were defined only for
+\emph{terminal aggregation}, i.e., when aggregation is the last operator of the query.
+In this paper, we extend the semantics of the selection operator to the
+case where selection is applied to aggregate expressions (\sql{HAVING}
+conditions), either by comparing an aggregate with a constant or two
+aggregates with each other.
