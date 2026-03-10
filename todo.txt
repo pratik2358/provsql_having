@@ -1,0 +1,10 @@
+--Section2(prelim)
+lemma 6 and 7 is true in any semiring
+
+--Section3
+swtich aggregate function from multiset domain of values to list examples of arbit aggregates 
+--section 4 make proof more readable hardness proof for specific semiring semantics eqivalence to bool provenance  
+--section 5
+group by already does distinct remove uuids and implementation details algorithms for min max pickfirst. maybe a general algorithm  
+--section 6
+geq k and leq k
