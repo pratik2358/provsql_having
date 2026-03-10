@@ -3,15 +3,20 @@
 \usepackage{minted}
 \usepackage{graphicx}
 \usepackage{xcolor}
-\usepackage[bb=boondox]{mathalfa}
 
 % The annoying following lines are necessary to prevent fdsymbol, needed
 % for \lAngle/\rAngle, to break other math alphabets
 \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
 \SetMathAlphabet{\mathcal}{bold}{OMS}{cmsy}{b}{n}
+\let\oldDeclareMathAlphabet\DeclareMathAlphabet
+\let\oldSetMathAlphabet\SetMathAlphabet
 \def\DeclareMathAlphabet#1#2#3#4#5{\relax}
 \def\SetMathAlphabet#1#2#3#4#5#6{\relax}
 \usepackage{fdsymbol}
+\let\DeclareMathAlphabet\oldDeclareMathAlphabet
+\let\SetMathAlphabet\oldSetMathAlphabet
+
+\usepackage[bb=boondox]{mathalfa}
 
 \usepackage[linesnumbered,algoruled,commentsnumbered,boxruled,noend]{algorithm2e}
 \usepackage{booktabs}
