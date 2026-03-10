@@ -12,7 +12,7 @@ without \sql{HAVING}).
 
 \paragraph*{M-Semirings}
 
-\begin{definition}[Semiring]
+\begin{definition} \label{def:semiring}
   A \emph{semiring} is an algebraic structure $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
   \begin{itemize}
     \item $(\mathbb K,\oplus,\mathbb 0)$ is a commutative monoid and $(\mathbb K,\otimes,\mathbb 1)$ is a (not necessarily commutative) monoid;
@@ -33,7 +33,7 @@ without \sql{HAVING}).
 We extend the definition of semiring with a monus operation $\ominus$;
 note that this definition, when possible, uniquely defines such an
 operation:
-\begin{definition}[m-semiring]
+\begin{definition} \label{def:m-semiring}
   Let $(\mathbb K, \oplus, \otimes, \mathbb 0, \mathbb 1)$ be a semiring.
   For $a, b, c\in\mathbb K$, define
 $\leq$ as
@@ -102,23 +102,28 @@ few erroneous statements in the literature: \cite{geerts2010database} had
 wrongly claimed that the tropical semiring over reals could not be equipped with a
 $\ominus$; \cite{amsterdamer2011provenance} wrongly claimed that
 both $\mathbb{N}[X]$ and Why[$X$] had a $\otimes$ distributive over $\ominus$
-(called Axiom A13 in \cite{amsterdamer2011provenance}). We stress that it
-is important to have clean, formally proven definitions and properties
-for such elementary building blocks of data provenance, and that this is
-a contribution of this work.
+(called Axiom A13 in \cite{amsterdamer2011provenance}). We stress that
+errors are bound to happen given some counter-intuitive properties of
+these elementary building blocks of data provenance, and that it
+is important to have clean, formally proven definitions and properties,
+which is one of the contributions of this work.
 
-For aggregate queries, an useful notion is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and, (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$.
-Intuitively, the $\delta$ is used to capture the semantics of the existence of the results of an aggregation.
-%\sil{I'm actually not sure about this. Should we define it the table for each semiring instead? (for semiring having $\delta(x)=x$)}
-%\rjok{for semirings with $\delta(x)=x \text{ for } x\neq0$ these two properties are still satisfied. so it is okay i guess.}
+For queries with grouping and aggregation, an additional useful notion
+\cite{amsterdamer2011provenance} is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$.
+Intuitively, $\delta$ is used to capture the semantics of the
+existence of a group. For reasons we will explain later on, we fix the
+definition of $\delta$ to be $\delta(x)=x$ in
+idempotent semirings (in which $\mathbb 1\oplus\dots\oplus\mathbb
+1=\mathbb 1$); and $\delta(x)=\mathbb 1$ for all $x\neq\mathbb 0$ in
+non-idempotent semirings.
 
-In the following, we refer exclusively commutative semirings of the form $(\mathbb K,\oplus,\otimes,\ominus,\delta,\mathbb 0,\mathbb 1)$, i.e., \emph{commutative $\delta$-semirings with monus}.
-
-\paragraph**{Useful results on m-semirings.} We discuss now some additional results on m-semirings that we use later. In particular, we show that in an m-semiring, additive idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$. We also show that homomorphisms between m-semirings preserve these properties.
+\paragraph*{Useful results on m-semirings.} We discuss now some
+additional results on m-semirings that we use later. First we show that idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
 \begin{propositionrep}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
-  Let $S$ be any m-semiring. $S$ is idempotent if and only if $\ominus$
-  is right-distributive over~$\oplus$ in $S$.
+  An m-semiring $\mathbb K$ is idempotent if and only if $\ominus$
+  is right-distributive over~$\oplus$ in $S$, i.e., iff $\forall a, b,
+c\in\mathbb K, (a\oplus b)\ominus c=(a\ominus c)+(b\ominus c)$.
 \end{propositionrep}
 \begin{appendixproof}
   \textbf{($\Rightarrow$)}
@@ -164,21 +169,16 @@ Since $a\ominus a=0$, the right-hand side is $0$. And $(a\oplus a)\ominus a = 0\
 \smallskip
 Both sides, prove the equivalence.
 \end{appendixproof}
-% This is wrong but why?
-%\begin{proposition}
-%   Let $K_1, K_2$ be two m-semirings and $h: K_1\to K_2$ a semiring
-%   homomorphism. Then $h$ is an m-semiring homomorphism.
-% \end{proposition}
-\begin{corollaryrep}[Right-distributivity of $\ominus$ over finite $\oplus$-sums]\label{lem:finite-add-monus}
-Let \((\mathbb K,\oplus,\otimes,\ominus,\mathbb{0},\mathbb{1})\) be an
-m-semiring in which \(\ominus\) is right-distributive over \(\oplus\).
-
-Then for every \(n \ge 1\) and \(\forall a_1,\dots,a_n,c \in K\),
-\[
-\Bigl(\bigoplus_{i=1}^n a_i\Bigr)\ominus c
+\begin{corollaryrep}\label{lem:finite-add-monus}
+Let \(\mathbb K\) be an
+idempotent
+m-semiring.
+Then \(\forall n \ge 1\) and \(\forall a_1,\dots,a_n,c \in K\),
+\(
+\left(\bigoplus_{i=1}^n a_i\right)\ominus c
 =
 \bigoplus_{i=1}^n (a_i \ominus c).
-\]
+\)
 \end{corollaryrep}
 
 \begin{appendixproof}
@@ -205,39 +205,15 @@ where the second equality uses right-distributivity and the third uses the
 induction hypothesis.
 \end{appendixproof}
 
-\sil{Remove this?}
-\begin{proposition}
-  Let $\mathbb{K}_1, \mathbb{K}_2$ be two m-semirings and $h:
-  \mathbb{K}_1\to \mathbb{K}_2$ a m-semiring
-  homomorphism. Then:
-    \begin{enumerate}[(i)]
-    \item
-      \lean{SemiringWithMonus}{idempotent_of_injective_homomorphism_idempotent}
-      If $h$ is injective and $\mathbb{K}_2$ idempotent, then so is
-      $\mathbb{K}_1$.
-      \item
-        \lean{SemiringWithMonus}{idempotent_of_surjective_homomorphism_idempotent}
-      If $h$ is surjective and $\mathbb K_1$ idempotent, then so is
-      $\mathbb K_2$.
-      \item
-        \lean{SemiringWithMonus}{mul_sub_left_of_injective_homomorphism_mul_sub_left}
-        If $h$ is injective and $\otimes$ is left-distributive over $\ominus$ in $\mathbb{K}_2$, the
-        is true in~$\mathbb{K}_1$.
-        \item
-        \lean{SemiringWithMonus}{mul_sub_left_of_surjective_homomorphism_mul_sub_left}
-        If $h$ is surjective and $\otimes$ is left-distributive over $\ominus$ in $\mathbb{K}_1$, the
-        is true in~$\mathbb{K}_2$.
-    \end{enumerate}
-\end{proposition}
-
-Finally, we isolate two elementary inequalities on the residual characterization of $\ominus$ and the natural order defined for commutative $m-$semirings.
+Finally, we isolate two elementary inequalities on the residual
+characterization of $\ominus$ in idempotent commutative m-semirings.
 \begin{lemmarep}\label{lem:x-y<=x}
-  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring.
-  Then $\forall x,y\in \mathbb K$, $x\ominus y \le x$.
+  In an idempotent commutative m-semiring $\mathbb K$,
+$\forall x,y\in \mathbb K$, $x\ominus y \le x$.
 \end{lemmarep}
 
 \begin{appendixproof}
-By \eqref{eq:residuation-monus} with $z=x$, we have
+  By the residuation law (see Definition~\ref{def:m-semiring}) with $z=x$, we have
 \[
 x\ominus y \le x \quad\Longleftrightarrow\quad x \le y\oplus x.
 \]
@@ -247,13 +223,13 @@ Hence $x\ominus y\le x$.
 \end{appendixproof}
 
 \begin{lemmarep}\label{lem:x<=y+(x-y)}
-  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a idempotent commutative m-semiring.
-  Then $\forall x,y\in \mathbb K$, $x \le y\oplus (x\ominus y)$.
+  In any m-semiring $\mathbb K$,
+  $\forall x,y\in \mathbb K$, $x \le y\oplus (x\ominus y)$.
 \end{lemmarep}
 
 \begin{appendixproof}
-Apply \eqref{eq:residuation-monus} with $z=x\ominus y$:
-since $x\ominus y\le x\ominus y$ holds trivially, \eqref{eq:residuation-monus} yields
+  Apply the residuation law (see Definition \ref{def:m-semiring}) with $z=x\ominus y$:
+since $x\ominus y\le x\ominus y$ holds trivially, we obtain
 \[
 x \le y\oplus (x\ominus y),
 \]
