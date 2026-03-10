@@ -67,7 +67,7 @@ For the equivalent \sql{JOIN} query, the performance is similar as for provenanc
 
 The original SQL query template is the following:
 \begin{minted}[fontsize=\small, breaklines, linenos]{sql}
-SELECT img, sr_boolexpr(provenance()) AS prov
+SELECT img, provenance() AS prov
 FROM dataset
 WHERE obj = c
 GROUP BY img
@@ -75,7 +75,7 @@ HAVING COUNT(obj) >= k;
 \end{minted}
 
 For probability evaluation, we use use \sql{probability_evaluate(provenance())} 
-instead of \sql{sr_boolexpr(provenance())}.
+instead of \sql{provenance()}.
 
 The equivalent self-\sql{JOIN} rewriting used in the comparison is:
 
