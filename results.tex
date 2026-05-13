@@ -709,8 +709,56 @@ Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat
 \end{proof}
 
 \begin{proposition}
-There exist Boolean HAVING queries such that determining whether the provenance of these
-queries in the $\mathbb{N}$ (respectively, $\mathbb{B}[X]$) is $0$
-(respectively, $\bot$) is NP-complete.
+  For any $\mathbb{K}$-instance of characteristic~0, there exists a Boolean \textsf{HAVING} query such that determining
+  whether the provenance of this query over a \mathbb{K}-instance is not
+  $\mathbb{0}_\mathbb{K}$ is NP-hard.
+
+  Furthermore, this problem is in NP for semirings such as
+  $\mathbb{N}$ or $\mathbb{B}[X]$.
 \end{proposition}
-\rjok{todo: propose that for boolean provenance possible world semantics matches}
+
+\begin{proof}
+  Let's first show NP membership for $\mathbb{N}$ and $\mathbb{B}[X]$. We evaluate the provenance bottom-up in
+  $\mathbb{K}$ (keeping integers in $\mathbb{N}$ and unexpanded circuits for
+  the Boolean expressions in $\mathbb{B}[X]$) using the standard
+  semantics of relational algebra operators in $\mathbb{K}$-semirings
+  \cite{sen2026provsql}.
+  For all operators other than \textsf{HAVING}, this is a polynomial-time
+  operation. For \textsf{HAVING}, we guess (and keep only) one
+  (polynomial-sized) possible world in the
+  formula of Definition~\ref{def:semantics}. We obtain this way in
+  polynomial-time an element of $\mathbb{K}$. If $\mathbb{K}=\mathbb{N}$,
+  if the resulting number is non-$0$, we return True. If $\mathbb{K}=\mathbb{B}[X]$, we guess a
+  (polynomial-sized) valuation of the variables of the resulting Boolean circuit; if the
+  circuit is true under such a valuation, we return True. This
+  non-deterministic polynomial-time algorithm
+  returns True if and only if the provenance is not $\mathbb 0_{\mathbb{K}}$.
+
+  For hardness, we reduce from
+  subset-sum \cite{DBLP:conf/coco/Karp72}, a classic
+NP-hard problem. Take a finite multiset $M=\{\{m_1,\dots,m_n\}\}$ of $n$ natural integers and a
+  positive integer $B$. The subset-sum problem amounts to determining
+  whether there is a sub-multiset of $M$ that sums to exactly $B$.
+
+  We construct a $\mathbb N$-instance $D$ formed of a unary relation
+  $R(v)$ containing $n$ tuples $(m_1), \dots, (m_n)$, each tuple $t_i$
+  being annotated with provenance $\mathbb{1}_\mathbb{K}$.
+
+  We fix the query
+  \begin{minted}{sql}
+SELECT DISTINCT 1 FROM R HAVING SUM(v) = B
+  \end{minted}
+
+  The provenance of the result $(1)$ in this query is:
+
+\[
+  \predsem{\hat I}{q}{\psi}(u)\defeq
+  \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
+\Bigl(
+\ann^{\hat I}_{q',\vec v}(W)\otimes
+\chi_{\op}\bigl(f(\vals_t(W)),\ f'(\vals_{t'}(W))\bigr)
+\Bigr).
+\]
+
+  This Boolean query returns the result $(1)$ annotated with
+\end{proof}

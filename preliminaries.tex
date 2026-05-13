@@ -59,6 +59,7 @@ An m-semiring $(\mathbb K, \oplus, \otimes, \ominus, \mathbb 0, \mathbb
       $(a\ominus b)\ominus c = a\ominus(b\oplus c)$;
     \item \lean{SemiringWithMonus}{monus_self}
       \lean{SemiringWithMonus}{zero_monus} $a\ominus a = \mathbb 0\ominus a=\mathbb 0$.
+    \item $a\ominus 0=a$.
   \end{itemize}
 
 Additionally to the their definition, m-semirings may have other properties. Useful ones are:
@@ -70,6 +71,9 @@ Additionally to the their definition, m-semirings may have other properties. Use
     \lean{SemiringWithMonus}{mul_sub_left_distributive} $\forall a,b,c\in
     \mathbb K$, $a\otimes (b\ominus c) = (a\otimes b) \ominus (a\otimes
     c)$.
+  \item \textbf{Characteristic~$0$}: \(\forall n\geq 0,
+    \underbrace{\mathbb{1}+\dots+\mathbb{1}}_{\text{$n$ times}} \neq
+    \mathbb{0}$.
 \end{itemize}
 
 \input{table_semirings}

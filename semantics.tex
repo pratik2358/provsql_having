@@ -2,9 +2,9 @@
 \label{sec:semantics}
 \pierre{1 page}
 
-In the semimodule approach presented in~\cite{amsterdamer2011provenance}, provenance for aggregation is made algebraically uniform and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. 
+In the semimodule approach presented in~\cite{amsterdamer2011provenance}, provenance for aggregation is made algebraically uniform and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples.
 This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states such as \sql{AVG} via \sql{SUM} and \sql{COUNT}).
-Thus, the semimodule approach of~\cite{amsterdamer2011provenance} for aggregate comparisons gives us a symbolic semimodule element for an aggregate for cases allowing this lifting. 
+Thus, the semimodule approach of~\cite{amsterdamer2011provenance} for aggregate comparisons gives us a symbolic semimodule element for an aggregate for cases allowing this lifting.
 However, the semimodule approach fails for arbitrary operations: division, products of aggregates, conditional expressions, nested expressions e.g., \sql{AVG(x)+MEDIAN(y))/MAX(z)}.
 There is no generic approach to apply these operations on semimodule expressions without imposing extra algebraic structures or adding ad hoc rules.
 Moreover, the semimodule approach loses the semantics of the provenance in case where the comparison does not hold; this is not the case for our possible world semantics.
@@ -81,6 +81,7 @@ Let $t$ be a term of max-index $\le k$ and $\hat I$ a $\mathbb{K}$-instance.
 \]
 \end{definition}
 \begin{definition}[Semantics of Selection Predicate]
+  \label{def:semantics}
 Fix a $\mathbb K$-instance $\hat I$  and let $q\in \RA_k$.
 A \emph{selection predicate} $\psi$ over arity $k$ induces a function
   $\predsem{\hat I}{q}{\psi} : \mathcal V^k \to \mathbb{K}$,
@@ -110,7 +111,7 @@ If $\psi$ is of such an atomic form:
 \]
 \smallskip\noindent
 If $q$ is of the form $\gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q')\in \RA_{k=m+n}$
-with $q'\in\RA_{k'}$ and distinct grouping indices $(i_j)_{1\le j\le m}$ such that $1\le i_j\le k'$, 
+with $q'\in\RA_{k'}$ and distinct grouping indices $(i_j)_{1\le j\le m}$ such that $1\le i_j\le k'$,
 consider aggregate-comparison atom(s): $(t:f)\ \op\ (t':f')$ or $(t:f)\ \op\ c$ with $c\in\mathcal V$ and max-index of $t,t'$ being $\leq k'$.
 
 \smallskip\noindent
