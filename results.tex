@@ -710,7 +710,7 @@ Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat
 
 \begin{proposition}
   For any $\mathbb{K}$-instance of characteristic~0, there exists a Boolean \textsf{HAVING} query such that determining
-  whether the provenance of this query over a \mathbb{K}-instance is not
+  whether the provenance of this query over a $\mathbb{K}$-instance is not
   $\mathbb{0}_\mathbb{K}$ is NP-hard.
 
   Furthermore, this problem is in NP for semirings such as
@@ -749,16 +749,24 @@ NP-hard problem. Take a finite multiset $M=\{\{m_1,\dots,m_n\}\}$ of $n$ natural
 SELECT DISTINCT 1 FROM R HAVING SUM(v) = B
   \end{minted}
 
-  The provenance of the result $(1)$ in this query is:
+  The provenance of the result $(1)$ in this query is, following
+  Definition~\ref{def:semantics}:
+
+  \pierre{Review the notation, finalize the expression, and make sure they align after semantics
+  have been revised.}
 
 \[
-  \predsem{\hat I}{q}{\psi}(u)\defeq
   \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
 \Bigl(
-\ann^{\hat I}_{q',\vec v}(W)\otimes
-\chi_{\op}\bigl(f(\vals_t(W)),\ f'(\vals_{t'}(W))\bigr)
-\Bigr).
+  \mathbb{1}\otimes
+\chi_{\op}\bigl(\Sigma(\vals_t(W)), B)\bigr)
+\Bigr)=
+  \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
+\Bigl(
+\chi_{\op}\bigl(f(\vals_t(W)), B)\bigr)
+\Bigr)
 \]
-
-  This Boolean query returns the result $(1)$ annotated with
+which is non-zero if and only if one of the term of the $\oplus$ ssum is non-zero since
+$\mathbb K$ has characteristic 0, i.e., if the subset-sum instance has a
+solution.
 \end{proof}
