@@ -59,7 +59,7 @@ An m-semiring $(\mathbb K, \oplus, \otimes, \ominus, \mathbb 0, \mathbb
       $(a\ominus b)\ominus c = a\ominus(b\oplus c)$;
     \item \lean{SemiringWithMonus}{monus_self}
       \lean{SemiringWithMonus}{zero_monus} $a\ominus a = \mathbb 0\ominus a=\mathbb 0$.
-    \item $a\ominus 0=a$.
+    \item \lean{SemiringWithMonus}{monus_zero} $a\ominus 0=a$.
   \end{itemize}
 
 Additionally to the their definition, m-semirings may have other properties. Useful ones are:
