@@ -88,14 +88,17 @@ m-semirings}. In more detail:
   aggregate, in the case where the m-semiring
   is idempotent and $\otimes$ distributes over $\ominus$. This is in
   particular the case in the Boolean function semiring, which implies that our
-  semantics is compatible with probabilistic query evaluation. (Section
+  semantics is compatible with probabilistic query evaluation.
+  Unsuprisingly, this semantics results in intracatable query evaluation
+  in the general case. (Section
   \ref{sec:results})
 
 \item We provide algorithms implementing our semantics: a general
+  exponential-time
   algorithm based on possible-world enumeration; algorithms specialized
   for common aggregate functions such as \sql{COUNT}, \sql{SUM},
   \sql{MIN}, and \sql{MAX}; and optimizations
-  thereof to obtain a lower parameterized complexity for some comparison
+  thereof to obtain a polynomial-time parameterized complexity for some comparison
   operators and some m-semirings (especially, absorptive ones). (Section
   \ref{sec:algorithms})
 
