@@ -115,7 +115,13 @@ is important to have clean, formally proven definitions and properties,
 which is one of the contributions of this work.
 
 For queries with grouping and aggregation, an additional useful notion
-\cite{amsterdamer2011provenance} is that of \emph{$\delta$-semirings}, which is a semiring with an additional unary operator $\delta:\mathbb K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb 0)=\mathbb 0$ and (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb 1)=\mathbb 1$.
+\cite{amsterdamer2011provenance} is that of \emph{$\delta$-semirings},
+which is a semiring with an additional unary operator $\delta:\mathbb
+K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb
+0)=\mathbb 0$ and (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb
+1)=\mathbb 1$. Semirings in which a $\delta$ can be defined are exactly
+those of characteristic~$0$
+  \lean{SemiringWithMonus}{delta_exists_iff_charP_zero}.
 Intuitively, $\delta$ is used to capture the semantics of the
 existence of a group. For reasons we will explain later on, we fix the
 definition of $\delta$ to be $\delta(x)=x$ in
