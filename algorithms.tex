@@ -103,6 +103,7 @@ The algorithms can also be used to evaluate provenance for comparisons between t
 
 Both algorithms are correct by the following two theorems.
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:sum_dp}]\label{thm:sumdp-correct}
+\lean{Algorithms/SumDP}{SumDP.sumDP_correct}
 Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
 Let $U\defeq U^{\hat I}_{q',\vec v}$ and represent it as a finite list of distinct occurrences
 $((u_i,\alpha_i))_{1\le i\le N}$.
@@ -402,6 +403,7 @@ This establishes the correctness.
   \Return $\mathcal W$\;
 \end{algorithm}
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:count_enum}]\label{thm:count-enum-correct}
+\lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
 Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
 Let $U\defeq U^{\hat I}_{q',\vec v}$ and represent it as a finite list of distinct occurrences
 $((u_i,\alpha_i))_{1\le i\le N}$.
