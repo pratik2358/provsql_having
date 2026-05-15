@@ -9,25 +9,25 @@
 \bfseries $\otimes$ distr.\ / $\ominus$&
 \bfseries Char.\ $0$\\
 \midrule
-$\mathbb{B}$ \lean{Semirings/Bool}{instSemiringWithMonusBool}&
+$\mathbb{B}$ \lean{Semirings/Bool}{instCommSemiringWithMonusBool}&
 $a\land\lnot b$&
 \ok\ \lean{Semirings/Bool}{Bool.idempotent}&
 \ok\ \lean{Semirings/Bool}{Bool.absorptive}&
 \ok\ \lean{Semirings/Bool}{Bool.mul_sub_left_distributive}&
 \ok\ \lean{Semirings/Bool}{Bool.instCharPZero}\\
-$\mathbb{B}[X]$ \lean{Semirings/BoolFunc}{instSemiringWithMonusBoolFunc}&
+$\mathbb{B}[X]$ \lean{Semirings/BoolFunc}{instCommSemiringWithMonusBoolFunc}&
 $\nu\mapsto a(\nu)\land\lnot b(\nu)$&
 \ok\ \lean{Semirings/BoolFunc}{BoolFunc.idempotent}&
 \ok\ \lean{Semirings/BoolFunc}{BoolFunc.absorptive}&
 \ok\ \lean{Semirings/BoolFunc}{BoolFunc.mul_sub_left_distributive}&
 \ok\ \lean{Semirings/BoolFunc}{BoolFunc.instCharPZero}\\
-$\mathrm{Why}[X]$ \lean{Semirings/Why}{instSemiringWithMonusWhy}&
+$\mathrm{Why}[X]$ \lean{Semirings/Why}{instCommSemiringWithMonusWhy}&
 $a\setminus b$&
 \ok\ \lean{Semirings/Why}{Why.idempotent}&
 \ko\ \lean{Semirings/Why}{Why.not_absorptive}&
 \ko\ \lean{Semirings/Why}{Why.not_mul_sub_left_distributive}&
 \ok\ \lean{Semirings/Why}{Why.instCharPZero}\\
-$\mathrm{Which}[X]$ \lean{Semirings/Which}{instSemiringWithMonusWhich}&
+$\mathrm{Which}[X]$ \lean{Semirings/Which}{instCommSemiringWithMonusWhich}&
 \(\begin{cases}
   \bot&\text{if $a=\bot\lor a\subseteq b$}\\[-.4em]
   a&\text{if $a\neq\bot\land b=\bot$}\\[-.4em]
@@ -37,44 +37,44 @@ $\mathrm{Which}[X]$ \lean{Semirings/Which}{instSemiringWithMonusWhich}&
 \ko\ \lean{Semirings/Which}{Which.not_absorptive}&
 \ko\ \lean{Semirings/Which}{Which.not_mul_sub_left_distributive}&
 \ok\ \lean{Semirings/Which}{Which.instCharPZero}\\
-Temporal \lean{Semirings/IntervalUnion}{instSemiringWithMonusIntervalUnion}&
+Temporal \lean{Semirings/IntervalUnion}{instCommSemiringWithMonusIntervalUnion}&
 $a\setminus b$&
 \ok\ \lean{Semirings/IntervalUnion}{IntervalUnion.idempotent}&
 \ok\ \lean{Semirings/IntervalUnion}{IntervalUnion.absorptive}&
 \ok\ \lean{Semirings/IntervalUnion}{IntervalUnion.mul_sub_left_distributive}&
 \ok\ \lean{Semirings/IntervalUnion}{IntervalUnion.instCharPZero}\\
-Tropical \lean{Semirings/Tropical}{instSemiringWithMonusTropicalWithTopNat}&
+Tropical \lean{Semirings/Tropical}{instCommSemiringWithMonusTropicalWithTopNat}&
 if $a\geq b$ then $+\infty$ else $a$&
 \ok\ \lean{Semirings/Tropical}{Tropical.idempotent}&
 \ok\ \lean{Semirings/Tropical}{TropicalN.absorptive}&
 \ok\ \lean{Semirings/Tropical}{TropicalN.mul_sub_left_distributive}&
 \ok\ \lean{Semirings/Tropical}{TropicalN.instCharPZero}\\
 Viterbi
-\lean{Semirings/Viterbi}{Viterbi.instSemiringWithMonus}&
+\lean{Semirings/Viterbi}{Viterbi.instCommSemiringWithMonus}&
 if $a\leq b$ then $0$ else $a$&
 \ok\ \lean{Semirings/Viterbi}{Viterbi.idempotent}&
 \ok\ \lean{Semirings/Viterbi}{Viterbi.absorptive}&
 \ok\ \lean{Semirings/Viterbi}{Viterbi.mul_sub_left_distributive}&
 \ok\ \lean{Semirings/Viterbi}{Viterbi.instCharPZero}\\
-Security \lean{Semirings/MinMax}{instSemiringWithMonusMaxMinTVL}&
+Security \lean{Semirings/MinMax}{instCommSemiringWithMonusMaxMinTVL}&
 if $a\geq b$ then $\top$ else $a$&
 \ok\ \lean{Semirings/MinMax}{MinMax.idempotent}&
 \ok\ \lean{Semirings/MinMax}{MinMax.absorptive}&
 \ko\ \lean{Semirings/MinMax}{TVL.not_mul_sub_left_distributive}&
 \ok\ \lean{Semirings/MinMax}{MaxMin.instCharPZero}\\
-$\mathbb{N}$ \lean{Semirings/Nat}{instSemiringWithMonusNat}&
+$\mathbb{N}$ \lean{Semirings/Nat}{instCommSemiringWithMonusNat}&
 $\max(a-b, 0)$&
 \ko\ \lean{Semirings/Nat}{Nat.not_idempotent}&
 \ko\ \lean{Semirings/Nat}{Nat.not_absorptive}&
 \ok\ \lean{Semirings/Nat}{Nat.mul_sub_left_distributive}&
 \ok\ \lean{Semirings/Nat}{Nat.charP_zero}\\
-$\mathbb{N}[X]$ \lean{Semirings/How}{instSemiringWithMonusMvPolynomialNat}&
+$\mathbb{N}[X]$ \lean{Semirings/How}{instCommSemiringWithMonusMvPolynomialNat}&
 \(\sum_{\text{$M$}}\max(\mathrm{c}_M(A)-\mathrm{c}_M(b), 0)M\)&
 \ko\ \lean{Semirings/How}{How.not_idempotent}&
 \ko\ \lean{Semirings/How}{How.not_absorptive}&
 \ko\ \lean{Semirings/How}{How.not_mul_sub_left_distributive}&
 \ok\ \lean{Semirings/How}{How.charP_zero}\\
-$\textrm{\L ukasiewicz}$ \lean{Semirings/Lukasiewicz}{instSemiringWithMonusLukasiewicz}&
+$\textrm{\L ukasiewicz}$ \lean{Semirings/Lukasiewicz}{instCommSemiringWithMonusLukasiewicz}&
 if $a\leq b$ then $0$ else $a$&
 \ok\ \lean{Semirings/Lukasiewicz}{Lukasiewicz.idempotent}&
 \ok\ \lean{Semirings/Lukasiewicz}{Lukasiewicz.absorptive}&
