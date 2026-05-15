@@ -477,6 +477,7 @@ T_U(W)
 &= A_W\ominus \bigoplus_{w\in U\setminus W}(A_W\otimes \alpha_w ) \\
 &= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
 \end{align*}
+\lean{Having}{Having.T_eq_mul_one_monus_sum}
 Since $[|W|\op C]=\mathbb{1}_\mathbb{K}$ iff for a fiven choice of $\op$, $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
 \begin{equation}\label{eq:pw_tw}
 \langle Q^{\ge C}_1\rangle^{\hat I}(a)
@@ -552,7 +553,7 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr)
 \qquad(C\ge 1).
 \tag{R$_S$}
 \]
-We prove that $F_C(U)=S_C(U)$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$.
+We prove that $F_C(U)=S_C(U)$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}.
 If $|U|=0$ then $U=\varnothing$ and $F_C(\varnothing)=\mathbb 0=S_C(\varnothing)$ for $C\ge 1$
 (empty $\oplus$-sum).
 Assume $|U|>0$ and pick $u\in U$, let $U'=U\setminus\{u\}$.

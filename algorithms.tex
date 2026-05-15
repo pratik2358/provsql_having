@@ -590,7 +590,7 @@ The provenance can be computed by a direct scan over the occurrences in the grou
 \smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly the non-empty subsets
 $W\subseteq U^{\hat I}_{q',\vec v}$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
-  If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the provenance of an upward-closed family of sets is equal to the provenance of its family of minimal sets. Here, The minimal satisfying worlds are:
+  If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the provenance of an upward-closed family of sets is equal to the provenance of its family of minimal sets \lean{Having}{Having.absorbing_subfamily}. Here, The minimal satisfying worlds are:
 \begin{itemize}
 \item exactly the worlds of size $k$ for \sql{COUNT(*) >= k};
 \item exactly the worlds of size $k+1$ for \sql{COUNT(*) > k}.
