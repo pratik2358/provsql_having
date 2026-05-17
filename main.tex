@@ -16,6 +16,8 @@
 \let\DeclareMathAlphabet\oldDeclareMathAlphabet
 \let\SetMathAlphabet\oldSetMathAlphabet
 
+\newcommand{\tortangl}{\lgroup}
+\newcommand{\tortangr}{\rgroup}
 \usepackage[bb=boondox]{mathalfa}
 
 \usepackage[linesnumbered,algoruled,commentsnumbered,boxruled,noend]{algorithm2e}
@@ -29,7 +31,7 @@
 \newcommand{\llangle}{\langle\mkern-5mu\langle}
 \newcommand{\rrangle}{\rangle\mkern-5mu\rangle}
 \newcommand{\angsem}[2]{\lAngle #2\rAngle^{#1}}
-\newcommand{\predsem}[3]{\lAngle #3\rAngle^{#1}_{#2}}
+\newcommand{\predsem}[3]{\tortangl{} #3\tortangr^{#1}_{#2}}
 \newcommand{\RA}{\mathsf{RA}}
 \newcommand{\SUM}{\mathrm{SUM}}
 \author{Anonymous}{Anonymous}{}{}{}

@@ -111,11 +111,10 @@ and $\psi=(t:f)\ \op\ (t':f')$ or $\psi=(t:f)\ \op\ t'$ where max-index of $t,t'
 For $\psi = (t:f) \op (t':f')$,
 \[
 \predsem{\hat I}{q}{\psi}(u)\defeq
-\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q',\vec v}|]\\ W\neq\emptyset}}
+\bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
 \Bigl(
 \ann^{\hat I}_{q',\vec v}(W)\otimes
-\chi_{\op}\bigl(f((t(u_r))_{r\in W}),\ f'((t'(u_r))_{r\in W}
-)\bigr)
+\chi_{\op}\bigl(f(t(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})),\ f'(t'(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})) \bigr)
 \Bigr)
 \]
 
@@ -123,11 +122,10 @@ For $\psi = (t:f) \op (t':f')$,
 and for $\psi = (t:f) \op t'$,
 \[
 \predsem{\hat I}{q}{\psi}(u)\defeq
-\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q',\vec v}|]\\ W\neq\emptyset}}
+\bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
 \Bigl(
 \ann^{\hat I}_{q',\vec v}(W)\otimes
-\chi_{\op}\bigl(f((t(u_r))_{r\in W}
-),\ t'(u)\bigr)
+\chi_{\op}\bigl(f(t(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})),\ t'(u)\bigr)
 \Bigr)
 \]
 where, for $u=(\vec v,a_1,\dots,a_n)\in\mathcal V^{m+n}$ ,
@@ -171,8 +169,8 @@ We define:
 \end{definition}\label{def:semantics}
 
 \smallskip\noindent\emph{Note:}
-For any aggregate comparison atom, if $U^{\hat I}_{q',\vec v}=\emptyset$ then every output
-tuple $u$ with group key $\vec v$, we have $\predsem{\hat I}{q}{\theta}(u)=\mathbb 0$.
+For any aggregate comparison atom, if $((U^{\hat I}_{q',\vec v})_r)=()$ then every output
+tuple $u$ with group key $\vec v$, we have $\predsem{\hat I}{q}{\psi}(u)=\mathbb 0$.
 Since the possible-world semantics
 ranges over non-empty worlds only.
 So multiplying the possible world provenance
