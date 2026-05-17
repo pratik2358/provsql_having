@@ -13,7 +13,7 @@ This lifting is canonical only for aggregates with the right algebraic structure
 % Instead, for each possible subset of tuples, called a \emph{possible world}, in an aggregate group we evaluate the aggregate as an arbitrary function over the sequence of values and then restrict provenance to the satisfying cases only.
 % Thus any SQL aggregate function (average, median/percentile, array/JSON aggregates, custom UDFs, etc.) can be handled in this semantics.
 % Our semantics naturally support arbitrary arithmetic over arbitrary aggregate functions in \sql{HAVING}-like conditions; they are evaluated on the aggregate values in each possible world, and then the provenance is accumulated only for the satisfying  possible-worlds.
-In this section we give a general \emph{possible world semantics} for selection predicates involving comparisons between arbitrary aggregates or even comparisons between arbitrary arithmetic over the aggregate function(s).
+In this section we give a general \emph{possible world semantics} that extends semiring-provenance evaluation beyond queries whose selection predicates are restricted to non-aggregate comparisons. In particular, this semantics handles comparisons among arbitrary aggregate expressions, including unrestricted arithmetic over them.
 We fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our
 annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$.
 For any set $S$, we write $\Seq(S)$ for the set of finite sequences over $S$.
@@ -55,7 +55,7 @@ We extend the semiring-provenance semantics of \emph{selection} in \cite{sen2026
 Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, if we define
 the sequence of occurences of tuples involved as 
 $
-((U^{\hat I}_{q,\vec v})_r)_{1\leq r\leq|\angsem{\hat I}{q}|} \defeq (\, (u_r,\alpha_r)\in \angsem{\hat I}{q} | (u_{r,i_1},\dots,u_{r,i_m})=\vec v \,)_{1\leq r\leq|\angsem{\hat I}{q}|}$, then for any \emph{possible-world} of $\vec v$, $W\subseteq [|((U^{\hat I}_{q,\vec v})_r)|]$, we define its $\mathbb{K}-$annotation as 
+((U^{\hat I}_{q,\vec v})_r)_{1\leq r\leq|\angsem{\hat I}{q}|} \defeq (\, (u_r,\alpha_r)\in \angsem{\hat I}{q} | (u_{r_{i_1}},\dots,u_{r_{i_m}})=\vec v \,)_{1\leq r\leq|\angsem{\hat I}{q}|}$, then for any \emph{possible-world} of $\vec v$, $W\subseteq [|((U^{\hat I}_{q,\vec v})_r)|]$, we define its $\mathbb{K}-$annotation as 
 $
 \ann^{\hat I}_{q,\vec v}(W) \defeq
 \Bigl( \bigotimes_{r\in W}(U^{\hat I}_{\substack{q,\vec v}})_r[\alpha] \Bigr)
