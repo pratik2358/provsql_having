@@ -270,8 +270,8 @@ K$ which we usually denote $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and
 We call $\alpha$ the annotation of the tuple $u$.
 
 A $\mathbb K$-instance, usually denoted as $\hat I$ over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
-We consider, instead of attribute names, their \emph{positional index}, denoted by $\#i$ for $i\in \mathbb N^*$.
-A \emph{term} is then an expression involving values from $\mathcal V$ and positional indices, and the \emph{max-index} of a term is the largest positional index appearing in it ($0$ if none appear).
+We consider, instead of attribute names, their \emph{positional indices}, denoted by $\#i$ for $i\in \mathbb N^*$.
+A \emph{term} is then an expression involving values from $\mathcal V$ and positional indices, and the \emph{max-index} of a term is the largest positional index appearing in it ($0$ if none appear). Given a tuple $u=(u_1,\dots,u_k)$ and a term $t$ of max-index$\leq k$ we can define $t(u)\in \mathcal V$ that evaluates the \emph{term}-expression after replacing the positional indices in it with the respective attribute values of the tuple. Given a finite sequence of tuples $(u_{i_1},\dots,u_{i_n})$ we define the pointwise evauation of a well-defined term t on them as $\pi_{t}((u_{i_1},\dots,u_{i_n}))=(t(u_{i_1}),\dots,t(u_{i_n}))$.
 
 The semantics of a query $q$ over annotated relations, denoted as
 $\angsem{\hat I}{q}$, is defined in \cite{sen2026provsql} over $\mathbb
