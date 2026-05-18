@@ -18,7 +18,7 @@ Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
     \begin{enumerate}[(i)]
       \item
         For any commutative m-semiring $\mathbb{K}$ which is
-        idempotent and such that $\otimes$ is
+        absorptive and such that $\otimes$ is
         distributive over $\ominus$, for any
         $\mathbb{K}$-instance $\hat I$,
         $\langle Q^{\op C}_1\rangle^{\hat I}=\langle Q^{\op C}_2\rangle^{\hat I}$.
@@ -28,8 +28,8 @@ Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
         $\mathbb{K}_1$-instance $\hat I_1$ such that
         $\langle Q^{\op C}_1\rangle^{\hat I_1}\neq\langle Q^{\op C}_2\rangle^{\hat I_1}$.
       \item There exists a commutative m-semiring $\mathbb{K}_2$ that has
-        distributivity of $\otimes$ over $\ominus$ but which is not
-        idempotent, and a
+        distributivity of $\otimes$ over $\ominus$ and that is idempotent but not
+        absorptive, and a
         $\mathbb{K}_2$-instance $\hat I_2$ such that
         $\langle Q^{\op C}_1\rangle^{\hat I_2}\neq\langle Q^{\op C}_2\rangle^{\hat I_2}$.
     \end{enumerate}
@@ -691,24 +691,26 @@ Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat
 
 \paragraph*{Proof of (iii)}
 \begin{proof}
-\lean{Semirings/Nat}{Nat.counterexample_having}
-We consider a similar setting as mentioned in Proof~\ref{proof:proof_2} but with
-$\mathbb{N}$-semiring valuation of $t_1, t_2, t_3$: $1, 1, 1$.
-\begin{align*}
-  &\langle Q^{= 2}_1\rangle^{\hat I}(u)=\\
-  &((1\times 1)\times(1- 1)) + ((1\times 1)\times(1-1)) + ((1\times 1)\times(1-1))\\
-  =& 0 + 0 + 0 \\
-  =& 0
-\end{align*}
-
-But,
-\begin{align*}
-  &\langle Q^{= 2}_2\rangle^{\hat I}(u)=\\
-  &(1\times1)+(1\times 1)+(1\times 1)\\
-  =& 1 + 1 + 1 \\
-  =& 3
-\end{align*}
-Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
+  \pierre{Need to replace with idempotent non-absorptive example
+  \lean{Semirings/Tropical}{TropicalR.F_ne_S}}
+%\lean{Semirings/Nat}{Nat.counterexample_having}
+%We consider a similar setting as mentioned in Proof~\ref{proof:proof_2} but with
+%$\mathbb{N}$-semiring valuation of $t_1, t_2, t_3$: $1, 1, 1$.
+%\begin{align*}
+%  &\langle Q^{= 2}_1\rangle^{\hat I}(u)=\\
+%  &((1\times 1)\times(1- 1)) + ((1\times 1)\times(1-1)) + ((1\times 1)\times(1-1))\\
+%  =& 0 + 0 + 0 \\
+%  =& 0
+%\end{align*}
+%
+%But,
+%\begin{align*}
+%  &\langle Q^{= 2}_2\rangle^{\hat I}(u)=\\
+%  &(1\times1)+(1\times 1)+(1\times 1)\\
+%  =& 1 + 1 + 1 \\
+%  =& 3
+%\end{align*}
+%Hence, $\langle Q^{\op C}_1\rangle^{\hat I}\neq \langle Q^{\op C}_2\rangle^{\hat I}$.
 \end{proof}
 
 \begin{proposition}
