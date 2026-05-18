@@ -1,20 +1,20 @@
-\documentclass[anonymous,a4paper,UKenglish]{lipics-v2021}
+\documentclass[acmsmall,review,anonymous]{acmart}
 
+\usepackage{paralist}
 \usepackage{minted}
 \usepackage{graphicx}
 \usepackage{xcolor}
 
-% The annoying following lines are necessary to prevent fdsymbol, needed
-% for \lAngle/\rAngle, to break other math alphabets
-\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
-\SetMathAlphabet{\mathcal}{bold}{OMS}{cmsy}{b}{n}
-\let\oldDeclareMathAlphabet\DeclareMathAlphabet
-\let\oldSetMathAlphabet\SetMathAlphabet
-\def\DeclareMathAlphabet#1#2#3#4#5{\relax}
-\def\SetMathAlphabet#1#2#3#4#5#6{\relax}
-\usepackage{fdsymbol}
-\let\DeclareMathAlphabet\oldDeclareMathAlphabet
-\let\SetMathAlphabet\oldSetMathAlphabet
+% Borrow only \lAngle/\rAngle from the FdSymbolF delimiter font, without
+% loading fdsymbol (which would redefine \mathcal, \leq, etc.).
+\DeclareFontFamily{U}{FdSymbolF}{}
+\DeclareFontShape{U}{FdSymbolF}{m}{n}{
+  <-7.1> FdSymbolF-Book
+  <7.1->  FdSymbolF-Medium
+}{}
+\DeclareSymbolFont{fdsymdelims}{U}{FdSymbolF}{m}{n}
+\DeclareMathDelimiter{\lAngle}{\mathopen}{fdsymdelims}{"92}{fdsymdelims}{"92}
+\DeclareMathDelimiter{\rAngle}{\mathclose}{fdsymdelims}{"98}{fdsymdelims}{"98}
 
 \newcommand{\tortangl}{\bigl\lgroup}
 \newcommand{\tortangr}{\bigr\rgroup}
@@ -22,7 +22,6 @@
 
 \usepackage[linesnumbered,algoruled,commentsnumbered,boxruled,noend]{algorithm2e}
 \usepackage{booktabs}
-\usepackage[sort,compress]{cite}
 \newcommand{\fakesql}[1]{\texttt{\textcolor{green!45!black}{\bfseries #1}}}
 
 \newcommand{\NN}{\mathbb{N}}
@@ -34,7 +33,6 @@
 \newcommand{\predsem}[3]{\tortangl #3\tortangr^{#1}_{#2}}
 \newcommand{\RA}{\mathsf{RA}}
 \newcommand{\SUM}{\mathrm{SUM}}
-\author{Anonymous}{Anonymous}{}{}{}
 
 \usepackage{pifont}
 \newcommand{\ok}{\text{\color{green!50!black}\ding{51}}}
@@ -91,6 +89,8 @@ with Monus}
 \SetKwProg{Fn}{Function}{}{}
 
 \begin{document}
+\input{abstract}
+
 \maketitle
 
 \ccsdesc{Theory of computation~Data provenance}
@@ -100,8 +100,6 @@ with Monus}
 
 \keywords{Data provenance, probabilistic database, aggregate query, query
 processing}
-
-\input{abstract}
 
 \input{introduction}
 
@@ -119,7 +117,7 @@ processing}
 
 \input{conclusion}
 
-\bibliographystyle{plainurl}
+\bibliographystyle{ACM-Reference-Format}
 \bibliography{ref}
 
 \end{document}
