@@ -281,10 +281,7 @@ as required.
 Next, we formalize a standard recurrence for the \sql{JOIN}-based provenance expression, by splitting $|C|$-sized subsets of $U$ depending on the inclusion of a fixed $u\in U$.
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
-  Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent $m$-semiring such that $\otimes$ distributes over $\oplus$:
-\[
-r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b)\qquad(\forall r,a,b\in K).
-\]
+  Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an $m$-semiring.
 Fix a finite set $U$ and a family $(\alpha)_{x\in U}\in K$.
 For $W\subseteq U$ define
 \[
