@@ -691,26 +691,50 @@ Hence, $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
 
 \paragraph*{Proof of (iii)}
 \begin{proof}
-  \pierre{Need to replace with idempotent non-absorptive example
-  \lean{Semirings/Tropical}{TropicalR.F_ne_S}}
-%\lean{Semirings/Nat}{Nat.counterexample_having}
-%We consider a similar setting as mentioned in Proof~\ref{proof:proof_2} but with
-%$\mathbb{N}$-semiring valuation of $t_1, t_2, t_3$: $1, 1, 1$.
-%\begin{align*}
-%  &\angsem{\hat I}{Q^{= 2}_1}(u)=\\
-%  &((1\times 1)\times(1- 1)) + ((1\times 1)\times(1-1)) + ((1\times 1)\times(1-1))\\
-%  =& 0 + 0 + 0 \\
-%  =& 0
-%\end{align*}
-%
-%But,
-%\begin{align*}
-%  &\angsem{\hat I}{Q^{= 2}_2}(u)=\\
-%  &(1\times1)+(1\times 1)+(1\times 1)\\
-%  =& 1 + 1 + 1 \\
-%  =& 3
-%\end{align*}
-%Hence, $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
+\lean{Semirings/Tropical}{TropicalR.F_ne_S}
+
+Consider the tropical semiring
+$\mathbb K_2=(\mathbb{R}\cup\{\infty\},\min,+,\infty,0)$.
+It is idempotent, $\otimes$ distributes over $\ominus$ and is non-absorptive.
+We show that there exists a $\mathbb K_2$-instance $\hat I_2$ such that
+\[
+\angsem{\hat I_2}{Q^{\op C}_1}
+\neq
+\angsem{\hat I_2}{Q^{\op C}_2}.
+\]
+
+Fix $C=1$ and $\op=\geq$.
+Consider a group with key $u$ containing exactly two tuples,
+both annotated by
+$
+t_1=t_2=-1$.
+Now,
+\[
+\angsem{\hat I_2}{Q^{\ge1}_2}(u)
+=
+t_1\oplus t_2
+=
+\min(-1,-1)
+=
+-1
+\]
+and,
+\[
+\angsem{\hat I_2}{Q^{\ge1}_1}(u)
+=
+(t_1\otimes(\mathbb 1 \ominus t_2)) \oplus (t_2\otimes(\mathbb 1 \ominus t_1))\oplus (t_1\otimes t_2\otimes(\mathbb 1 \ominus \mathbb 0))
+=
+min(\infty,\infty,-2)
+=
+-2
+\]
+
+Therefore,
+\[
+\angsem{\hat I_2}{Q^{\ge1}_1}(u)
+\neq
+\angsem{\hat I_2}{Q^{\ge1}_2}(u),
+\]
 \end{proof}
 
 \begin{proposition}
