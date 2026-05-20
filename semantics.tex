@@ -1,61 +1,57 @@
 \section{Semantics}
 \label{sec:semantics}
-\pierre{1 page}
 
-In the semimodule approach presented in~\cite{amsterdamer2011provenance}, provenance for aggregation is made algebraically uniform and compositional by lifting the aggregate to act on $\mathbb{K}$-annotated input tuples. 
-This lifting is canonical only for aggregates with the right algebraic structure (specifically monoid aggregates, or aggregates reducible to monoid states such as \sql{AVG} via \sql{SUM} and \sql{COUNT}).
-%Thus, the semimodule approach of~\cite{amsterdamer2011provenance} for aggregate comparisons gives us a symbolic semimodule element for an aggregate for cases allowing this lifting. 
-%However, the semimodule approach fails for arbitrary operations: division, products of aggregates, conditional expressions, nested expressions e.g., \sql{AVG(x)+MEDIAN(y))/MAX(z)}.
-%There is no generic approach to apply these operations on semimodule expressions without imposing extra algebraic structures or adding ad hoc rules.
-%
-% In this section we give a general \emph{possible world semantics} for selection predicates involving comparisons between aggregates.
-% This semantics does not need an algebraic lifting of the aggregate function.
-% Instead, for each possible subset of tuples, called a \emph{possible world}, in an aggregate group we evaluate the aggregate as an arbitrary function over the sequence of values and then restrict provenance to the satisfying cases only.
-% Thus any SQL aggregate function (average, median/percentile, array/JSON aggregates, custom UDFs, etc.) can be handled in this semantics.
-% Our semantics naturally support arbitrary arithmetic over arbitrary aggregate functions in \sql{HAVING}-like conditions; they are evaluated on the aggregate values in each possible world, and then the provenance is accumulated only for the satisfying  possible-worlds.
-In this section we give a general \emph{possible world semantics} for selection predicates involving comparisons between arbitrary aggregates or even comparisons between arbitrary arithmetic over the aggregate function(s).
-We fix $(\mathbb{K},\oplus,\otimes,\ominus,\delta,\mathbb{0},\mathbb{1})$ as our
-annotation structure, as discussed in the preliminaries, along with a finite data domain $\mathcal{V}$.
-For any set $S$, we write $\Seq(S)$ for the set of finite sequences over $S$.
-We define arbitrary aggregate functions as:
-\begin{definition}[Arbitrary Aggregate Function]
-  An arbitrary aggregate function is a function  $f:\Seq(\mathcal{V})\to \mathcal{A}$, for some output domain $\mathcal{A}$.
+In this section we give a general \emph{possible-world semantics} for
+selection predicates involving comparisons of aggregate values, in
+arbitrary m-semirings.
+
+In the approach presented in~\cite{amsterdamer2011provenance}, also used
+in the ProvSQL implementation \cite{sen2026provsql},
+annotation of aggregate query results rely on a \emph{semimodule} whose
+elements are tensor products of data values and semiring elements, with
+the aggregation operation, required to be a commutative monoid operation,
+being lifted as the semimodule sum. This allows compositionality and some
+form of compatibility between semiring operations and the aggregate
+values. On the other hand, this restricts aggregate operations, with
+common non-associative operations (such as \sql{AVG}) or non-commutative ones
+(such as \fakesql{STRING\_AGG} or \fakesql{ARRAY\_AGG}). In contrast, for
+generality and because our semantics does not depend on the fine
+semimodule structure, we extend to any arbitrary aggregate function on
+\emph{sequences} of values. This results in replacing the semimodule
+structure with a formal non-commutative algebraic structure.
+
+We fix a commutative m-semiring
+$(\mathbb{K},\oplus,\otimes,\ominus,\mathbb{0},\mathbb{1})$, as discussed in the preliminaries, along with a data domain $\mathcal{V}$.
+For any set~$S$, we write $\Seq(S)$ the set of finite sequences over $S$.
+We consider aggregate functions and comparison operators:
+\begin{definition}
+An \emph{aggregate function} is a function  $f:\Seq(\mathcal{V})\to\mathcal{V}$.
+  For any comparison operator $\op\in\{<,\leq,=,\geq,>,\neq\}$ defined
+  over $\mathcal{V}$, i.e., $\op: \mathcal{V}^2\rightarrow
+  \{\bot,\top\}$, we denote
+\(
+  \chi_{\op}:\mathcal{V}\times\mathcal{V}\to \mathbb{K}
+  \) the mapping that sends $(a,b)$ to $\mathbb{1}$ if $a\op b$, and to
+  $\mathbb{0}$ otherwise.
 \end{definition}
-Now, monoid aggregate functions (\sql{SUM}, \sql{COUNT}, etc.) can be treated as arbitrary aggregate functions in our semantics.
-For comparing the result of two aggregates we define a comparison operator $\op$:
-\begin{definition}[Comparison Operator]
-  For any $\op\in\{=,\neq,<,\leq,>,\geq\}$ defined for a domain $\mathcal{A}$, we define
-\[
-  \chi_{\op}:\mathcal{A}\times\mathcal{A}\to \mathbb{K},
-\qquad
-  \chi_{\op}(a,b)\defeq
-\begin{cases}
-  \mathbb{1}\in \mathbb{K} & \text{if } a \op b,\\
-  \mathbb{0} \in \mathbb{K} & \text{otherwise},
-\end{cases}
-\]
-where $\mathbb{K}$ is any commutative $m-$semiring.
-\end{definition}
-We extend the semiring-provenance semantics of \emph{selection} in \cite{sen2026provsql} with possible-world semantics when \emph{selection}-predicates involve boolean combinations of comparisons between results of arbitrary aggregate functions.
+
+\cite{sen2026provsql} provides a provenance semantics over annotated
+relations for the multiset relational alegbra extended with
+\emph{terminal} aggregation,
+which itself is based on that of
+\cite{green2008provenance,geerts2010database,amsterdamer2011provenance}.
+We extend the semantics of the \emph{selection} operator to allow
+comparisons of aggregate values (i.e., non-terminal aggregates) using a
+possible-world semantics.
+\pierre{We need to add an ordering function on aggregation.}
 We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions:
-% \begin{definition}[Aggregate Comparison Atoms]\label{def:agg_comp_atoms}
-%  Aggregate-comparison atoms are expressions of one of the forms
-% \[
-% (t:f) \op (t':f')
-% \;or\;
-% (t:f) \op c
-% \]
-% where $t,t'$ are terms of max-index $\le k$, $f,f'$ are aggregate functions with common output domain~$\mathcal{A}$,
-% $c\in\mathcal{A}$, and $\op\in\{=,\neq,<,\le,>,\ge\}$ and appear inside a
-% selection condition $\psi$ of queries.
-% \end{definition}
-%\rjok{removed GROUP-BY scoping constraint for agg-comp-atoms because they always and only appear inside selection conditions of a HAVING-like query.}
 
-\begin{definition}[Possible-World Semantics]
-Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, if we define
-the sequence of occurences of tuples involved as 
+\begin{definition}
+Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a $k$-ary
+extended relational algebra query $q$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, we define
+the sequence of occurrences of tuples in $k$ involved as
 $
-U^{\hat I}_{q,\vec v} \defeq (\, (u_r,\alpha_r)\in \angsem{\hat I}{q} | (u_{r,i_1},\dots,u_{r,i_m})=\vec v \,)_{1\leq r\leq|\angsem{\hat I}{q}|}$, then for any \emph{possible-world} of $\vec v$, $W\subseteq [|U^{\hat I}_{q,\vec v}|]$, we define its $\mathbb{K}-$annotation as 
+U^{\hat I}_{q,\vec v} \defeq (\, (u_r,\alpha_r)\in \angsem{\hat I}{q} | (u_{r,i_1},\dots,u_{r,i_m})=\vec v \,)_{1\leq r\leq|\angsem{\hat I}{q}|}$, then for any \emph{possible-world} of $\vec v$, $W\subseteq [|U^{\hat I}_{q,\vec v}|]$, we define its $\mathbb{K}-$annotation as
 $
 \ann^{\hat I}_{q,\vec v}(W) \defeq
 \Bigl( \bigotimes_{U^{\hat I}_{q,\vec v}[r], r\in W}\alpha_r \Bigr)
@@ -102,7 +98,7 @@ For an atomic comparison $\psi$ of the form $t\op t'$:
 \]
 \smallskip\noindent
 Otherwise, $q$ is of the form $\gamma_{i_1,\dots,i_m}[t_1:f_1,\dots,t_n:f_n](q')\in \RA_{k=m+n}$
-with $q'\in\RA_{k'}$, distinct grouping indices $(i_j)_{1\le j\le m}$ such that $1\le i_j\le k'$, 
+with $q'\in\RA_{k'}$, distinct grouping indices $(i_j)_{1\le j\le m}$ such that $1\le i_j\le k'$,
 and $\psi=(t:f)\ \op\ (t':f')$ or $\psi=(t:f)\ \op\ t'$ where max-index of $t,t'\leq k'$.
 
 \smallskip\noindent
