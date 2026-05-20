@@ -15,19 +15,19 @@ This does not change our semantics: multiset properties are preserved because di
 All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} subquery $q'$.
 Accordingly, any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
-For bounded range comparisons of the form $\mathrm{SUM}(t)\op C$, a dynamic programming procedure is presented in Algorithm~\ref{alg:sum_dp}.
-It enumerates the possible worlds $W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$(i.e. $\SUM(t)$) satisfies the comparison with the constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding $\chi_{\op}$-ensured possible-world sum in the semantics of aggregate comparison atoms.
+For bounded range comparisons of the form \sql{SUM}$(t)\op C$, a dynamic programming procedure is presented in Algorithm~\ref{alg:sum_dp}.
+It enumerates the possible worlds $W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$ (i.e., \sql{SUM}$(t)$) satisfies the comparison with the constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding $\chi_{\op}$-ensured possible-world sum in the semantics of aggregate comparison atoms.
 
-The algorithm works also for the special case where $t=1$, i.e., bounded range $\mathrm{COUNT}(t)\op C$ comparisons.
-However, for this case we can use a more efficient enumeration, exploiting the unit-weight sum structure of $\mathrm{COUNT}$ aggregates, as shown in Algorithm~\ref{alg:count_enum}.
-Similarly, for $\mathrm{MIN}$/$\mathrm{MAX}$ aggregates we can use strategies based on ordering the possible aggregate values that avoid full world enumeration, and only listing the worlds that are under or over the threshold $C$ as needed.
+The algorithm works also for the special case where $t=1$, i.e., bounded range \sql{COUNT}$(t)\op C$ comparisons.
+However, for this case we can use a more efficient enumeration, exploiting the unit-weight sum structure of \sql{COUNT} aggregates, as shown in Algorithm~\ref{alg:count_enum}.
+Similarly, for \sql{MIN}/\sql{MAX} aggregates we can use strategies based on ordering the possible aggregate values that avoid full world enumeration, and only listing the worlds that are under or over the threshold $C$ as needed.
 
 For aggregate functions or predicates not covered by the specialized cases, reverting to
 brute-force enumeration of non-empty worlds $W\subseteq U^{\hat I}_{q',\vec v}$ will always give the correct answer by our semantics.
 The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. \sil{Do we need to list all possible constants for the second aggregate?}
 
 \begin{algorithm}
-  \caption{Enumeration of valid worlds for $(t:\mathrm{SUM}) \op C$ at a fixed group key $\vec v$}
+  \caption{Enumeration of valid worlds for \sql{SUM}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
 
   \Input{a finite set of group-member occurrences $U^{\hat I}_{q',\vec v}$, a term $t$ of max-index $\le k$ such that $t(u)\in\NN \; \forall (u,\alpha)\in U^{\hat I}_{q',\vec v}$ , a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
@@ -338,7 +338,7 @@ It follows that the final output is exactly
 This establishes the correctness.
 \end{appendixproof}
 \begin{algorithm}
-  \caption{Enumeration of valid worlds for $(t:\mathrm{COUNT}) \op C$ at a fixed group key $\vec v$}
+  \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
 
   \Input{a finite set of group-member occurrences $U^{\hat I}_{q',\vec v}$, a term $t$ with max-index $\leq k$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
@@ -419,7 +419,7 @@ Then
 \end{theoremrep}
 
 \begin{appendixproof}
-The term $t$ is part of the input signature for uniformity with the other algorithm which was for SUM aggregate, but the computation for \textsc{COUNT} depends only on the occurrences in $U$.
+The term $t$ is part of the input signature for uniformity with the other algorithm which was for the \sql{SUM} aggregate, but the computation for \sql{COUNT} depends only on the occurrences in $U$.
 
 We represent $U$ as the finite list of distinct occurrences
 \[
@@ -551,7 +551,7 @@ This establishes correctness.
 
 Some important cases of aggregate comparisons can be evaluated in polynomial time:
 \begin{proposition}
-  The provenance of HAVING queries of the following forms can be computed
+  The provenance of \sql{HAVING} queries of the following forms can be computed
   in polynomial time in data complexity:
   \begin{itemize}
     \item \sql{MIN(a)}${}\op c$,
@@ -576,7 +576,7 @@ U^{\hat I}_{q',\vec v}
 \{(u_1,\alpha_1),\dots,(u_N,\alpha_N)\}.
 \]
 For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $N$. Since the queries are fixed, this implying polynomial time in data complexity.
-We recall that the provenance of the HAVING condition( eqv. selection predicates with aggregate comparisons ) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
+We recall that the provenance of the \sql{HAVING} condition (eqv. selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
 and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 1: \sql{MIN(a)}$\op c$, \sql{MAX(a)}${}\op c$, and \fakesql{PICKFIRST}\texttt{(a)}$\op c$.}
@@ -618,5 +618,5 @@ Since $k$ is fixed, the number of such worlds is bounded by
   $\binom{N}{k},\, \sum_{i=1}^{k}\binom{N}{i},\text{ and } \sum_{i=1}^{k-1}\binom{N}{i}$, respectively. Each of these bounds is polynomial in $N$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
 
 \smallskip\noindent
-WIth these 4 cases, provenance can be computed in polynomial time for all the HAVING queries describe in the proposition.
+With these 4 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
 \end{proof}

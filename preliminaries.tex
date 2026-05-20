@@ -4,7 +4,7 @@
   \label{appendix}
 \end{toappendix}
 
-We start about preliminaries about (m-)semirings, annotated relations,
+We start with preliminaries on (m-)semirings, annotated relations,
 and extended relational algebra queries; we refer to
 \cite{sen2026provsql} for a full description of the semantics of
 extended relational algebra queries with terminal aggregation (i.e.,
@@ -16,8 +16,9 @@ without \sql{HAVING}).
   A \emph{semiring} is an algebraic structure $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
   \begin{itemize}
     \item $(\mathbb K,\oplus,\mathbb 0)$ is a commutative monoid and $(\mathbb K,\otimes,\mathbb 1)$ is a (not necessarily commutative) monoid;
-    \item $\otimes$ distributes over $\oplus$: $\forall~a,b,c\in K$, $a\otimes (b\oplus c) = (a\otimes b)\oplus (a\otimes c)$ and $(a\oplus b)\otimes c = (a\otimes c)\oplus (b\otimes c)$;
-    \item $\mathbb 0$ is an annihilator for $\otimes$: $\forall a\in K$, $a\otimes \mathbb 0 = \mathbb 0 \otimes a = \mathbb 0$.
+    \item $\otimes$ distributes over $\oplus$: $\forall~a,b,c\in\mathbb K$, $a\otimes (b\oplus c) = (a\otimes b)\oplus (a\otimes c)$ and $(a\oplus b)\otimes c = (a\otimes c)\oplus (b\otimes c)$;
+    \item $\mathbb 0$ is an annihilator for $\otimes$: $\forall
+      a\in\mathbb K$, $a\otimes \mathbb 0 = \mathbb 0 \otimes a = \mathbb 0$.
   \end{itemize}
 \end{definition}
 
@@ -25,8 +26,9 @@ without \sql{HAVING}).
   Some example semirings are:
   \begin{itemize}
     \item The counting semiring $\mathbb N$: $(\mathbb N,+,\times,0,1)$.
-    \item The Boolean semiring $\mathbb B$: $(\{\bot,\top\},\lor,\land,\bot,\top)$.
-    \item The Why-provenance semiring over a set of variables $X$: $({2^2}^X,\cup,\Cup,\emptyset,\{\emptyset\})$ where $\Cup$ is defined as follows: $A\Cup B := \{a\cup b \mid a\in A, b\in B\}$.
+    \item The Boolean semiring $\mathbb B$: $(\{\top,\bot\},\lor,\land,\bot,\top)$.
+    \item The Why-provenance semiring over a set of variables $X$:
+      $(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\})$ where $\Cup$ is defined as follows: $A\Cup B := \{a\cup b \mid a\in A, b\in B\}$.
   \end{itemize}
 \end{example}
 
@@ -58,11 +60,11 @@ An m-semiring $(\mathbb K, \oplus, \otimes, \ominus, \mathbb 0, \mathbb
     \item \lean{SemiringWithMonus}{monus_add}
       $(a\ominus b)\ominus c = a\ominus(b\oplus c)$;
     \item \lean{SemiringWithMonus}{monus_self}
-      \lean{SemiringWithMonus}{zero_monus} $a\ominus a = \mathbb 0\ominus a=\mathbb 0$.
+      \lean{SemiringWithMonus}{zero_monus} $a\ominus a = \mathbb 0\ominus a=\mathbb 0$;
     \item \lean{SemiringWithMonus}{monus_zero} $a\ominus 0=a$.
   \end{itemize}
 
-Additionally to the their definition, m-semirings may have other properties. Useful ones are:
+In addition to their definition, m-semirings may have other properties. Useful ones are:
 \begin{itemize}
   \item \textbf{Commutativity of $\otimes$}: $\forall a,b\in \mathbb K$, $a\otimes b = b\otimes a$.
   \item \textbf{Idempotence}: \lean{SemiringWithMonus}{idempotent} $\forall a\in \mathbb K$, $a\oplus a = a$.
@@ -71,9 +73,9 @@ Additionally to the their definition, m-semirings may have other properties. Use
     \lean{SemiringWithMonus}{mul_sub_left_distributive} $\forall a,b,c\in
     \mathbb K$, $a\otimes (b\ominus c) = (a\otimes b) \ominus (a\otimes
     c)$.
-  \item \textbf{Characteristic~$0$}: \(\forall n\geq 0,
+  \item \textbf{Characteristic~$0$}: \(\forall n\geq 1,
     \underbrace{\mathbb{1}+\dots+\mathbb{1}}_{\text{$n$ times}} \neq
-    \mathbb{0}$.
+    \mathbb{0}\).
 \end{itemize}
 
 \input{table_semirings}
@@ -89,30 +91,30 @@ Table~\ref{tab:semirings} summarizes the definitions of the $\ominus$
 operator and whether they satisfy the other four properties above for
 the semirings in Example~\ref{ex:semirings}, along with the Boolean
 function semiring \cite{green2007provenance,senellart2017provenance}, the
-Which[$X$] or \emph{lineage} semiring \cite{green2017provenance}, the
+Which[$X$] semiring \cite{green2017provenance}, the
 Temporal semiring of unions of intervals
 used in temporal databases
-\cite{widiaatmaja2025demonstration}, the tropical semiring \cite{green2007provenance}, the Viterbi semiring
+\cite{widiaatmaja2025demonstration}, the tropical semirings \cite{green2007provenance}, the Viterbi semiring
 \cite{green2017provenance}, the security or access control semiring
 \cite{green2017provenance}, the $\mathbb{N}[X]$ or How[$X$] semiring
 \cite{green2007provenance} and the \L ukasiewicz semiring
 \cite{gradel2005provenance}.
-We note that only the Boolean, Boolean function, Tropical, Viterbi and \L
+We note that only the Boolean, Boolean function, Temporal, Tropical (over
+$\mathbb{N}$), Viterbi, and \L
 ukasiewicz semirings are idempotent, absorptive and have $\otimes$
 distributive over~$\ominus$.
 These properties will be important for the semantics of \sql{HAVING}
 queries. Note that this table, along with the formal Lean proofs that
-ensure its validity, allows
-to fix in a definitive way a
-few erroneous statements in the literature: \cite{geerts2010database} had
-wrongly claimed that the tropical semiring over reals could not be equipped with a
+ensure its validity, definitively fixes
+a
+few erroneous statements in the literature: \cite{geerts2010database}
+wrongly claimed that the tropical semiring over reals could not be equipped with
 $\ominus$; \cite{amsterdamer2011limitations} wrongly claimed that
-both $\mathbb{N}[X]$ and Why[$X$] had a $\otimes$ distributive over $\ominus$
-(called Axiom A13 in \cite{amsterdamer2011provenance}). We stress that
-errors are bound to happen given some counter-intuitive properties of
-these elementary building blocks of data provenance, and that it
-is important to have clean, formally proven definitions and properties,
-which is one of the contributions of this work.
+both $\mathbb{N}[X]$ and Why[$X$] had $\otimes$ distributive over $\ominus$
+(called Axiom A13 in \cite{amsterdamer2011provenance}). Such errors are
+easy to make given some counter-intuitive properties of
+these basic building blocks; clean, formally proven statements
+are one of the contributions of this work.
 
 For queries with grouping and aggregation, an additional useful notion
 \cite{amsterdamer2011provenance} is that of \emph{$\delta$-semirings},
@@ -121,7 +123,7 @@ K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb
 0)=\mathbb 0$ and (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb
 1)=\mathbb 1$. Semirings in which a $\delta$ can be defined are exactly
 those of characteristic~$0$
-  \lean{SemiringWithMonus}{delta_exists_iff_charP_zero}.
+\lean{SemiringWithMonus}{delta_exists_iff_charP_zero}.
 Intuitively, $\delta$ is used to capture the semantics of the
 existence of a group. For reasons we will explain later on, we fix the
 definition of $\delta$ to be $\delta(x)=x$ in
@@ -260,23 +262,24 @@ We use the notion of annotated relations initially introduced in
 \cite{green2007provenance}, relying on the setting (in particular where
 relations are multiset of tuples) and definitions introduced in detail in
 \cite[Section IV]{sen2026provsql}.
-In short, if $\mathcal{V}$ if the (usually infinite countable) set of
+In short, if $\mathcal{V}$ is the (usually countably infinite) set of
 data values used within regular relations, given a commutative m-semiring
 $\mathbb K$ and a set $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of
-values (which can be either $\mathcal V$ or an extension of it) a
+values (either $\mathcal V$ or an extension of it) a
 $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb
 K}$ is a multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb
 K$ which we usually denote $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$.
 We call $\alpha$ the annotation of the tuple $u$.
 
-A $\mathbb K$-instance, usually denoted as $\hat I$ over a database schema $\mathcal D$ is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
-We consider, instead of attribute names, their \emph{positional index}, denoted by $\#i$ for $i\in \mathbb N^*$.
-A \emph{term} is then an expression involving values from $\mathcal V$ and positional indices, and the \emph{max-index} of a term is the largest positional index appearing in it ($0$ if none appear).
+A $\mathbb K$-instance, usually denoted as $\hat I$, over a database
+schema $\mathcal D$, is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
+We consider, instead of attribute names, their \emph{positional indices}, denoted by $\#i$ for $i\in \mathbb N^*$.
+A \emph{term} is then an expression involving values from $\mathcal V$ and positional indices, and the \emph{max-index} of a term is the largest positional index appearing in it ($0$ if none appear). Given a tuple $u=(u_1,\dots,u_k)$ and a term $t$ of max-index $\leq k$ we can define $t(u)\in \mathcal V$ that evaluates the term expression after replacing the positional indices in it with the respective attribute values of the tuple. Given a finite sequence of tuples $(u_{i_1},\dots,u_{i_n})$ we define the pointwise evaluation of a well-defined term t on them as $\pi_{t}((u_{i_1},\dots,u_{i_n}))=(t(u_{i_1}),\dots,t(u_{i_n}))$.
 
 The semantics of a query $q$ over annotated relations, denoted as
 $\angsem{\hat I}{q}$, is defined in \cite{sen2026provsql} over $\mathbb
 K$-relations for each operator of the relational
-algebra extended with a grouping and aggregation operator inspired from
+algebra extended with a grouping and aggregation operator inspired by
 \cite{DBLP:journals/tcs/Libkin03}.
 There, semantics of aggregation queries were defined only for
 \emph{terminal aggregation}, i.e., when aggregation is the last operator of the query.

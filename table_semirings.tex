@@ -43,12 +43,19 @@ $a\setminus b$&
 \ok\ \lean{Semirings/IntervalUnion}{IntervalUnion.absorptive}&
 \ok\ \lean{Semirings/IntervalUnion}{IntervalUnion.mul_sub_left_distributive}&
 \ok\ \lean{Semirings/IntervalUnion}{IntervalUnion.instCharPZero}\\
-Tropical \lean{Semirings/Tropical}{instCommSemiringWithMonusTropicalWithTopNat}&
+Tropical ($\mathbb{N}$) \lean{Semirings/Tropical}{instCommSemiringWithMonusTropicalWithTopNat}&
 if $a\geq b$ then $+\infty$ else $a$&
 \ok\ \lean{Semirings/Tropical}{Tropical.idempotent}&
 \ok\ \lean{Semirings/Tropical}{TropicalN.absorptive}&
 \ok\ \lean{Semirings/Tropical}{TropicalN.mul_sub_left_distributive}&
 \ok\ \lean{Semirings/Tropical}{TropicalN.instCharPZero}\\
+Tropical ($\mathbb{R}$)
+\lean{Semirings/Tropical}{instCommSemiringWithMonusTropicalWithTopReal}&
+if $a\geq b$ then $+\infty$ else $a$&
+\ok\ \lean{Semirings/Tropical}{Tropical.idempotent}&
+\ko\ \lean{Semirings/Tropical}{TropicalR.not_absorptive}&
+\ok\ \lean{Semirings/Tropical}{TropicalR.mul_sub_left_distributive}&
+\ok\ \lean{Semirings/Tropical}{TropicalR.instCharPZero}\\
 Viterbi
 \lean{Semirings/Viterbi}{Viterbi.instCommSemiringWithMonus}&
 if $a\leq b$ then $0$ else $a$&

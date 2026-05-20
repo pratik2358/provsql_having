@@ -54,9 +54,9 @@ $
 U^{\hat I}_{q,\vec v} \defeq (\, (u_r,\alpha_r)\in \angsem{\hat I}{q} | (u_{r,i_1},\dots,u_{r,i_m})=\vec v \,)_{1\leq r\leq|\angsem{\hat I}{q}|}$, then for any \emph{possible-world} of $\vec v$, $W\subseteq [|U^{\hat I}_{q,\vec v}|]$, we define its $\mathbb{K}-$annotation as
 $
 \ann^{\hat I}_{q,\vec v}(W) \defeq
-\Bigl( \bigotimes_{U^{\hat I}_{q,\vec v}[r], r\in W}\alpha_r \Bigr)
+\Bigl( \bigotimes_{r\in W}(U^{\hat I}_{\substack{q,\vec v}})_r[\alpha] \Bigr)
  \otimes
- \Bigl( \mathbb{1} \ominus \bigoplus_{U^{\hat I}_{q,\vec v}[r], r\in [|U^{\hat I}_{q,\vec v}|]\setminus W}\alpha_r \Bigr)
+ \Bigl( \mathbb{1} \ominus \bigoplus_{r\in [|((U^{\hat I}_{q,\vec v})_r)|]\setminus W}(U^{\hat I}_{q,\vec v})_r[\alpha] \Bigr)
 $
 where, empty $\otimes$-products equal $\mathbb{1}$ and empty $\oplus$-sums equal $\mathbb{0}$.
 
@@ -107,12 +107,10 @@ and $\psi=(t:f)\ \op\ (t':f')$ or $\psi=(t:f)\ \op\ t'$ where max-index of $t,t'
 For $\psi = (t:f) \op (t':f')$,
 \[
 \predsem{\hat I}{q}{\psi}(u)\defeq
-  \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
+\bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
 \Bigl(
 \ann^{\hat I}_{q',\vec v}(W)\otimes
-\chi_{\op}\bigl(f(\mset{\, t(u) \mid (u,\alpha)\in W\,}
-),\ f'(\mset{\, t'(u) \mid (u,\alpha)\in W\,}
-)\bigr)
+\chi_{\op}\bigl(f(\pi_t(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})),\ f'(\pi_{t'}(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})) \bigr)
 \Bigr)
 \]
 
@@ -120,11 +118,10 @@ For $\psi = (t:f) \op (t':f')$,
 and for $\psi = (t:f) \op t'$,
 \[
 \predsem{\hat I}{q}{\psi}(u)\defeq
-  \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
+\bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
 \Bigl(
 \ann^{\hat I}_{q',\vec v}(W)\otimes
-\chi_{\op}\bigl(f(\mset{\, t(u) \mid (u,\alpha)\in W\,}
-),\ t'(u)\bigr)
+\chi_{\op}\bigl(f(\pi_t(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})),\ t'(u)\bigr)
 \Bigr)
 \]
 where, for $u=(\vec v,a_1,\dots,a_n)\in\mathcal V^{m+n}$ ,
@@ -148,7 +145,7 @@ Now, for $u\in\mathcal V^k$, let $\psi_1$ and $\psi_2$ be arbitrary selection pr
 \end{definition}
 
 
-\begin{definition}[Provenance for HAVING-like queries]Let $\hat I$ be a $\mathbb K$-instance, let $k\in\NN$, let $q\in\RA_k$, and let $\psi$ be
+\begin{definition}[Provenance for \sql{HAVING}-like queries]Let $\hat I$ be a $\mathbb K$-instance, let $k\in\NN$, let $q\in\RA_k$, and let $\psi$ be
 a well-formed selection predicate over arity $k$.
 We define:
 % \[
@@ -168,8 +165,8 @@ We define:
 \end{definition}\label{def:semantics}
 
 \smallskip\noindent\emph{Note:}
-For any aggregate comparison atom, if $U^{\hat I}_{q',\vec v}=\emptyset$ then every output
-tuple $u$ with group key $\vec v$, we have $\predsem{\hat I}{q}{\theta}(u)=\mathbb 0$.
+For any aggregate comparison atom, if $((U^{\hat I}_{q',\vec v})_r)=()$ then every output
+tuple $u$ with group key $\vec v$, we have $\predsem{\hat I}{q}{\psi}(u)=\mathbb 0$.
 Since the possible-world semantics
 ranges over non-empty worlds only.
 So multiplying the possible world provenance
