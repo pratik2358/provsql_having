@@ -45,21 +45,24 @@ which itself is based on that of
 We extend the semantics of the \emph{selection} operator to allow
 comparisons of aggregate values (i.e., non-terminal aggregates) using a
 possible-world semantics.
-\pierre{We need to add an ordering function on aggregation.}
-We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions:
-
+%\pierre{We need to add an ordering function on aggregation.}
+%We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions:
 \begin{definition}
 Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a $k$-ary
 extended relational algebra query $q$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, we define
-the sequence of occurrences of tuples in $k$ involved as
-$
-U^{\hat I}_{q,\vec v} \defeq (\, (u_r,\alpha_r)\in \angsem{\hat I}{q} | (u_{r,i_1},\dots,u_{r,i_m})=\vec v \,)_{1\leq r\leq|\angsem{\hat I}{q}|}$, then for any \emph{possible-world} of $\vec v$, $W\subseteq [|U^{\hat I}_{q,\vec v}|]$, we define its $\mathbb{K}-$annotation as
-$
+the multiset of tuples involved as a set of their occurrences, \[U^{\hat I}_{q,\vec v}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1},\dots,u_{i_m})=\vec v \}\]
+Fix an ordering function $\omega:U^{\hat I}_{q,\vec v}\rightarrow(\mathbb U,\leq_{\omega})$ into a totally ordered set $(\mathbb U,\leq_{\omega})$. 
+Now, for an $\omega$-ordered sequence of $U^{\hat I}_{q,\vec v}$,
+\[
+  ((U^{\hat I}_{q,\vec v})_n^{\omega})\defeq((u_1,\alpha_1),\dots,(u_n,\alpha_n)\,|\,\forall\, 1\leq p< s\leq n=|U^{\hat I}_{q,\vec v}|,\, (u_p,\alpha_p,o_p)\leq_{\omega}(u_s,\alpha_s,o_s))
+\]
+and for any \emph{possible-world} of $\vec v$, $W\subseteq [|U^{\hat I}_{q,\vec v}|]$, we define its $\mathbb{K}-$annotation as,
+\[
 \ann^{\hat I}_{q,\vec v}(W) \defeq
-\Bigl( \bigotimes_{r\in W}(U^{\hat I}_{\substack{q,\vec v}})_r[\alpha] \Bigr)
+\Bigl( \bigotimes_{r\in W}(U^{\hat I}_{\substack{q,\vec v}})_r^\omega[\alpha] \Bigr)
  \otimes
- \Bigl( \mathbb{1} \ominus \bigoplus_{r\in [|((U^{\hat I}_{q,\vec v})_r)|]\setminus W}(U^{\hat I}_{q,\vec v})_r[\alpha] \Bigr)
-$
+ \Bigl( \mathbb{1} \ominus \bigoplus_{r\in [|U^{\hat I}_{q,\vec v}|]\setminus W}(U^{\hat I}_{q,\vec v})_r^\omega[\alpha] \Bigr)
+\]
 where, empty $\otimes$-products equal $\mathbb{1}$ and empty $\oplus$-sums equal $\mathbb{0}$.
 
 \end{definition}
