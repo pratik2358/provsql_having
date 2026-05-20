@@ -774,32 +774,34 @@ NP-hard problem. Take a finite multiset $M=\{\{m_1,\dots,m_n\}\}$ of $n$ natural
   whether there is a sub-multiset of $M$ that sums to exactly $B$.
 
   We construct a $\mathbb N$-instance $D$ formed of a unary relation
-  $R(v)$ containing $n$ tuples $(m_1), \dots, (m_n)$, each tuple $t_i$
+  $R(v)$ containing $n$ tuples $(m_{i_1}), \dots, (m_{i_n})$, each tuple $t_i$
   being annotated with provenance $\mathbb{1}_\mathbb{K}$.
 
   We fix the query
   \begin{minted}{sql}
-SELECT DISTINCT 1 FROM R HAVING SUM(v) = B
+q: SELECT DISTINCT 1 FROM R HAVING SUM(v) = B
   \end{minted}
 
   The provenance of the result $(1)$ in this query is, following
   Definition~\ref{def:semantics}:
 
-  \pierre{Review the notation, finalize the expression, and make sure they align after semantics
-  have been revised.}
+  %\pierre{Review the notation, finalize the expression, and make sure they align after semantics
+  %have been revised.}
 
 \[
-  \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
+   \bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
 \Bigl(
-  \mathbb{1}\otimes
-\chi_{\op}\bigl(\Sigma(\vals_t(W)), B)\bigr)
-\Bigr)=
-  \bigoplus_{\substack{W\msubseteq U^{\hat I}_{q',\vec v}\\ W\neq\emptyset}}
-\Bigl(
-\chi_{\op}\bigl(f(\vals_t(W)), B)\bigr)
+  \mathbb{1}_{\mathbb K}\otimes
+  \chi_{\op}\bigl(f_\Sigma(\pi_{\#1}(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})), B)\bigr)
 \Bigr)
+=
+\bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
+\Bigl(
+  \chi_{\op}\bigl(\Sigma_{j\in W} m_{i_j}, B)\bigr)
+\Bigr),
 \]
-which is non-zero if and only if one of the term of the $\oplus$ ssum is non-zero since
+where $q'$ is the subquery before the implicit \sql{GROUP BY} on all tuples in $R$ with group key $\vec v=()$.
+This is non-zero if and only if one of the term of the $\oplus$ sum is non-zero since
 $\mathbb K$ has characteristic 0, i.e., if the subset-sum instance has a
 solution.
 \end{proof}
