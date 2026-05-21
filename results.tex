@@ -789,18 +789,18 @@ q: SELECT DISTINCT 1 FROM R HAVING SUM(v) = B
   %have been revised.}
 
 \[
-   \bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
+   \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q',\vec v}|]\\ W\neq\emptyset}}
 \Bigl(
   \mathbb{1}_{\mathbb K}\otimes
-  \chi_{\op}\bigl(f_\Sigma(\pi_{\#1}(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})), B)\bigr)
+  \chi_{\op}\bigl(f_\Sigma(\pi_{\#1}(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W}^\omega)), B\bigr)
 \Bigr)
 =
-\bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
+\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q',\vec v}|]\\ W\neq\emptyset}}
 \Bigl(
   \chi_{\op}\bigl(\Sigma_{j\in W} m_{i_j}, B)\bigr)
 \Bigr),
 \]
-where $q'$ is the subquery before the implicit \sql{GROUP BY} on all tuples in $R$ with group key $\vec v=()$.
+where $q'$ is the subquery before the implicit \sql{GROUP BY} on all tuples in $R$ with group key $\vec v=()$ and $\omega$ is any arbitrary ordering since our aggregate here is commutative.
 This is non-zero if and only if one of the term of the $\oplus$ sum is non-zero since
 $\mathbb K$ has characteristic 0, i.e., if the subset-sum instance has a
 solution.
