@@ -112,10 +112,10 @@ and $\psi=(t:f)\ \op\ (t':f')$ or $\psi=(t:f)\ \op\ t'$ where max-index of $t,t'
 For $\psi = (t:f) \op (t':f')$,
 \[
 \predsem{\hat I}{q}{\psi}(u)\defeq
-\bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
+\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q',\vec v}|]\\ W\neq\emptyset}}
 \Bigl(
 \ann^{\hat I}_{q',\vec v}(W)\otimes
-\chi_{\op}\bigl(f(\pi_t(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})),\ f'(\pi_{t'}(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})) \bigr)
+\chi_{\op}\bigl(f(\pi_t(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W}^\omega)),\ f'(\pi_{t'}(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W}^\omega)) \bigr)
 \Bigr)
 \]
 
@@ -123,10 +123,10 @@ For $\psi = (t:f) \op (t':f')$,
 and for $\psi = (t:f) \op t'$,
 \[
 \predsem{\hat I}{q}{\psi}(u)\defeq
-\bigoplus_{\substack{W\subseteq [|((U^{\hat I}_{q',\vec v})_r)|]\\ W\neq\emptyset}}
+\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q',\vec v}|]\\ W\neq\emptyset}}
 \Bigl(
 \ann^{\hat I}_{q',\vec v}(W)\otimes
-\chi_{\op}\bigl(f(\pi_t(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W})),\ t'(u)\bigr)
+\chi_{\op}\bigl(f(\pi_t(((U^{\hat I}_{q',\vec v})_r[u])_{r\in W}^\omega)),\ t'(u)\bigr)
 \Bigr)
 \]
 where, for $u=(\vec v,a_1,\dots,a_n)\in\mathcal V^{m+n}$ ,
@@ -175,7 +175,7 @@ tuple $u$ with group key $\vec v$, we have $\predsem{\hat I}{q}{\psi}(u)=\mathbb
 Since the possible-world semantics
 ranges over non-empty worlds only.
 So multiplying the possible world provenance
-expression with $\alpha$( which is a $\delta(\cdot)$-type provenance expression to enforce group existence) is redundant.
+expression with $\alpha$ (which is a $\delta(\cdot)$-type provenance expression to enforce group existence) is redundant.
 
 % \pierre{What precedes need to be made more formal (e.g., there should be
 %   a formal definition of a semiring with~$\delta$, and of a semimodule,
