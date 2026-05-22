@@ -400,48 +400,21 @@ For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{
     suffices to show that for each group produced by
     the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with
     that produced by the self-join query.
-Since \(q\) is an arity~$2$ query, every tuple in its output has the form
-\((\#1,\#2)\).
-Fix a value \(a\) of attribute \(\#1\), arbitrarily.
+    Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$.
+Fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
+% \smallskip\noindent\emph{Note: }\textit{For simplicity, we assume set semantics, i.e, $q$ produces no duplicate output tuples. In this setting, for a fixed group key $a$ selecting $C$ tuples whose second attributes form a strict join chain is the same as requiring the existence of $C-$ distinct tuples in the group. The same proof idea can be extended to multiset-semantics by treating duplicate tuples as distinct tuple occurences (e.g. by indexing inside groups) and refining the strict-ordering predicate in the join chain with this new tie-breaking attribute so that it is possible to select distinct tuple occurences with equal second attributes in increasing order.}
 
-\smallskip\noindent\emph{Note: }\textit{For simplicity, we assume set semantics, i.e, $q$ produces no duplicate output tuples. In this setting, for a fixed group key $a$ selecting $C$ tuples whose second attributes form a strict join chain is the same as requiring the existence of $C-$ distinct tuples in the group. The same proof idea can be extended to multiset-semantics by treating duplicate tuples as distinct tuple occurences (e.g. by indexing inside groups) and refining the strict-ordering predicate in the join chain with this new tie-breaking attribute so that it is possible to select distinct tuple occurences with equal second attributes in increasing order.}
-
-We define
-\[
-  U \;=\; \{\, (a,\#2) \mid (a,\#2) \in q \,\}.
-\]
-  That is, \(U\) is a set of tuples in \(q\) corresponding to group-key \(a\).
-  Each \(u \in U\) has provenance
-  \(\alpha_u \in \mathbb{K} \) and
-  contributes the value \(1 \in M(\mathbb{N},+,.)\) to the count aggregate.
-
-\smallskip\noindent\emph{Note: }\textit{Again, for multiset-semantics $U$ is to be defined as a finite index set of tuple-occurences of tuples in $q$ for a particular group-key. And each $u\in U $ will have provenance $\alpha_u\in\mathbb{K}$}
-
-The provenance of the output tuple corresponding
-  to group-key \(a\) depends exclusively on the tuples in $U$.
-Tuples whose first attribute is different from \(a\) do not contribute to
-this group and are therefore irrelevant for the computation of its
-provenance.
-Consider the query
-\[
+So,
+\[U^{\hat I}_{q,(a)}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1})=(a) \}\]
+For the query 
+$
 Q^{\op C}_1
 =
 \Pi_{\#1}\bigl(
 \sigma_{\#2 \op C}(
   \gamma_{\#1}[1:+](q)
-)\bigr).
-\]
-For the group with key value $a$, the operator \(\gamma_{\#1}[1:+]\) produces a single aggregate
-\[
-\mathcal{a}
-=
-  \bigoplus_{\substack{\mathcal{M} \\ u \in U}} (\alpha_u,1)
-\in \mathcal M .
-\]
-Applying the selection \(\sigma_{\#2 \op C}\) corresponds to evaluating the
-aggregate-comparison predicate \([\mathcal{a} \op C]\).
-By our possible-world semantics, the provenance annotation of the output
-tuple corresponding to group-key \(a\) is,
+)\bigr)
+$
 \begin{equation}\label{eq:Q1-prov}
 \angsem{\hat I}{Q^{\op C}_1}(a)
 =
