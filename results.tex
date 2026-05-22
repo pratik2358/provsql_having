@@ -415,25 +415,27 @@ Q^{\op C}_1
   \gamma_{\#1}[1:+](q)
 )\bigr)
 $
-\begin{equation}\label{eq:Q1-prov}
+\begin{multline}\label{eq:Q1-prov}
 \angsem{\hat I}{Q^{\op C}_1}(a)
-=
-  \bigoplus_{W \subseteq U}
+=\predsem{\hat I}{\gamma_{\#1}[1:+](q)}{\#2\op C}(u)
+=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\ W\neq\emptyset}}
 \Bigl(
-  \bigotimes_{u\in W} \alpha_u
-\;\otimes\;
-  [|W|\op C]
-\;\otimes\;
-\bigl(
-  \mathbb{1}_\mathbb{K} \ominus \bigoplus_{u \in U \setminus W} \alpha_u \bigr)
-\Bigr).
-\end{equation}
+\ann^{\hat I}_{q,(a)}(W)\otimes
+\chi_{\op}\bigl(f_{\Sigma}(\pi_{1}(((U^{\hat I}_{q,(a)})_r[u])_{r\in W}^\omega)),\ C\bigr)
+\Bigr)\\
+=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\ W\neq\emptyset}}
+\Bigl(
+\ann^{\hat I}_{q,(a)}(W)\otimes
+\chi_{\op}\bigl(\Sigma_{r\in W} 1,\ C\bigr)
+\Bigr)
+\end{multline}
+where for any arbitrary ordering $\omega$ our commutative aggregate \sql{COUNT} is denoted as $f_\Sigma$.
 \\
-For each subset \(W \subseteq U\) such that $|W|\op C$. Let,
+For each possibel-world $W$ such that $|W|\op C$. Let,
 \[
-A_W:=\bigotimes_{w\in W}\alpha_w ,
-\qquad
-B_W:=\bigoplus_{w\in U\setminus W}\alpha_w .
+  A_W:=\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w ,
+\\
+B_W:=\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w .
 \]
 We define,
 \[
