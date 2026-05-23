@@ -34,7 +34,7 @@ where, the join-chain inequality $<^*$ is $<$ refined with some tie-breaking con
     \end{enumerate}
 \end{theoremrep}
 \begin{appendixproof}
-Finally we proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
+We proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
 \paragraph*{Proof of (i)}
 For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing
   that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
@@ -140,7 +140,7 @@ S_1([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]).
 \paragraph{\textbf{When $\op$ is $\ge$ :}}
 From \eqref{eq:pw_tw} with $\op = \ge$, we set 
 $
-F_C([|U^{\hat I}_{q,(a)}|])\ :=\ \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
+F_C([|U^{\hat I}_{q,(a)}|])\defeq \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
 $
 So,
 \begin{equation}\label{eq:PW_ge_equals_F}
@@ -312,7 +312,68 @@ $
 $
 \end{appendixproof}
 \begin{proofsketch}
-For any idempotent (follows from absorptivity) $m$-semiring $\mathbb K$ we first obtain a weak bound on $\mathbb K$-element(s) implying joint tuple-presence in corresponding \emph{possible-worlds}.
+For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing
+  that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
+    $\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ apply the same relational algebra operators to the same subquery $q$
+    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically. Hence, it
+    suffices to show that for each group produced by
+    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with
+    that produced by the self-join query.
+    Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$.
+Fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
+So,
+\[U^{\hat I}_{q,(a)}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1})=(a) \}\]
+We claim that 
+\[
+\angsem{\hat I}{Q^{\op C}_1}(a)
+=\predsem{\hat I}{\gamma_{\#1}[1:+](q)}{\#2\op C}(u)
+=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\ W\neq\emptyset,\\|W|\op C}} T_{[|U^{\hat I}_{q,(a)}|]}(W)
+=F_C([|U^{\hat I}_{q,(a)}|])
+\]
+where 
+$
+T_{[|U^{\hat I}_{q,(a)}|]}(W)= A_W\ominus \bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}A_{W\cup\{w\}}
+$
+is indeed the $\ann^{\hat I}_{q,(a)}(W)$ for each possible-world $W\subseteq [|U^{\hat I}_{q,(a)}|]$, 
+$A_W=\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w$ and 
+$B_W=\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w$.
+For, query $Q^{\ge C}_2$ we show that 
+\[
+\angsem{\hat I}{Q^{\ge C}_2}(a)
+=S_C([|U^{\hat I}_{q,(a)}|]).
+\tag{$J_{\ge}$}
+\]
+
+where for every $W\subseteq [|U^{\hat I}_{q,(a)}|] $ and $C\ge 1$ we define,
+\[
+S_C([|U^{\hat I}_{q,(a)}|]):=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|] \\|W|=C}} A_W
+\quad
+(\text{with }S_C([|U^{\hat I}_{q,(a)}|])=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
+\]
+A join-valuation contributing to the output
+tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
+attribute $a$ and strictly increasing second attributes (due to the chain of
+join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurence attribute as in $U^{\hat I}_{q,(a)}$ so that it is possible to select distinct tuple occurences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
+$C$-element subset $W\subseteq[|U^{\hat I}_{q,(a)}|]$, and
+$\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
+By definition,
+\[
+Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2,
+\qquad
+Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2,
+\]
+Hence, using $(J_{\ge})$,
+\[
+\angsem{\hat I}{Q^{=C}_2}(a)
+=
+S_C([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]),
+\quad
+\angsem{\hat I}{Q^{\le C}_2}(a)
+=
+S_1([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]).
+\tag{$J_{=,\le}$}
+\]
+We now claim a weak bound on $\mathbb K$-element(s) implying joint tuple-presence in corresponding \emph{possible-worlds}.
 
 \begin{lemmarep}\label{lem:upward-expansion}
 \lean{Having}{Having.upward_expansion}
@@ -407,7 +468,7 @@ since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{appendixproof}
 
-Using Lemma~\ref{lem:upward-expansion} we claim that $\mathbb K$-provenance expressions arising from provenance evaluation using the possible-world semantics in Section~\ref{sec:semantics} for queries that involve $\ge$-comparisons between \sql{COUNT} aggregates and some constant $C\in \mathbb{N}_{\ge 1}$, can be expressed as recurrences on C, given that $\mathbb K$ satisfies certain $m$-semiring properties.
+By virtue of lemma~\ref{lem:upward-expansion} and other properties of $m$-semiring we state the following lemmas that we will need in our proof to establish recurrences for $F_C([|U^{\hat I}_{q,(a)}|])$ and $S_C([|U^{\hat I}_{q,(a)}|])$. 
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 \lean{Having}{Having.FC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring.
@@ -534,8 +595,7 @@ Together with \eqref{eq:leq-direction}, this yields
 F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\beta),
 \]
 as required.
-\end{appendixproof}
-We also formalize a standard recurrence for the natural \sql{JOIN}-based provenance expression, for such queries.
+\end{appendixproof} 
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
   Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an m-semiring.
@@ -648,6 +708,57 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
 \]
 as required.
 \end{appendixproof}
+If we set $U=[|U^{\hat I}_{q,(a)}|]$ and and $(\alpha_u)_{u\in U}=((U^{\hat I}_{q,(a)})_u[\alpha])_{u\in U}^\omega$ then, by Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$,
+\[
+F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr).
+\tag{R$_F$}
+\]
+Similarly, by Lemma~\ref{lem:SC_recurrence}, $S_C(U)$ can be shown to satisfy the same recurrence:
+\[
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)
+\qquad(C\ge 1).
+\tag{R$_S$}
+\]
+We prove that $F_C(U)=S_C(U)$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}.
+That is, $F_C([|U^{\hat I}_{q,(a)}|])=S_C([|U^{\hat I}_{q,(a)}|])$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(J_{\ge})$,
+\[
+\angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
+\]
+For $n\in\mathbb N$ we have, 
+$\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)$ and $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$.  
+We show that 
+\[\angsem{\hat I}{Q^{=C}_1}(a)
+=
+\angsem{\hat I}{Q^{\ge C}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a)\]
+and,
+\[
+\angsem{\hat I}{Q^{\le C}_1}(a)
+=
+\angsem{\hat I}{Q^{\ge 1}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
+\]
+By the already established $\ge$-case,
+$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. 
+Therefore, 
+$
+\angsem{\hat I}{Q^{=C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])\ominus S_{C+1}([|U^{\hat I}_{q,(a)}|])=\angsem{\hat I}{Q^{=C}_2}(a)
+$ by $(J_{=,\le})$. 
+Similarly, $\angsem{\hat I}{Q^{\ge 1}_1}(a)=S_1([|U^{\hat I}_{q,(a)}|])$ and
+$\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. 
+
+Hence
+$
+\angsem{\hat I}{Q^{\le C}_1}(a)
+=
+S_1([|U^{\hat I}_{q,(a)}|])\ominus S_{C+1}([|U^{\hat I}_{q,(a)}|])
+=
+\angsem{\hat I}{Q^{\le C}_2}(a)
+$ by $(J_{=,\le})$.
+
+\smallskip
+Since group key $(a)$ was arbitrary, we conclude
+$\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
+$\op\in\{\ge,=,\le\}$. 
+This proves $(i)$. For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and establish counterexamples.
 \end{proofsketch}
 
 % \begin{proof}[Proof sketch]
@@ -671,8 +782,7 @@ as required.
 % \]
 % For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the non-trivial part: it relies on the algebraic properties of $\ominus$ together with a bounding lemma: products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
 %
-% Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and show counterexamples.
-% \end{proof}
+% Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). % \end{proof}
 
 \begin{proposition}
 \pierre{PQE result}
