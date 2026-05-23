@@ -1,9 +1,6 @@
 \section{Main Results}
 \label{sec:results}
 \pierre{3.5 pages: main theorem, proof arguments, complexity}
-
-We reason on the generality and correctness of the possible-world semantics we proposed for aggregate comparison predicates, by showing that our semantics agrees with that of standard \sql{JOIN}-equivalent queries for simple \sql{HAVING COUNT(*)} queries. Concretely we show that if we restrict our domain of provenance annotations to a commutative m-semiring with two other algebraic constraints: additive idempotence and distributivity of $\otimes$ over $\ominus$, provenance evaluation using our possible-world semantics is equivalent to the provenance evaluated for the \sql{JOIN}-based rewritings of simple \sql{HAVING COUNT(*)} queries.
-
 \begin{theorem}\label{th:correctness}
   For any arity~$2$ query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
   =,\geq\}$ consider the queries:
@@ -432,14 +429,17 @@ $
 \end{multline}
 where for any arbitrary ordering $\omega$ our commutative aggregate \sql{COUNT} is denoted as $f_\Sigma$.
 \\
-For each possible-world $W$, let 
+For each possible-world $W\subseteq [|U^{\hat I}_{q,(a)}|]$, if we denote 
 \begin{align*}
-A_W&:=\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w\\
-B_W&:=\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w\\
-T_W&:=\ A_W \otimes \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\\ 
+&A_W=\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w\\
+&B_W=\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w\\
+\end{align*}
+then,
+\begin{align*}
+T_{[|U^{\hat I}_{q,(a)}|]}(W)&:=\ A_W \otimes \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\\ 
 &= A_W\ominus \bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}A_{W\cup\{w\}} \;\textit{[ by distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$]}
 \end{align*}
-such that, $\ann^{\hat I}_{q,(a)}(W)=T_W.$
+such that, $\ann^{\hat I}_{q,(a)}(W)=T_{[|U^{\hat I}_{q,(a)}|]}(W).$
 % By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
 % \begin{align*}
 % T_U(W)
@@ -453,25 +453,25 @@ Since $\chi_{\op}(|W|\op C)=\mathbb{1}_\mathbb{K}$ iff $|W|\op C$ is true and $\
 \begin{equation}\label{eq:pw_tw}
 \angsem{\hat I}{Q^{\ge C}_1}(a)
 =
-\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\ W\neq\emptyset,\\|W|\op C}} T_W.
+\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\ W\neq\emptyset,\\|W|\op C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
 \end{equation}
 \smallskip\noindent\emph{Provenance of the join queries:}
 For every $W\subseteq [|U^{\hat I}_{q,(a)}|] $ and $C\ge 1$ we define,
 \[
-S_C \;:=\; \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|] \\|W|=C}} A_W
+S_C([|U^{\hat I}_{q,(a)}|]):=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|] \\|W|=C}} A_W
 \quad
-(\text{with }S_C=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
+(\text{with }S_C([|U^{\hat I}_{q,(a)}|])=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
 \]
-Consider the query $Q^{\ge C}_2$.  A valuation contributing to the output
+Consider the query $Q^{\ge C}_2$.  A join-valuation contributing to the output
 tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
 attribute $a$ and strictly increasing second attributes (due to the chain of
-join conditions $\#2<^*\#4<^*\cdots$) refined with a tie-breaking occurence attribute as in $U^{\hat I}_{q,(a)}$ so that it is possible to select distinct tuple occurences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
+join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurence attribute as in $U^{\hat I}_{q,(a)}$ so that it is possible to select distinct tuple occurences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
 $C$-element subset $W\subseteq[|U^{\hat I}_{q,(a)}|]$, and
 $\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
 Therefore,
 \[
 \angsem{\hat I}{Q^{\ge C}_2}(a)
-=S_C.
+=S_C([|U^{\hat I}_{q,(a)}|]).
 \tag{$J_{\ge}$}
 \]
 By definition,
@@ -484,40 +484,37 @@ Hence, using $(J_{\ge})$,
 \[
 \angsem{\hat I}{Q^{=C}_2}(a)
 =
-S_C \ominus S_{C+1},
-\qquad
+S_C([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]),
+\quad
 \angsem{\hat I}{Q^{\le C}_2}(a)
 =
-S_1 \ominus S_{C+1}.
+S_1([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]).
 \tag{$J_{=,\le}$}
 \]
 
 \smallskip\noindent\textbf{\emph{When $\op$ is $\ge$ :}}
-From \eqref{eq:pw_tw} with $\op = \ge$ we set,
-\[
-F_C(U)\ :=\ \bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
-\]
-Now,
+From \eqref{eq:pw_tw} with $\op = \ge$, we set 
+$
+F_C([|U^{\hat I}_{q,(a)}|])\ :=\ \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
+$
+So,
 \begin{equation}\label{eq:PW_ge_equals_F}
-\angsem{\hat I}{Q^{\ge C}_1}(a)=F_C(U).
+\angsem{\hat I}{Q^{\ge C}_1}(a)=F_C([|U^{\hat I}_{q,(a)}|]).
 \tag{$PW_{\ge}$}
 \end{equation}
 We already showed for the join query that
 \[
-\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C(U)
-\quad\text{where}\quad
-S_C(U)=\bigoplus_{\substack{W\subseteq U\\|W|=C}}A_W.
+\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C([|U^{\hat I}_{q,(a)}|])
 \tag{$J_{\ge}$}
 \]
-By Lemma~\ref{lem:FC_recurrence}, for any $u\in U$ with $U'=U\setminus\{u\}$ and $\beta=\alpha_u$,
-and for all $C\ge 1$,
+If we set $U=[|U^{\hat I}_{q,(a)}|]$ and and $(\alpha_u)_{u\in U}=((U^{\hat I}_{q,(a)})_u[\alpha])_{u\in U}^\omega$ then, by Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$,
 \[
-F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\beta\bigr).
+F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr).
 \tag{R$_F$}
 \]
-By Lemma~\ref{lem:SC_recurrence}, $S_C(U)$ satisfy the same recurrence:
+Similarly, by Lemma~\ref{lem:SC_recurrence}, $S_C(U)$ can be shown to satisfy the same recurrence:
 \[
-S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr)
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)
 \qquad(C\ge 1).
 \tag{R$_S$}
 \]
@@ -527,13 +524,13 @@ If $|U|=0$ then $U=\varnothing$ and $F_C(\varnothing)=\mathbb 0=S_C(\varnothing)
 Assume $|U|>0$ and pick $u\in U$, let $U'=U\setminus\{u\}$.
 By the induction hypothesis, $F_C(U')=S_C(U')$ and $F_{C-1}(U')=S_{C-1}(U')$.
 Applying (R$_F$) and (R$_S$) gives
-\[
+$
 F_C(U)
-=F_C(U')\oplus(F_{C-1}(U')\otimes\beta)
-=S_C(U')\oplus(S_{C-1}(U')\otimes\beta)
-=S_C(U).
-\]
-Thus $F_C(U)=S_C(U)$ for all $C\ge 1$, hence by \eqref{eq:PW_ge_equals_F} and $(J_{\ge})$,
+=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)
+=S_C(U')\oplus(S_{C-1}(U')\otimes\alpha_u)
+=S_C(U)
+$.
+Thus $F_C([|U^{\hat I}_{q,(a)}|])=S_C([|U^{\hat I}_{q,(a)}|])$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(J_{\ge})$,
 \[
 \angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
 \]
