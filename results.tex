@@ -1,6 +1,7 @@
 \section{Main Results}
 \label{sec:results}
 \pierre{3.5 pages: main theorem, proof arguments, complexity}
+We show that our semantics as formalised in Section~\ref{sec:semantics} is compatible with the \sql{JOIN}-based semantics of \sql{HAVING}-like queries when our semiring of choice is absorptive and satisfies distributivity of $\otimes$ over $\ominus$.
 \begin{theoremrep}\label{th:correctness}
   For any arity~$2$ query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
   =,\geq\}$ consider the queries:
@@ -267,17 +268,14 @@ But,
 \end{align*}
 Hence, $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
 \paragraph*{Proof of (iii)}
-
-\lean{Semirings/Tropical}{TropicalR.F_ne_S}
-
-Consider the tropical semiring
+\lean{Semirings/Tropical}{TropicalR.F_ne_S} Consider the tropical semiring
 $\mathbb K_2=(\mathbb{R}\cup\{\infty\},\min,+,\infty,0)$.
 It is idempotent, $\otimes$ distributes over $\ominus$ and is non-absorptive.
-We show that there exists a $\mathbb K_2$-instance $\hat I_2$ such that
+We show that there exists a $\mathbb K_2$-instance $\hat I$ such that
 \[
-\angsem{\hat I_2}{Q^{\op C}_1}
+\angsem{\hat I}{Q^{\op C}_1}
 \neq
-\angsem{\hat I_2}{Q^{\op C}_2}.
+\angsem{\hat I}{Q^{\op C}_2}.
 \]
 
 Fix $C=1$ and $\op=\geq$.
@@ -287,7 +285,7 @@ $
 t_1=t_2=-1$.
 So,
 \[
-\angsem{\hat I_2}{Q^{\ge1}_2}(u)
+\angsem{\hat I}{Q^{\ge1}_2}(u)
 =
 t_1\oplus t_2
 =
@@ -297,7 +295,7 @@ t_1\oplus t_2
 \]
 But,
 \[
-\angsem{\hat I_2}{Q^{\ge1}_1}(u)
+\angsem{\hat I}{Q^{\ge1}_1}(u)
 =
 (t_1\otimes(\mathbb 1 \ominus t_2)) \oplus (t_2\otimes(\mathbb 1 \ominus t_1))\oplus (t_1\otimes t_2\otimes(\mathbb 1 \ominus \mathbb 0))
 =
@@ -308,35 +306,14 @@ min(\infty,\infty,-2)
 
 Hence,
 $
-\angsem{\hat I_2}{Q^{\ge1}_1}
+\angsem{\hat I}{Q^{\ge1}_1}
 \neq
-\angsem{\hat I_2}{Q^{\ge1}_2}.
+\angsem{\hat I}{Q^{\ge1}_2}.
 $
 \end{appendixproof}
-% \begin{proof}[Proof sketch]
-% In this proof we are going to dilute some naming conventions used in our semantics for brevity. Further for simplicity we assume set semantics and later explain how our arguments can be extended to multiset semantics. The two queries $Q^{\op C}_1$ and $Q^{\op C}_2$  differ only in how they implement the \sql{HAVING} condition. So let us fix one group key value $a$ and compare the single provenance expression produced for that group; equality for every $a$ then implies equality of the full query results.
-%
-% Let us assume for now that $q$ has no duplicate tuple. For this fixed $a$, let $U$ be the finite collection of tuples of $q$ with first attribute $a$, with annotations $\alpha_u\in\mathbb K$. The query $Q^{\ge C}_2$ with strict self-join ordering predicate is designed to ``exhibit'' $C$ distinct tuples in the group: a satisfying valuation of these \sql{JOIN} conditions selects $C$ tuples (arranged by the strict inequalities in the join predicate), and the semantics contributes the product of their annotations. Summing over all satisfying valuations therefore yields the necessary provenance: the $\oplus$-sum of all products $\bigotimes_{u\in W}\alpha_u$( say $A_W$) over $C$-element choices $W\subseteq U$. Call this expression $S_C(U)$.
-%
-% The possible-world semantics of the \sql{HAVING} predicate looks quite different at first: it sums over all subsets $W\subseteq U$ (possible worlds), keeps those with $|W|\ge C$, and multiplies by a factor enforcing that tuples outside $W$ are "absent". Using distributivity of $\otimes$ over $\ominus$ and $\oplus$, the contribution associated with each $W$ can be rewritten in a normal form
-% \[
-% T_U(W)=A_W\ominus\bigoplus_{u\in U\setminus W}A_{W\cup\{u\}},
-% \]
-% so that the provenance becomes,
-% \[
-% F_C(U)=\bigoplus_{|W|\ge C}T_U(W).
-% \]
-% Intuitively, $T_U(W)$ takes the monomial for choosing exactly the tuples in $W$ and removes away all one-step extensions of $W$, which is precisely what the "absence" factor is meant to enforce.
-%
-% The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looking constructions, if we pick any $u\in U$, write $U'=U\setminus\{u\}$, and $\beta=\alpha_u$, then both expressions split into two disjoint contributions: those worlds that do not use $u$, and those that do use $u$. This yields the same include/exclude recurrence for both  $F_C(U)$ and $S_C(U)$  (for all $C\ge 1$):
-% \[
-% \square_C(U)=\square_C(U')\ \oplus\ \bigl(\square_{C-1}(U')\otimes\beta\bigr).
-% \]
-% For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the non-trivial part: it relies on the algebraic properties of $\ominus$ together with a bounding lemma: products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
-%
-% Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and show counterexamples.
-% \end{proof}
-For the proof of part (i) we first state the bounding lemma that we will use to establish a recurrence for the possible-world provenance expression.
+\begin{proofsketch}
+For any idempotent (follows from absorptivity) $m$-semiring $\mathbb K$ we first obtain a weak bound on $\mathbb K$-element(s) implying joint tuple-presence in corresponding \emph{possible-worlds}.
+
 \begin{lemmarep}\label{lem:upward-expansion}
 \lean{Having}{Having.upward_expansion}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring,
@@ -429,7 +406,8 @@ Combining with \eqref{eq:AV-bound} yields
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{appendixproof}
-Using Lemma~\ref{lem:upward-expansion} together with the algebraic properties of $\ominus $ we now establish a recurrence for the possibe-world provenance expression.
+
+Using Lemma~\ref{lem:upward-expansion} we claim that $\mathbb K$-provenance expressions arising from provenance evaluation using the possible-world semantics in Section~\ref{sec:semantics} for queries that involve $\ge$-comparisons between \sql{COUNT} aggregates and some constant $C\in \mathbb{N}_{\ge 1}$, can be expressed as recurrences on C, given that $\mathbb K$ satisfies certain $m$-semiring properties.
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 \lean{Having}{Having.FC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring.
@@ -557,7 +535,7 @@ F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\beta),
 \]
 as required.
 \end{appendixproof}
-Next, we formalize a standard recurrence for the \sql{JOIN}-based provenance expression, by splitting $|C|$-sized subsets of $U$ depending on the inclusion of a fixed $u\in U$.
+We also formalize a standard recurrence for the natural \sql{JOIN}-based provenance expression, for such queries.
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
   Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an m-semiring.
@@ -670,7 +648,31 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
 \]
 as required.
 \end{appendixproof}
+\end{proofsketch}
 
+% \begin{proof}[Proof sketch]
+% In this proof we are going to dilute some naming conventions used in our semantics for brevity. Further for simplicity we assume set semantics and later explain how our arguments can be extended to multiset semantics. The two queries $Q^{\op C}_1$ and $Q^{\op C}_2$  differ only in how they implement the \sql{HAVING} condition. So let us fix one group key value $a$ and compare the single provenance expression produced for that group; equality for every $a$ then implies equality of the full query results.
+%
+% Let us assume for now that $q$ has no duplicate tuple. For this fixed $a$, let $U$ be the finite collection of tuples of $q$ with first attribute $a$, with annotations $\alpha_u\in\mathbb K$. The query $Q^{\ge C}_2$ with strict self-join ordering predicate is designed to ``exhibit'' $C$ distinct tuples in the group: a satisfying valuation of these \sql{JOIN} conditions selects $C$ tuples (arranged by the strict inequalities in the join predicate), and the semantics contributes the product of their annotations. Summing over all satisfying valuations therefore yields the necessary provenance: the $\oplus$-sum of all products $\bigotimes_{u\in W}\alpha_u$( say $A_W$) over $C$-element choices $W\subseteq U$. Call this expression $S_C(U)$.
+%
+% The possible-world semantics of the \sql{HAVING} predicate looks quite different at first: it sums over all subsets $W\subseteq U$ (possible worlds), keeps those with $|W|\ge C$, and multiplies by a factor enforcing that tuples outside $W$ are "absent". Using distributivity of $\otimes$ over $\ominus$ and $\oplus$, the contribution associated with each $W$ can be rewritten in a normal form
+% \[
+% T_U(W)=A_W\ominus\bigoplus_{u\in U\setminus W}A_{W\cup\{u\}},
+% \]
+% so that the provenance becomes,
+% \[
+% F_C(U)=\bigoplus_{|W|\ge C}T_U(W).
+% \]
+% Intuitively, $T_U(W)$ takes the monomial for choosing exactly the tuples in $W$ and removes away all one-step extensions of $W$, which is precisely what the "absence" factor is meant to enforce.
+%
+% The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looking constructions, if we pick any $u\in U$, write $U'=U\setminus\{u\}$, and $\beta=\alpha_u$, then both expressions split into two disjoint contributions: those worlds that do not use $u$, and those that do use $u$. This yields the same include/exclude recurrence for both  $F_C(U)$ and $S_C(U)$  (for all $C\ge 1$):
+% \[
+% \square_C(U)=\square_C(U')\ \oplus\ \bigl(\square_{C-1}(U')\otimes\beta\bigr).
+% \]
+% For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the non-trivial part: it relies on the algebraic properties of $\ominus$ together with a bounding lemma: products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
+%
+% Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). For (ii) and (iii) we choose semirings from  Table~\ref{tab:semirings} and show counterexamples.
+% \end{proof}
 
 \begin{proposition}
 \pierre{PQE result}
