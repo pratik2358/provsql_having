@@ -1,7 +1,7 @@
 \section{Main Results}
 \label{sec:results}
 \pierre{3.5 pages: main theorem, proof arguments, complexity}
-\begin{theorem}\label{th:correctness}
+\begin{theoremrep}\label{th:correctness}
   For any arity~$2$ query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
   =,\geq\}$ consider the queries:
 \begin{align*}
@@ -31,7 +31,288 @@ where, the join-chain inequality $<^*$ is $<$ refined with some tie-breaking con
         $\mathbb{K}_2$-instance $\hat I_2$ such that
         $\angsem{\hat I_2}{Q^{\op C}_1}\neq\angsem{\hat I_2}{Q^{\op C}_2}$.
     \end{enumerate}
-\end{theorem}
+\end{theoremrep}
+\begin{appendixproof}
+Finally we proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
+\paragraph*{Proof of (i)}
+For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing
+  that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
+    $\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ apply the same relational algebra operators to the same subquery $q$
+    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically. Hence, it
+    suffices to show that for each group produced by
+    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with
+    that produced by the self-join query.
+    Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$.
+Fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
+% \smallskip\noindent\emph{Note: }\textit{For simplicity, we assume set semantics, i.e, $q$ produces no duplicate output tuples. In this setting, for a fixed group key $a$ selecting $C$ tuples whose second attributes form a strict join chain is the same as requiring the existence of $C-$ distinct tuples in the group. The same proof idea can be extended to multiset-semantics by treating duplicate tuples as distinct tuple occurences (e.g. by indexing inside groups) and refining the strict-ordering predicate in the join chain with this new tie-breaking attribute so that it is possible to select distinct tuple occurences with equal second attributes in increasing order.}
+
+So,
+\[U^{\hat I}_{q,(a)}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1})=(a) \}\]
+\paragraph{Provenance of the \sql{HAVING} query using possible-world semantics:}
+For the query 
+$
+Q^{\op C}_1
+=
+\Pi_{\#1}\bigl(
+\sigma_{\#2 \op C}(
+  \gamma_{\#1}[1:+](q)
+)\bigr)
+$
+\begin{multline}\label{eq:Q1-prov}
+\angsem{\hat I}{Q^{\op C}_1}(a)
+=\predsem{\hat I}{\gamma_{\#1}[1:+](q)}{\#2\op C}(u)
+=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\ W\neq\emptyset}}
+\Bigl(
+\ann^{\hat I}_{q,(a)}(W)\otimes
+\chi_{\op}\bigl(f_{\Sigma}(\pi_{1}(((U^{\hat I}_{q,(a)})_r[u])_{r\in W}^\omega)),\ C\bigr)
+\Bigr)\\
+=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\ W\neq\emptyset}}
+\Bigl(
+\ann^{\hat I}_{q,(a)}(W)\otimes
+\chi_{\op}\bigl(\Sigma_{r\in W} 1,\ C\bigr)
+\Bigr)
+\end{multline}
+where for any arbitrary ordering $\omega$ our commutative aggregate \sql{COUNT} is denoted as $f_\Sigma$.
+\\
+For each possible-world $W\subseteq [|U^{\hat I}_{q,(a)}|]$, if we denote 
+\begin{align*}
+&A_W=\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w\\
+&B_W=\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w\\
+\end{align*}
+then,
+\begin{align*}
+T_{[|U^{\hat I}_{q,(a)}|]}(W)&:=\ A_W \otimes \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\\ 
+&= A_W\ominus \bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}A_{W\cup\{w\}} \;\textit{[ by distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$]}
+\end{align*}
+such that, $\ann^{\hat I}_{q,(a)}(W)=T_{[|U^{\hat I}_{q,(a)}|]}(W).$
+% By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
+% \begin{align*}
+% T_U(W)
+%   &= (A_W\otimes \mathbb{1}_{\mathbb{K}})\ominus (A_W\otimes B_W) \\
+%   &= A_W\ominus\Bigl(A_W\otimes \bigoplus_{w\in U\setminus W}\alpha_w \Bigr) \\
+% &= A_W\ominus \bigoplus_{w\in U\setminus W}(A_W\otimes \alpha_w ) \\
+% &= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
+% \end{align*}
+\lean{Having}{Having.T_eq_mul_one_monus_sum}
+Since $\chi_{\op}(|W|\op C)=\mathbb{1}_\mathbb{K}$ iff $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
+\begin{equation}\label{eq:pw_tw}
+\angsem{\hat I}{Q^{\ge C}_1}(a)
+=
+\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\ W\neq\emptyset,\\|W|\op C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
+\end{equation}
+\paragraph{Provenance of the \sql{JOIN} queries:}
+For every $W\subseteq [|U^{\hat I}_{q,(a)}|] $ and $C\ge 1$ we define,
+\[
+S_C([|U^{\hat I}_{q,(a)}|]):=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|] \\|W|=C}} A_W
+\quad
+(\text{with }S_C([|U^{\hat I}_{q,(a)}|])=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
+\]
+Consider the query $Q^{\ge C}_2$.  A join-valuation contributing to the output
+tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
+attribute $a$ and strictly increasing second attributes (due to the chain of
+join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurence attribute as in $U^{\hat I}_{q,(a)}$ so that it is possible to select distinct tuple occurences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
+$C$-element subset $W\subseteq[|U^{\hat I}_{q,(a)}|]$, and
+$\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
+Therefore,
+\[
+\angsem{\hat I}{Q^{\ge C}_2}(a)
+=S_C([|U^{\hat I}_{q,(a)}|]).
+\tag{$J_{\ge}$}
+\]
+By definition,
+\[
+Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2,
+\qquad
+Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2,
+\]
+Hence, using $(J_{\ge})$,
+\[
+\angsem{\hat I}{Q^{=C}_2}(a)
+=
+S_C([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]),
+\quad
+\angsem{\hat I}{Q^{\le C}_2}(a)
+=
+S_1([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]).
+\tag{$J_{=,\le}$}
+\]
+\paragraph{\textbf{When $\op$ is $\ge$ :}}
+From \eqref{eq:pw_tw} with $\op = \ge$, we set 
+$
+F_C([|U^{\hat I}_{q,(a)}|])\ :=\ \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
+$
+So,
+\begin{equation}\label{eq:PW_ge_equals_F}
+\angsem{\hat I}{Q^{\ge C}_1}(a)=F_C([|U^{\hat I}_{q,(a)}|]).
+\tag{$PW_{\ge}$}
+\end{equation}
+We already showed for the join query that
+\[
+\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C([|U^{\hat I}_{q,(a)}|])
+\tag{$J_{\ge}$}
+\]
+If we set $U=[|U^{\hat I}_{q,(a)}|]$ and and $(\alpha_u)_{u\in U}=((U^{\hat I}_{q,(a)})_u[\alpha])_{u\in U}^\omega$ then, by Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$,
+\[
+F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr).
+\tag{R$_F$}
+\]
+Similarly, by Lemma~\ref{lem:SC_recurrence}, $S_C(U)$ can be shown to satisfy the same recurrence:
+\[
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)
+\qquad(C\ge 1).
+\tag{R$_S$}
+\]
+We prove that $F_C(U)=S_C(U)$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}.
+If $|U|=0$ then $U=\varnothing$ and $F_C(\varnothing)=\mathbb 0=S_C(\varnothing)$ for $C\ge 1$
+(empty $\oplus$-sum).
+Assume $|U|>0$ and pick $u\in U$, let $U'=U\setminus\{u\}$.
+By the induction hypothesis, $F_C(U')=S_C(U')$ and $F_{C-1}(U')=S_{C-1}(U')$.
+Applying (R$_F$) and (R$_S$) gives
+$
+F_C(U)
+=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)
+=S_C(U')\oplus(S_{C-1}(U')\otimes\alpha_u)
+=S_C(U)
+$.
+Thus $F_C([|U^{\hat I}_{q,(a)}|])=S_C([|U^{\hat I}_{q,(a)}|])$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(J_{\ge})$,
+\[
+\angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
+\]
+\paragraph{\textbf{When $\op$ is $=$ :}}
+For $n\in\mathbb N$ we have, 
+$
+\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)
+$. Then for each $W\subseteq [|U^{\hat I}_{q,(a)}|]$,
+\begin{align*}
+T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes \chi_{=}( |W|,C)
+&=
+T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\bigl(\chi_{\ge}(|W|,C)\ominus\chi_{\ge}(|W|,C+1)\bigr)\\
+&=
+(T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{\ge}(|W|,C))\ominus(T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{\ge}(|W|,C+1)),
+\end{align*}
+by distributivity of $\otimes$ over $\ominus$.
+Summing over $W$ and using right-distributivity of $\ominus$ over $\oplus$ (which holds because absorptivity in $\mathbb K$ implies idempotence), we obtain
+\begin{align*}
+\angsem{\hat I}{Q^{=C}_1}(a)
+&=
+\bigoplus_{W\subseteq [|U^{\hat I}_{q,(a)}|]}\bigl(T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{=}( |W|,C)\bigr)\\
+&=
+\left(\bigoplus_{W\subseteq [|U^{\hat I}_{q,(a)}|]} T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{\ge}(|W|,C)\right)
+\ominus
+\left(\bigoplus_{W\subseteq [|U^{\hat I}_{q,(a)}|]} T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{\ge}(|W|,C+1)\right)\\
+&=
+\left(\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W)\right)
+\ominus
+\left(\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\|W|\ge C+1}} T_{[|U^{\hat I}_{q,(a)}|]}(W)\right)\\
+&=
+\angsem{\hat I}{Q^{\ge C}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
+\end{align*}
+By the already established $\ge$-case,
+$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. Therefore, 
+$
+\angsem{\hat I}{Q^{=C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])\ominus S_{C+1}([|U^{\hat I}_{q,(a)}|])=\angsem{\hat I}{Q^{=C}_2}(a)
+$ by $(J_{=,\le})$. 
+\paragraph{\textbf{When $\op$ is $\le$:}}
+For $n\ge 1$ we have $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$. Since groups produced by $\gamma_{\#1}$ are nonempty, only $n=|W|\ge 1$ occur.
+Repeating the same argument as in the case where $\op$ is $=$, we obtain 
+\[
+\angsem{\hat I}{Q^{\le C}_1}(a)
+=
+\angsem{\hat I}{Q^{\ge 1}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
+\]
+By the $\ge$-case, $\angsem{\hat I}{Q^{\ge 1}_1}(a)=S_1([|U^{\hat I}_{q,(a)}|])$ and
+$\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. Hence
+$
+\angsem{\hat I}{Q^{\le C}_1}(a)
+=
+S_1([|U^{\hat I}_{q,(a)}|])\ominus S_{C+1}([|U^{\hat I}_{q,(a)}|])
+=
+\angsem{\hat I}{Q^{\le C}_2}(a)
+$ by $(J_{=,\le})$.
+
+\smallskip
+Since group key $(a)$ was arbitrary, we conclude
+$\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
+$\op\in\{\ge,=,\le\}$.
+\paragraph*{Proof of (ii)}
+\lean{Semirings/Why}{Why.counterexample_having}
+We show that there exists a $\mathbb{K}$-instance $\hat I$ such that
+$\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
+Fix $C=2$ and $\op= \; =$.
+Since these queries are equivalent, both of them return groups which have 2 tuples. Say, in a certain $\hat I$ the result of the pre-aggregation subquery $q$ can form a valid group with group-key $u$ with $\mathbb K$-annotations $t_1,t_2,\text{ and }t_3$.
+Then,
+\[
+  \angsem{\hat I}{Q^{= 2}_1}=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
+\]
+and,
+\[
+  \angsem{\hat I}{Q^{= 2}_2}=(t_1 \otimes t_2)\oplus (t_1 \otimes t_3)\oplus (t_2 \otimes t_3)
+\]
+Fix a Why-semiring valuation of $t_1, t_2, t_3$: $\{\{a\}\}, \{\{b\}\}, \{\emptyset\}$.
+So,
+\begin{align*}
+  &\angsem{\hat I}{Q^{= 2}_1}(u)=\\
+  &((\{\{a\}\}\Cup \{\{b\}\})\Cup(\{\emptyset\}\setminus \{\emptyset\})) \cup ((\{\{a\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{b\}\})) \\
+  &\cup((\{\{b\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{a\}\}))\\
+  =&(\{\{a\}\}\Cup \{\{b\}\}\Cup \emptyset) \cup (\{\{a\}\}\Cup \{\emptyset\}) \cup (\{\{b\}\}\Cup \{\emptyset\})\\
+  =&\{\{a\},\{b\}\}
+\end{align*}
+
+But,
+\begin{align*}
+  &\angsem{\hat I}{Q^{= 2}_2}(u)=\\
+  &(\{\{a\}\}\Cup\{\{b\}\})\cup(\{\{a\}\}\Cup\{\emptyset\})\cup(\{\{b\}\}\Cup\{\emptyset\})\\
+  =&\{\{a, b\}\} \cup \{\{a\}\} \cup \{\{b\}\}\\
+  =&\{\{a\}, \{b\}, \{a, b\}\}
+\end{align*}
+Hence, $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
+\paragraph*{Proof of (iii)}
+
+\lean{Semirings/Tropical}{TropicalR.F_ne_S}
+
+Consider the tropical semiring
+$\mathbb K_2=(\mathbb{R}\cup\{\infty\},\min,+,\infty,0)$.
+It is idempotent, $\otimes$ distributes over $\ominus$ and is non-absorptive.
+We show that there exists a $\mathbb K_2$-instance $\hat I_2$ such that
+\[
+\angsem{\hat I_2}{Q^{\op C}_1}
+\neq
+\angsem{\hat I_2}{Q^{\op C}_2}.
+\]
+
+Fix $C=1$ and $\op=\geq$.
+Consider a group with key $u$ containing exactly two tuples,
+both annotated by
+$
+t_1=t_2=-1$.
+So,
+\[
+\angsem{\hat I_2}{Q^{\ge1}_2}(u)
+=
+t_1\oplus t_2
+=
+\min(-1,-1)
+=
+-1.
+\]
+But,
+\[
+\angsem{\hat I_2}{Q^{\ge1}_1}(u)
+=
+(t_1\otimes(\mathbb 1 \ominus t_2)) \oplus (t_2\otimes(\mathbb 1 \ominus t_1))\oplus (t_1\otimes t_2\otimes(\mathbb 1 \ominus \mathbb 0))
+=
+min(\infty,\infty,-2)
+=
+-2.
+\]
+
+Hence,
+$
+\angsem{\hat I_2}{Q^{\ge1}_1}
+\neq
+\angsem{\hat I_2}{Q^{\ge1}_2}.
+$
+\end{appendixproof}
 % \begin{proof}[Proof sketch]
 % In this proof we are going to dilute some naming conventions used in our semantics for brevity. Further for simplicity we assume set semantics and later explain how our arguments can be extended to multiset semantics. The two queries $Q^{\op C}_1$ and $Q^{\op C}_2$  differ only in how they implement the \sql{HAVING} condition. So let us fix one group key value $a$ and compare the single provenance expression produced for that group; equality for every $a$ then implies equality of the full query results.
 %
@@ -389,290 +670,7 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
 \]
 as required.
 \end{appendixproof}
-\begin{proof}
-Finally we proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
-\paragraph*{Proof of (i)}
-For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing
-  that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
-    $\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ apply the same relational algebra operators to the same subquery $q$
-    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically. Hence, it
-    suffices to show that for each group produced by
-    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with
-    that produced by the self-join query.
-    Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$.
-Fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
-% \smallskip\noindent\emph{Note: }\textit{For simplicity, we assume set semantics, i.e, $q$ produces no duplicate output tuples. In this setting, for a fixed group key $a$ selecting $C$ tuples whose second attributes form a strict join chain is the same as requiring the existence of $C-$ distinct tuples in the group. The same proof idea can be extended to multiset-semantics by treating duplicate tuples as distinct tuple occurences (e.g. by indexing inside groups) and refining the strict-ordering predicate in the join chain with this new tie-breaking attribute so that it is possible to select distinct tuple occurences with equal second attributes in increasing order.}
 
-So,
-\[U^{\hat I}_{q,(a)}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1})=(a) \}\]
-\paragraph{Provenance of the \sql{HAVING} query using possible-world semantics:}
-For the query 
-$
-Q^{\op C}_1
-=
-\Pi_{\#1}\bigl(
-\sigma_{\#2 \op C}(
-  \gamma_{\#1}[1:+](q)
-)\bigr)
-$
-\begin{multline}\label{eq:Q1-prov}
-\angsem{\hat I}{Q^{\op C}_1}(a)
-=\predsem{\hat I}{\gamma_{\#1}[1:+](q)}{\#2\op C}(u)
-=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\ W\neq\emptyset}}
-\Bigl(
-\ann^{\hat I}_{q,(a)}(W)\otimes
-\chi_{\op}\bigl(f_{\Sigma}(\pi_{1}(((U^{\hat I}_{q,(a)})_r[u])_{r\in W}^\omega)),\ C\bigr)
-\Bigr)\\
-=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\ W\neq\emptyset}}
-\Bigl(
-\ann^{\hat I}_{q,(a)}(W)\otimes
-\chi_{\op}\bigl(\Sigma_{r\in W} 1,\ C\bigr)
-\Bigr)
-\end{multline}
-where for any arbitrary ordering $\omega$ our commutative aggregate \sql{COUNT} is denoted as $f_\Sigma$.
-\\
-For each possible-world $W\subseteq [|U^{\hat I}_{q,(a)}|]$, if we denote 
-\begin{align*}
-&A_W=\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w\\
-&B_W=\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w\\
-\end{align*}
-then,
-\begin{align*}
-T_{[|U^{\hat I}_{q,(a)}|]}(W)&:=\ A_W \otimes \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\\ 
-&= A_W\ominus \bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}A_{W\cup\{w\}} \;\textit{[ by distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$]}
-\end{align*}
-such that, $\ann^{\hat I}_{q,(a)}(W)=T_{[|U^{\hat I}_{q,(a)}|]}(W).$
-% By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
-% \begin{align*}
-% T_U(W)
-%   &= (A_W\otimes \mathbb{1}_{\mathbb{K}})\ominus (A_W\otimes B_W) \\
-%   &= A_W\ominus\Bigl(A_W\otimes \bigoplus_{w\in U\setminus W}\alpha_w \Bigr) \\
-% &= A_W\ominus \bigoplus_{w\in U\setminus W}(A_W\otimes \alpha_w ) \\
-% &= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
-% \end{align*}
-\lean{Having}{Having.T_eq_mul_one_monus_sum}
-Since $\chi_{\op}(|W|\op C)=\mathbb{1}_\mathbb{K}$ iff $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
-\begin{equation}\label{eq:pw_tw}
-\angsem{\hat I}{Q^{\ge C}_1}(a)
-=
-\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\ W\neq\emptyset,\\|W|\op C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
-\end{equation}
-\paragraph{Provenance of the \sql{JOIN} queries:}
-For every $W\subseteq [|U^{\hat I}_{q,(a)}|] $ and $C\ge 1$ we define,
-\[
-S_C([|U^{\hat I}_{q,(a)}|]):=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|] \\|W|=C}} A_W
-\quad
-(\text{with }S_C([|U^{\hat I}_{q,(a)}|])=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
-\]
-Consider the query $Q^{\ge C}_2$.  A join-valuation contributing to the output
-tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
-attribute $a$ and strictly increasing second attributes (due to the chain of
-join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurence attribute as in $U^{\hat I}_{q,(a)}$ so that it is possible to select distinct tuple occurences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
-$C$-element subset $W\subseteq[|U^{\hat I}_{q,(a)}|]$, and
-$\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
-Therefore,
-\[
-\angsem{\hat I}{Q^{\ge C}_2}(a)
-=S_C([|U^{\hat I}_{q,(a)}|]).
-\tag{$J_{\ge}$}
-\]
-By definition,
-\[
-Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2,
-\qquad
-Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2,
-\]
-Hence, using $(J_{\ge})$,
-\[
-\angsem{\hat I}{Q^{=C}_2}(a)
-=
-S_C([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]),
-\quad
-\angsem{\hat I}{Q^{\le C}_2}(a)
-=
-S_1([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]).
-\tag{$J_{=,\le}$}
-\]
-\paragraph{\textbf{When $\op$ is $\ge$ :}}
-From \eqref{eq:pw_tw} with $\op = \ge$, we set 
-$
-F_C([|U^{\hat I}_{q,(a)}|])\ :=\ \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
-$
-So,
-\begin{equation}\label{eq:PW_ge_equals_F}
-\angsem{\hat I}{Q^{\ge C}_1}(a)=F_C([|U^{\hat I}_{q,(a)}|]).
-\tag{$PW_{\ge}$}
-\end{equation}
-We already showed for the join query that
-\[
-\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C([|U^{\hat I}_{q,(a)}|])
-\tag{$J_{\ge}$}
-\]
-If we set $U=[|U^{\hat I}_{q,(a)}|]$ and and $(\alpha_u)_{u\in U}=((U^{\hat I}_{q,(a)})_u[\alpha])_{u\in U}^\omega$ then, by Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$,
-\[
-F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr).
-\tag{R$_F$}
-\]
-Similarly, by Lemma~\ref{lem:SC_recurrence}, $S_C(U)$ can be shown to satisfy the same recurrence:
-\[
-S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)
-\qquad(C\ge 1).
-\tag{R$_S$}
-\]
-We prove that $F_C(U)=S_C(U)$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}.
-If $|U|=0$ then $U=\varnothing$ and $F_C(\varnothing)=\mathbb 0=S_C(\varnothing)$ for $C\ge 1$
-(empty $\oplus$-sum).
-Assume $|U|>0$ and pick $u\in U$, let $U'=U\setminus\{u\}$.
-By the induction hypothesis, $F_C(U')=S_C(U')$ and $F_{C-1}(U')=S_{C-1}(U')$.
-Applying (R$_F$) and (R$_S$) gives
-$
-F_C(U)
-=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)
-=S_C(U')\oplus(S_{C-1}(U')\otimes\alpha_u)
-=S_C(U)
-$.
-Thus $F_C([|U^{\hat I}_{q,(a)}|])=S_C([|U^{\hat I}_{q,(a)}|])$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(J_{\ge})$,
-\[
-\angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
-\]
-\paragraph{\textbf{When $\op$ is $=$ :}}
-For $n\in\mathbb N$ we have, 
-$
-\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)
-$. Then for each $W\subseteq [|U^{\hat I}_{q,(a)}|]$,
-\begin{align*}
-T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes \chi_{=}( |W|,C)
-&=
-T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\bigl(\chi_{\ge}(|W|,C)\ominus\chi_{\ge}(|W|,C+1)\bigr)\\
-&=
-(T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{\ge}(|W|,C))\ominus(T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{\ge}(|W|,C+1)),
-\end{align*}
-by distributivity of $\otimes$ over $\ominus$.
-Summing over $W$ and using right-distributivity of $\ominus$ over $\oplus$ (which holds because absorptivity in $\mathbb K$ implies idempotence), we obtain
-\begin{align*}
-\angsem{\hat I}{Q^{=C}_1}(a)
-&=
-\bigoplus_{W\subseteq [|U^{\hat I}_{q,(a)}|]}\bigl(T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{=}( |W|,C)\bigr)\\
-&=
-\left(\bigoplus_{W\subseteq [|U^{\hat I}_{q,(a)}|]} T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{\ge}(|W|,C)\right)
-\ominus
-\left(\bigoplus_{W\subseteq [|U^{\hat I}_{q,(a)}|]} T_{[|U^{\hat I}_{q,(a)}|]}(W)\otimes\chi_{\ge}(|W|,C+1)\right)\\
-&=
-\left(\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W)\right)
-\ominus
-\left(\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\|W|\ge C+1}} T_{[|U^{\hat I}_{q,(a)}|]}(W)\right)\\
-&=
-\angsem{\hat I}{Q^{\ge C}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
-\end{align*}
-By the already established $\ge$-case,
-$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. Therefore, 
-$
-\angsem{\hat I}{Q^{=C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])\ominus S_{C+1}([|U^{\hat I}_{q,(a)}|])=\angsem{\hat I}{Q^{=C}_2}(a)
-$ by $(J_{=,\le})$. 
-\paragraph{\textbf{When $\op$ is $\le$:}}
-For $n\ge 1$ we have $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$. Since groups produced by $\gamma_{\#1}$ are nonempty, only $n=|W|\ge 1$ occur.
-Repeating the same argument as in the case where $\op$ is $=$, we obtain 
-\[
-\angsem{\hat I}{Q^{\le C}_1}(a)
-=
-\angsem{\hat I}{Q^{\ge 1}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
-\]
-By the $\ge$-case, $\angsem{\hat I}{Q^{\ge 1}_1}(a)=S_1([|U^{\hat I}_{q,(a)}|])$ and
-$\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. Hence
-$
-\angsem{\hat I}{Q^{\le C}_1}(a)
-=
-S_1([|U^{\hat I}_{q,(a)}|])\ominus S_{C+1}([|U^{\hat I}_{q,(a)}|])
-=
-\angsem{\hat I}{Q^{\le C}_2}(a)
-$ by $(J_{=,\le})$.
-
-\smallskip
-Since group key $(a)$ was arbitrary, we conclude
-$\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
-$\op\in\{\ge,=,\le\}$.
-\end{proof}
-\paragraph*{Proof of (ii)}
-\begin{proof}\label{proof:proof_2}
-\lean{Semirings/Why}{Why.counterexample_having}
-We show that there exists a $\mathbb{K}$-instance $\hat I$ such that
-$\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
-Fix $C=2$ and $\op= \; =$.
-Since these queries are equivalent, both of them return groups which have 2 tuples. Say, in a certain $\hat I$ the result of the pre-aggregation subquery $q$ can form a valid group with group-key $u$ with $\mathbb K$-annotations $t_1,t_2,\text{ and }t_3$.
-Then,
-\[
-  \angsem{\hat I}{Q^{= 2}_1}=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
-\]
-and,
-\[
-  \angsem{\hat I}{Q^{= 2}_2}=(t_1 \otimes t_2)\oplus (t_1 \otimes t_3)\oplus (t_2 \otimes t_3)
-\]
-Fix a Why-semiring valuation of $t_1, t_2, t_3$: $\{\{a\}\}, \{\{b\}\}, \{\emptyset\}$.
-So,
-\begin{align*}
-  &\angsem{\hat I}{Q^{= 2}_1}(u)=\\
-  &((\{\{a\}\}\Cup \{\{b\}\})\Cup(\{\emptyset\}\setminus \{\emptyset\})) \cup ((\{\{a\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{b\}\})) \\
-  &\cup((\{\{b\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{a\}\}))\\
-  =&(\{\{a\}\}\Cup \{\{b\}\}\Cup \emptyset) \cup (\{\{a\}\}\Cup \{\emptyset\}) \cup (\{\{b\}\}\Cup \{\emptyset\})\\
-  =&\{\{a\},\{b\}\}
-\end{align*}
-
-But,
-\begin{align*}
-  &\angsem{\hat I}{Q^{= 2}_2}(u)=\\
-  &(\{\{a\}\}\Cup\{\{b\}\})\cup(\{\{a\}\}\Cup\{\emptyset\})\cup(\{\{b\}\}\Cup\{\emptyset\})\\
-  =&\{\{a, b\}\} \cup \{\{a\}\} \cup \{\{b\}\}\\
-  =&\{\{a\}, \{b\}, \{a, b\}\}
-\end{align*}
-Hence, $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
-\end{proof}
-\paragraph*{Proof of (iii)}
-\begin{proof}
-\lean{Semirings/Tropical}{TropicalR.F_ne_S}
-
-Consider the tropical semiring
-$\mathbb K_2=(\mathbb{R}\cup\{\infty\},\min,+,\infty,0)$.
-It is idempotent, $\otimes$ distributes over $\ominus$ and is non-absorptive.
-We show that there exists a $\mathbb K_2$-instance $\hat I_2$ such that
-\[
-\angsem{\hat I_2}{Q^{\op C}_1}
-\neq
-\angsem{\hat I_2}{Q^{\op C}_2}.
-\]
-
-Fix $C=1$ and $\op=\geq$.
-Consider a group with key $u$ containing exactly two tuples,
-both annotated by
-$
-t_1=t_2=-1$.
-So,
-\[
-\angsem{\hat I_2}{Q^{\ge1}_2}(u)
-=
-t_1\oplus t_2
-=
-\min(-1,-1)
-=
--1.
-\]
-But,
-\[
-\angsem{\hat I_2}{Q^{\ge1}_1}(u)
-=
-(t_1\otimes(\mathbb 1 \ominus t_2)) \oplus (t_2\otimes(\mathbb 1 \ominus t_1))\oplus (t_1\otimes t_2\otimes(\mathbb 1 \ominus \mathbb 0))
-=
-min(\infty,\infty,-2)
-=
--2.
-\]
-
-Hence,
-$
-\angsem{\hat I_2}{Q^{\ge1}_1}
-\neq
-\angsem{\hat I_2}{Q^{\ge1}_2}.
-$
-\end{proof}
 
 \begin{proposition}
 \pierre{PQE result}
