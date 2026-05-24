@@ -442,31 +442,13 @@ $
 By virtue of lemma~\ref{lem:upward-expansion} and other properties of $m$-semiring we state further lemmas that we will need in this proof to establish recurrences for $F_C([|U^{\hat I}_{q,(a)}|])$ and $S_C([|U^{\hat I}_{q,(a)}|])$. 
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 \lean{Having}{Having.FC_recurrence}
-Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring.
-Write the natural order as $a\le b \iff a\oplus b=b$, and assume $\ominus$ satisfies
-residuation $x\ominus y\le z \iff x\le y\oplus z$.
-Assume moreover that $\otimes$ distributes over $\oplus$ and over $\ominus$, i.e.
-\[
-r\otimes(a\oplus b)=(r\otimes a)\oplus(r\otimes b),
-\qquad
-r\otimes(a\ominus b)=(r\otimes a)\ominus(r\otimes b).
-\]
-Fix a finite set $U$ and elements $(\alpha)_{x\in U}\in K$.
-For $W\subseteq U$ define
-\[
-A_W:=\bigotimes_{x\in W}\alpha_x,
-\qquad
-T_U(W):=A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}},
-\]
-and for $C\in\mathbb N$ define
-\[
+Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring satisfying distributivity of $\otimes$ over $\ominus$. Fix a non-empty finite set $U$ and elements $(\alpha)_{x\in U}\in K$. For $W\neq\emptyset\subseteq U$ define
+$A_W:=\bigotimes_{x\in W}\alpha_x$ and $T_U(W):=A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}}$.
+Further for $C\in\mathbb N^{\geq 1}$ define
+$
 F_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
-\]
-Let $u\in U$, put $U':=U\setminus\{u\}$ and $\beta:=\alpha_u$.
-Then for all $C\in\mathbb N$ with $C\ge 1$,
-\[
-F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\beta\bigr).
-\]
+$
+Then for an arbitrary choice of $u\in U$ such that $U'=U\setminus\{u\}$ $F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$.
 \end{lemmarep}
 
 \begin{appendixproof}
