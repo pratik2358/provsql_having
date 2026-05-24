@@ -569,24 +569,15 @@ as required.
 \end{appendixproof} 
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
-  Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an m-semiring.
-Fix a finite set $U$ and a family $(\alpha)_{x\in U}\in K$.
-For $W\subseteq U$ define
-\[
-A_W:=\bigotimes_{x\in W}\alpha_x
-\quad\text{(with the convention }A_\varnothing:=\mathbb 1\text{),}
-\]
-and for $C\in\mathbb N$ define
-\[
-S_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W
-\quad
-(\text{with the convention that an empty $\oplus$-sum equals }\mathbb 0).
-\]
-Let $u\in U$, put $U':=U\setminus\{u\}$ and $\beta:=\alpha_u$.
-Then for every $C\ge 1$,
-\[
-S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr).
-\]
+Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an m-semiring.
+Fix a non-empty finite set $U$ and a family $(\alpha)_{x\in U}\in K$.
+For $W\neq\emptyset\subseteq U$ define $A_W:=\bigotimes_{x\in W}\alpha_x$ and for $C\in\mathbb N^{\ge 1}$ define
+$
+S_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$. 
+For an arbitrary choice of $u\in U$ such that $U'=U\setminus\{u\}$ for every $C\ge 1$, 
+$
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr).
+$
 \end{lemmarep}
 
 \begin{appendixproof}
@@ -660,22 +651,22 @@ A_{W'\cup\{u\}}
 =
 \Bigl(\bigotimes_{x\in W'}\alpha_x \Bigr)\otimes \alpha_u
 =
-A_{W'}\otimes \beta.
+A_{W'}\otimes \alpha_u.
 \]
 Substituting into \eqref{eq:B-reindex} and using distributivity of $\otimes$ over $\oplus$,
 \begin{equation}\label{eq:B-part}
 \bigoplus_{W\in\mathcal B}A_W
 =
-\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} (A_{W'}\otimes\beta)
+\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} (A_{W'}\otimes\alpha_u)
 =
-\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{W'}\Bigr)\otimes\beta
+\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{W'}\Bigr)\otimes\alpha_u
 =
-S_{C-1}(U')\otimes\beta.
+S_{C-1}(U')\otimes\alpha_u.
 \end{equation}
 
 Finally, combining \eqref{eq:split-SC}, \eqref{eq:A-part}, and \eqref{eq:B-part}, we obtain
 \[
-S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\beta\bigr),
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr),
 \]
 as required.
 \end{appendixproof}
