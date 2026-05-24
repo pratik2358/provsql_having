@@ -345,27 +345,22 @@ We now claim a weak bound on $\mathbb K$-element(s) implying joint tuple-presenc
 
 \begin{lemmarep}\label{lem:upward-expansion}
 \lean{Having}{Having.upward_expansion}
-Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring,
-and write the natural order as $a\le b \iff a\oplus b=b$.
-Assume that $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in K$,
-\begin{equation}\label{eq:residuation}
-  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
-\end{equation}
-  Fix a finite set $U$ and elements $(\alpha)_{x\in U}\in K$.
-For $W\subseteq U$ define
-\[
-  A_W := \bigotimes_{x\in W}\alpha_x ,
-  \qquad
-  T_U(W) := A_W \ominus \bigoplus_{x\in U\setminus W} A_{W\cup\{x\}} .
-\]
-Then for every $V\subseteq U$,
-\begin{equation}\label{eq:upward-expansion}
-  A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
-\end{equation}
+Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring. Fix a finite set $U$ and elements $(\alpha)_{x\in U}\in \mathbb K$. For $W\subseteq U$ define
+$A_W := \bigotimes_{x\in W}\alpha_x$ and $T_U(W) := A_W \ominus \bigoplus_{x\in U\setminus W} A_{W\cup\{x\}}$. 
+Then for every $V\subseteq U$, $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)$.
 \end{lemmarep}
 
 \begin{appendixproof}
-We prove \eqref{eq:upward-expansion} by induction on $d:=|U\setminus V|$.
+From the properties of $m$-semirings $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in K$,
+\begin{equation}\label{eq:residuation}
+  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
+\end{equation}
+
+We prove 
+\begin{equation}\label{eq:upward-expansion}
+  A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
+\end{equation}
+by induction on $d:=|U\setminus V|$.
 
 \smallskip\noindent
 \textbf{Base case ($d=0$).}
@@ -442,7 +437,7 @@ $
 By virtue of lemma~\ref{lem:upward-expansion} and other properties of $m$-semiring we state further lemmas that we will need in this proof to establish recurrences for $F_C([|U^{\hat I}_{q,(a)}|])$ and $S_C([|U^{\hat I}_{q,(a)}|])$. 
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 \lean{Having}{Having.FC_recurrence}
-Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring satisfying distributivity of $\otimes$ over $\ominus$. Fix a non-empty finite set $U$ and elements $(\alpha)_{x\in U}\in K$. For $W\neq\emptyset\subseteq U$ define
+Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring satisfying distributivity of $\otimes$ over $\ominus$. Fix a non-empty finite set $U$ and elements $(\alpha)_{x\in U}\in \mathbb K$. For $W\neq\emptyset\subseteq U$ define
 $A_W:=\bigotimes_{x\in W}\alpha_x$ and $T_U(W):=A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}}$.
 Further for $C\in\mathbb N^{\geq 1}$ define
 $
@@ -552,7 +547,7 @@ as required.
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an m-semiring.
-Fix a non-empty finite set $U$ and a family $(\alpha)_{x\in U}\in K$.
+Fix a non-empty finite set $U$ and a family $(\alpha)_{x\in U}\in \mathbb K$.
 For $W\neq\emptyset\subseteq U$ define $A_W:=\bigotimes_{x\in W}\alpha_x$ and for $C\in\mathbb N^{\ge 1}$ define
 $
 S_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$. 
