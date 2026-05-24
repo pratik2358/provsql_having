@@ -452,7 +452,7 @@ Then for an arbitrary choice of $u\in U$ such that $U'=U\setminus\{u\}$ $F_C(U)=
 \end{lemmarep}
 
 \begin{appendixproof}
-Fix $u\in U$, set $U':=U\setminus\{u\}$ and $\beta:=\alpha_u$, and let $C\ge 1$.
+  Fix $u\in U$ such that $U'=U\setminus\{u\}$ and a $C\in\mathbb N^{\geq 1}$.
 Split  $F_C(U)$ according to whether $u\in W$:
 \begin{equation}\label{eq:split-I-II}
 F_C(U)
@@ -462,69 +462,69 @@ F_C(U)
 \underbrace{\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_U(W'\cup\{u\})}_{(II).\;u\in W}.
 \end{equation}
 
-\smallskip\noindent\emph{Simplify $(II)$.}
-Fix $W'\subseteq U'$. Then $A_{W'\cup\{u\}}=A_{W'}\otimes\beta$, and
+\paragraph{Simplify $(II)$: }
+Fix $W'\subseteq U'$. Then $A_{W'\cup\{u\}}=A_{W'}\otimes\alpha_u$, and
 $U\setminus(W'\cup\{u\})=U'\setminus W'$. Hence, using distributivity of $\otimes$ over $\oplus$,
 \[
 \bigoplus_{x\in U\setminus(W'\cup\{u\})}A_{W'\cup\{u,x\}}
 =
-\bigoplus_{x\in U'\setminus W'}\bigl(A_{W'\cup\{x\}}\otimes\beta\bigr)
+\bigoplus_{x\in U'\setminus W'}\bigl(A_{W'\cup\{x\}}\otimes\alpha_u\bigr)
 =
-\Bigl(\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\beta.
+\Bigl(\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\alpha_u.
 \]
 Therefore, using distributivity of $\otimes$ over $\ominus$,
 \[
 T_U(W'\cup\{u\})
 =
-(A_{W'}\otimes\beta)\ominus
-\Bigl(\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\beta
+(A_{W'}\otimes\alpha_u)\ominus
+\Bigl(\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\alpha_u
 =
-\Bigl(A_{W'}\ominus\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\beta
+\Bigl(A_{W'}\ominus\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\alpha_u
 =
-T_{U'}(W')\otimes\beta.
+T_{U'}(W')\otimes\alpha_u.
 \]
-Taking $\oplus$ over all $W'\subseteq U'$ with $|W'|\ge C-1$ and factoring $\beta$ using
+Taking $\oplus$ over all $W'\subseteq U'$ with $|W'|\ge C-1$ and factoring $\alpha_u$ using
 distributivity of $\otimes$ over $\oplus$ yields
 \begin{equation}\label{eq:II-simplifies}
-(II)=\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_{U'}(W')\Bigr)\otimes\beta
-=F_{C-1}(U')\otimes\beta.
+(II)=\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_{U'}(W')\Bigr)\otimes\alpha_u
+=F_{C-1}(U')\otimes\alpha_u.
 \end{equation}
 
-\smallskip\noindent\emph{Relate $T_U(W)$ and $T_{U'}(W)$ for $W\subseteq U'$.}
+\paragraph{Relate $T_U(W)$ and $T_{U'}(W)$ for $W\subseteq U'$: }
 Fix $W\subseteq U'$. Since $U\setminus W=(U'\setminus W)\cup\{u\}$, we have
 \[
 \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}}
 =
-\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\Bigr)\oplus (A_W\otimes\beta).
+\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\Bigr)\oplus (A_W\otimes\alpha_u).
 \]
 Using
 $x\ominus(y\oplus z)=(x\ominus y)\ominus z$, we get
 \begin{equation}\label{eq:TU-rewrite}
 T_U(W)
 =
-A_W\ominus\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\oplus(A_W\otimes\beta)\Bigr)
+A_W\ominus\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\oplus(A_W\otimes\alpha_u)\Bigr)
 =
-T_{U'}(W)\ominus(A_W\otimes\beta).
+T_{U'}(W)\ominus(A_W\otimes\alpha_u).
 \end{equation}
 
-\smallskip\noindent\emph{Show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\beta)$.}
+\paragraph{Show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)$: }
   By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$ (shown in Lemma~\ref{lem:x-y<=x}),
 we have $T_U(W)\le T_{U'}(W)$ for all $W\subseteq U'$.
 Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ yields $(I)\le F_C(U')$.
 Together with \eqref{eq:split-I-II} and \eqref{eq:II-simplifies}, this gives
 \begin{equation}\label{eq:leq-direction}
-F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\beta).
+F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u).
 \end{equation}
 
-\smallskip\noindent\emph{Show $F_C(U')\le F_C(U)$.}
+\paragraph{Show $F_C(U')\le F_C(U)$: }
 Fix $W\subseteq U'$ with $|W|\ge C$.
 By the inequality $x\le y\oplus(x\ominus y)$ (shown in Lemma~\ref{lem:x<=y+(x-y)}) applied to
-$x=T_{U'}(W)$ and $y=A_W\otimes\beta$, and using \eqref{eq:TU-rewrite}, we get
+$x=T_{U'}(W)$ and $y=A_W\otimes\alpha_u$, and using \eqref{eq:TU-rewrite}, we get
 \begin{equation}\label{eq:TUprime-bound}
-T_{U'}(W)\le (A_W\otimes\beta)\oplus T_U(W).
+T_{U'}(W)\le (A_W\otimes\alpha_u)\oplus T_U(W).
 \end{equation}
 Since $|W|\ge C$, the term $T_U(W)$ is one of the summands of $F_C(U)$, hence $T_U(W)\le F_C(U)$.
-Moreover $A_W\otimes\beta=A_{W\cup\{u\}}$, and $|W\cup\{u\}|\ge C$.
+Moreover $A_W\otimes\alpha_u=A_{W\cup\{u\}}$, and $|W\cup\{u\}|\ge C$.
 By Lemma~\ref{lem:upward-expansion} applied to $V=W\cup\{u\}$ we have
 \[
 A_{W\cup\{u\}}
@@ -535,17 +535,17 @@ A_{W\cup\{u\}}
 =
 F_C(U),
 \]
-so $A_W\otimes\beta\le F_C(U)$.
+so $A_W\otimes\alpha_u\le F_C(U)$.
 Plugging these two bounds into \eqref{eq:TUprime-bound} yields $T_{U'}(W)\le F_C(U)$.
 Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ gives $F_C(U')\le F_C(U)$.
 
-\smallskip\noindent\emph{The recurrence.}
+\paragraph{The recurrence: }
 From \eqref{eq:leq-direction}, $F_C(U')\le F_C(U)$ and
-$F_{C-1}(U')\otimes\beta=(II)\le F_C(U)$, we obtain
-$F_C(U')\oplus(F_{C-1}(U')\otimes\beta)\le F_C(U)$.
-Together with \eqref{eq:leq-direction}, this yields
+$F_{C-1}(U')\otimes\alpha_u=(II)\le F_C(U)$, we obtain
+$F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)\le F_C(U)$.
+Together with \eqref{eq:leq-direction}, we get 
 \[
-F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\beta),
+F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u),
 \]
 as required.
 \end{appendixproof} 
