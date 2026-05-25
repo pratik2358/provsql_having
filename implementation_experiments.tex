@@ -49,18 +49,49 @@ The result query along with its \sql{JOIN}-rewrite is presented in the Appendix~
 to Postgres 18 with shared buffer size limited to 20,000MB.
 
 
-Figure~\ref{fig:prov_only_times_ge} and Figure~\ref{fig:prov_only_times_lt} report query execution times for provenance evaluation, 
-comparing our possible-world semantics with the \sql{HAVING} version of the query. 
-During the execution a provenance circuit is created having a \emph{comparison gate} representing the aggregate comparison.
-The possible world semantics are trigger at the semiring level, by instantiating the formula semiring in ProvSQL.
-For smaller values of $k$, provenance evaluation using our possible-world semantics is slower than that of the \sql{JOIN} version.
-However with increasing $k$, provenance evaluation using possible world-semantics is considerably faster.
-This is expected, since the rewriting requires $k$ aliases of the base relation and produces increasingly expensive intermediate join tables. 
-In comparison, execution times for provenance evaluation using our possible-world semantics are almost constant with varying $k$ in the query.
+% Figure~\ref{fig:prov_only_times_ge} and Figure~\ref{fig:prov_only_times_lt} report query execution times for provenance evaluation, 
+% comparing our possible-world semantics with the \sql{JOIN} version of the query. 
+% During the execution a provenance circuit is created having a \emph{comparison gate} representing the aggregate comparison.
+% The possible world semantics trigger at the semiring level, by instantiating the formula semiring in ProvSQL.
+% For smaller values of $k$, provenance evaluation using our possible-world semantics is slower than that of the \sql{JOIN} version.
+% However with increasing $k$, provenance evaluation using possible world-semantics is considerably faster.
+% This is expected, since the rewriting requires $k$ aliases of the base relation and produces increasingly expensive intermediate join tables. 
+% In comparison, execution times for provenance evaluation using our possible-world semantics are almost constant with varying $k$ in the query.
 
-We observe similar results in Figure~\ref{fig:prob_eval_times_ge} and Figure~\ref{fig:prob_eval_times_lt} for probability computation.
-In this case, execution times for probability computation using possible-world semantics increases with varying $k$, but only up to a point, after which the running time actually can decrease; this is because of the fact that the possible worlds that satisfy the comparison are much smaller.
-For the equivalent \sql{JOIN} query, the performance is similar as for provenance computations, i.e, there is a phase shift in the running time around $k=6$. \sil{Check my write-up}
+% We observe similar results in Figure~\ref{fig:prob_eval_times_ge} and Figure~\ref{fig:prob_eval_times_lt} for probability computation.
+% In this case, execution times for probability computation using possible-world semantics increases with varying $k$, but only up to a point, after which the running time actually can decrease; this is because of the fact that the possible worlds that satisfy the comparison are much smaller.
+% For the equivalent \sql{JOIN} query, the performance is similar as for provenance computations, i.e, there is a phase shift in the running time around $k=6$. \sil{Check my write-up}
+
+Figure~\ref{fig:prov_only_times_ge} and Figure~\ref{fig:prov_only_times_lt} report query 
+execution times including provenance computation, comparing our possible-world semantics 
+with the corresponding \sql{JOIN}-based rewriting. During execution, our semantics constructs 
+a provenance circuit with a \emph{comparison gate} representing the aggregate comparison. The 
+possible-world semantics is triggered at the semiring level, by instantiating the formula semiring 
+in ProvSQL. For provenance computation alone, the running time of our semantics remains relatively 
+stable as $k$ varies. For the \sql{COUNT(*)>=k} query, the \sql{JOIN}-based rewriting is faster for 
+very small values of $k$, and then becomes comparable to the \sql{HAVING}-based semantics after a 
+phase shift around $k=5$. For the \sql{COUNT(*)<k} query, the \sql{JOIN}-based rewriting is again 
+cheaper for small values of $k$, but becomes slightly more expensive than our semantics for larger 
+values of $k$. Thus, for provenance computation alone, the main observation is not a monotone increase 
+with $k$, but rather that the \sql{JOIN}-based rewriting exhibits a sharp change in behavior, while 
+the \sql{HAVING}-based possible-world semantics remains comparatively stable.
+
+% The behavior of the \sql{JOIN}-based rewriting depends on the number of witnesses produced by the 
+% self-join, and therefore need not be monotone in $k$. For a group with $m$ matching tuples, the 
+% rewriting for \sql{COUNT(*)>=k} may generate up to $\binom{m}{k}$ witnesses. Hence, the cost is 
+% governed not only by the number of aliases in the rewritten query, but also by the distribution 
+% of group sizes in the data and by the number of surviving witnesses. This explains why the \sql{JOIN}-based 
+% timings are small for the first few values of $k$, and then change sharply once the self-join starts 
+% producing larger provenance expressions.
+
+The difference becomes much more pronounced in Figure~\ref{fig:prob_eval_times_ge} and 
+Figure~\ref{fig:prob_eval_times_lt}, where probability evaluation is included in addition 
+to query execution and provenance computation. In these experiments, the \sql{HAVING}-based 
+possible-world semantics remains in the same general range across different values of $k$. In 
+contrast, the \sql{JOIN}-based rewriting is cheap only for small values of $k$, and then becomes 
+substantially more expensive after the same phase shift. This is because the \sql{JOIN} formulation 
+represents the aggregate comparison indirectly through many tuple combinations, leading to 
+significantly larger provenance expressions for probability evaluation.
 
 \begin{toappendix}
 \section{Implementation and Experiments}
