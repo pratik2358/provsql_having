@@ -699,9 +699,25 @@ For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$)
 % Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). % \end{proof}
 
 \begin{proposition}
-  Let $I$ be an instance where each input tuple $u$ is associated with an independent probability $Pr(u)\in [0,1]$, then the probabilistic query evaluation of a boolean \sql{HAVING} query $Q$ evaluated on $I$ is equivalent to the probability that the Boolean expression $\angsem{\hat I}{Q}$, where $\hat I$ is a $B[X]$-instance, evaluates to true when every tuple $u \in\hat I$ is set to true with probability $Pr(u)$.
+  Let $I$ be an instance where each input tuple $u$ is associated with an independent probability $Pr(u)\in [0,1]$, then the probabilistic query evaluation of a boolean \sql{HAVING} query $Q$ evaluated on $I$ is equivalent to the probability that the Boolean expression $\angsem{\hat I}{Q}$, where $\hat I$ is a $\mathbb{B}[X]$-instance, evaluates to true when every tuple $u \in\hat I$ is set to true with probability $Pr(u)$.
 \end{proposition}\rjok{anyone remembers the paper where they defined PQE? (for citation)}
+\begin{proof}\
+  By definition, probabilistic query evaluation of $Q$ on $I$, is \[Pr_{I}(Q)=\Sigma_{\substack{S\subseteq I,\\ S\models Q }}\Bigl( \Pi_{u \in S}(Pr(u))\Pi_{u \in I\msetminus S }(1-Pr(u)) \Bigr).\]
+  Now, evaluating provenance in $B[X]$ for the boolean query $Q$, using the possible-world semantics for provenance evaluation from Section~\ref{sec:semantics}  yields a Boolean formula over tuples in $\hat I$. This semantics is, in fact, defined by summing over possible worlds satisfying the aggregate comparison(s) in $Q$. Since $\hat I$ is tuple-independent, every possible-world valuation $\nu:\mathbf{X}_{\hat{I}}\rightarrow\{\top,\bot\}$ mimicing a possible-world $W$ as in Definition~\ref{def:possible_world} has probability $
+  Pr(\nu)=\Pi_{\nu(\mathbf{x}_u\in \mathbf{X}_{\hat{I}})=\top}Pr(u)\Pi_{\nu(\mathbf{x}_u\in \mathbf{X}_{\hat{I}})=\bot}(1-Pr(u))$.\\
+By construction, the $\mathbb{B}[X]$-expression $\angsem{\hat I}{Q}$ is true under a valuation $\nu$ if and only if the corresponding possible sub-instance $S_\nu=\mset{u\in \hat I\mid \nu(\mathbf{x}_u)=\top}$
+satisfies $Q$, i.e.,
+$
+\nu(\angsem{\hat I}{Q})=\top
+\iff
+S_\nu\models Q
+$ and is indeed the Boolean provenance of $Q$ by defintion.
+Therefore, 
+$
+Pr(\angsem{\hat I}{Q})
+=\Sigma_{\nu \models \angsem{\hat I}{Q}} Pr(\nu)=\Sigma_{\substack{S\subseteq I,\\ S\models Q }}\Bigl(\Pi_{u \in S}Pr(u)\Pi_{u \in I\msetminus S }(1-Pr(u))\Bigr)=Pr_I(Q).$
 
+\end{proof}
 \begin{proposition}
   For any $\mathbb{K}$-instance of characteristic~0, there exists a Boolean \sql{HAVING} query such that determining
   whether the provenance of this query over a $\mathbb{K}$-instance is not

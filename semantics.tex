@@ -47,7 +47,7 @@ comparisons of aggregate values (i.e., non-terminal aggregates) using a
 possible-world semantics.
 %\pierre{We need to add an ordering function on aggregation.}
 %We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions:
-\begin{definition}
+\begin{definition}\label{def:possible_world}
 Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a $k$-ary
 extended relational algebra query $q$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, we define
 the multiset of tuples involved as a set of their occurrences, \[U^{\hat I}_{q,\vec v}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1},\dots,u_{i_m})=\vec v \}\]
