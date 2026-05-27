@@ -699,8 +699,8 @@ For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$)
 % Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). % \end{proof}
 
 \begin{proposition}
-\pierre{PQE result}
-\end{proposition}
+  Let $I$ be an instance where each input tuple $u$ is associated with an independent probability $Pr(u)\in [0,1]$, then the probabilistic query evaluation of a boolean \sql{HAVING} query $Q$ evaluated on $I$ is equivalent to the probability that the Boolean expression $\angsem{\hat I}{Q}$, where $\hat I$ is a $B[X]$-instance, evaluates to true when every tuple $u \in\hat I$ is set to true with probability $Pr(u)$.
+\end{proposition}\rjok{anyone remembers the paper where they defined PQE? (for citation)}
 
 \begin{proposition}
   For any $\mathbb{K}$-instance of characteristic~0, there exists a Boolean \sql{HAVING} query such that determining
