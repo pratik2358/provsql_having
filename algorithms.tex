@@ -5,10 +5,10 @@
 
 In this section we describe specialized procedures for evaluating the valid possible-worlds for selections involving aggregate comparisons.
 
-ProvSQL implements multiset semantics, using \emph{tuple occurrences} carrying globally unique provenance identifiers (UUIDs).
-We maintain a uniqueness invariant for every intermediate query result $\angsem{\hat I}{q}$: no pair $(u,\alpha)$ occurs twice, meaning that duplicates of the same value-tuple $u$ are represented as distinct occurrences with different annotations $\alpha$.
-Under this invariant, the multiset of group member occurrences can be treated as a finite \emph{set}, and possible worlds are then ordinary subsets.
-This does not change our semantics: multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
+% ProvSQL implements multiset semantics, using \emph{tuple occurrences} carrying globally unique provenance identifiers (UUIDs).
+% We maintain a uniqueness invariant for every intermediate query result $\angsem{\hat I}{q}$: no pair $(u,\alpha)$ occurs twice, meaning that duplicates of the same value-tuple $u$ are represented as distinct occurrences with different annotations $\alpha$.
+% Under this invariant, the multiset of group member occurrences can be treated as a finite \emph{set}, and possible worlds are then ordinary subsets.
+% This does not change our semantics: multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
 All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} subquery $q'$.
 Accordingly, any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
@@ -23,7 +23,7 @@ Similarly, for \sql{MIN}/\sql{MAX} aggregates we can use strategies based on ord
 For aggregate functions or predicates not covered by the specialized cases, reverting to
 brute-force enumeration of non-empty worlds $W\subseteq U^{\hat I}_{q',\vec v}$ will always give the correct answer by our semantics.
 The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. \sil{Do we need to list all possible constants for the second aggregate?}
-
+\begin{toappendix} 
 \begin{algorithm}
   \caption{Enumeration of valid worlds for \sql{SUM}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
@@ -98,6 +98,8 @@ The algorithms can also be used to evaluate provenance for comparisons between t
   \Return $\mathcal W$\;
   }
 \end{algorithm}
+\end{toappendix}
+
 
 Both algorithms are correct by the following two theorems.
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:sum_dp}]\label{thm:sumdp-correct}
@@ -335,6 +337,8 @@ It follows that the final output is exactly
 
 This establishes the correctness.
 \end{appendixproof}
+
+\begin{toappendix}
 \begin{algorithm}
   \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
@@ -400,6 +404,8 @@ This establishes the correctness.
 
   \Return $\mathcal W$\;
 \end{algorithm}
+\end{toappendix}
+
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:count_enum}]\label{thm:count-enum-correct}
 \lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
 Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
