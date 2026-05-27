@@ -16,7 +16,7 @@ form of compatibility between semiring operations and the aggregate
 values. On the other hand, this restricts aggregate operations, with
 common non-associative operations (such as \sql{AVG}) or non-commutative ones
 (such as \fakesql{STRING\_AGG} or \fakesql{ARRAY\_AGG}). In contrast, for
-generality and because our semantics does not depend on the fine
+generality and because our semantics does not depend on the
 semimodule structure, we extend to any arbitrary aggregate function on
 \emph{sequences} of values. This results in replacing the semimodule
 structure with a formal non-commutative algebraic structure.
@@ -24,7 +24,7 @@ structure with a formal non-commutative algebraic structure.
 We fix a commutative m-semiring
 $(\mathbb{K},\oplus,\otimes,\ominus,\mathbb{0},\mathbb{1})$, as discussed in the preliminaries, along with a data domain $\mathcal{V}$.
 For any set~$S$, we write $\Seq(S)$ the set of finite sequences over $S$.
-We consider aggregate functions and comparison operators:
+We define aggregate functions with comparison operators:
 \begin{definition}
 An \emph{aggregate function} is a function  $f:\Seq(\mathcal{V})\to\mathcal{V}$.
   For any comparison operator $\op\in\{<,\leq,=,\geq,>,\neq\}$ defined
@@ -32,18 +32,17 @@ An \emph{aggregate function} is a function  $f:\Seq(\mathcal{V})\to\mathcal{V}$.
   \{\bot,\top\}$, we denote
 \(
   \chi_{\op}:\mathcal{V}\times\mathcal{V}\to \mathbb{K}
-  \) the mapping that sends $(a,b)$ to $\mathbb{1}$ if $a\op b$, and to
+  \) the following mapping: $(a,b)$ to $\mathbb{1}$ if $a\op b$, and to
   $\mathbb{0}$ otherwise.
 \end{definition}
 
-\cite{sen2026provsql} provides a provenance semantics over annotated
+Sen et al.~\cite{sen2026provsql} provide a provenance semantics over annotated
 relations for the multiset relational alegbra extended with
 \emph{terminal} aggregation,
-which itself is based on that of
+itself based on that of
 \cite{green2007provenance,geerts2010database,amsterdamer2011provenance}. 
-\rjok{previously the citation was green2008provenance, and it caused a reference issue. recorrect if i am wrong}
 We extend the semantics of the \emph{selection} operator to allow
-comparisons of aggregate values (i.e., non-terminal aggregates) using a
+comparisons of aggregate values (i.e., non-terminal aggregates) using
 possible-world semantics.
 %\pierre{We need to add an ordering function on aggregation.}
 %We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions:
@@ -84,7 +83,7 @@ where, empty $\otimes$-products equal $\mathbb{1}$ and empty $\oplus$-sums equal
 % \vals_t(W) \defeq \mset{\, t(u) \mid (u,\alpha)\in W\,}
 % \]
 % \end{definition}
-We now formalise a general semantics for $selection$, assuming that atomic comparisons inside \emph{selection} predicates- $t\op t'$ and $(t:f) \op (t':f')$, where $t, t'$ are terms of max-index $\leq k$ and $f,f'$ are arbitrary aggregate functions, are well-defined: whenever such a comparison is evaluated on $u\in\mathcal V^k$, $t(u)$ and $t'(u)$  must lie in the domain on
+We now formalise a general semantics for $selection$, assuming that atomic comparisons inside \emph{selection} predicates- $t\op t'$ and $(t:f) \op (t':f')$, where $t, t'$ are terms of max-index $\leq k$ and $f,f'$ are arbitrary aggregate functions. We assume the predicates are well-defined: whenever such a comparison is evaluated on $u\in\mathcal V^k$, $t(u)$ and $t'(u)$  must lie in the domain on
 which $\op$ is defined (likewise, for $(t:f)\op(t':f')$).
 \begin{definition}[Semantics of Selection Predicate]
 Fix a $\mathbb K$-instance $\hat I$  and let $q\in \RA_k$.
