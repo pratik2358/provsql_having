@@ -1,6 +1,5 @@
 \section{Semantics}
 \label{sec:semantics}
-\pierre{1.5 page}
 
 In this section we give a general \emph{possible-world semantics} for
 selection predicates involving comparisons of aggregate values, in
@@ -13,13 +12,13 @@ elements are tensor products of data values and semiring elements, with
 the aggregation operation, required to be a commutative monoid operation,
 being lifted as the semimodule sum. This allows compositionality and some
 form of compatibility between semiring operations and the aggregate
-values. On the other hand, this restricts aggregate operations, with
+values. On the other hand, this rules out
 common non-associative operations (such as \sql{AVG}) or non-commutative ones
 (such as \fakesql{STRING\_AGG} or \fakesql{ARRAY\_AGG}). In contrast, for
 generality and because our semantics does not depend on the
 semimodule structure, we extend to any arbitrary aggregate function on
-\emph{sequences} of values. This results in replacing the semimodule
-structure with a formal non-commutative algebraic structure.
+\emph{sequences} of values. This amounts to replacing the semimodule
+with a formal non-commutative algebraic structure.
 
 We fix a commutative m-semiring
 $(\mathbb{K},\oplus,\otimes,\ominus,\mathbb{0},\mathbb{1})$, as discussed in the preliminaries, along with a data domain $\mathcal{V}$.
@@ -40,7 +39,7 @@ Sen et al.~\cite{sen2026provsql} provide a provenance semantics over annotated
 relations for the multiset relational alegbra extended with
 \emph{terminal} aggregation,
 itself based on that of
-\cite{green2007provenance,geerts2010database,amsterdamer2011provenance}. 
+\cite{green2007provenance,geerts2010database,amsterdamer2011provenance}.
 We extend the semantics of the \emph{selection} operator to allow
 comparisons of aggregate values (i.e., non-terminal aggregates) using
 possible-world semantics.
@@ -49,8 +48,10 @@ possible-world semantics.
 \begin{definition}\label{def:possible_world}
 Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a $k$-ary
 extended relational algebra query $q$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, we define
-the multiset of tuples involved as a set of their occurrences, \[U^{\hat I}_{q,\vec v}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1},\dots,u_{i_m})=\vec v \}\]
-Fix an ordering function $\omega:U^{\hat I}_{q,\vec v}\rightarrowtail(\mathbb U,<)$ into a totally ordered set $(\mathbb U,<)$. 
+the multiset of tuples involved as a set of their occurrences, \[U^{\hat
+I}_{q,\vec v}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th
+occurrence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1},\dots,u_{i_m})=\vec v \}\]
+Fix an ordering function $\omega:U^{\hat I}_{q,\vec v}\rightarrowtail(\mathbb U,<)$ into a totally ordered set $(\mathbb U,<)$.
 Now, for an $\omega$-ordered sequence of $U^{\hat I}_{q,\vec v}$,
 \[
   ((U^{\hat I}_{q,\vec v})_r)^\omega_{r\in[|U^{\hat I}_{q,\vec v}|]}\defeq((u_1,\alpha_1),\dots,(u_n,\alpha_n))^\omega \text{ such that, }\forall\, 1\leq p< s\leq n,\,\omega(u_p,\alpha_p,o_p)<_{\mathbb U}\omega(u_s,\alpha_s,o_s)
@@ -66,24 +67,7 @@ where, empty $\otimes$-products equal $\mathbb{1}$ and empty $\oplus$-sums equal
 
 \end{definition}
 
-% \begin{definition}[Possible World Semantics]
-%   Let $\hat I$ be a $\mathbb{K}$-instance. Fix $k\in \mathbb{N}$, a subquery $q\in\RA_k$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group key $\vec v\in\mathcal{V}^m$. For any \emph{possible-world} $W\msubseteq U^{\hat I}_{q,\vec v}$, we define it's $\mathbb{K}-$annotation as:
-% \[
-% \ann^{\hat I}_{q,\vec v}(W) \defeq
-% \Bigl( \bigotimes_{(u,\alpha)\in W}\alpha \Bigr)
-%  \otimes
-% \Bigl( \mathbb{1} \ominus \bigoplus_{(u,\alpha)\in U^{\hat I}_{q,\vec v}\msetminus W}\alpha \Bigr).
-% \]
-% (Empty $\otimes$-products equal $\mathbb{1}$; empty $\oplus$-sums equal $\mathbb{0}$.)
-% \end{definition}
-% \begin{definition}[Aggregate Bags]
-% Let $t$ be a term of max-index $\le k$ and $\hat I$ a $\mathbb{K}$-instance.
-%   For a possibble-world $W\msubseteq U^{\hat I}_{q,\vec v}$, define the \emph{induced multiset of values} $\in \Bag(\mathcal{V})$ as:
-% \[
-% \vals_t(W) \defeq \mset{\, t(u) \mid (u,\alpha)\in W\,}
-% \]
-% \end{definition}
-We now formalise a general semantics for $selection$, assuming that atomic comparisons inside \emph{selection} predicates- $t\op t'$ and $(t:f) \op (t':f')$, where $t, t'$ are terms of max-index $\leq k$ and $f,f'$ are arbitrary aggregate functions. We assume the predicates are well-defined: whenever such a comparison is evaluated on $u\in\mathcal V^k$, $t(u)$ and $t'(u)$  must lie in the domain on
+We now formalize a general semantics for $selection$, assuming that atomic comparisons inside \emph{selection} predicates- $t\op t'$ and $(t:f) \op (t':f')$, where $t, t'$ are terms of max-index $\leq k$ and $f,f'$ are arbitrary aggregate functions. We assume the predicates are well-defined: whenever such a comparison is evaluated on $u\in\mathcal V^k$, $t(u)$ and $t'(u)$  must lie in the domain on
 which $\op$ is defined (likewise, for $(t:f)\op(t':f')$).
 \begin{definition}[Semantics of Selection Predicate]
 Fix a $\mathbb K$-instance $\hat I$  and let $q\in \RA_k$.
