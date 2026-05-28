@@ -23,7 +23,7 @@ Similarly, for \sql{MIN}/\sql{MAX} aggregates we can use strategies based on ord
 For aggregate functions or predicates not covered by the specialized cases, reverting to
 brute-force enumeration of non-empty worlds $W\subseteq U^{\hat I}_{q',\vec v}$ will always give the correct answer by our semantics.
 The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. \sil{Do we need to list all possible constants for the second aggregate?}
-\begin{toappendix} 
+\begin{toappendix}
 \begin{algorithm}
   \caption{Enumeration of valid worlds for \sql{SUM}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
@@ -351,7 +351,7 @@ This establishes the correctness.
 
   \BlankLine
   $\mathcal W \gets \emptyset$\;
-  
+
   \SetKwFunction{Combinations}{Combinations}
   \Fn{\Combinations{$i, x, W$}}{
     \If{$x = 0$}{
@@ -573,7 +573,8 @@ Some important cases of aggregate comparisons can be evaluated in polynomial tim
   \end{itemize}
 \end{proposition}
 \begin{proof}
-Fix an arbitrary $\mathbb K$-instance $\hat I$, a group key $\vec v$, and represnet
+Fix an arbitrary $\mathbb K$-instance $\hat I$, a group key $\vec v$, and
+represent
 \[
 U^{\hat I}_{q',\vec v}
 =
@@ -623,4 +624,108 @@ Since $k$ is fixed, the number of such worlds is bounded by
 
 \smallskip\noindent
 With these 4 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
+\end{proof}
+
+\begin{proposition}
+\label{prop:agg-cmp-poly-prob}
+Fix a $\mathbb{B}[X]$-instance $\hat I$ in which every input variable
+$x_u\in\mathbf X_{\hat I}$ carries an independent probability
+$\Pr(x_u)\in[0,1]$, a group key $\vec v$, and let
+$U\defeq U^{\hat I}_{q',\vec v}=((u_i,\alpha_i))_{1\le i\le N}$ be the
+pre-aggregation occurrences at that group key.
+Assume the contributors are \emph{independent}: the sets of input
+variables of the annotations $(\alpha_i)_{1\le i\le N}$ are pairwise
+disjoint and disjoint from the variables of every other annotation in
+$\angsem{\hat I}{q}$.  Write $p_i\defeq\Pr(\alpha_i)$ for the
+contributor marginals (each computable in polynomial time when
+$\alpha_i$ is a read-once Boolean tree).
+Then, for every comparison operator
+$\op\in\{=,\neq,<,\le,>,\ge\}$ and threshold $C\in\NN$, the probability
+of the aggregate-comparison atom on the contributors of group $\vec v$
+under the possible-world semantics can be computed by the following
+deterministic procedures:
+\begin{itemize}
+  \item \sql{COUNT(*)}\,$\op\,C$: in time
+        $O\bigl(N\cdot\min(C,\,N-C)\bigr)$;
+  \item \sql{SUM}$(t)\,\op\,C$ with $t(u_i)\in\NN$ and
+        $S\defeq\sum_{i=1}^N t(u_i)$: in time $O(N\cdot S)$, hence
+        polynomial in $N$ whenever $\max_i t(u_i)$ is polynomial in
+        $N$;
+  \item \sql{MIN}$(t)\,\op\,C$ and \sql{MAX}$(t)\,\op\,C$, for any
+        totally ordered value domain: in time $O(N)$.
+\end{itemize}
+\end{proposition}
+
+\begin{proof}
+By the independence hypothesis and the equivalence between
+probabilistic query evaluation and possible-world summation
+(Proposition~\ref{prop:pqe-equiv}), the probability of the comparison
+atom factors through the indicators
+$X_i\defeq[(u_i,\alpha_i)\text{ present in the world}]$, which form a
+family of \emph{independent} Bernoullis with $\Pr[X_i=1]=p_i$.
+We exhibit the three procedures.
+
+\smallskip\noindent\textbf{(1) \sql{COUNT(*)}\,$\op\,C$.}
+The aggregate value on a world $W$ is $|W|=\sum_{i=1}^N X_i$, a
+Poisson-binomial variable $B$.  For each $\op$, the satisfaction set
+$\{j\in\{0,\dots,N\}\mid j\op C\}$ is an interval (possibly truncated
+by $0$, or with the singleton $\{C\}$ removed in the $\neq$ case), so
+the answer reduces to two CDF queries among $\Pr[B\le T]$,
+$\Pr[B\ge T]$, $\Pr[B=T]$, $\Pr[B=0]$.
+
+Let $\rho_n(j)\defeq\Pr\bigl[\sum_{i\le n}X_i=j\bigr]$.
+The classical convolution identity
+\[
+\rho_n(j)=(1-p_n)\,\rho_{n-1}(j)+p_n\,\rho_{n-1}(j-1)
+\]
+yields a 1-D rolling DP that fills the row $\rho_N(\cdot)$ up to any
+prescribed index $J\le N$ in time $O(N\cdot J)$.
+Computing the upper tail $\Pr[B\ge C]$ directly costs
+$O(N\cdot(N-C+1))$; computing the lower tail costs $O(N\cdot C)$.
+Using $\Pr[B\ge C]=\Pr[B'\le N-C]$ for $B'=\sum_i(1-X_i)$, one can
+always evaluate the tail on whichever side of $C$ is shorter, giving
+the announced bound $O\bigl(N\cdot\min(C,N-C)\bigr)$.
+The empty-world mass $\Pr[B=0]=\prod_i(1-p_i)$ is obtained as a
+by-product (linear time) and subtracted in the branches whose
+satisfaction interval contains $0$ (i.e.\ $\le$, $<$, $\neq$, and $\ge$
+with $C\le0$).
+
+\smallskip\noindent\textbf{(2) \sql{SUM}$(t)\,\op\,C$ with integer
+weights.}
+The aggregate value on a world $W$ is
+$\Sigma\defeq\sum_{i:X_i=1}t(u_i)$, a weighted Poisson-binomial
+variable.  The same convolution generalises:
+\[
+\sigma_n(s)=(1-p_n)\,\sigma_{n-1}(s)+p_n\,\sigma_{n-1}\bigl(s-t(u_n)\bigr),
+\qquad
+0\le s\le S,
+\]
+where $\sigma_n(s)\defeq\Pr\bigl[\sum_{i\le n}t(u_i)X_i=s\bigr]$.
+Filling $\sigma_N(\cdot)$ on $[0,S]$ takes $O(N\cdot S)$ time and gives
+all atoms $\Pr[\Sigma=s]$, hence every $\Pr[\Sigma\op C]$ by a single
+length-$O(S)$ summation; the empty-world adjustment is the same
+$\prod_i(1-p_i)$ as before.  (When $C\le S/2$ a smaller-tail trick
+analogous to~(1) reduces the constant; we state the looser bound for
+clarity.)
+
+\smallskip\noindent\textbf{(3) \sql{MIN}$(t)\,\op\,C$ and
+\sql{MAX}$(t)\,\op\,C$.}
+Independence makes the events
+``$\max_{i:X_i=1}t(u_i)\le C$'' and ``$\min_{i:X_i=1}t(u_i)\ge C$''
+\emph{factor over $i$}, since each surviving $X_i=1$ contributes its
+threshold check independently:
+\begin{align*}
+  \Pr[\text{\sql{MAX}}\le C\text{ on a nonempty world}]
+ &=\Bigl(\textstyle\prod_{i:t(u_i)>C}(1-p_i)\Bigr)
+   \,\bigl(1-\textstyle\prod_{i:t(u_i)\le C}(1-p_i)\bigr),\\
+   \Pr[\text{\sql{MIN}}\ge C\text{ on a nonempty world}]
+ &=\Bigl(\textstyle\prod_{i:t(u_i)<C}(1-p_i)\Bigr)
+   \,\bigl(1-\textstyle\prod_{i:t(u_i)\ge C}(1-p_i)\bigr),
+\end{align*}
+each computable by a single scan in $O(N)$.
+The remaining operators are obtained by complementation
+(``\sql{MAX}$>C$'' is the negation of ``\sql{MAX}$\le C$'' on the nonempty
+worlds, etc.) and the equality cases by intersecting two such tails;
+$\neq$ subtracts the equality from the nonempty mass
+$1-\prod_i(1-p_i)$.  All these algebraic combinations stay $O(N)$.
 \end{proof}

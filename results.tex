@@ -50,7 +50,7 @@ Fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
 So,
 \[U^{\hat I}_{q,(a)}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1})=(a) \}\]
 \paragraph{Provenance of the \sql{HAVING} query using possible-world semantics:}
-For the query 
+For the query
 $
 Q^{\op C}_1
 =
@@ -75,14 +75,14 @@ $
 \end{multline}
 where for any arbitrary ordering $\omega$ our commutative aggregate \sql{COUNT} is denoted as $f_\Sigma$.
 \\
-For each possible-world $W\subseteq [|U^{\hat I}_{q,(a)}|]$, if we denote 
+For each possible-world $W\subseteq [|U^{\hat I}_{q,(a)}|]$, if we denote
 \begin{align*}
 &A_W=\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w\\
 &B_W=\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w\\
 \end{align*}
 then,
 \begin{align*}
-T_{[|U^{\hat I}_{q,(a)}|]}(W)&:=\ A_W \otimes \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\\ 
+T_{[|U^{\hat I}_{q,(a)}|]}(W)&:=\ A_W \otimes \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\\
 &= A_W\ominus \bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}A_{W\cup\{w\}} \;\textit{[ by distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$]}
 \end{align*}
 such that, $\ann^{\hat I}_{q,(a)}(W)=T_{[|U^{\hat I}_{q,(a)}|]}(W).$
@@ -138,7 +138,7 @@ S_1([|U^{\hat I}_{q,(a)}|]) \ominus S_{C+1}([|U^{\hat I}_{q,(a)}|]).
 \tag{$J_{=,\le}$}
 \]
 \paragraph{\textbf{When $\op$ is $\ge$ :}}
-From \eqref{eq:pw_tw} with $\op = \ge$, we set 
+From \eqref{eq:pw_tw} with $\op = \ge$, we set
 $
 F_C([|U^{\hat I}_{q,(a)}|])\defeq \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
 $
@@ -180,7 +180,7 @@ Thus $F_C([|U^{\hat I}_{q,(a)}|])=S_C([|U^{\hat I}_{q,(a)}|])$ for all $C\ge 1$.
 \angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
 \]
 \paragraph{\textbf{When $\op$ is $=$ :}}
-For $n\in\mathbb N$ we have, 
+For $n\in\mathbb N$ we have,
 $
 \chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)
 $. Then for each $W\subseteq [|U^{\hat I}_{q,(a)}|]$,
@@ -209,13 +209,13 @@ Summing over $W$ and using right-distributivity of $\ominus$ over $\oplus$ (whic
 \angsem{\hat I}{Q^{\ge C}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
 \end{align*}
 By the already established $\ge$-case,
-$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. Therefore, 
+$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. Therefore,
 $
 \angsem{\hat I}{Q^{=C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])\ominus S_{C+1}([|U^{\hat I}_{q,(a)}|])=\angsem{\hat I}{Q^{=C}_2}(a)
-$ by $(J_{=,\le})$. 
+$ by $(J_{=,\le})$.
 \paragraph{\textbf{When $\op$ is $\le$:}}
 For $n\ge 1$ we have $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$. Since groups produced by $\gamma_{\#1}$ are nonempty, only $n=|W|\ge 1$ occur.
-Repeating the same argument as in the case where $\op$ is $=$, we obtain 
+Repeating the same argument as in the case where $\op$ is $=$, we obtain
 \[
 \angsem{\hat I}{Q^{\le C}_1}(a)
 =
@@ -312,16 +312,16 @@ $
 $
 \end{appendixproof}
 \begin{proofsketch}
-  For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that the corresponding $\mathbb K$-provenance under the assumptions of $(i)$, are same for any arbitrary tuple in $\angsem{\hat I}{Q^{\op C}_1}$ and $\angsem{\hat I}{Q^{\op C}_2}$.$\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ are equivalent queries and apply the same relational algebra operators to the same subquery $q$ and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically. Hence, it suffices to show that for each group produced by the grouping operator in $Q^{\op C}_1$, the evaluated $\mathbb K$-provenance because of the aggregate comparison coincides with that produced by $Q^{\op C}_2$ for the corresponding tuple in $\angsem{\hat I}{Q^{\op C}_2}$. 
+  For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that the corresponding $\mathbb K$-provenance under the assumptions of $(i)$, are same for any arbitrary tuple in $\angsem{\hat I}{Q^{\op C}_1}$ and $\angsem{\hat I}{Q^{\op C}_2}$.$\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ are equivalent queries and apply the same relational algebra operators to the same subquery $q$ and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically. Hence, it suffices to show that for each group produced by the grouping operator in $Q^{\op C}_1$, the evaluated $\mathbb K$-provenance because of the aggregate comparison coincides with that produced by $Q^{\op C}_2$ for the corresponding tuple in $\angsem{\hat I}{Q^{\op C}_2}$.
 Since $q$ is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$. We fix an arbitrary group-key $\vec v=(\#1(u)=a)$. So,
-$U^{\hat I}_{q,(a)}=\{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1})=(a) \}$. Following the semantics in Section~\ref{sec:semantics} we claim that 
-$\angsem{\hat I}{Q^{\op C}_1}(a)=\predsem{\hat I}{\gamma_{\#1}[1:+](q)}{\#2\op C}(u)$ is 
-$\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\ W\neq\emptyset,\\|W|\op C}} T_{[|U^{\hat I}_{q,(a)}|]}(W)$ where, 
-$T_{[|U^{\hat I}_{q,(a)}|]}(W)= A_W\ominus \bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}A_{W\cup\{w\}}$ 
-is indeed the $\ann^{\hat I}_{q,(a)}(W)$ for each possible-world $W\subseteq [|U^{\hat I}_{q,(a)}|]$, 
-$A_W$ is $\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w$ and 
-$B_W$ is $\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w$. 
-For every $W\subseteq [|U^{\hat I}_{q,(a)}|] $ and $C\ge 1$ we define 
+$U^{\hat I}_{q,(a)}=\{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1})=(a) \}$. Following the semantics in Section~\ref{sec:semantics} we claim that
+$\angsem{\hat I}{Q^{\op C}_1}(a)=\predsem{\hat I}{\gamma_{\#1}[1:+](q)}{\#2\op C}(u)$ is
+$\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\ W\neq\emptyset,\\|W|\op C}} T_{[|U^{\hat I}_{q,(a)}|]}(W)$ where,
+$T_{[|U^{\hat I}_{q,(a)}|]}(W)= A_W\ominus \bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}A_{W\cup\{w\}}$
+is indeed the $\ann^{\hat I}_{q,(a)}(W)$ for each possible-world $W\subseteq [|U^{\hat I}_{q,(a)}|]$,
+$A_W$ is $\bigotimes_{w\in W}(U^{\hat I}_{q,(a)})_w[\alpha]=\bigotimes_{w\in W}\alpha_w$ and
+$B_W$ is $\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}(U^{\hat I}_{q,(a)})_w[\alpha] =\bigoplus_{w\in [|U^{\hat I}_{q,(a)}|]\setminus W}\alpha_w$.
+For every $W\subseteq [|U^{\hat I}_{q,(a)}|] $ and $C\ge 1$ we define
 $S_C([|U^{\hat I}_{q,(a)}|]):=\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|] \\|W|=C}} A_W$ with $S_C([|U^{\hat I}_{q,(a)}|])=\mathbb{0}_\mathbb{K}$ if $C>|U|$ and show that,
 $\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C([|U^{\hat I}_{q,(a)}|])$.\\
 A join-valuation contributing to the output
@@ -331,7 +331,7 @@ join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurence attribute as
 $C$-element subset $W\subseteq[|U^{\hat I}_{q,(a)}|]$, and
 $\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.\\
 By definition, $Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2$ and $Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2$.
-Since, $\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C([|U^{\hat I}_{q,(a)}|])$, we write: 
+Since, $\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C([|U^{\hat I}_{q,(a)}|])$, we write:
 \[
 \angsem{\hat I}{Q^{=C}_2}(a)
 =
@@ -346,7 +346,7 @@ We now claim a weak bound on $\mathbb K$-element(s) implying joint tuple-presenc
 \begin{lemmarep}\label{lem:upward-expansion}
 \lean{Having}{Having.upward_expansion}
 Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring. Fix a finite set $U$ and elements $(\alpha)_{x\in U}\in \mathbb K$. For $W\subseteq U$ define
-$A_W := \bigotimes_{x\in W}\alpha_x$ and $T_U(W) := A_W \ominus \bigoplus_{x\in U\setminus W} A_{W\cup\{x\}}$. 
+$A_W := \bigotimes_{x\in W}\alpha_x$ and $T_U(W) := A_W \ominus \bigoplus_{x\in U\setminus W} A_{W\cup\{x\}}$.
 Then for every $V\subseteq U$, $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)$.
 \end{lemmarep}
 
@@ -356,7 +356,7 @@ From the properties of $m$-semirings $\ominus$ is the (right) residual of $\oplu
   x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
 \end{equation}
 
-We prove 
+We prove
 \begin{equation}\label{eq:upward-expansion}
   A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
 \end{equation}
@@ -430,11 +430,11 @@ Combining with \eqref{eq:AV-bound} yields
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{appendixproof}
-With $\op$ as $\ge$, in 
-$\angsem{\hat I}{Q^{\op C}_1}(a)$ we set 
+With $\op$ as $\ge$, in
+$\angsem{\hat I}{Q^{\op C}_1}(a)$ we set
 $F_C([|U^{\hat I}_{q,(a)}|])\defeq \bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|]\\|W|\ge C}} T_{[|U^{\hat I}_{q,(a)}|]}(W).
 $
-By virtue of lemma~\ref{lem:upward-expansion} and other properties of $m$-semiring we state further lemmas that we will need in this proof to establish recurrences for $F_C([|U^{\hat I}_{q,(a)}|])$ and $S_C([|U^{\hat I}_{q,(a)}|])$. 
+By virtue of lemma~\ref{lem:upward-expansion} and other properties of $m$-semiring we state further lemmas that we will need in this proof to establish recurrences for $F_C([|U^{\hat I}_{q,(a)}|])$ and $S_C([|U^{\hat I}_{q,(a)}|])$.
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 \lean{Having}{Having.FC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring satisfying distributivity of $\otimes$ over $\ominus$. Fix a non-empty finite set $U$ and elements $(\alpha)_{x\in U}\in \mathbb K$. For $W\neq\emptyset\subseteq U$ define
@@ -538,20 +538,20 @@ Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ gives $F_C(U')\le F_C(U
 From \eqref{eq:leq-direction}, $F_C(U')\le F_C(U)$ and
 $F_{C-1}(U')\otimes\alpha_u=(II)\le F_C(U)$, we obtain
 $F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)\le F_C(U)$.
-Together with \eqref{eq:leq-direction}, we get 
+Together with \eqref{eq:leq-direction}, we get
 \[
 F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u),
 \]
 as required.
-\end{appendixproof} 
+\end{appendixproof}
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an m-semiring.
 Fix a non-empty finite set $U$ and a family $(\alpha)_{x\in U}\in \mathbb K$.
 For $W\neq\emptyset\subseteq U$ define $A_W:=\bigotimes_{x\in W}\alpha_x$ and for $C\in\mathbb N^{\ge 1}$ define
 $
-S_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$. 
-For an arbitrary choice of $u\in U$ such that $U'=U\setminus\{u\}$ for every $C\ge 1$, 
+S_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$.
+For an arbitrary choice of $u\in U$ such that $U'=U\setminus\{u\}$ for every $C\ge 1$,
 $
 S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr).
 $
@@ -647,21 +647,21 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr),
 \]
 as required.
 \end{appendixproof}
-If we set $U=[|U^{\hat I}_{q,(a)}|]$ and $(\alpha_u)_{u\in U}=((U^{\hat I}_{q,(a)})_u[\alpha])_{u\in U}^\omega$ for any fixed choice of ordering $\omega$, then by Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$, $F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ and by Lemma~\ref{lem:SC_recurrence}, $S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$. 
-We prove that $F_C(U)=S_C(U)$, i.e, $F_C([|U^{\hat I}_{q,(a)}|])=S_C([|U^{\hat I}_{q,(a)}|])$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}. Hence, $\angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a)$. 
-For $n\in\mathbb N$ we have, 
-$\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)$ and $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. 
-We show that 
+If we set $U=[|U^{\hat I}_{q,(a)}|]$ and $(\alpha_u)_{u\in U}=((U^{\hat I}_{q,(a)})_u[\alpha])_{u\in U}^\omega$ for any fixed choice of ordering $\omega$, then by Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$, $F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ and by Lemma~\ref{lem:SC_recurrence}, $S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$.
+We prove that $F_C(U)=S_C(U)$, i.e, $F_C([|U^{\hat I}_{q,(a)}|])=S_C([|U^{\hat I}_{q,(a)}|])$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}. Hence, $\angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a)$.
+For $n\in\mathbb N$ we have,
+$\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)$ and $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$.
+We show that
 $\angsem{\hat I}{Q^{=C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a)$
 and,
-$\angsem{\hat I}{Q^{\le C}_1}(a)=\angsem{\hat I}{Q^{\ge 1}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a)$. 
+$\angsem{\hat I}{Q^{\le C}_1}(a)=\angsem{\hat I}{Q^{\ge 1}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a)$.
 By the already established $\ge$-case,
-$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. 
-Therefore, 
+$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$.
+Therefore,
 $
 \angsem{\hat I}{Q^{=C}_1}(a)=S_C([|U^{\hat I}_{q,(a)}|])\ominus S_{C+1}([|U^{\hat I}_{q,(a)}|])=\angsem{\hat I}{Q^{=C}_2}(a)
 $. Similarly, $\angsem{\hat I}{Q^{\ge 1}_1}(a)=S_1([|U^{\hat I}_{q,(a)}|])$ and
-$\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. Hence, 
+$\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}([|U^{\hat I}_{q,(a)}|])$. Hence,
 $
 \angsem{\hat I}{Q^{\le C}_1}(a)
 =
@@ -699,6 +699,7 @@ For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$)
 % Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). % \end{proof}
 
 \begin{proposition}
+  \label{prop:pqe-equiv}
   Let $I$ be an instance where each input tuple $u$ is associated with an independent probability $Pr(u)\in [0,1]$, then the probabilistic query evaluation of a boolean \sql{HAVING} query $Q$ evaluated on $I$ is equivalent to the probability that the Boolean expression $\angsem{\hat I}{Q}$, where $\hat I$ is a $\mathbb{B}[X]$-instance, evaluates to true when every tuple $u \in\hat I$ is set to true with probability $Pr(u)$.
 \end{proposition}\rjok{anyone remembers the paper where they defined PQE? (for citation)}
 \begin{proof}\
@@ -712,7 +713,7 @@ $
 \iff
 S_\nu\models Q
 $ and is indeed the Boolean provenance of $Q$ by defintion.
-Therefore, 
+Therefore,
 $
 Pr(\angsem{\hat I}{Q})
 =\Sigma_{\nu \models \angsem{\hat I}{Q}} Pr(\nu)=\Sigma_{\substack{S\msubseteq I,\\ S\models Q }}\Bigl(\Pi_{u \in S}Pr(u)\Pi_{u \in I\msetminus S }(1-Pr(u))\Bigr)=Pr_I(Q).$
