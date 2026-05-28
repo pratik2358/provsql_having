@@ -1,8 +1,7 @@
 \section{Introduction}
-\pierre{2 pages with title+abstract}
 As phrased by Peter Buneman, Sanjeev Khanna, and Wang-Chiew Tan, data
 provenance is information on ``where a piece of data came from and the
-process by which it arrived in the database'' \cite{bunemankt01}. Data
+process by which it arrived in the database''~\cite{bunemankt01}. Data
 provenance has numerous applications, in particular with respect to
 understandability, reproducibility, and quality management of a
 data-handling process \cite{herschel2017survey}. A particular form of
@@ -41,16 +40,15 @@ associative and commutative.
 
 Provenance tracking systems on top of regular database management systems
 have been successfully implemented, usually based on query rewriting to construct the
-annotations, notably GProM \cite{bahareh2018gprom} and ProvSQL
+annotations, notably GProM~\cite{bahareh2018gprom} and ProvSQL
 \cite{senellart2018provsql,sen2026provsql}. However, partly because it
 is unclear what semantics should be given to the comparison operator,
-aggregation support in such systems has been partial
+aggregation support has been partial
 \cite{bahareh2018gprom} or limited to terminal aggregation
 \cite{senellart2018provsql}. At best, systems wishing to faithfully
 follow the approach of \cite{amsterdamer2011provenance} stop at
 constructing abstract formulas involving the comparison operator
-\cite{pintor2025dbms}, but do not provide concrete semiring elements.
-
+\cite{pintor2025dbms}, with no concrete semiring elements.
 In contrast, most semirings used for data provenance (see
 Section~\ref{sec:preliminaries}) -- though not all
 semirings~\cite{amarilli2016example} -- can be equipped in a canonical way
@@ -71,7 +69,7 @@ m-semirings}. In more detail:
 \begin{compactenum}[(i)]
 \item We provide a characterization of most commutative m-semirings
   studied in the literature, with, for each, a machine-checked Lean proof
-  of the validity of their definition (including the $\ominus$
+  of the validity of their definition (including the~$\ominus$
   operator) and of important properties.
   This is important as it
   fixes erroneous claims made in previous papers
@@ -98,27 +96,27 @@ m-semirings}. In more detail:
   exponential-time
   algorithm based on possible-world enumeration; algorithms specialized
   for common aggregate functions such as \sql{COUNT}, \sql{SUM},
-  \sql{MIN}, and \sql{MAX}; and optimizations
-  thereof to obtain a polynomial-time parameterized complexity for some comparison
-  operators and some m-semirings (especially absorptive ones). (Section
+  \sql{MIN}, and \sql{MAX} and optimizations
+  thereof to obtain polynomial-time parameterized complexity in some
+  cases
+  (especially for absorptive m-semirings). (Section
   \ref{sec:algorithms})
 
-\item We implement these algorithms within the ProvSQL
-  provenance-tracking extension of PostgreSQL, and explain the relevant
+\item We implement these algorithms within ProvSQL and explain the relevant
   implementation issues.
 We present experiments which show
   the viability of the approach on a real-world database, including for probabilistic
   query evaluation. (Section \ref{sec:implementation_experiments}).
 \end{compactenum}
 
+Related work is discussed in Section~\ref{sec:related_work}.
 Every statement that can be formalized in Lean is accompanied by a
 machine-checked proof, available in an anonymized repository and
 hyperlinked with \leanmain{} throughout the paper; the exceptions are
 complexity claims (no Mathlib support for computational complexity) and
-statements presupposing a Lean implementation of the \sql{HAVING}
-operator.
-The code of the implementation described
-in Section~\ref{sec:implementation_experiments} will be made available
+statements presupposing a Lean implementation of \sql{HAVING}.
+The code of the implementation
+will be made available
 once double-blind requirements are removed. For lack of space,
 most proofs and some additional details are relegated to an
 \hyperref[appendix]{Appendix}.
