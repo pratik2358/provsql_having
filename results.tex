@@ -312,8 +312,12 @@ $
 $
 \end{appendixproof}
 \begin{proofsketch}
-  For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that the corresponding $\mathbb K$-provenance under the assumptions of $(i)$, are same for any arbitrary tuple in $\angsem{\hat I}{Q^{\op C}_1}$ and $\angsem{\hat I}{Q^{\op C}_2}$.$\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ are equivalent queries and apply the same relational algebra operators to the same subquery $q$ and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically. Hence, it suffices to show that for each group produced by the grouping operator in $Q^{\op C}_1$, the evaluated $\mathbb K$-provenance because of the aggregate comparison coincides with that produced by $Q^{\op C}_2$ for the corresponding tuple in $\angsem{\hat I}{Q^{\op C}_2}$.
-Since $q$ is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$. We fix an arbitrary group-key $\vec v=(\#1(u)=a)$. So,
+For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that the corresponding $\mathbb K$-provenance under the assumptions of $(i)$, are same for any arbitrary tuple in $\angsem{\hat I}{Q^{\op C}_1}$ and $\angsem{\hat I}{Q^{\op C}_2}$.
+$\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ are equivalent queries and apply the same relational algebra operators to the same subquery $q$.
+Thus the provenance semantics defined for those operators are identical.
+The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically.
+Hence, it suffices to show that for each group produced by the grouping operator in $Q^{\op C}_1$, the evaluated $\mathbb K$-provenance because of the aggregate comparison coincides with that produced by $Q^{\op C}_2$ for the corresponding tuple in $\angsem{\hat I}{Q^{\op C}_2}$.
+Since $q$ is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$. We fix an arbitrary group-key $\vec v=(\#1(u)=a)$. 
 $U^{\hat I}_{q,(a)}=\{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th occurence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1})=(a) \}$. Following the semantics in Section~\ref{sec:semantics} we claim that
 $\angsem{\hat I}{Q^{\op C}_1}(a)=\predsem{\hat I}{\gamma_{\#1}[1:+](q)}{\#2\op C}(u)$ is
 $\bigoplus_{\substack{W\subseteq [|U^{\hat I}_{q,(a)}|],\\ W\neq\emptyset,\\|W|\op C}} T_{[|U^{\hat I}_{q,(a)}|]}(W)$ where,
@@ -673,6 +677,7 @@ Since group key $(a)$ was arbitrary, we conclude
 $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
 $\op\in\{\ge,=,\le\}$. This proves $(i)$.\\
 For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$) semiring respectively, from  Table~\ref{tab:semirings} and establish counterexamples.
+\sil{Should we add the counterexamples here?}
 \end{proofsketch}
 
 % \begin{proof}[Proof sketch]
@@ -704,7 +709,7 @@ For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$)
 \end{proposition}\rjok{anyone remembers the paper where they defined PQE? (for citation)}
 \begin{proof}\
   By definition, probabilistic query evaluation of $Q$ on $I$, is \[Pr_{I}(Q)=\Sigma_{\substack{S\msubseteq I,\\ S\models Q }}\Bigl( \Pi_{u \in S}(Pr(u))\Pi_{u \in I\msetminus S }(1-Pr(u)) \Bigr).\]
-  Now, evaluating provenance in $B[X]$ for the boolean query $Q$, using the possible-world semantics for provenance evaluation from Section~\ref{sec:semantics}  yields a Boolean formula over tuples in $\hat I$. This semantics is, in fact, defined by summing over possible worlds satisfying the aggregate comparison(s) in $Q$. Since $\hat I$ is tuple-independent, every valuation $\nu:\mathbf{X}_{\hat{I}}\rightarrow\{\top,\bot\}$ mimicing a possible-world $W$ as in Definition~\ref{def:possible_world} has probability $
+  Now, evaluating provenance in $B[X]$ for the boolean query $Q$, using the possible-world semantics for provenance evaluation from Section~\ref{sec:semantics}  yields a Boolean formula over tuples in $\hat I$. This semantics is, in fact, defined by summing over possible worlds satisfying the aggregate comparison(s) in $Q$. Since $\hat I$ is tuple-independent, every valuation $\nu:\mathbf{X}_{\hat{I}}\rightarrow\{\top,\bot\}$ corresponding to a possible-world $W$ as in Definition~\ref{def:possible_world} has probability $
   Pr(\nu)=\Pi_{\nu(\mathbf{x}_u\in \mathbf{X}_{\hat{I}})=\top}Pr(u)\Pi_{\nu(\mathbf{x}_u\in \mathbf{X}_{\hat{I}})=\bot}(1-Pr(u))$.\\
 By construction, the $\mathbb{B}[X]$-expression $\angsem{\hat I}{Q}$ is true under a valuation $\nu$ if and only if the corresponding sub-instance $S_\nu=\mset{u\in \hat I\mid \nu(\mathbf{x}_u)=\top}$
 satisfies $Q$, i.e.,
@@ -712,7 +717,8 @@ $
 \nu(\angsem{\hat I}{Q})=\top
 \iff
 S_\nu\models Q
-$ and is indeed the Boolean provenance of $Q$ by defintion.
+.$
+This the Boolean provenance of $Q$ by defintion.
 Therefore,
 $
 Pr(\angsem{\hat I}{Q})
