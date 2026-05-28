@@ -132,6 +132,8 @@ the query becomes vacuously true or false when $k$ is higher than the
 number of objects in the images, which both our implementations can do.
 
 \begin{toappendix}
+  \section{Material for Section~\ref{sec:implementation_experiments}
+  (Implementation and Experiments)}
 \newcommand{\quotedzero}{\PYG{l+s+s1}{\apos$\mathbb{0}$\apos}}
 \label{sec:appendix_impl_experiments}
 
@@ -143,7 +145,7 @@ the functions of the ProvSQL extension of PostgreSQL (\sql{provenance()}, \sql{s
 The \sql{HAVING}-based template, instantiated either with
 ``\sql{COUNT(obj) >= k}'' or ``\sql{COUNT(obj) <= k}'', is:
 \newcommand{\apos}{\texttt{\textquotesingle}}
-\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{sql}
+\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{postgresql}
 SELECT * FROM (
   SELECT img, sr_formula(provenance(), 'image_mapping') AS prov
   FROM dataset
@@ -156,7 +158,7 @@ SELECT * FROM (
 For probability evaluation, the projection
 \sql{sr_formula(provenance(), 'image_mapping')} is replaced by
 \sql{probability_evaluate(provenance())} and the zero-filter
-``\mintinline[escapeinside=||]{sql}{prov <> |\quotedzero|}'' by
+``\mintinline[escapeinside=||]{postgresql}{prov <> |\quotedzero|}'' by
 ``\sql{prov > 0}''; both serve to discard images whose
 provenance simplifies to $\mathbb{0}$ (resp., have  probability~$0$), which
 under the \sql{HAVING} semantics correspond to images for which the
@@ -165,7 +167,7 @@ aggregate comparison is impossible in every possible world.
 The equivalent self-\sql{JOIN} rewriting for the ``\sql{>= k}'' case uses
 a $(k{-}1)$-fold self-join, with the
 ``\sql{id > }'' chain ensuring distinct matching tuples:
-\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{sql}
+\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{postgresql}
 SELECT * FROM (
   SELECT img, sr_formula(provenance(), 'image_mapping') AS prov
   FROM (
@@ -173,7 +175,7 @@ SELECT * FROM (
     FROM dataset d1
     JOIN dataset d2 ON d2.img = d1.img AND d2.obj = c AND d2.id > d1.id
     ...
-    JOIN dataset dk ON dk.img = d1.img AND dk.obj = c AND dk.id > d|$_{k-1}$|.id
+    JOIN dataset dk ON dk.img = d1.img AND dk.obj = c AND dk.id > d|\(_{k-1}\)|.id
     WHERE d1.obj = c
   ) AS t
 ) sub WHERE prov <> |\quotedzero|;
@@ -181,7 +183,7 @@ SELECT * FROM (
 
 The ``\sql{<= k}'' case is non-monotone and is rewritten as
 “at least one match”~\sql{EXCEPT}~“at least~$k+1$ matches”:
-\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{sql}
+\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{postgresql}
 SELECT * FROM (
   SELECT img, sr_formula(provenance(), 'image_mapping') AS prov
   FROM (
@@ -193,7 +195,7 @@ SELECT * FROM (
     FROM dataset d1
     JOIN dataset d2 ON d2.img = d1.img AND d2.obj = c AND d2.id > d1.id
     ...
-    JOIN dataset d|$_{k+1}$| ON d|$_{k+1}$|.img = d1.img AND d|$_{k+1}$|.obj = c AND d|$_{k+1}$|.id > dk.id
+    JOIN dataset d|\(_{k+1}\)| ON d|\(_{k+1}\)|.img = d1.img AND d|\(_{k+1}\)|.obj = c AND d|\(_{k+1}\)|.id > dk.id
     WHERE d1.obj = c
   ) AS t
 ) sub WHERE prov <> |\quotedzero|;
