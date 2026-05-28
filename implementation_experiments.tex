@@ -131,7 +131,7 @@ FROM (
     \centering
     \begin{minipage}[t]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{plots/ge_prov_only_bar_log.pdf}
+        \includegraphics[width=\textwidth]{plots_pierre/fig1_formula_ge.pdf}
         \caption{Query execution time (including provenance computation) comparison between \sql{HAVING} and 
         \sql{JOIN} based semantics for \sql{COUNT(*)>=k} queries.}
         \label{fig:prov_only_times_ge}
@@ -139,7 +139,7 @@ FROM (
     \hfill
     \begin{minipage}[t]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{plots/lt_prov_only_bar_log.pdf}
+        \includegraphics[width=\textwidth]{plots_pierre/fig2_formula_le.pdf}
         \caption{Query execution time (including provenance computation) comparison between \sql{HAVING} and 
         \sql{JOIN} based semantics for \sql{COUNT(*)<k} queries.}
         \label{fig:prov_only_times_lt}
@@ -150,14 +150,14 @@ FROM (
     \centering
     \begin{minipage}[t]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{plots/ge_prob_eval_bar_log.pdf}
+        \includegraphics[width=\textwidth]{plots_pierre/fig3_prob_ge.pdf}
         \caption{Query execution and probability evaluation time comparison between \sql{HAVING} and \sql{JOIN} based semantics for \sql{COUNT(*)>=k} queries.}
         \label{fig:prob_eval_times_ge}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{plots/lt_prob_eval_bar_log.pdf}
+        \includegraphics[width=\textwidth]{plots_pierre/fig4_prob_le.pdf}
         \caption{Query execution and probability evaluation time comparison between \sql{HAVING} and \sql{JOIN} based semantics for \sql{COUNT(*)<k} queries.}
         \label{fig:prob_eval_times_lt}
     \end{minipage}
