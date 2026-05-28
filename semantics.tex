@@ -14,7 +14,7 @@ being lifted as the semimodule sum. This allows compositionality and some
 form of compatibility between semiring operations and the aggregate
 values. On the other hand, this rules out
 common non-associative operations (such as \sql{AVG}) or non-commutative ones
-(such as \fakesql{STRING\_AGG} or \fakesql{ARRAY\_AGG}). In contrast, for
+(such as \fakesql{ARRAY\_AGG} or \fakesql{LISTAGG}). In contrast, for
 generality and because our semantics does not depend on the
 semimodule structure, we extend to any arbitrary aggregate function on
 \emph{sequences} of values. This amounts to replacing the semimodule
@@ -42,9 +42,13 @@ itself based on that of
 \cite{green2007provenance,geerts2010database,amsterdamer2011provenance}.
 We extend the semantics of the \emph{selection} operator to allow
 comparisons of aggregate values (i.e., non-terminal aggregates) using
-possible-world semantics.
-%\pierre{We need to add an ordering function on aggregation.}
-%We now introduce \emph{aggregate comparison atoms} in \emph{selection} conditions:
+possible-world semantics. As we allow non-commutative aggregation
+functions, we also need to specify, along with the aggregation function,
+which ordering is used,
+similarly to the ``\sql{agg(...) WITHIN GROUP (ORDER BY ...)}'' standard SQL
+feature, or the ``\sql{agg(... ORDER BY ...)}'' feature of PostgreSQL.
+This ordering is irrelevant for commutative aggregates and can be ignored.
+
 \begin{definition}\label{def:possible_world}
 Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a $k$-ary
 extended relational algebra query $q$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, we define
@@ -145,8 +149,8 @@ We define:
 \mset{\, (u,\predsem{\hat I}{q}{\psi}(u)) \mid (u,\alpha)\in \angsem{\hat I}{q}\,}
 & \text{otherwise.}
 \end{cases}
-\]
-\end{definition}\label{def:semantics}
+\]\label{def:semantics}
+\end{definition}
 We note that this possible-world semantics
 ranges over non-empty worlds only. So multiplying the possible-world provenance expression with $\alpha$ (which is a $\delta(\cdot)$-type provenance expression to enforce group existence) is redundant.
 
