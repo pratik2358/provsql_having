@@ -2,138 +2,34 @@
 \label{sec:implementation_experiments}
 \subsection{Implementation}
 We implemented the algorithms described in Section~\ref{sec:algorithms}
-in ProvSQL with some added optimizations. One such optimization is a
+(Proposition~\ref{prop:algorithms})
+within ProvSQL in C++. Implementation includes a number of optimizations. One such optimization is a
 generic \emph{range check}: for every aggregation operator, we determine
 what the minimum and maximum value it can take over all possible worlds (e.g., the sum of all
-negative numbers and of all positive numbers respectively for \sql{SUM}).
-
-We submit all
-\smallskip\noindent
-\emph{\textbf{Optimizations}} For aggregate comparisons involving \sql{SUM} we deal with impossible-world cases as established in Algorithm~\ref{alg:sum_dp} itself. In a similar fashion the following predicates are detected early on as universally true:
-\begin{itemize}
-  \item \sql{SUM > C} and $C < 0$
-  \item \sql{SUM >= C} and $C \leq 0$
-  \item \sql{SUM < C} and $C > T$
-  \item \sql{SUM <= C} and $C \geq T$
-\end{itemize}
-For these cases we skip DP computation and compute fallback to a brute-force enumeration of possible worlds.
-Instead of allocating DP up to the comparison constant $C$, the maximum tracked sum $J$ is defined in an optimized way (lines 8-13 in ALgorithm~\ref{alg:sum_dp}) to prevent unnecessarily large DP tables when $C$ is much larger than reachable sums.
-We also eliminate iterations over sums that are not yet reachable at a particular DP-iteration, reducing early-stage DP cost. For negative tuple values, we resort to exhaustive enumeration of possible worlds.
-For absorptive semirings if \sql{SUM} in a possible-world already satisfies a monotone comparison ($\ge, >$) , further supersets of the world are not enumerated because under absorption, supersets of satisfying worlds do not contribute new information.
-
-\smallskip\noindent
-Similarly, for \sql{COUNT >= m} or \sql{COUNT > m} under absorptive semirings, instead of enumerating all subsets of size at least $m$ only subsets of size exactly $m$ are generated.
-Further if every non-empty world satisfies the comparison predicate and the semiring is absorptive, the set of all worlds is replaced with singleton worlds representing an upward closure via minimal worlds.
-
-\smallskip\noindent
-\emph{\textbf{Simplifications}} While constructing semiring provenance expressions multiplication by $\mathbb 1$ and addition of $\mathbb 0$ is omitted to reduce clutter.
-In absorptive semirings with monotone comparisons for \sql{MAX} with $>\text{ or }\geq$
-and for \sql{MIN} with $<\text{ or }\leq$ missing-tuples factor is suppressed when they do not affect minimal satisfying worlds.
-
-\smallskip\noindent
-The presented optimizations preserve correctness under possible-world semantics and semiring evaluation while significantly reducing world enumeration times and provenance expression size.
+negative numbers and of all positive numbers respectively for \sql{SUM})
+and return either $\mathbb{0}$ if a condition is unsatisfiable, or the
+$\oplus$ of all possible worlds if a condition is necessarily
+true.
 
 
-\subsection{Experiments}
-To test our implementation we ran experiments on a probabilistic image-retrieval database. Following the method
-in~\cite{yunus2025using}, the database is built from object-detection
-output over the COCO 2017~\cite{lin2014microsoft} dataset: for each
-image, YOLOv5~\cite{ultralytics2021yolov5} detects objects,
-and each detected object is stored as one tuple in relation \sql{dataset} with
-a unique identifier \sql{id}, the image identifier \sql{img}, the object
-class \sql{obj}, and a probability derived from the detector
-confidence score. These object annotations are treated as independent
-probabilistic facts. The database contains $119{,}359$ images and $579{,}123$
-object annotations.
+Similarly, for \sql{SUM}, instead of running the dynamic programming up
+to the comparison constant $C$, the maximum tracked sum $J$ is defined in
+an optimized way (cf., lines 8-13 in Algorithm~\ref{alg:sum_dp}, for the
+case of non-negative integers).
+We also eliminate iterations over sums that are not yet reachable at a
+particular DP-iteration, reducing early-stage DP cost. We exploit when
+possible the absorptive nature of the m-semiring.
 
-We compare execution times in ProvSQL for: (i) provenance tracking and, (ii) probability computation of a \sql{HAVING} query with comparisons of the form \sql{COUNT(*) >= k} to find images with at least $k$ couches, for our possible-world semantics against the equivalent self-\sql{JOIN} version. %that defaults to the \sql{JOIN} semantics.
-In our experiments we vary the scalar $k$ of the queries from 1 to 20.
-The result query along with its \sql{JOIN}-rewrite is presented in the Appendix~\ref{sec:appendix_impl_experiments}. We use the same probabilistic backend (d4) in ProvSQL, for both the queries. For each $k$, every query was executed $20$ times on an AMD EPYC 7543P (64) @ 2.800GHz machine running Ubuntu 22.04 using ProvSQL as an extension
-to Postgres 18 with shared buffer size limited to 20,000MB.
+For probability evaluation, we also implemented the algorithms presented
+in Proposition~\ref{prop:agg-cmp-poly-prob}.
 
+Finally, while constructing semiring provenance expressions, we fold standard
+(m-)semiring identities: multiplication by $\mathbb 1$, addition or
+multiplication by $\mathbb 0$, etc.
 
-% Figure~\ref{fig:prov_only_times_ge} and Figure~\ref{fig:prov_only_times_lt} report query execution times for provenance evaluation,
-% comparing our possible-world semantics with the \sql{JOIN} version of the query.
-% During the execution a provenance circuit is created having a \emph{comparison gate} representing the aggregate comparison.
-% The possible world semantics trigger at the semiring level, by instantiating the formula semiring in ProvSQL.
-% For smaller values of $k$, provenance evaluation using our possible-world semantics is slower than that of the \sql{JOIN} version.
-% However with increasing $k$, provenance evaluation using possible world-semantics is considerably faster.
-% This is expected, since the rewriting requires $k$ aliases of the base relation and produces increasingly expensive intermediate join tables.
-% In comparison, execution times for provenance evaluation using our possible-world semantics are almost constant with varying $k$ in the query.
-
-% We observe similar results in Figure~\ref{fig:prob_eval_times_ge} and Figure~\ref{fig:prob_eval_times_lt} for probability computation.
-% In this case, execution times for probability computation using possible-world semantics increases with varying $k$, but only up to a point, after which the running time actually can decrease; this is because of the fact that the possible worlds that satisfy the comparison are much smaller.
-% For the equivalent \sql{JOIN} query, the performance is similar as for provenance computations, i.e, there is a phase shift in the running time around $k=6$. \sil{Check my write-up}
-
-Figure~\ref{fig:prov_only_times_ge} and Figure~\ref{fig:prov_only_times_lt} report query
-execution times including provenance computation, comparing our possible-world semantics
-with the corresponding \sql{JOIN}-based rewriting. During execution, our semantics constructs
-a provenance circuit with a \emph{comparison gate} representing the aggregate comparison. The
-possible-world semantics is triggered at the semiring level, by instantiating the formula semiring
-in ProvSQL. For provenance computation alone, the running time of our semantics remains relatively
-stable as $k$ varies. For the \sql{COUNT(*)>=k} query, the \sql{JOIN}-based rewriting is faster for
-very small values of $k$, and then becomes comparable to the \sql{HAVING}-based semantics after a
-phase shift around $k=5$. For the \sql{COUNT(*)<k} query, the \sql{JOIN}-based rewriting is again
-cheaper for small values of $k$, but becomes slightly more expensive than our semantics for larger
-values of $k$. Thus, for provenance computation alone, the main observation is not a monotone increase
-with $k$, but rather that the \sql{JOIN}-based rewriting exhibits a sharp change in behavior, while
-the \sql{HAVING}-based possible-world semantics remains comparatively stable.
-
-% The behavior of the \sql{JOIN}-based rewriting depends on the number of witnesses produced by the
-% self-join, and therefore need not be monotone in $k$. For a group with $m$ matching tuples, the
-% rewriting for \sql{COUNT(*)>=k} may generate up to $\binom{m}{k}$ witnesses. Hence, the cost is
-% governed not only by the number of aliases in the rewritten query, but also by the distribution
-% of group sizes in the data and by the number of surviving witnesses. This explains why the \sql{JOIN}-based
-% timings are small for the first few values of $k$, and then change sharply once the self-join starts
-% producing larger provenance expressions.
-
-The difference becomes much more pronounced in Figure~\ref{fig:prob_eval_times_ge} and
-Figure~\ref{fig:prob_eval_times_lt}, where probability evaluation is included in addition
-to query execution and provenance computation. In these experiments, the \sql{HAVING}-based
-possible-world semantics remains in the same general range across different values of $k$. In
-contrast, the \sql{JOIN}-based rewriting is cheap only for small values of $k$, and then becomes
-substantially more expensive after the same phase shift. This is because the \sql{JOIN} formulation
-represents the aggregate comparison indirectly through many tuple combinations, leading to
-significantly larger provenance expressions for probability evaluation.
-
-\begin{toappendix}
-\section{Implementation and Experiments}
-\subsection{Experiment Codes}
-\label{sec:appendix_impl_experiments}
-
-The original SQL query template is the following:
-\begin{minted}[fontsize=\small, breaklines, linenos]{sql}
-SELECT img, provenance() AS prov
-FROM dataset
-WHERE obj = c
-GROUP BY img
-HAVING COUNT(obj) >= k;
-\end{minted}
-
-For probability evaluation, we use use \sql{probability_evaluate(provenance())}
-instead of \sql{provenance()}.
-
-The equivalent self-\sql{JOIN} rewriting used in the comparison is:
-
-\begin{minted}[fontsize=\small, breaklines, linenos]{sql}
-SELECT img, provenance()
-FROM (
-  SELECT DISTINCT d1.img
-  FROM dataset d1
-  JOIN dataset d2
-    ON d2.img = d1.img AND d2.obj = c AND d2.id > d1.id
-  ...
-  JOIN dataset dk
-    ON dk.img = d1.img AND dk.obj = c AND dk.id > d{k-1}.id
-  WHERE d1.obj = c
-) AS t;
-\end{minted}
-\end{toappendix}
-
-\begin{figure}[t]
+\begin{figure}
     \centering
     \begin{minipage}[t]{0.49\textwidth}
-        \centering
         \includegraphics[width=\textwidth]{plots_pierre/fig1_formula_ge.pdf}
         \caption{Query execution time (including provenance computation) comparison between \sql{HAVING} and
         \sql{JOIN} based semantics for \sql{COUNT(*)>=k} queries.}
@@ -141,7 +37,6 @@ FROM (
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.49\textwidth}
-        \centering
         \includegraphics[width=\textwidth]{plots_pierre/fig2_formula_le.pdf}
         \caption{Query execution time (including provenance computation) comparison between \sql{HAVING} and
         \sql{JOIN} based semantics for \sql{COUNT(*)<k} queries.}
@@ -152,16 +47,157 @@ FROM (
 \begin{figure}[t]
     \centering
     \begin{minipage}[t]{0.49\textwidth}
-        \centering
         \includegraphics[width=\textwidth]{plots_pierre/fig3_prob_ge.pdf}
         \caption{Query execution and probability evaluation time comparison between \sql{HAVING} and \sql{JOIN} based semantics for \sql{COUNT(*)>=k} queries.}
         \label{fig:prob_eval_times_ge}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.49\textwidth}
-        \centering
         \includegraphics[width=\textwidth]{plots_pierre/fig4_prob_le.pdf}
         \caption{Query execution and probability evaluation time comparison between \sql{HAVING} and \sql{JOIN} based semantics for \sql{COUNT(*)<k} queries.}
         \label{fig:prob_eval_times_lt}
     \end{minipage}
 \end{figure}
+
+\subsection{Experiments}
+To test our implementation and validate the practical feasibility of the
+\sql{HAVING} semantics, we ran experiments on a probabilistic image-retrieval database. Following the method
+in~\cite{yunus2025using}, the database is built from object-detection
+output over the COCO 2017~\cite{lin2014microsoft} dataset: for each
+image, YOLOv5~\cite{ultralytics2021yolov5} detects objects,
+and each detected object is stored as one tuple in relation \sql{dataset} with
+a unique identifier \sql{id}, the image identifier \sql{img}, the object
+class \sql{obj}, and a probability derived from the detector
+confidence score. These object annotations are treated as independent
+probabilistic facts. The database contains $119{,}359$ images and $579{,}123$
+object annotations.
+
+We compare execution times in ProvSQL for: (i)~provenance tracking (with
+production of a symbolic formula representing the provenance); and
+(ii)~probability computation of a \sql{HAVING} query with comparisons of
+the form \sql{COUNT(*) >= k} or \sql{COUNT(*) <= k} to find images with
+at least (or at most) $k$ objects for a given class, for our
+possible-world semantics against the equivalent self-\sql{JOIN} version
+(see Theorem~\ref{th:correctness}).
+Note that this is the exact set-up of \cite{yunus2025using}, where
+authors had to use the \sql{JOIN} version as nothing else was available.
+
+We choose a specific object class (72, \emph{refrigerator}).
+In our experiments we vary the scalar $k$ of the queries from 0 to 15
+(the maximum number of refrigerators detected in an image is 13).
+Exact queries ran, along with their \sql{JOIN}-rewrite, are presented in
+the Appendix~\ref{sec:appendix_impl_experiments}. For probabilistic query
+evaluation, we use the default ProvSQL pipeline which, when the
+provenance circuit is not read-once, first attempts to build a
+tree-decomposition of small treewidth and, if unsuccessful, resorts to an
+external knowledge compiler (d4~\cite{dblp:conf/ijcai/lagniezm17}).
+
+For each $k$, every query was executed $3$ times on a standard laptop
+computer running Ubuntu 26.04, ProvSQL version 1.8.0 on top of PostgreSQL 18.
+
+Figure~\ref{fig:prov_only_times_ge} and Figure~\ref{fig:prov_only_times_lt} report query
+execution times including the materialization of a textual representation
+of a provenance formula, comparing our possible-world semantics
+with the corresponding \sql{JOIN}-based rewriting. During execution, our semantics constructs
+a provenance circuit with a \emph{comparison gate} representing the aggregate comparison. The
+possible-world semantics is triggered at the semiring evaluation level,
+by instantiating the formula pseudo-semiring (\texttt{sr\_semiring})
+in ProvSQL. For provenance computation alone, the running time of our semantics remains relatively
+stable as $k$ varies. For the \sql{COUNT(*)>=k} query, the \sql{JOIN}-based rewriting is faster for
+very small values of $k$, and then becomes slower to the \sql{HAVING}-based semantics after a
+phase shift around $k=6$ -- queries with a large number of joins can be
+slow for the query evaluator. For the \sql{COUNT(*)<k} query, the
+\sql{JOIN}-based rewriting (which includes a non-monotone \sql{EXCEPT}) is again
+cheaper for very small values of $k$, but becomes several order of
+magnitude more expensive than our semantics for larger
+values of $k$. Thus, for provenance computation alone, the main
+observation a stability of the runtime cost, which pays off as $k$
+increases.
+
+The difference becomes much more pronounced in Figure~\ref{fig:prob_eval_times_ge} and
+Figure~\ref{fig:prob_eval_times_lt}, where probability evaluation is included in addition
+to query execution and provenance computation. In these experiments,
+we compare three different probability computation modes: \sql{HAVING}
+semantics with the Poisson-binomial CDF optimization for counting independent events
+of Proposition~\ref{prop:agg-cmp-poly-prob}, plain \sql{HAVING} semantics, and
+\sql{JOIN} rewriting; remember that probability evaluation is, in
+general, \#P-hard. The first one remains efficient for all values of~$k$;
+the second one is more efficient than the \sql{JOIN} semantics for the
+monotone $\geq k$ case, but is order of magnitude slower for the $\leq k$
+case, where the non-monotone and complex provenance expressions become
+hard to process for the knowledge compiler. The \sql{JOIN} rewriting
+presents a similar profile in both cases (note the different scale of
+both graphs) -- interestingly, it is unable to exploit the fact that
+the query becomes vacuously true or false when $k$ is higher than the
+number of objects in the images, which both our implementations can do.
+
+\begin{toappendix}
+\newcommand{\quotedzero}{\PYG{l+s+s1}{\apos$\mathbb{0}$\apos}}
+\label{sec:appendix_impl_experiments}
+
+We present the query templates used for the experiments of
+Section~\ref{sec:implementation_experiments}. They are SQL queries using
+the functions of the ProvSQL extension of PostgreSQL (\sql{provenance()}, \sql{sr_formula},
+\sql{probability_evaluate}, etc.)
+
+The \sql{HAVING}-based template, instantiated either with
+``\sql{COUNT(obj) >= k}'' or ``\sql{COUNT(obj) <= k}'', is:
+\newcommand{\apos}{\texttt{\textquotesingle}}
+\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{sql}
+SELECT * FROM (
+  SELECT img, sr_formula(provenance(), 'image_mapping') AS prov
+  FROM dataset
+  WHERE obj = c
+  GROUP BY img
+  HAVING COUNT(obj) >= k  -- or:  HAVING COUNT(obj) <= k
+) sub WHERE prov <> |\quotedzero|;
+\end{minted}
+
+For probability evaluation, the projection
+\sql{sr_formula(provenance(), 'image_mapping')} is replaced by
+\sql{probability_evaluate(provenance())} and the zero-filter
+``\mintinline[escapeinside=||]{sql}{prov <> |\quotedzero|}'' by
+``\sql{prov > 0}''; both serve to discard images whose
+provenance simplifies to $\mathbb{0}$ (resp., have  probability~$0$), which
+under the \sql{HAVING} semantics correspond to images for which the
+aggregate comparison is impossible in every possible world.
+
+The equivalent self-\sql{JOIN} rewriting for the ``\sql{>= k}'' case uses
+a $(k{-}1)$-fold self-join, with the
+``\sql{id > }'' chain ensuring distinct matching tuples:
+\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{sql}
+SELECT * FROM (
+  SELECT img, sr_formula(provenance(), 'image_mapping') AS prov
+  FROM (
+    SELECT DISTINCT d1.img
+    FROM dataset d1
+    JOIN dataset d2 ON d2.img = d1.img AND d2.obj = c AND d2.id > d1.id
+    ...
+    JOIN dataset dk ON dk.img = d1.img AND dk.obj = c AND dk.id > d|$_{k-1}$|.id
+    WHERE d1.obj = c
+  ) AS t
+) sub WHERE prov <> |\quotedzero|;
+\end{minted}
+
+The ``\sql{<= k}'' case is non-monotone and is rewritten as
+“at least one match”~\sql{EXCEPT}~“at least~$k+1$ matches”:
+\begin{minted}[fontsize=\small, breaklines, escapeinside=||]{sql}
+SELECT * FROM (
+  SELECT img, sr_formula(provenance(), 'image_mapping') AS prov
+  FROM (
+    SELECT DISTINCT d1.img
+    FROM dataset d1
+    WHERE d1.obj = c
+    EXCEPT
+    SELECT DISTINCT d1.img
+    FROM dataset d1
+    JOIN dataset d2 ON d2.img = d1.img AND d2.obj = c AND d2.id > d1.id
+    ...
+    JOIN dataset d|$_{k+1}$| ON d|$_{k+1}$|.img = d1.img AND d|$_{k+1}$|.obj = c AND d|$_{k+1}$|.id > dk.id
+    WHERE d1.obj = c
+  ) AS t
+) sub WHERE prov <> |\quotedzero|;
+\end{minted}
+The same projection / zero-filter substitution applies to obtain the
+\sql{probability_evaluate} variants of both \sql{JOIN} rewritings.
+\end{toappendix}
