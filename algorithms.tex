@@ -675,6 +675,7 @@ $\Pr[B\ge T]$, $\Pr[B=T]$, $\Pr[B=0]$.
 
 Let $\rho_n(j)\defeq\Pr\bigl[\sum_{i\le n}X_i=j\bigr]$.
 The classical convolution identity
+\lean{HavingProbability}{HavingProbability.countMass_insert_succ}
 \[
 \rho_n(j)=(1-p_n)\,\rho_{n-1}(j)+p_n\,\rho_{n-1}(j-1)
 \]
@@ -694,7 +695,8 @@ with $C\le0$).
 weights.}
 The aggregate value on a world $W$ is
 $\Sigma\defeq\sum_{i:X_i=1}t(u_i)$, a weighted Poisson-binomial
-variable.  The same convolution generalises:
+variable.  The same convolution generalises
+\lean{HavingProbability}{HavingProbability.sumMass_insert_of_le}:
 \[
 \sigma_n(s)=(1-p_n)\,\sigma_{n-1}(s)+p_n\,\sigma_{n-1}\bigl(s-t(u_n)\bigr),
 \qquad
@@ -711,7 +713,10 @@ clarity.)
 \smallskip\noindent\textbf{(3) \sql{MIN}$(t)\,\op\,C$ and
 \sql{MAX}$(t)\,\op\,C$.}
 Independence makes the events
-``$\max_{i:X_i=1}t(u_i)\le C$'' and ``$\min_{i:X_i=1}t(u_i)\ge C$''
+``$\max_{i:X_i=1}t(u_i)\le C$''
+\lean{HavingProbability}{HavingProbability.funcProb_maxLeOnNonempty}
+and ``$\min_{i:X_i=1}t(u_i)\ge C$''
+\lean{HavingProbability}{HavingProbability.funcProb_minGeOnNonempty}
 \emph{factor over $i$}, since each surviving $X_i=1$ contributes its
 threshold check independently:
 \begin{align*}

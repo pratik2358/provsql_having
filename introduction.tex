@@ -111,9 +111,13 @@ We present experiments which show
   query evaluation. (Section \ref{sec:implementation_experiments}).
 \end{compactenum}
 
-Hyperlinks to an anonymized repository of formal statements and proofs in
-Lean are marked with \leanmain{} throughout
-the paper. The code of the implementation described
+Every statement that can be formalized in Lean is accompanied by a
+machine-checked proof, available in an anonymized repository and
+hyperlinked with \leanmain{} throughout the paper; the exceptions are
+complexity claims (no Mathlib support for computational complexity) and
+statements presupposing a Lean implementation of the \sql{HAVING}
+operator.
+The code of the implementation described
 in Section~\ref{sec:implementation_experiments} will be made available
 once double-blind requirements are removed. For lack of space,
 most proofs and some additional details are relegated to an
