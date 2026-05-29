@@ -25,6 +25,7 @@ brute-force enumeration of non-empty worlds $W\subseteq U^{\hat I}_{q',\vec v}$ 
 The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. \sil{Do we need to list all possible constants for the second aggregate?}
 \begin{toappendix}
 \begin{algorithm}
+  \small
   \caption{Enumeration of valid worlds for \sql{SUM}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
 
@@ -340,8 +341,11 @@ This establishes the correctness.
 
 \begin{toappendix}
 \begin{algorithm}
+  \small
   \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
+
+  \nlset{}\textbf{\textsc{CountDP}$(U^{\hat I}_{q',\vec v}, t, C, \op)$}\;
 
   \Input{a finite set of group-member occurrences $U^{\hat I}_{q',\vec v}$, a term $t$ with max-index $\leq k$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
   \Output{a list $\mathcal W$ of worlds $\emptyset\neq W\subseteq U^{\hat I}_{q',\vec v}$ such that $|W| \op C$}
