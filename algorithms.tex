@@ -13,7 +13,7 @@ In this section we describe specialized procedures for evaluating the valid poss
 All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} subquery $q'$.
 Accordingly, any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
-For bounded range comparisons of the form \sql{SUM}$(t)\op C$, a dynamic programming procedure is presented in Algorithm~\ref{alg:sum_dp}.
+For bounded range comparisons of the form \sql{SUM}$(t)\op C$, a dynamic programming procedure is presented in Algorithm~\ref{alg:sum_dp} (in Appendix).
 It enumerates the possible worlds $W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$ (i.e., \sql{SUM}$(t)$) satisfies the comparison with the constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding $\chi_{\op}$-ensured possible-world sum in the semantics of aggregate comparison atoms.
 
 The algorithm works also for the special case where $t=1$, i.e., bounded range \sql{COUNT}$(t)\op C$ comparisons.
@@ -25,6 +25,7 @@ brute-force enumeration of non-empty worlds $W\subseteq U^{\hat I}_{q',\vec v}$ 
 The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. \sil{Do we need to list all possible constants for the second aggregate?}
 \begin{toappendix}
 \begin{algorithm}
+  \small
   \caption{Enumeration of valid worlds for \sql{SUM}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
 
@@ -104,18 +105,17 @@ The algorithms can also be used to evaluate provenance for comparisons between t
 Both algorithms are correct by the following two theorems.
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:sum_dp}]\label{thm:sumdp-correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
-Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
-Let $U\defeq U^{\hat I}_{q',\vec v}$ and represent it as a finite list of distinct occurrences
-$((u_i,\alpha_i))_{1\le i\le N}$.
-Let $t$ be a term of max-index $\le k$ such that $t(u_i)\in\NN$ for all $1\le i\le N$.
+Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\omega$. Let $U\defeq U^{\hat I}_{q',\vec v}$; then $(U_r)^{\omega}_{r\in[|U|]}$ is the $\omega$-ordered sequence of $U$. 
+Let $t$ be a term of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$.
 Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
-Let $\mathcal W$ be the output of Algorithm~\ref{alg:sum_dp} on input $(U,t,C,\op)$.
+Let $\mathcal W$ be the output of Algorithm~\ref{alg:sum_dp} on input $(U,t,C,\op,\omega)$.
 Then
 \[
 \mathcal W
 =
-\{\,W\subseteq U\mid W\neq\emptyset,\sum_{(u,\alpha)\in W}t(u)\op C\,\}.
+\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_\Sigma(\pi_t((U_r[u])^{\omega}_{r\in W})\op C\,\}.
 \]
+where, $f_\Sigma$ is the \sql{SUM} aggregate described as an arbitrary aggregate function. 
 \end{theoremrep}
 
 \begin{appendixproof}
@@ -340,8 +340,11 @@ This establishes the correctness.
 
 \begin{toappendix}
 \begin{algorithm}
+  \small
   \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
+
+  \nlset{}\textbf{\textsc{CountDP}$(U^{\hat I}_{q',\vec v}, t, C, \op)$}\;
 
   \Input{a finite set of group-member occurrences $U^{\hat I}_{q',\vec v}$, a term $t$ with max-index $\leq k$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
   \Output{a list $\mathcal W$ of worlds $\emptyset\neq W\subseteq U^{\hat I}_{q',\vec v}$ such that $|W| \op C$}
@@ -408,18 +411,16 @@ This establishes the correctness.
 
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:count_enum}]\label{thm:count-enum-correct}
 \lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
-Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
-Let $U\defeq U^{\hat I}_{q',\vec v}$ and represent it as a finite list of distinct occurrences
-$((u_i,\alpha_i))_{1\le i\le N}$.
-Let $t$ be a term of max-index $\le k$.
-Fix $C\in\NN$ and $\op\in\{=,\neq,>,<,\ge,\le\}$.
-Let $\mathcal W$ be the output of Algorithm~\ref{alg:count_enum} on input $(U,t,C,\op)$.
+Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\omega$. Let $U\defeq U^{\hat I}_{q',\vec v}$; then $(U_r)^{\omega}_{r\in[|U|]}$ is the $\omega$-ordered sequence of $U$. 
+Let $t$ be a term of max-index $\le k$. Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
+Let $\mathcal W$ be the output of Algorithm~\ref{alg:count_enum} on input $(U,t,C,\op,\omega)$.
 Then
 \[
 \mathcal W
 =
-\{\,W\subseteq U\mid W\neq\emptyset,\ |W|\op C\,\}.
+\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W})\op C\,\}.
 \]
+where, $f_{\Sigma^*}$ is the \sql{COUNT} aggregate described as an arbitrary aggregate function.
 \end{theoremrep}
 
 \begin{appendixproof}
