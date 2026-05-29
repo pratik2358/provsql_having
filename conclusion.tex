@@ -1,4 +1,22 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-\pierre{.5 page}
+We have presented a general semantics for \sql{HAVING} queries that can
+be applied to provenance in any commutative m-semiring, which eliminates
+the need for a dedicated comparison operator in each concrete semiring.
+This semantics is compatible with a natural join-based semantics for
+m-semirings that are absorptive and where times distributes over monus,
+covering in particular the case of the Boolean function semiring
+necessary for probability evaluation --
+for other semirings, the semantics differ but this is unavoidable: the
+way a query is rewritten changes its provenance in m-semirings
+not subsumed by Boolean provenance. Concrete algorithms for specific
+combinations of aggregate functions and operators, coupled with
+experiments, validate the feasibility of our approach, which
+yields the first end-to-end provenance-aware implementation of selection
+on aggregate values. We also stress that all formal results that were
+feasible were machine-checked in the Lean proof assistant.
+An interesting direction for future work would be to combine this work with
+the query-shape tractability results of \cite{re2009trichotomy}, to
+guarantee polynomial-time probabilistic query evaluation (or
+approximation) of safe queries.
