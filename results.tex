@@ -705,7 +705,7 @@ For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$)
 
 \begin{proposition}
   \label{prop:pqe-equiv}
-  Let $I$ be an instance where each input tuple $u$ is associated with an independent probability $Pr(u)\in [0,1]$, then the probabilistic query evaluation of a boolean \sql{HAVING} query $Q$ evaluated on $I$ is equivalent to the probability that the Boolean expression $\angsem{\hat I}{Q}$, where $\hat I$ is a $\mathbb{B}[X]$-instance, evaluates to true when every tuple $u \in\hat I$ is set to true with probability $Pr(u)$.
+Let $I$ be an instance where each input tuple $u$ is associated with an independent probability $Pr(u)\in [0,1]$, then the probabilistic query evaluation of a boolean \sql{HAVING} query $Q$ evaluated on $I$ is equivalent to the probability that the Boolean expression $\angsem{\hat I}{Q}$, where $\hat I$ is a $\mathbb{B}[X]$-instance, evaluates to true when every tuple $u \in\hat I$ is set to true with probability $Pr(u)$.
 \end{proposition}
 \begin{proof}\
 By definition \cite{suciu2011probabilistic}, probabilistic query evaluation of a query $Q$ on an instance $I$, under the possible worlds semantics, consists in evaluating the probability \[Pr_{I}(Q)=\Sigma_{\substack{S\msubseteq I,\\ S\models Q }}\Bigl( \Pi_{u \in S}(Pr(u))\Pi_{u \in I\msetminus S }(1-Pr(u)) \Bigr),\]

@@ -10,27 +10,43 @@ In this section we describe specialized procedures for evaluating the valid poss
 % Under this invariant, the multiset of group member occurrences can be treated as a finite \emph{set}, and possible worlds are then ordinary subsets.
 % This does not change our semantics: multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
-All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} subquery $q'$. We represent these group-member occurences as an $\omega$-ordered sequence as in Defintion ~\ref{def:possible_world} and possible worlds are index sets that help us select positions in the sequence. Any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).\par
-We provide a dynamic programming algorithm for \sql{SUM} comparisons that incrementally constructs all possible worlds producing the desired sum. It processes each tuple and maintains ror every achievable sum the collection of worlds that realize it. For every new tuple, the previously constructed possible worlds can remain unchanged or be extended by inclusion of this new tuple, hence creating new worlds with larger sums. After all the tuples have been encountered, the algorithm returns a collection of non-empty worlds whose total sum satisfies the comparison constant.
-The listing of this algorithm is presented in Algorithm~\ref{alg:sum_dp} (in Appendix).\par
+All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} sub-query $q'$.
+We represent these group-member occurrences as an $\omega$-ordered sequence as in Definition ~\ref{def:possible_world}.
+Possible worlds are then represented as index sets of positions in the sequence.
+Any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
+
+We first provide provide a dynamic programming algorithm for \sql{SUM} comparisons that incrementally constructs all possible worlds producing the desired sum, named \textsc{ValidSum}.
+It processes each tuple iteratively and maintains, for every possible value of the sum, the collection of worlds that realize it.
+For a new tuple, previously constructed possible worlds can either remain unchanged or be extended by inclusion of this new tuple, hence creating new worlds having larger sums.
+After all the tuples have been encountered, the algorithm returns a collection of non-empty worlds whose total sum satisfies the comparison constant.
+The full listing of this algorithm is presented in Algorithm~\ref{alg:sum_dp} of the Appendix.
+
 The algorithm works also for the special case where $t=1$, i.e., bounded range \sql{COUNT}$(t)\op C$ comparisons.
-However, for this case we can use a more efficient enumeration, exploiting the unit-weight sum structure of \sql{COUNT} aggregates. For bounded range \sql{COUNT}$\op C$ we only rely in the fact that the result of a \sql{COUNT} depends only on the number of occurences of the tuples selected. Our algorithm recursively constructs worlds by deciding for each tuple-occurence if it is included in or excluded from the current world. This enumerates subsets of the desired sizes and we combine the appropriate size-ranges according to the nature of the comparison operator to get a collection of non-empty worlds that satisfy the comparison. We present this algorithm as a listing in Algorithm~\ref{alg:count_enum} (in Appendix).\par
-For aggregate functions or predicates not covered by the specialized cases, reverting to
-brute-force enumeration of non-empty worlds $W\subseteq [|U^{\hat I}_{q',\vec v}|]$ will always give the correct answer by our semantics.\par
-The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. \sil{Do we need to list all possible constants for the second aggregate?}
-\rjok{there are various ways; one way is t look for the aggregate with the smaller result value. but i guess we can talk about the implementation in provsql(which i am not sure about). Pierre did the implementation for agg vs agg if i am not wrong}
+However, for this case we can use a more efficient enumeration algorithm, named \textsc{ValidCount}, exploiting the unit-weight sum structure of \sql{COUNT} aggregates.
+For bounded range \sql{COUNT}$\op C$ we only rely in the fact that the result of a \sql{COUNT} depends only on the number of occurrences of the group key values of the selected tuples.
+Our algorithm recursively constructs worlds by deciding for each tuple-occurrence if it is included in or excluded from the current world.
+This enumerates subsets of the desired sizes.
+Finally, depending on the comparison operator, we combine the appropriate size-ranges to get a set of non-empty worlds that satisfy the comparison.
+The full listing of this algorithm is presented in Algorithm~\ref{alg:count_enum} of the Appendix.
+
+For aggregate functions or predicates not covered by the specialized cases, using brute-force enumeration of non-empty worlds $W\subseteq [|U^{\hat I}_{q',\vec v}|]$ will always give the correct answer by our semantics.
+The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. 
+%\sil{Do we need to list all possible constants for the second aggregate?}
+%\rjok{there are various ways; one way is t look for the aggregate with the smaller result value. but i guess we can talk about the implementation in provsql(which i am not sure about). Pierre did the implementation for agg vs agg if i am not wrong}
 \begin{toappendix}
 \begin{algorithm}
   \small
   \caption{Enumeration of valid worlds for \sql{SUM}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
 
+  \nlset{}\textbf{\textsc{ValidSum}$(U, t, C, \op, \omega)$}\;
+
   \Input{a finite set of group-member occurrences $U \defeq U^{\hat I}_{q',\vec v}$, an arbitrary ordering $\omega$ of $U$, a term $t$ of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$, a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
   \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma}(\pi_t((U_r[u])^{\omega}_{r\in W}))\op C\,\}$}
   \BlankLine
-  \Fn{\textsc{SumDP}$(U,t,C,\op, \omega)$}{
+  %\Fn{\textsc{SumDP}$(U,t,C,\op, \omega)$}{
   \If{$\op = \neq$}{
-    \Return $\textsc{SumDP}(U,t,C,<, \omega) \cup \textsc{SumDP}(U,t,C,>, \omega)$\;
+    \Return $\textsc{ValidSum}(U,t,C,<, \omega) \cup \textsc{ValidSum}(U,t,C,>, \omega)$\;
   }
  \BlankLine
   Consider the sequence $(U_r)^{\omega}_{r \in [|U|]}$ ordered by $\omega$\\
@@ -93,18 +109,18 @@ The algorithms can also be used to evaluate provenance for comparisons between t
   $\mathcal W \leftarrow \mathcal W \setminus \{\emptyset\}$\;
 
   \Return $\mathcal W$\;
-  }
+  %}
 \end{algorithm}
 \end{toappendix}
 
 
 Both algorithms are correct by the following two theorems.
-\begin{theoremrep}[Correctness of Algorithm~\ref{alg:sum_dp}]\label{thm:sumdp-correct}
+\begin{theoremrep}[Correctness of \textsc{ValidSum}]\label{thm:sumdp-correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
 Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\omega$. Let $U\defeq U^{\hat I}_{q',\vec v}$; then $(U_r)^{\omega}_{r\in[|U|]}$ is the $\omega$-ordered sequence of $U$. 
 Let $t$ be a term of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$.
 Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
-Let $\mathcal W$ be the output of Algorithm~\ref{alg:sum_dp} on input $(U,t,C,\op,\omega)$.
+Let $\mathcal W$ be the output of \textsc{ValidSum} on input $(U,t,C,\op,\omega)$.
 Then
 \[
 \mathcal W
@@ -123,7 +139,7 @@ Write
 \smallskip\noindent\textbf{Case $\op=\neq$.}
 If $\op=\neq$, the algorithm returns
 \[
-\textsc{SumDP}(U,t,C,<, \omega)\cup\textsc{SumDP}(U,t,C,>, \omega).
+\textsc{ValidSum}(U,t,C,<, \omega)\cup\textsc{ValidSum}(U,t,C,>, \omega).
 \]
 By the correctness proved below for $\op\in\{<,>\}$, this equals
 \[
@@ -281,7 +297,7 @@ Hence each world in $\mathcal D_{i-1}(j)$ contributes exactly one extended world
 
 Therefore, after iteration $i$, the content of $dp[j]$ is exactly:
 \begin{itemize}
-\item all worlds in $\mathcal D_{i-1}(j)$, corressponding to the case $i\notin W$;
+\item all worlds in $\mathcal D_{i-1}(j)$, corresponding to the case $i\notin W$;
 \item together with all worlds of the form $W'\cup\{i\}$ for
   $W'\in\mathcal D_{i-1}(j-t(U_i[u]))$, corresponding to the case $i\in W$.
 \end{itemize}
@@ -334,7 +350,7 @@ This establishes the correctness.
   \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
 
-  \nlset{}\textbf{\textsc{CountDP}$(U, t, C, \op, \omega)$}\;
+  \nlset{}\textbf{\textsc{ValidCount}$(U, t, C, \op, \omega)$}\;
 
   \Input{a finite set of group-member occurrences $U\defeq U^{\hat I}_{q',\vec v}$, an arbitrary ordering $\omega$ of $U$, a term $t$ with max-index $\leq k$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
   \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W}))\op C\,\}$}\quad \text{where $f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W})) = |W|$}
@@ -399,11 +415,11 @@ This establishes the correctness.
 \end{algorithm}
 \end{toappendix}
 
-\begin{theoremrep}[Correctness of Algorithm~\ref{alg:count_enum}]\label{thm:count-enum-correct}
+\begin{theoremrep}[Correctness of \textsc{ValidCount}]\label{thm:count-enum-correct}
 \lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
 Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\omega$. Let $U\defeq U^{\hat I}_{q',\vec v}$; then $(U_r)^{\omega}_{r\in[|U|]}$ is the $\omega$-ordered sequence of $U$. 
 Let $t$ be a term of max-index $\le k$. Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
-Let $\mathcal W$ be the output of Algorithm~\ref{alg:count_enum} on input $(U,t,C,\op,\omega)$.
+Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,t,C,\op,\omega)$.
 Then
 \[
 \mathcal W
