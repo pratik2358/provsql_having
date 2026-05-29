@@ -105,18 +105,17 @@ The algorithms can also be used to evaluate provenance for comparisons between t
 Both algorithms are correct by the following two theorems.
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:sum_dp}]\label{thm:sumdp-correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
-Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
-Let $U\defeq U^{\hat I}_{q',\vec v}$ and represent it as a finite list of distinct occurrences
-$((u_i,\alpha_i))_{1\le i\le N}$.
-Let $t$ be a term of max-index $\le k$ such that $t(u_i)\in\NN$ for all $1\le i\le N$.
+Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\omega$. Let $U\defeq U^{\hat I}_{q',\vec v}$; then $(U_r)^{\omega}_{r\in[|U|]}$ is the $\omega$-ordered sequence of $U$. 
+Let $t$ be a term of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$.
 Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
-Let $\mathcal W$ be the output of Algorithm~\ref{alg:sum_dp} on input $(U,t,C,\op)$.
+Let $\mathcal W$ be the output of Algorithm~\ref{alg:sum_dp} on input $(U,t,C,\op,\omega)$.
 Then
 \[
 \mathcal W
 =
-\{\,W\subseteq U\mid W\neq\emptyset,\sum_{(u,\alpha)\in W}t(u)\op C\,\}.
+\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_\Sigma(\pi_t((U_r[u])^{\omega}_{r\in W})\op C\,\}.
 \]
+where, $f_\Sigma$ is the \sql{SUM} aggregate described as an arbitrary aggregate function. 
 \end{theoremrep}
 
 \begin{appendixproof}
@@ -412,18 +411,16 @@ This establishes the correctness.
 
 \begin{theoremrep}[Correctness of Algorithm~\ref{alg:count_enum}]\label{thm:count-enum-correct}
 \lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
-Fix a $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
-Let $U\defeq U^{\hat I}_{q',\vec v}$ and represent it as a finite list of distinct occurrences
-$((u_i,\alpha_i))_{1\le i\le N}$.
-Let $t$ be a term of max-index $\le k$.
-Fix $C\in\NN$ and $\op\in\{=,\neq,>,<,\ge,\le\}$.
-Let $\mathcal W$ be the output of Algorithm~\ref{alg:count_enum} on input $(U,t,C,\op)$.
+Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\omega$. Let $U\defeq U^{\hat I}_{q',\vec v}$; then $(U_r)^{\omega}_{r\in[|U|]}$ is the $\omega$-ordered sequence of $U$. 
+Let $t$ be a term of max-index $\le k$. Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
+Let $\mathcal W$ be the output of Algorithm~\ref{alg:count_enum} on input $(U,t,C,\op,\omega)$.
 Then
 \[
 \mathcal W
 =
-\{\,W\subseteq U\mid W\neq\emptyset,\ |W|\op C\,\}.
+\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W})\op C\,\}.
 \]
+where, $f_{\Sigma^*}$ is the \sql{COUNT} aggregate described as an arbitrary aggregate function.
 \end{theoremrep}
 
 \begin{appendixproof}
