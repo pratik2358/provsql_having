@@ -1,8 +1,8 @@
 \section{Related Work}
 \label{sec:related_work}
 
-\paragraph*{Aggregation in the provenance semiring framerork}
-The approach describes here relies on that proposed
+\paragraph*{Aggregation in the provenance semiring framework}
+The approach described here relies on that proposed
 in~\cite{amsterdamer2011provenance}: \sql{HAVING} expressions result in
 comparison operators between elements of a formal algebraic structure
 combining semiring elements and scalar values (in
@@ -24,7 +24,7 @@ expected \cite{amsterdamer2011limitations}, in particular, as discussed
 in Section~\ref{sec:preliminaries} distributivity of times over monus.
 However, this modeling of negation has proved fruitful, being the basis
 of a provenance for SPARQL queries
-\cite{DBLP:journals/jacm/GeertsUKFC16}, of a semiring generaliztion of
+\cite{DBLP:journals/jacm/GeertsUKFC16}, of a semiring generalization of
 Codd's theorem \cite{badia2025codd}, and of the implementation of the
 \sql{EXCEPT} operator in ProvSQL \cite{sen2026provsql}. An alternative
 modeling of negation is through
@@ -39,12 +39,12 @@ transparently and represents provenance annotations as nodes in a provenance
 circuit. Its implementation of aggregation
 closely follows
 \cite{amsterdamer2011provenance} but, again, only supports terminal
-aggregation -- this is the system we extends in this work. ProvSQL is
-also a probabilistic database, also relevant for this work.
+aggregation -- this is the system we extend in this work. ProvSQL is
+also a probabilistic database, which is relevant for this work.
 GProM \cite{arab2018gprom} is a query-rewriting middleware supporting
 different relational backends -- it does not support full semiring
 semantics, but different forms of provenance can be computed and
-aggregation are supported by joining the aggregation result with
+aggregation is supported by joining the aggregation result with
 provenance computed for each group; \sql{HAVING} is treated as a
 downstream selection, meaning that GProM does not record how the
 provenance value depends on whether the comparison holds. This in
@@ -55,7 +55,8 @@ engine.
 The complexity of \sql{HAVING} queries over probabilistic databases has
 been explored in \cite{re2009trichotomy}, a purely theoretical work that gives a full
 characterization of
-which aggregation conjunctive queries with a single \sql{HAVING} atom can be evaluated in polynomial-time on a
+which aggregate conjunctive queries with a single \sql{HAVING} atom can
+be evaluated or approximated in polynomial-time on a
 probabilistic database; it is mostly orthogonal to the results in
 Section~\ref{sec:algorithms} which explore which combinations of
 semirings and aggregation operators can be evaluated in polynomial-time,
@@ -64,7 +65,7 @@ With respect to probabilistic data, Proposition~\ref{prop:agg-cmp-poly-prob}
 focuses on the tractability of the sole comparison operator, for
 read-once provenance.
 
-\cite{abiteboul2011capturing} consider aggregate queries over
+\cite{abiteboul2011capturing} considers aggregate queries over
 probabilistic XML documents; they mainly study the complexity of
 different operations over terminal aggregates, so there is no support of
 \sql{HAVING} -- this is again not
@@ -76,11 +77,10 @@ for the specific purpose of probability evaluation, supporting
 \sql{HAVING} operators in the process. This means in particular that
 their semantics of \sql{HAVING} is specific to the probabilistic or
 Boolean function case, in contrast with our proposed semantics valid in
-arbitrary commutative m-semirings. Only aggregate functions that are
-commutative and monoid aggregates are supported, as in
+arbitrary commutative m-semirings. Only aggregates over commutative
+monoids are supported, as in
 \cite{amsterdamer2011provenance}. The approach has been implemented in a
 prototype version of SPROUT, unfortunately not publicly released.
-\cite{abiteboul2011capturing}
 
 In addition to ProvSQL~\cite{sen2026provsql} which was already discussed,
 other probabilistic database systems have been released as research
