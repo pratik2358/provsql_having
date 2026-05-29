@@ -344,13 +344,13 @@ This establishes the correctness.
   \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
 
-  \nlset{}\textbf{\textsc{CountDP}$(U^{\hat I}_{q',\vec v}, t, C, \op)$}\;
+  \nlset{}\textbf{\textsc{CountDP}$(U, t, C, \op, \omega)$}\;
 
-  \Input{a finite set of group-member occurrences $U^{\hat I}_{q',\vec v}$, a term $t$ with max-index $\leq k$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
-  \Output{a list $\mathcal W$ of worlds $\emptyset\neq W\subseteq U^{\hat I}_{q',\vec v}$ such that $|W| \op C$}
+  \Input{a finite set of group-member occurrences $U\defeq U^{\hat I}_{q',\vec v}$, an arbitrary ordering $\omega$ of $U$, a term $t$ with max-index $\leq k$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
+  \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W}))\op C\,\}$}\quad \text{where $f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W})) = |W|$}
 
   \BlankLine
-  Consider the $\omega$ ordered sequence $(U^{\hat I}_{q',\vec v})$
+  Consider the sequence $(U_r)^{\omega}_{r \in [|U|]}$ ordered by $\omega$\\
 
   \BlankLine
   $\mathcal W \gets \emptyset$\;
@@ -361,10 +361,10 @@ This establishes the correctness.
       append $W$ to $\mathcal W$\;
       \Return\;
     }
-    \If{$i > N$}{
+    \If{$i > |U|$}{
       \Return\;
     }
-    \If{$N-i+1 < x$}{
+    \If{$|U|-i+1 < x$}{
       \Return\;
     }
 
@@ -372,12 +372,12 @@ This establishes the correctness.
     \Combinations{$i+1, x, W$}\;
 
     \tcp{Case 2: select occurrence $i$}
-    \Combinations{$i+1, x-1, W \cup \{(u_i,\alpha_i)\}$}\;
+    \Combinations{$i+1, x-1, W \cup \{i\}$}\;
   }
 
   \SetKwFunction{AddExact}{AddExact}
   \Fn{\AddExact{$x$}}{
-    \If{$x\le 0$ \textbf{or} $x>N$}{\Return}
+    \If{$x\le 0$ \textbf{or} $x>|U|$}{\Return}
     \Combinations{$1, x, \emptyset$}\;
      }
 
@@ -387,19 +387,19 @@ This establishes the correctness.
       \AddExact{$C$}\;
     }
     \Case{$>$}{
-      \For{$x\gets C+1$ \KwTo $N$}{\AddExact{$x$}}
+      \For{$x\gets C+1$ \KwTo $|U|$}{\AddExact{$x$}}
     }
     \Case{$\ge$}{
-      \For{$x\gets C$ \KwTo $N$}{\AddExact{$x$}}
+      \For{$x\gets C$ \KwTo $|U|$}{\AddExact{$x$}}
     }
     \Case{$<$}{
-      \For{$x\gets 1$ \KwTo $\min(C-1,N)$}{\AddExact{$x$}}
+      \For{$x\gets 1$ \KwTo $\min(C-1,|U|)$}{\AddExact{$x$}}
     }
     \Case{$\le$}{
-      \For{$x\gets 1$ \KwTo $\min(C,N)$}{\AddExact{$x$}}
+      \For{$x\gets 1$ \KwTo $\min(C,|U|)$}{\AddExact{$x$}}
     }
     \Case{$\neq$}{
-      \For{$x\gets 1$ \KwTo $N$}{
+      \For{$x\gets 1$ \KwTo $|U|$}{
         \If{$x\neq C$}{\AddExact{$x$}}
       }
     }
