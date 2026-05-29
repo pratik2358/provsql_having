@@ -1,4 +1,121 @@
 \section{Related Work}
 \label{sec:related_work}
 
-\pierre{1 page}
+\paragraph*{Aggregation in the provenance semiring framerork}
+The approach describes here relies on that proposed
+in~\cite{amsterdamer2011provenance}: \sql{HAVING} expressions result in
+comparison operators between elements of a formal algebraic structure
+combining semiring elements and scalar values (in
+\cite{amsterdamer2011provenance}, a \emph{provenance semimodule}). But
+\cite{amsterdamer2011provenance} stopped at producing these comparison
+expressions, with no concrete computable semantics for these; probability
+computation is also not considered.
+The approach of \cite{amsterdamer2011provenance} is followed by \cite{pintor2025dbms}, in which a
+DBMS-independent query rewriting system is proposed to produce such
+expressions, stored as strings. The present work starts where these two
+works end, by providing a semantics for these expressions.
+
+\paragraph*{Negation in the provenance semiring framework}
+Since provenance semirings \cite{green2007provenance,green2017provenance}
+do not support non-monotone queries, \cite{geerts2010database} proposed
+to extend them with a monus operator, yielding m-semirings. This approach
+has limitations as some m-semirings do not respect axioms that may be
+expected \cite{amsterdamer2011limitations}, in particular, as discussed
+in Section~\ref{sec:preliminaries} distributivity of times over monus.
+However, this modeling of negation has proved fruitful, being the basis
+of a provenance for SPARQL queries
+\cite{DBLP:journals/jacm/GeertsUKFC16}, of a semiring generaliztion of
+Codd's theorem \cite{badia2025codd}, and of the implementation of the
+\sql{EXCEPT} operator in ProvSQL \cite{sen2026provsql}. An alternative
+modeling of negation is through
+quotient semirings of polynomials with dual indeterminates
+\cite{gradel2025provenance}, which is less practically implementable.
+
+\paragraph*{Provenance systems with aggregation}
+Two main provenance-aware database systems support aggregation.
+ProvSQL \cite{sen2026provsql} is an extension of the PostgreSQL database
+engine which rewrites queries over provenance-tracked relations
+transparently and represents provenance annotations as nodes in a provenance
+circuit. Its implementation of aggregation
+closely follows
+\cite{amsterdamer2011provenance} but, again, only supports terminal
+aggregation -- this is the system we extends in this work. ProvSQL is
+also a probabilistic database, also relevant for this work.
+GProM \cite{arab2018gprom} is a query-rewriting middleware supporting
+different relational backends -- it does not support full semiring
+semantics, but different forms of provenance can be computed and
+aggregation are supported by joining the aggregation result with
+provenance computed for each group; \sql{HAVING} is treated as a
+downstream selection, meaning that GProM does not record how the
+provenance value depends on whether the comparison holds. This in
+particular precludes GProM from being used as a probabilistic database
+engine.
+
+\paragraph*{Aggregation in probabilistic databases}
+The complexity of \sql{HAVING} queries over probabilistic databases has
+been explored in \cite{re2009trichotomy}, a purely theoretical work that gives a full
+characterization of
+which aggregation conjunctive queries with a single \sql{HAVING} atom can be evaluated in polynomial-time on a
+probabilistic database; it is mostly orthogonal to the results in
+Section~\ref{sec:algorithms} which explore which combinations of
+semirings and aggregation operators can be evaluated in polynomial-time,
+independently of the shape of the query.
+With respect to probabilistic data, Proposition~\ref{prop:agg-cmp-poly-prob}
+focuses on the tractability of the sole comparison operator, for
+read-once provenance.
+
+\cite{abiteboul2011capturing} consider aggregate queries over
+probabilistic XML documents; they mainly study the complexity of
+different operations over terminal aggregates, so there is no support of
+\sql{HAVING} -- this is again not
+implemented.
+
+\cite{fink2012aggregation} is a very relevant work that also follows the
+semiring construction of \cite{amsterdamer2011provenance} but extend it
+for the specific purpose of probability evaluation, supporting
+\sql{HAVING} operators in the process. This means in particular that
+their semantics of \sql{HAVING} is specific to the probabilistic or
+Boolean function case, in contrast with our proposed semantics valid in
+arbitrary commutative m-semirings. Only aggregate functions that are
+commutative and monoid aggregates are supported, as in
+\cite{amsterdamer2011provenance}. The approach has been implemented in a
+prototype version of SPROUT, unfortunately not publicly released.
+\cite{abiteboul2011capturing}
+
+In addition to ProvSQL~\cite{sen2026provsql} which was already discussed,
+other probabilistic database systems have been released as research
+prototypes:
+MystiQ \cite{DBLP:conf/sigmod/BoulosDMMRS05},
+Trio \cite{dblp:conf/vldb/agrawalbshnsw06},
+Orion \cite{singh2008orion},
+MayBMS \cite{huang2009maybms} and its SPROUT
+\cite{DBLP:conf/icde/OlteanuHK09}\footnote{By SPROUT, here, we mean the publicly
+  available version that is integrated within MayBMS or available from
+  \url{https://www.cs.ox.ac.uk/projects/SPROUT/}; the SPROUT version
+  from \cite{fink2012aggregation} was not publicly released, and
+is discussed above.} query evaluator; none of them
+is maintained anymore and they have either no support (MystiQ, MayBMS) or
+only partial support (Trio~\cite{murthy2011aggregation}, Orion) for aggregation over
+uncertain data; none of them supports an uncertain semantics for
+\sql{HAVING}.
+
+ProbLog \cite{DBLP:journals/tplp/FierensBRSGTJR15,DBLP:conf/pkdd/DriesKMRBVR15} is a probabilistic
+programming system, reminiscent of Prolog, that can be used to query
+uncertain data by translating tuples to facts and queries to rules. It
+does support aggregation, and filtering on aggregation results is also
+supported -- marginal probabilities can be obtained through ground
+computation and weighted model counting; evaluation in other
+(m-)semirings is not possible. Importantly, \cite{sen2026provsql} has
+shown that ProbLog which relies on in-memory processing of rules, cannot
+handle databases of real-world sizes, in contrast with dedicated
+probabilistic databases.
+
+\paragraph*{Aggregation over compact representations}
+
+Finally, \cite{bakibayev2013aggregation} extends a factorized database
+engine with aggregation and \sql{HAVING} clauses. Though no provenance is
+generated and the setting is deterministic, there is some overlap in
+techniques with those necessary to track provenance. In particular, one
+possible direction for future work would be to investigate whether such a
+factorized representation could be used to compress the possible worlds
+enumerated over in our semantics.
