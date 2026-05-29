@@ -13,7 +13,7 @@ In this section we describe specialized procedures for evaluating the valid poss
 All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} subquery $q'$.
 Accordingly, any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
-For bounded range comparisons of the form \sql{SUM}$(t)\op C$, a dynamic programming procedure is presented in Algorithm~\ref{alg:sum_dp}.
+For bounded range comparisons of the form \sql{SUM}$(t)\op C$, a dynamic programming procedure is presented in Algorithm~\ref{alg:sum_dp} (in Appendix).
 It enumerates the possible worlds $W\subseteq U^{\hat I}_{q',\vec v}$ whose sum $\sum_{(u,\alpha)\in W} t(u)$ (i.e., \sql{SUM}$(t)$) satisfies the comparison with the constant $C$, i.e., precisely the worlds contributing nonzero weight to the corresponding $\chi_{\op}$-ensured possible-world sum in the semantics of aggregate comparison atoms.
 
 The algorithm works also for the special case where $t=1$, i.e., bounded range \sql{COUNT}$(t)\op C$ comparisons.
