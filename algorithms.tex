@@ -570,14 +570,8 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
   \end{itemize}
 \end{proposition}
 \begin{proof}
-Fix an arbitrary $\mathbb K$-instance $\hat I$, a group key $\vec v$, and
-represent
-\[
-U^{\hat I}_{q',\vec v}
-=
-\{(u_1,\alpha_1),\dots,(u_N,\alpha_N)\}.
-\]
-For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $N$. Since the queries are fixed, this implying polynomial time in data complexity.
+Fix an arbitrary $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
+For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $|U^{\hat I}_{q',\vec v}|$. Since the queries are fixed, this implying polynomial time in data complexity.
 We recall that the provenance of the \sql{HAVING} condition (eqv. selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
 and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
@@ -587,27 +581,27 @@ For these aggregates, validity of a world is determined directly from the occurr
   \item for \sql{MIN(a)}${}\op c$, one checks whether the selected occurrences contain an admissible minimum value and exclude all values that would violate the comparison;
   \item \sql{MAX(a)}${}\op c$ is a dual to \sql{MIN(a)}${}\op c$;
   \item for \fakesql{PICKFIRST}\texttt{(a)}$\op c$, one checks which occurrence is the first and if its value satisfies the comparison.\end{itemize}
-The provenance can be computed by a direct scan over the occurrences in the group, using only polynomially many operations in $N$. Therefore these cases are in polynomial time for arbitrary m-semirings.
+The provenance can be computed by a direct scan over the occurrences in the group, using only polynomially many operations in $|U^{\hat I}_{q',\vec v}|$. Therefore these cases are in polynomial time for arbitrary m-semirings.
 
 \smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly the non-empty subsets
-$W\subseteq U^{\hat I}_{q',\vec v}$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
+$W\subseteq [|U^{\hat I}_{q',\vec v}|]$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
   If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the provenance of an upward-closed family of sets is equal to the provenance of its family of minimal sets \lean{Having}{Having.absorbing_subfamily}. Here, The minimal satisfying worlds are:
 \begin{itemize}
 \item exactly the worlds of size $k$ for \sql{COUNT(*) >= k};
 \item exactly the worlds of size $k+1$ for \sql{COUNT(*) > k}.
 \end{itemize}
-Since $k$ is fixed, the number of such worlds is $\binom{N}{k}\text{ or }\binom{N}{k+1}$,
-which is polynomial in $N$. Therefore the provenance can be computedi n polynomial time.
+Since $k$ is fixed, the number of such worlds is $\binom{|U^{\hat I}_{q',\vec v}|}{k}\text{ or }\binom{|U^{\hat I}_{q',\vec v}|}{k+1}$,
+which is polynomial in $|U^{\hat I}_{q',\vec v}|$. Therefore the provenance can be computedi n polynomial time.
 
 \smallskip\noindent\textbf{Case 3: \sql{SUM(a) >= c} and \sql{SUM(a) > c} with $c\ge 0$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:sum_dp}, the valid worlds are exactly the non-empty subsets
-$W\subseteq U^{\hat I}_{q',\vec v}$ such that $\sum_{(u,\alpha)\in W} a(u)\ge c\text{ or }\sum_{(u,\alpha)\in W} a(u)>c$ .
+$W\subseteq [|U^{\hat I}_{q',\vec v}|]$ such that $\sum_{r\in W} t((U^{\hat I}_{q',\vec v})_r[u])\ge c\text{ and }\sum_{r\in W} t((U^{\hat I}_{q',\vec v})_r[u])>c$ .
 Since all values are nonnegative, these families are upward-closed under inclusion. Hence, in an absorptive m-semiring, it suffices to consider the minimal satisfying worlds.
-Let $W$ be a minimal satisfying world. If Each selected occurrence contributes at least $c/k$, then the size of $W$ is at most $k$: indeed, if $|W|>k$, then the sum of the values in $W$ is already forced by more than $k$ nonnegative contributions each at least $c/k$, contradicting minimality of $W$. Therefore every minimal satisfying $W$ has cardinality at most $k$.
+Let $W$ be a minimal satisfying world. If each selected occurrence contributes at least $c/k$, then the size of $W$ is at most $k$: indeed, if $|W|>k$, then the sum of the values in $W$ is already forced by more than $k$ non-negative contributions each at least $c/k$, contradicting minimality of $W$. Therefore every minimal satisfying $W$ has cardinality at most $k$.
 
-Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k}\binom{N}{i}$ ,
-which is polynomial in $N$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
+Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k}\binom{|U^{\hat I}_{q',\vec v}|}{i}$ ,
+which is polynomial in $|U^{\hat I}_{q',\vec v}|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
@@ -617,7 +611,7 @@ By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
 \item the worlds of sizes $1,\dots,k-1$ for \sql{COUNT(*) < k}.
 \end{itemize}
 Since $k$ is fixed, the number of such worlds is bounded by
-  $\binom{N}{k},\, \sum_{i=1}^{k}\binom{N}{i},\text{ and } \sum_{i=1}^{k-1}\binom{N}{i}$, respectively. Each of these bounds is polynomial in $N$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
+  $\binom{|U^{\hat I}_{q',\vec v}|}{k},\, \sum_{i=1}^{k}\binom{|U^{\hat I}_{q',\vec v}|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U^{\hat I}_{q',\vec v}|}{i}$, respectively. Each of these bounds is polynomial in $|U^{\hat I}_{q',\vec v}|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
 
 \smallskip\noindent
 With these 4 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
