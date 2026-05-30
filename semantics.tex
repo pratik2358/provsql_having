@@ -45,8 +45,8 @@ comparisons of aggregate values (i.e., non-terminal aggregates) using
 possible-world semantics. As we allow non-commutative aggregation
 functions, we also need to specify, along with the aggregation function,
 which ordering is used,
-similarly to the ``\sql{agg(...) WITHIN GROUP (ORDER BY ...)}'' standard SQL
-feature, or the ``\sql{agg(... ORDER BY ...)}'' feature of PostgreSQL.
+similarly to the ``\sql{AGG(...) WITHIN GROUP (ORDER BY ...)}'' standard SQL
+feature, or the ``\sql{AGG(... ORDER BY ...)}'' feature of PostgreSQL.
 This ordering is irrelevant for commutative aggregates and can be chosen
 arbitrarily in that case. We define possible worlds of a multiset of
 tuples under such an ordering:
