@@ -35,16 +35,16 @@ where $<^*$ denotes $<$ augmented with an occurrence-based tie-break, ensuring d
 \begin{appendixproof}
 We proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
 \paragraph*{Proof of (i)}
-For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing
-  that for any arbitrary tuple in the query result the corresponding provenance expressions instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are same.
+For any $\mathbb{K}$-instance $\hat I$, we prove the equality $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing
+  that, for any tuple in the query result, the corresponding provenance expressions, instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are the same.
     $\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ apply the same relational algebra operators to the same subquery $q$
     and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically. Hence, it
     suffices to show that for each group produced by
     the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with
     that produced by the self-join query.
-    Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$.
+    Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where $u$ is $(u_1,u_2)$ and $\alpha\in \mathbb K$.
 Fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
-% \smallskip\noindent\emph{Note: }\textit{For simplicity, we assume set semantics, i.e, $q$ produces no duplicate output tuples. In this setting, for a fixed group key $a$ selecting $C$ tuples whose second attributes form a strict join chain is the same as requiring the existence of $C-$ distinct tuples in the group. The same proof idea can be extended to multiset-semantics by treating duplicate tuples as distinct tuple occurences (e.g. by indexing inside groups) and refining the strict-ordering predicate in the join chain with this new tie-breaking attribute so that it is possible to select distinct tuple occurences with equal second attributes in increasing order.}
+% \smallskip\noindent\emph{Note: }\textit{For simplicity, we assume set semantics, i.e, $q$ produces no duplicate output tuples. In this setting, for a fixed group key $a$ selecting $C$ tuples whose second attributes form a strict join chain is the same as requiring the existence of $C-$ distinct tuples in the group. The same proof idea can be extended to multiset-semantics by treating duplicate tuples as distinct tuple occurrences (e.g. by indexing inside groups) and refining the strict-ordering predicate in the join chain with this new tie-breaking attribute so that it is possible to select distinct tuple occurrences with equal second attributes in increasing order.}
 
 So, let $U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ be the sequence of
 occurrences of the group with key~$a$ in $\angsem{\hat I}{q}$, for some
@@ -97,7 +97,7 @@ such that, $\ann_U(W)=T_U(W).$
 % &= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
 % \end{align*}
 \lean{Having}{Having.T_eq_mul_one_monus_sum}
-Since $\chi_{\op}(|W|\op C)=\mathbb{1}_\mathbb{K}$ iff $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
+Since $\chi_{\op}(|W|,C)=\mathbb{1}_\mathbb{K}$ iff $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
 \begin{equation}\label{eq:pw_tw}
 \angsem{\hat I}{Q^{\op C}_1}(a)
 =
@@ -113,7 +113,7 @@ S_C(U):=\bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
 Consider the query $Q^{\ge C}_2$.  A join-valuation contributing to the output
 tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
 attribute $a$ and strictly increasing second attributes (due to the chain of
-join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurence attribute as in $U$ so that it is possible to select distinct tuple occurences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
+join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurrence attribute as in $U$ so that it is possible to select distinct tuple occurrences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
 $C$-element subset $W\subseteq U$, and
 $\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
 Therefore,
@@ -216,7 +216,7 @@ $
 \angsem{\hat I}{Q^{=C}_1}(a)=S_C(U)\ominus S_{C+1}(U)=\angsem{\hat I}{Q^{=C}_2}(a)
 $ by $(J_{=,\le})$.
 \paragraph{\textbf{When $\op$ is $\le$:}}
-For $n\ge 1$ we have $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$. Since groups produced by $\gamma^{\preceq}_{\#1}$ are nonempty, only $n=|W|\ge 1$ occur.
+For $n\ge 1$ we have $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$. Since groups produced by $\gamma^{\preceq}_{\#1}$ are nonempty, only $n=|W|\ge 1$ occurs.
 Repeating the same argument as in the case where $\op$ is $=$, we obtain
 \[
 \angsem{\hat I}{Q^{\le C}_1}(a)
@@ -242,7 +242,7 @@ $\op\in\{\ge,=,\le\}$.
 We show that there exists a $\mathbb{K}$-instance $\hat I$ such that
 $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
 Fix $C=2$ and $\op= \; =$.
-Since these queries are equivalent, both of them return groups which have 2 tuples. Say, in a certain $\hat I$ the result of the pre-aggregation subquery $q$ can form a valid group with group-key $u$ with $\mathbb K$-annotations $t_1,t_2,\text{ and }t_3$.
+Since these queries are equivalent, both of them return groups which have 2 tuples. Say, in a certain $\hat I$ the result of the pre-aggregation subquery $q$ can form a valid group with group-key $u$ and $\mathbb K$-annotations $t_1,t_2,\text{ and }t_3$.
 Then,
 \[
   \angsem{\hat I}{Q^{= 2}_1}=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
@@ -301,7 +301,7 @@ But,
 =
 (t_1\otimes(\mathbb 1 \ominus t_2)) \oplus (t_2\otimes(\mathbb 1 \ominus t_1))\oplus (t_1\otimes t_2\otimes(\mathbb 1 \ominus \mathbb 0))
 =
-min(\infty,\infty,-2)
+\min(\infty,\infty,-2)
 =
 -2.
 \]
@@ -314,12 +314,12 @@ $
 $
 \end{appendixproof}
 \begin{proofsketch}
-For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that the corresponding $\mathbb K$-provenance under the assumptions of $(i)$, are same for any arbitrary tuple in $\angsem{\hat I}{Q^{\op C}_1}$ and $\angsem{\hat I}{Q^{\op C}_2}$.
+For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that the corresponding $\mathbb K$-provenance under the assumptions of $(i)$ is the same for any tuple in $\angsem{\hat I}{Q^{\op C}_1}$ and $\angsem{\hat I}{Q^{\op C}_2}$.
 $\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ are equivalent queries and apply the same relational algebra operators to the same subquery $q$.
 Thus the provenance semantics defined for those operators are identical.
 The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically.
 Hence, it suffices to show that for each group produced by the grouping operator in $Q^{\op C}_1$, the evaluated $\mathbb K$-provenance because of the aggregate comparison coincides with that produced by $Q^{\op C}_2$ for the corresponding tuple in $\angsem{\hat I}{Q^{\op C}_2}$.
-Since $q$ is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where u is $(u_1,u_2)$ and $\alpha\in \mathbb K$. We fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
+Since $q$ is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where $u$ is $(u_1,u_2)$ and $\alpha\in \mathbb K$. We fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
 $U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ is the sequence of occurrences of the group with key~$a$ (Definition~\ref{def:possible_world}). Following the semantics in Section~\ref{sec:semantics} we claim that
 $\angsem{\hat I}{Q^{\op C}_1}(a)=\predsem{\hat I}{\gamma^{\preceq}_{\#1}[1:+](q)}{\#2\op C}(u)$ is
 $\bigoplus_{\substack{W\subseteq U,\\ W\neq\emptyset,\\|W|\op C}} T_{U}(W)$ where,
@@ -333,7 +333,7 @@ $\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C(U)$.\\
 A join-valuation contributing to the output
 tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
 attribute $a$ and strictly increasing second attributes (due to the chain of
-join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurence attribute as in $U$ so that it is possible to select distinct tuple occurences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
+join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurrence attribute as in $U$ so that it is possible to select distinct tuple occurrences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
 $C$-element subset $W\subseteq U$, and
 $\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.\\
 By definition, $Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2$ and $Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2$.
@@ -357,7 +357,7 @@ Then for every $V\subseteq U$, $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq 
 \end{lemmarep}
 
 \begin{appendixproof}
-From the properties of $m$-semirings $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in K$,
+From the properties of m-semirings $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in K$,
 \begin{equation}\label{eq:residuation}
   x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
 \end{equation}
@@ -440,7 +440,7 @@ With $\op$ as $\ge$, in
 $\angsem{\hat I}{Q^{\op C}_1}(a)$ we set
 $F_C(U)\defeq \bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_{U}(W).
 $
-By virtue of lemma~\ref{lem:upward-expansion} and other properties of $m$-semiring we state further lemmas that we will need in this proof to establish recurrences for $F_C(U)$ and $S_C(U)$.
+By virtue of Lemma~\ref{lem:upward-expansion} and other properties of m-semirings we state further lemmas that we will need in this proof to establish recurrences for $F_C(U)$ and $S_C(U)$.
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 \lean{Having}{Having.FC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring satisfying distributivity of $\otimes$ over $\ominus$. Fix a non-empty finite set $U$ and elements $(\alpha)_{x\in U}\in \mathbb K$. For $W\neq\emptyset\subseteq U$ define
@@ -654,7 +654,7 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr),
 as required.
 \end{appendixproof}
 By Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$, $F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ and by Lemma~\ref{lem:SC_recurrence}, $S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$.
-We prove that $F_C(U)=S_C(U)$, i.e, $F_C(U)=S_C(U)$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}. Hence, $\angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a)$.
+We prove that $F_C(U)=S_C(U)$ by induction on $|U|$, for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}. Hence, $\angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a)$.
 For $n\in\mathbb N$ we have,
 $\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)$ and $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$.
 We show that
@@ -679,7 +679,6 @@ Since group key $(a)$ was arbitrary, we conclude
 $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
 $\op\in\{\ge,=,\le\}$. This proves $(i)$.\\
 For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$) semiring respectively, from  Table~\ref{tab:semirings} and establish counterexamples.
-\sil{Should we add the counterexamples here?}
 \end{proofsketch}
 
 % \begin{proof}[Proof sketch]
@@ -709,7 +708,7 @@ For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$)
   \label{prop:pqe-equiv}
 Let $I$ be an instance where each input tuple $u$ is associated with an independent probability $Pr(u)\in [0,1]$, then the probabilistic query evaluation of a boolean \sql{HAVING} query $Q$ evaluated on $I$ is equivalent to the probability that the Boolean expression $\angsem{\hat I}{Q}$, where $\hat I$ is a $\mathbb{B}[X]$-instance, evaluates to true when every tuple $u \in\hat I$ is set to true with probability $Pr(u)$.
 \end{proposition}
-\begin{proof}\
+\begin{proof}
 By definition \cite{suciu2011probabilistic}, probabilistic query evaluation of a query $Q$ on an instance $I$, under the possible worlds semantics, consists in evaluating the probability \[Pr_{I}(Q)=\Sigma_{\substack{S\msubseteq I,\\ S\models Q }}\Bigl( \Pi_{u \in S}(Pr(u))\Pi_{u \in I\msetminus S }(1-Pr(u)) \Bigr),\]
 where $S\msubseteq I$ means that $S$ is a sub-instance of $I$ (i.e., $S$ is obtained from $I$ by removing some tuples, possibly with multiplicity if $I$ is a multiset), $S\models Q$ means that the query $Q$ evaluates to true on $S$, and the sum is taken over all sub-instances of $I$.
 
@@ -722,7 +721,7 @@ $
 \iff
 S_\nu\models Q
 .$
-This the Boolean provenance of $Q$ by defintion.
+This is the Boolean provenance of $Q$ by definition.
 Therefore,
 $
 Pr(\angsem{\hat I}{Q})
@@ -788,7 +787,7 @@ Let $U\defeq U^{\preceq}_{\angsem{\hat I}{R},()}$. Then the provenance is
 \chi_{\op}\bigl(\Sigma_{j\in W} m_{i_j},\ B\bigr),
 \]
 where the order $\preceq$ is irrelevant since the aggregate is commutative.
-This is non-zero if and only if one of the term of the $\oplus$ sum is non-zero since
+This is non-zero if and only if one of the terms of the $\oplus$ sum is non-zero since
 $\mathbb K$ has characteristic 0, i.e., if the subset-sum instance has a
 solution.
 \end{proof}
