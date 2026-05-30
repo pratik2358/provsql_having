@@ -413,27 +413,20 @@ This establishes the correctness.
 
 \begin{theoremrep}[Correctness of \textsc{ValidCount}]\label{thm:count-enum-correct}
 \lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
-Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\omega$. Let $U\defeq U^{\hat I}_{q',\vec v}$; then $(U_r)^{\omega}_{r\in[|U|]}$ is the $\omega$-ordered sequence of $U$. 
-Let $t$ be a term of max-index $\le k$. Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
-Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,t,C,\op,\omega)$.
+Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$, $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$. Let $U\defeq U^{\hat I}_{q',\vec v}$. Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,C,\op)$.
 Then
 \[
 \mathcal W
 =
-\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W}))\op C\,\}.
+\{\,W\subseteq [|U|]\mid W\neq\emptyset,|W|\op C\,\}.
 \]
-where, $f_{\Sigma^*}$ is the \sql{COUNT} aggregate described as an arbitrary aggregate function.
 \end{theoremrep}
 
 \begin{appendixproof}
-The term $t$ is part of the input signature for uniformity with the other algorithm which was for the \sql{SUM} aggregate, but the computation for \sql{COUNT} depends only on the occurrences in $U$.
+The computation for \sql{COUNT} depends only on the occurrences in $U$.
 
-We represent $U$ as the finite list of distinct occurrences
-\[
-((u_i,\alpha_i))_{1\le i\le N}.
-\]
 \smallskip\noindent\textbf{Correctness of \textsc{Combinations}.}
-For integers $i$ and $x$, and for a $W\subseteq \{(u_1,\alpha_1),\dots,(u_{i-1},\alpha_{i-1})\}$, consider a call
+For integers $i$ and $x$, and for a $W\subseteq [|U|]$, consider a call
 \[
 \textsc{Combinations}(i,x,W).
 \]
