@@ -10,8 +10,8 @@ In this section we describe specialized procedures for evaluating the valid poss
 % Under this invariant, the multiset of group member occurrences can be treated as a finite \emph{set}, and possible worlds are then ordinary subsets.
 % This does not change our semantics: multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
-All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\hat I}_{q',\vec v}$ of the \emph{pre-aggregation} sub-query $q'$.
-We represent these group-member occurrences as an $\omega$-ordered sequence as in Definition ~\ref{def:possible_world}.
+All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ of the \emph{pre-aggregation} sub-query $q'$.
+We represent these group-member occurrences as an $\preceq$-ordered sequence as in Definition ~\ref{def:possible_world}.
 Possible worlds are then represented as index sets of positions in the sequence.
 Any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
@@ -29,7 +29,7 @@ This enumerates subsets of the desired sizes.
 Finally, depending on the comparison operator, we combine the appropriate size-ranges to get a collection of non-empty worlds that satisfy the comparison.
 The full listing of this algorithm is presented in Algorithm~\ref{alg:count_enum} of the Appendix.
 
-For other aggregate functions, using brute-force enumeration of non-empty worlds $W\subseteq [|U^{\hat I}_{q',\vec v}|]$ will always give the correct answer by our semantics.
+For other aggregate functions, using brute-force enumeration of non-empty worlds $W\subseteq [|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|]$ will always give the correct answer by our semantics.
 The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. 
 %\sil{Do we need to list all possible constants for the second aggregate?}
 %\rjok{there are various ways; one way is t look for the aggregate with the smaller result value. but i guess we can talk about the implementation in provsql(which i am not sure about). Pierre did the implementation for agg vs agg if i am not wrong}
@@ -41,16 +41,16 @@ The algorithms can also be used to evaluate provenance for comparisons between t
 
   \nlset{}\textbf{\textsc{ValidSum}}:\;
 
-  \Input{a finite set of group-member occurrences $U \defeq U^{\hat I}_{q',\vec v}$, an arbitrary ordering $\omega$ of $U$, a term $t$ of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$, a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
-  \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma}(\pi_t((U_r[u])^{\omega}_{r\in W}))\op C\,\}$}
+  \Input{a finite set of group-member occurrences $U \defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, an arbitrary ordering $\preceq$ of $U$, a term $t$ of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$, a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
+  \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}$}
   \BlankLine
-  \Fn{\textsc{ValidSum}$(U,t,C,\op, \omega)$}{
+  \Fn{\textsc{ValidSum}$(U,t,C,\op, \preceq)$}{
   \If{$\op = \neq$}{
-    \Return $\textsc{ValidSum}(U,t,C,<, \omega) \cup \textsc{ValidSum}(U,t,C,>, \omega)$\;
+    \Return $\textsc{ValidSum}(U,t,C,<, \preceq) \cup \textsc{ValidSum}(U,t,C,>, \preceq)$\;
   }
  \BlankLine
-  Consider the sequence $(U_r)^{\omega}_{r \in [|U|]}$ ordered by $\omega$\\
-  $T \gets f_{\Sigma}(\pi_t((U_r[u])^{\omega}_{r\in [|U|]})) = \sum_{r=1}^{|U|} t(U_r[u])$\;
+  Consider the sequence $(U_r)^{\preceq}_{r \in [|U|]}$ ordered by $\preceq$\\
+  $T \gets \mathrm{agg}_{t,f_\Sigma}([|U|]) = \sum_{r=1}^{|U|} t(U_r[u])$\;
   \If{$(\op = = \textbf{ and } C > T)$ \textbf{or} $(\op = > \textbf{ and } C \ge T)$ \textbf{or} $(\op = \ge \textbf{ and } C > T)$ \textbf{or} $(\op = < \textbf{ and } C = 0)$}{
     \Return $\emptyset$\;
   }
@@ -117,29 +117,29 @@ The algorithms can also be used to evaluate provenance for comparisons between t
 The correctness of \textsc{ValidSum} and \textsc{ValidCount} are ensured by the following two theorems.
 \begin{theoremrep}[Correctness of \textsc{ValidSum}]\label{thm:sumdp-correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
-Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\omega$. Let $U\defeq U^{\hat I}_{q',\vec v}$; then $(U_r)^{\omega}_{r\in[|U|]}$ is the $\omega$-ordered sequence of $U$. 
+Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$; then $(U_r)^{\preceq}_{r\in[|U|]}$ is the $\preceq$-ordered sequence of $U$. 
 Let $t$ be a term of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$.
 Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
-Let $\mathcal W$ be the output of \textsc{ValidSum} on input $(U,t,C,\op,\omega)$.
+Let $\mathcal W$ be the output of \textsc{ValidSum} on input $(U,t,C,\op,\preceq)$.
 Then
 \[
 \mathcal W
 =
-\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_\Sigma(\pi_t((U_r[u])^{\omega}_{r\in W}))\op C\,\}.
+\{\,W\subseteq [|U|]\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}.
 \]
-where, $f_\Sigma$ is the \sql{SUM} aggregate described as an arbitrary aggregate function. 
+where $f_\Sigma$ is the \sql{SUM} aggregate, so that $\mathrm{agg}_{t,f_\Sigma}(W)=\sum_{r\in W}t(U_r[u])$.
 \end{theoremrep}
 
 \begin{appendixproof}
 Write
 \[
-  T\defeq f_\Sigma(\pi_t((U_r[u])^{\omega}_{r\in [|U|]}))=\sum_{r=1}^{|U|} t(U_r[u]).
+  T\defeq \mathrm{agg}_{t,f_\Sigma}([|U|])=\sum_{r=1}^{|U|} t(U_r[u]).
 \]
 
 \smallskip\noindent\textbf{Case $\op=\neq$.}
 If $\op=\neq$, the algorithm returns
 \[
-\textsc{ValidSum}(U,t,C,<, \omega)\cup\textsc{ValidSum}(U,t,C,>, \omega).
+\textsc{ValidSum}(U,t,C,<, \preceq)\cup\textsc{ValidSum}(U,t,C,>, \preceq).
 \]
 By the correctness proved below for $\op\in\{<,>\}$, this equals
 \[
@@ -352,7 +352,7 @@ This establishes the correctness.
 
   \nlset{}\textbf{\textsc{ValidCount}:}\;
 
-  \Input{a finite set of group-member occurrences $U\defeq U^{\hat I}_{q'}$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
+  \Input{a finite set of group-member occurrences $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
   \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,|W|\op C\,\}$}
     \BlankLine
   $\mathcal W \gets \emptyset$\;
@@ -413,7 +413,7 @@ This establishes the correctness.
 
 \begin{theoremrep}[Correctness of \textsc{ValidCount}]\label{thm:count-enum-correct}
 \lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
-Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$, $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$. Let $U\defeq U^{\hat I}_{q',\vec v}$. Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,C,\op)$.
+Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$, $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,C,\op)$.
 Then
 \[
 \mathcal W
@@ -571,37 +571,37 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
 \end{proposition}
 \begin{proof}
 Fix an arbitrary $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
-For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $|U^{\hat I}_{q',\vec v}|$. Since the queries are fixed, this implying polynomial time in data complexity.
+For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Since the queries are fixed, this implying polynomial time in data complexity.
 We recall that the provenance of the \sql{HAVING} condition (eqv. selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
 and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 1: \sql{MIN(a)}$\op c$, \sql{MAX(a)}${}\op c$, and \fakesql{PICKFIRST}\texttt{(a)}$\op c$.}
-For these aggregates, validity of a world is determined directly from the occurrences in $U^{\hat I}_{q',\vec v}$:
+For these aggregates, validity of a world is determined directly from the occurrences in $U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$:
 \begin{itemize}
   \item for \sql{MIN(a)}${}\op c$, one checks whether the selected occurrences contain an admissible minimum value and exclude all values that would violate the comparison;
   \item \sql{MAX(a)}${}\op c$ is a dual to \sql{MIN(a)}${}\op c$;
   \item for \fakesql{PICKFIRST}\texttt{(a)}$\op c$, one checks which occurrence is the first and if its value satisfies the comparison.\end{itemize}
-The provenance can be computed by a direct scan over the occurrences in the group, using only polynomially many operations in $|U^{\hat I}_{q',\vec v}|$. Therefore these cases are in polynomial time for arbitrary m-semirings.
+The provenance can be computed by a direct scan over the occurrences in the group, using only polynomially many operations in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore these cases are in polynomial time for arbitrary m-semirings.
 
 \smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly the non-empty subsets
-$W\subseteq [|U^{\hat I}_{q',\vec v}|]$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
+$W\subseteq [|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|]$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
   If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the provenance of an upward-closed family of sets is equal to the provenance of its family of minimal sets \lean{Having}{Having.absorbing_subfamily}. Here, The minimal satisfying worlds are:
 \begin{itemize}
 \item exactly the worlds of size $k$ for \sql{COUNT(*) >= k};
 \item exactly the worlds of size $k+1$ for \sql{COUNT(*) > k}.
 \end{itemize}
-Since $k$ is fixed, the number of such worlds is $\binom{|U^{\hat I}_{q',\vec v}|}{k}\text{ or }\binom{|U^{\hat I}_{q',\vec v}|}{k+1}$,
-which is polynomial in $|U^{\hat I}_{q',\vec v}|$. Therefore the provenance can be computedi n polynomial time.
+Since $k$ is fixed, the number of such worlds is $\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{k}\text{ or }\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{k+1}$,
+which is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore the provenance can be computedi n polynomial time.
 
 \smallskip\noindent\textbf{Case 3: \sql{SUM(a) >= c} and \sql{SUM(a) > c} with $c\ge 0$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:sum_dp}, the valid worlds are exactly the non-empty subsets
-$W\subseteq [|U^{\hat I}_{q',\vec v}|]$ such that $\sum_{r\in W} t((U^{\hat I}_{q',\vec v})_r[u])\ge c\text{ and }\sum_{r\in W} t((U^{\hat I}_{q',\vec v})_r[u])>c$ .
+$W\subseteq [|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|]$ such that $\sum_{r\in W} t((U^{\preceq}_{\angsem{\hat I}{q'},\vec v})_r[u])\ge c\text{ and }\sum_{r\in W} t((U^{\preceq}_{\angsem{\hat I}{q'},\vec v})_r[u])>c$ .
 Since all values are nonnegative, these families are upward-closed under inclusion. Hence, in an absorptive m-semiring, it suffices to consider the minimal satisfying worlds.
 Let $W$ be a minimal satisfying world. If each selected occurrence contributes at least $c/k$, then the size of $W$ is at most $k$: indeed, if $|W|>k$, then the sum of the values in $W$ is already forced by more than $k$ non-negative contributions each at least $c/k$, contradicting minimality of $W$. Therefore every minimal satisfying $W$ has cardinality at most $k$.
 
-Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k}\binom{|U^{\hat I}_{q',\vec v}|}{i}$ ,
-which is polynomial in $|U^{\hat I}_{q',\vec v}|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
+Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k}\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{i}$ ,
+which is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
@@ -611,7 +611,7 @@ By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
 \item the worlds of sizes $1,\dots,k-1$ for \sql{COUNT(*) < k}.
 \end{itemize}
 Since $k$ is fixed, the number of such worlds is bounded by
-  $\binom{|U^{\hat I}_{q',\vec v}|}{k},\, \sum_{i=1}^{k}\binom{|U^{\hat I}_{q',\vec v}|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U^{\hat I}_{q',\vec v}|}{i}$, respectively. Each of these bounds is polynomial in $|U^{\hat I}_{q',\vec v}|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
+  $\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{k},\, \sum_{i=1}^{k}\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{i}$, respectively. Each of these bounds is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
 
 \smallskip\noindent
 With these 4 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
@@ -622,7 +622,7 @@ With these 4 cases, provenance can be computed in polynomial time for all the \s
 Fix a $\mathbb{B}[X]$-instance $\hat I$ in which every input variable
 $x_u\in\mathbf X_{\hat I}$ carries an independent probability
 $\Pr(x_u)\in[0,1]$, a group key $\vec v$, and let
-$U\defeq U^{\hat I}_{q',\vec v}=((u_i,\alpha_i))_{1\le i\le N}$ be the
+$U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=((u_i,\alpha_i))_{1\le i\le N}$ be the
 pre-aggregation occurrences at that group key.
 Assume the contributors are \emph{independent}: the sets of input
 variables of the annotations $(\alpha_i)_{1\le i\le N}$ are pairwise
