@@ -35,6 +35,17 @@ An \emph{aggregate function} is a function  $f:\Seq(\mathcal{V})\to\mathcal{V}$.
   $\mathbb{0}$ otherwise.
 \end{definition}
 
+\begin{example}\label{ex:aggregates}
+Common aggregates such as \sql{SUM}, \sql{COUNT}, \sql{MIN} and \sql{MAX}
+are \emph{commutative}: their value is unchanged under any reordering of
+the input sequence. For instance, the \sql{SUM} aggregate is
+$f_\Sigma\bigl((x_1,\dots,x_n)\bigr)\defeq x_1+\dots+x_n$.
+By contrast, the \fakesql{PICKFIRST} aggregate
+$\fakesql{PICKFIRST}\bigl((x_1,\dots,x_n)\bigr)\defeq x_1$, which returns
+the first value of its input, is \emph{non-commutative}: its result
+depends on the order of the sequence.
+\end{example}
+
 Sen et al.~\cite{sen2026provsql} provide a provenance semantics over annotated
 relations for the multiset relational algebra extended with
 \emph{terminal} aggregation,
@@ -149,6 +160,42 @@ In the second case the annotation~$\alpha$ is
 dropped: the possible-world sum ranges over non-empty worlds only, so it
 already enforces group existence (the role of the $\delta(\cdot)$-type
 factor $\alpha$), making the extra $\otimes$ by $\alpha$ redundant.
+
+\begin{example}\label{ex:semantics}
+Consider a group with key $\vec v$ with pre-aggregation occurrences
+$U=\bigl((u_1,x_1),(u_2,x_2),$ $(u_3,x_3)\bigr)$, annotated in the
+Boolean-function semiring $\mathbb B[X]$ by distinct variables
+$x_1,x_2,x_3$ (so $\oplus=\lor$, $\otimes=\land$, $\mathbb 1=\top$,
+$\mathbb 0=\bot$, and $\mathbb 1\ominus a=\lnot a$). Take the predicate
+$\psi=\bigl(\text{\sql{COUNT(*)}}\ge 2\bigr)$, for which the aggregate value on a
+world $W$ is $|W|$, compared against the constant~$2$. The non-empty
+worlds $W\sqsubseteq U$ with $|W|\ge 2$ are the three pairs and the full
+triple (the others contribute $\chi_{\ge}=\mathbb 0$); for each, $\ann_U(W)$
+multiplies the annotations of the kept occurrences by the factor
+$\mathbb 1\ominus(\cdot)$ over the discarded ones:
+\[
+\begin{array}{ll}
+\ann_U(\{1,2\})=x_1\land x_2\land\lnot x_3, &
+\ann_U(\{1,3\})=x_1\land x_3\land\lnot x_2,\\[2pt]
+\ann_U(\{2,3\})=x_2\land x_3\land\lnot x_1, &
+\ann_U(\{1,2,3\})=x_1\land x_2\land x_3.
+\end{array}
+\]
+Their $\oplus$-sum is
+\[
+\predsem{\hat I}{q}{\psi}(u)=
+(x_1\land x_2)\lor(x_1\land x_3)\lor(x_2\land x_3),
+\]
+the Boolean function ``at least two of $x_1,x_2,x_3$ hold'', as one would
+expect of \sql{COUNT(*)}${}\ge 2$. Notice that the negative factors
+$\lnot x_i$ have cancelled out: since $\mathbb B[X]$ is absorptive, the
+provenance is already captured by the \emph{minimal} satisfying worlds
+(here the three pairs), with no use of $\ominus$. This is precisely the
+phenomenon exploited by the results of Section~\ref{sec:results} and the
+polynomial-time algorithms of Section~\ref{sec:algorithms}; in a
+non-absorptive semiring the discarded-occurrence factors do not cancel
+and this simplification fails.
+\end{example}
 
 \paragraph*{Boolean combinations.}
 For selection predicates $\psi_1,\psi_2$ and $u\in\mathcal V_{\mathbb K}^k$,

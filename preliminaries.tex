@@ -27,7 +27,7 @@ without \sql{HAVING}).
   $(\{\top,\bot\},\lor,\land,\bot,\top)$;
   the Why-provenance semiring over some set of variables $X$:
       $(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\})$ where $\Cup$ is defined as follows: $A\Cup B \defeq \{a\cup b \mid a\in A, b\in B\}$;
-  the Boolean function semiring $\mathbb B[X]$ over a set of variables $X$
+  the Boolean-function semiring $\mathbb B[X]$ over a set of variables $X$
   \cite{green2007provenance,senellart2017provenance}:
   the set of Boolean functions over $X$ (equivalently, propositional
   formulas over $X$ up to logical equivalence) with
@@ -104,9 +104,9 @@ used in temporal databases
 \cite{green2017provenance}, the security or access control semiring
 \cite{green2017provenance}, the $\mathbb{N}[X]$ or How[$X$] semiring
 \cite{green2007provenance} and the \L ukasiewicz semiring~\cite{gradel2025provenance}.
-We note that only the Boolean, Boolean function, Temporal, Tropical (over
+We note that only the Boolean, Boolean-function, Temporal, Tropical (over
 $\mathbb{N}$), Viterbi, and \L
-ukasiewicz semirings are idempotent, absorptive and have $\otimes$
+ukasiewicz m-semirings are idempotent, absorptive and have $\otimes$
 distributive over~$\ominus$.
 These properties will be important for the semantics of \sql{HAVING}
 queries. Note that this table, along with the formal Lean proofs that

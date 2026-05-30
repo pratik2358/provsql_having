@@ -1,24 +1,22 @@
 \section{Algorithms}
 \label{sec:algorithms}
 
-\pierre{2 pages}
-
-In this section we describe specialized procedures for evaluating the valid possible-worlds for selections involving aggregate comparisons.
+In this section we describe specialized procedures for evaluating the valid possible worlds for selections involving aggregate comparisons.
 
 % ProvSQL implements multiset semantics, using \emph{tuple occurrences} carrying globally unique provenance identifiers (UUIDs).
 % We maintain a uniqueness invariant for every intermediate query result $\angsem{\hat I}{q}$: no pair $(u,\alpha)$ occurs twice, meaning that duplicates of the same value-tuple $u$ are represented as distinct occurrences with different annotations $\alpha$.
 % Under this invariant, the multiset of group member occurrences can be treated as a finite \emph{set}, and possible worlds are then ordinary subsets.
 % This does not change our semantics: multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
-All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group member occurrences $U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ of the \emph{pre-aggregation} sub-query $q'$.
-We represent these group-member occurrences as an $\preceq$-ordered sequence as in Definition ~\ref{def:possible_world}.
-Possible worlds are then represented as index sets of positions in the sequence.
+All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group-member occurrences $U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ of the \emph{pre-aggregation} sub-query $q'$.
+We represent these group-member occurrences as an $\preceq$-ordered sequence as in Definition~\ref{def:possible_world}.
+By Definition~\ref{def:possible_world}, a possible world is a subsequence $W\sqsubseteq U$; since the order $\preceq$ is fixed, we identify each $W\sqsubseteq U$ with its set of positions in the sequence, an index set $W\subseteq [|U|]$, which is the representation the algorithms manipulate.
 Any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
-We first provide provide a dynamic programming algorithm for \sql{SUM} comparisons that incrementally constructs all possible worlds producing the desired sum, named \textsc{ValidSum}.
+We first provide a dynamic programming algorithm for \sql{SUM} comparisons that incrementally constructs all possible worlds producing the desired sum, named \textsc{ValidSum}.
 It processes each tuple iteratively and maintains, for every possible value of the sum, the collection of worlds that realize it.
 For a new tuple, previously constructed possible worlds can either remain unchanged or be extended by inclusion of this new tuple, hence creating new worlds having larger sums.
-After all the tuples have been encountered, the algorithm returns a collection of non-empty worlds whose total sum satisfies the comparison constant.
+After all the tuples have been encountered, the algorithm returns a collection of non-empty worlds whose total sum satisfies the desired comparison.
 The full listing of this algorithm is presented in Algorithm~\ref{alg:sum_dp} of the Appendix.
 
 The algorithm works also for the special case where $t=1$, i.e., bounded range \sql{COUNT}$(t)\op C$ comparisons.
@@ -29,8 +27,8 @@ This enumerates subsets of the desired sizes.
 Finally, depending on the comparison operator, we combine the appropriate size-ranges to get a collection of non-empty worlds that satisfy the comparison.
 The full listing of this algorithm is presented in Algorithm~\ref{alg:count_enum} of the Appendix.
 
-For other aggregate functions, using brute-force enumeration of non-empty worlds $W\subseteq [|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|]$ will always give the correct answer by our semantics.
-The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first. 
+For other aggregate functions, using brute-force enumeration of non-empty worlds $W\sqsubseteq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ will always give the correct answer by our semantics.
+The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first.
 %\sil{Do we need to list all possible constants for the second aggregate?}
 %\rjok{there are various ways; one way is t look for the aggregate with the smaller result value. but i guess we can talk about the implementation in provsql(which i am not sure about). Pierre did the implementation for agg vs agg if i am not wrong}
 \begin{toappendix}
@@ -41,16 +39,16 @@ The algorithms can also be used to evaluate provenance for comparisons between t
 
   \nlset{}\textbf{\textsc{ValidSum}}:\;
 
-  \Input{a finite set of group-member occurrences $U \defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, an arbitrary ordering $\preceq$ of $U$, a term $t$ of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$, a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
-  \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}$}
+  \Input{a finite set of group-member occurrences $U \defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, an arbitrary ordering $\preceq$ of $U$, a term $t$ of max-index $\le k$ such that $t(u)\in\NN$ for every $(u,\alpha)\in U$, a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
+  \Output{$\mathcal W =\{\,W\sqsubseteq U\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}$}
   \BlankLine
   \Fn{\textsc{ValidSum}$(U,t,C,\op, \preceq)$}{
   \If{$\op = \neq$}{
     \Return $\textsc{ValidSum}(U,t,C,<, \preceq) \cup \textsc{ValidSum}(U,t,C,>, \preceq)$\;
   }
  \BlankLine
-  Consider the sequence $(U_r)^{\preceq}_{r \in [|U|]}$ ordered by $\preceq$\\
-  $T \gets \mathrm{agg}_{t,f_\Sigma}([|U|]) = \sum_{r=1}^{|U|} t(U_r[u])$\;
+  Let $((u_r,\alpha_r))_{r \in [|U|]}$ be the occurrences of $U$ ordered by $\preceq$\\
+  $T \gets \mathrm{agg}_{t,f_\Sigma}([|U|]) = \sum_{r=1}^{|U|} t(u_r)$\;
   \If{$(\op = = \textbf{ and } C > T)$ \textbf{or} $(\op = > \textbf{ and } C \ge T)$ \textbf{or} $(\op = \ge \textbf{ and } C > T)$ \textbf{or} $(\op = < \textbf{ and } C = 0)$}{
     \Return $\emptyset$\;
   }
@@ -74,7 +72,7 @@ The algorithms can also be used to evaluate provenance for comparisons between t
   $\mathrm{pref\_sum} \gets 0$\;
 
   \For{$i \gets 1$ \KwTo $|U|$}{
-    $w \gets t(U_i[u])$\;
+    $w \gets t(u_i)$\;
     $\mathrm{pref\_sum} \gets \mathrm{pref\_sum} + w$\;
     $j_{\max} \gets \min(J,\ \mathrm{pref\_sum})$\;
 
@@ -117,23 +115,23 @@ The algorithms can also be used to evaluate provenance for comparisons between t
 The correctness of \textsc{ValidSum} and \textsc{ValidCount} are ensured by the following two theorems.
 \begin{theoremrep}[Correctness of \textsc{ValidSum}]\label{thm:sumdp-correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
-Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$; then $(U_r)^{\preceq}_{r\in[|U|]}$ is the $\preceq$-ordered sequence of $U$. 
-Let $t$ be a term of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$.
+Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=((u_r,\alpha_r))_{r\in[|U|]}$ be the $\preceq$-ordered sequence of group-member occurrences.
+Let $t$ be a term of max-index $\le k$ such that $t(u_r)\in\NN$ for all $r \in [|U|]$.
 Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
 Let $\mathcal W$ be the output of \textsc{ValidSum} on input $(U,t,C,\op,\preceq)$.
 Then
 \[
 \mathcal W
 =
-\{\,W\subseteq [|U|]\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}.
+\{\,W\sqsubseteq U\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}.
 \]
-where $f_\Sigma$ is the \sql{SUM} aggregate, so that $\mathrm{agg}_{t,f_\Sigma}(W)=\sum_{r\in W}t(U_r[u])$.
+where $f_\Sigma$ is the \sql{SUM} aggregate, so that $\mathrm{agg}_{t,f_\Sigma}(W)=\sum_{r\in W}t(u_r)$.
 \end{theoremrep}
 
 \begin{appendixproof}
 Write
 \[
-  T\defeq \mathrm{agg}_{t,f_\Sigma}([|U|])=\sum_{r=1}^{|U|} t(U_r[u]).
+  T\defeq \mathrm{agg}_{t,f_\Sigma}([|U|])=\sum_{r=1}^{|U|} t(u_r).
 \]
 
 \smallskip\noindent\textbf{Case $\op=\neq$.}
@@ -143,13 +141,13 @@ If $\op=\neq$, the algorithm returns
 \]
 By the correctness proved below for $\op\in\{<,>\}$, this equals
 \[
-  \{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W}t(U_r[u])<C\,\}
+  \{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W}t(u_r)<C\,\}
 \cup
-\{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W}t(U_r[u])>C\,\}.
+\{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W}t(u_r)>C\,\}.
 \]
 Since for every integer $x$ one has $x\neq C$ iff $x<C$ or $x>C$, the latter union is exactly
 \[
-  \{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W}t(U_r[u])\neq C\,\}.
+  \{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W}t(u_r)\neq C\,\}.
 \]
 Hence the theorem holds for $\op=\neq$.
 
@@ -166,28 +164,28 @@ The algorithm returns $\emptyset$ in the following scenarios:
 \end{itemize}
 If $\op$ is $=$ and $C>T$, then every world $W\subseteq [|U|]$ satisfies
 \[
-  \sum_{r\in W} t(U_r[u])\le \sum_{r=1}^{|U|} t(U_r[u])=T<C,
+  \sum_{r\in W} t(u_r)\le \sum_{r=1}^{|U|} t(u_r)=T<C,
 \]
 so no world has sum $C$.
 
-If $\op$ is $>$ and $C\ge T$, then every world $W\subseteq U$ satisfies
+If $\op$ is $>$ and $C\ge T$, then every world $W\subseteq [|U|]$ satisfies
 \[
-  \sum_{r\in W} t(U_r[u])\le T\le C,
+  \sum_{r\in W} t(u_r)\le T\le C,
 \]
 so no world has sum strictly greater than $C$.
 
 If $\op$ is $\ge$ and $C>T$, then again every world has sum at most $T<C$, so no world has sum at least $C$.
 
-If $\op$ is $<$ and $C=0$, since all values $t(U_r[u])$ lie in $\NN$, every world has nonnegative sum; hence no world has sum $<0$.
+If $\op$ is $<$ and $C=0$, since all values $t(u_r)$ lie in $\NN$, every world has nonnegative sum; hence no world has sum $<0$.
 
 Therefore, in each early-return case, the algorithm correctly outputs $\emptyset$.
 
 \smallskip\noindent\textbf{DP invariant.}
 We can safely assume from now on that none of the early-return cases occur.
-For $0\le i\le |U|$,$j\ge 0$, define
+For $0\le i\le |U|$, $j\ge 0$, define
 \[
 \mathcal D_i(j)\defeq
-\{\,W\subseteq [|i|]\mid \sum_{r\in W} t(U_r[u])=j\,\}.
+\{\,W\subseteq [i]\mid \sum_{r\in W} t(u_r)=j\,\}.
 \]
 We claim that after completing the outer-loop iteration with index $i$,
 for every $j\in\{0,\dots,J\}$,
@@ -219,20 +217,20 @@ We show that after iteration $i$, one has $dp[j]=\mathcal D_i(j)$.
 
 We now establish two cases.
 
-\smallskip\noindent\underline{Case 1: $j<t(U_i[u])$.}
+\smallskip\noindent\underline{Case 1: $j<t(u_i)$.}
 The inner loop does not update $dp[j]$, since the loop runs only for indices
 \[
-  j=j_{\max},j_{\max}-1,\dots,t(U_i[u]).
+  j=j_{\max},j_{\max}-1,\dots,t(u_i).
 \]
 Hence after iteration $i$, the value of $dp[j]$ is unchanged, so by the induction hypothesis
 \[
 dp[j]=\mathcal D_{i-1}(j).
 \]
-Further, no subset of $[i]$ can indicate a sum $j$, because such a subset shows a sum at least
+Further, no subset of $[i]$ that contains $i$ can have a sum $j$, because such a subset has a sum at least
 \[
-  t(U_i[u])>j,
+  t(u_i)>j,
 \]
-and all summands are nonnegative. Therefore every world in $\mathcal D_i(j)$ must avoid $i$, so
+all summands being nonnegative. Therefore every world in $\mathcal D_i(j)$ must avoid $i$, so
 \[
 \mathcal D_i(j)=\mathcal D_{i-1}(j).
 \]
@@ -241,10 +239,10 @@ Consequently,
 dp[j]=\mathcal D_i(j).
 \]
 
-\smallskip\noindent\underline{Case 2: $j\ge t(U_i[u])$.}
+\smallskip\noindent\underline{Case 2: $j\ge t(u_i)$.}
 A subset $W\subseteq [i]$ satisfies
 \[
-  \sum_{r\in W} t(U_r[u])=j
+  \sum_{r\in W} t(u_r)=j
 \]
 iff exactly one of the following two disjoint possibilities hold:
 \begin{itemize}
@@ -258,11 +256,11 @@ W=W'\cup\{i\}
 \]
 for a unique subset $W'\subseteq [i-1]$ satisfying
 \[
-  \sum_{r\in W'} t(U_r[u])=j-t(U_i[u]),
+  \sum_{r\in W'} t(u_r)=j-t(u_i),
 \]
 that is,
 \[
-  W'\in \mathcal D_{i-1}(j-t(U_i[u])).
+  W'\in \mathcal D_{i-1}(j-t(u_i)).
 \]
 \end{itemize}
 
@@ -270,11 +268,11 @@ By the induction hypothesis, before processing index $i$ we have
 \[
 dp[j]=\mathcal D_{i-1}(j)
 \qquad\text{and}\qquad
-dp[j-t(U_i[u])]=\mathcal D_{i-1}(j-t(U_i[u])).
+dp[j-t(u_i)]=\mathcal D_{i-1}(j-t(u_i)).
 \]
 During the update for this fixed $j$, the algorithm sets
 \[
-  p\gets j-t(U_i[u]),
+  p\gets j-t(u_i),
 \qquad
 s\gets |dp[p]|.
 \]
@@ -286,12 +284,12 @@ dp[p][r]\cup\{i\}
 to $dp[j]$.
 
 Thus the worlds added to $dp[j]$ are exactly those obtained by adding $i$ to the worlds that were already present in $dp[p]$ before any append operation at this $j$.
-Since, by the I.H, those pre-existing worlds are exactly the elements of $\mathcal D_{i-1}(j-t(U_i[u]))$, the algorithm adds exactly the worlds in
+Since, by the I.H, those pre-existing worlds are exactly the elements of $\mathcal D_{i-1}(j-t(u_i))$, the algorithm adds exactly the worlds in
 \[
-  \{\,W'\cup\{i\}\mid W'\in \mathcal D_{i-1}(j-t(U_i[u]))\,\}.
+  \{\,W'\cup\{i\}\mid W'\in \mathcal D_{i-1}(j-t(u_i))\,\}.
 \]
 
-$s=|dp[p]|$ is essential when $t(U_i[u])=0$, for then $p=j$.
+$s=|dp[p]|$ is essential when $t(u_i)=0$, for then $p=j$.
 In that situation the algorithm appends new worlds to $dp[j]$ while scanning from $dp[j]$, but it scans only the first $s$ entries, i.e. exactly those worlds that were present before the append operations started.
 Hence each world in $\mathcal D_{i-1}(j)$ contributes exactly one extended world containing $i$, and none of the newly appended worlds is reused again during the same update.
 
@@ -299,7 +297,7 @@ Therefore, after iteration $i$, the content of $dp[j]$ is exactly:
 \begin{itemize}
 \item all worlds in $\mathcal D_{i-1}(j)$, corresponding to the case $i\notin W$;
 \item together with all worlds of the form $W'\cup\{i\}$ for
-  $W'\in\mathcal D_{i-1}(j-t(U_i[u]))$, corresponding to the case $i\in W$.
+  $W'\in\mathcal D_{i-1}(j-t(u_i))$, corresponding to the case $i\in W$.
 \end{itemize}
 By the disjoint case analysis above, this is precisely $\mathcal D_i(j)$.
 Thus
@@ -314,7 +312,7 @@ Hence, after the outer loop terminates, for every $j\in\{0,\dots,J\}$,
 \[
 dp[j]
 =
-\{\,W\subseteq [|U|]\mid \sum_{r\in W}t(U_r[u])=j\,\}.
+\{\,W\subseteq [|U|]\mid \sum_{r\in W}t(u_r)=j\,\}.
 \]
 
 \smallskip\noindent\textbf{Selecting satisfying worlds.}
@@ -329,7 +327,7 @@ The algorithm forms $\mathcal W$ as a union of those $dp[j]$ whose index $j$ sat
 By the characterization of $dp[j]$ proved above, each such union is exactly the set of worlds
 $W\subseteq [|U|]$ whose sum satisfies
 \[
-  \sum_{r\in W} t(U_r[u])\op C.
+  \sum_{r\in W} t(u_r)\op C.
 \]
 The only possible extra world is $\emptyset$, which belongs to $dp[0]$ and may therefore appear whenever the selected range contains $0$.
 The algorithm omits it by setting
@@ -338,7 +336,7 @@ The algorithm omits it by setting
 \]
 It follows that the final output is exactly
 \[
-  \{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W} t(U_r[u])\op C\,\}.
+  \{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W} t(u_r)\op C\,\}.
 \]
 
 This establishes the correctness.
@@ -353,7 +351,7 @@ This establishes the correctness.
   \nlset{}\textbf{\textsc{ValidCount}:}\;
 
   \Input{a finite set of group-member occurrences $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
-  \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,|W|\op C\,\}$}
+  \Output{$\mathcal W =\{\,W\sqsubseteq U\mid W\neq\emptyset,|W|\op C\,\}$}
     \BlankLine
   $\mathcal W \gets \emptyset$\;
 
@@ -418,7 +416,7 @@ Then
 \[
 \mathcal W
 =
-\{\,W\subseteq [|U|]\mid W\neq\emptyset,|W|\op C\,\}.
+\{\,W\sqsubseteq U\mid W\neq\emptyset,|W|\op C\,\}.
 \]
 \end{theoremrep}
 
@@ -481,14 +479,14 @@ In the second case, the desired worlds are exactly those produced by
 \]
 since after selecting $i$, one must select exactly $x-1$ further occurrences from the suffix starting at $i+1$.
 
-By the I.H, the first recursive call appends exactly the words of the first kind, and the second appends exactly the words of the second kind. Since the two cases are disjoint and exhaustive, \textsc{Combinations} appends exactly all desired words, each exactly once.
+By the I.H, the first recursive call appends exactly the worlds of the first kind, and the second appends exactly the worlds of the second kind. Since the two cases are disjoint and exhaustive, \textsc{Combinations} appends exactly all desired worlds, each exactly once.
 
 This proves the claim.
 
 \smallskip\noindent\textbf{Correctness of \textsc{AddExact}.}
 Consider a call \textsc{AddExact}$(x)$.
 
-If $x\le 0$, the procedure returns immediately. This is correct because the output requires $W\neq\emptyset$, so no word of size $0$ should be output, and no word has negative cardinality.
+If $x\le 0$, the procedure returns immediately. This is correct because the output requires $W\neq\emptyset$, so no world of size $0$ should be output, and no world has negative cardinality.
 
 If $x>|U|$, the procedure also returns immediately. This is correct because no subset of $[|U|]$ can have cardinality greater than $|U|$.
 
@@ -502,7 +500,7 @@ By the claim proved above, this appends exactly all sets
 \quad\text{such that}\quad
 |W|=x.
 \]
-Hence \textsc{AddExact}$(x)$ appends exactly the non-empty words of cardinality $x$.
+Hence \textsc{AddExact}$(x)$ appends exactly the non-empty worlds of cardinality $x$.
 
 \smallskip\noindent\textbf{Selecting satisfying worlds.}
 We now inspect the final case distinction on $\op$.
@@ -532,7 +530,7 @@ Thus it returns exactly the non-empty worlds whose cardinality is strictly less 
 \[
 x\in\{1,\dots,\min(C,|U|)\}.
 \]
-Thus it retunrs exactly the non-empty worlds whose cardinality is at most $C$.
+Thus it returns exactly the non-empty worlds whose cardinality is at most $C$.
 
 \item If $\op$ is $\neq$, the algorithm executes \textsc{AddExact}$(x)$ for every
 \[
@@ -549,7 +547,7 @@ In every case, the resulting  $\mathcal W$ is exactly
 This establishes correctness.
 \end{appendixproof}
 
-We identify certain aggregate-comparison predicates for which the valid worlds can be constructed in polynomial time: 
+We identify certain aggregate-comparison predicates for which the valid worlds can be constructed in polynomial time:
 \begin{proposition}
   \label{prop:algorithms}
   The provenance of \sql{HAVING} queries of the following forms can be computed
@@ -571,8 +569,8 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
 \end{proposition}
 \begin{proof}
 Fix an arbitrary $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
-For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Since the queries are fixed, this implying polynomial time in data complexity.
-We recall that the provenance of the \sql{HAVING} condition (eqv. selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
+For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Since the queries are fixed, this implies polynomial time in data complexity.
+We recall that the provenance of the \sql{HAVING} condition (equiv.\ selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
 and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 1: \sql{MIN(a)}$\op c$, \sql{MAX(a)}${}\op c$, and \fakesql{PICKFIRST}\texttt{(a)}$\op c$.}
@@ -580,27 +578,27 @@ For these aggregates, validity of a world is determined directly from the occurr
 \begin{itemize}
   \item for \sql{MIN(a)}${}\op c$, one checks whether the selected occurrences contain an admissible minimum value and exclude all values that would violate the comparison;
   \item \sql{MAX(a)}${}\op c$ is a dual to \sql{MIN(a)}${}\op c$;
-  \item for \fakesql{PICKFIRST}\texttt{(a)}$\op c$, one checks which occurrence is the first and if its value satisfies the comparison.\end{itemize}
+  \item for \fakesql{PICKFIRST}\texttt{(a)}$\op c$ (the non-commutative aggregate of Example~\ref{ex:aggregates}), one checks which occurrence is the first and if its value satisfies the comparison.\end{itemize}
 The provenance can be computed by a direct scan over the occurrences in the group, using only polynomially many operations in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore these cases are in polynomial time for arbitrary m-semirings.
 
 \smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
-By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly the non-empty subsets
-$W\subseteq [|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|]$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
-  If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the provenance of an upward-closed family of sets is equal to the provenance of its family of minimal sets \lean{Having}{Having.absorbing_subfamily}. Here, The minimal satisfying worlds are:
+By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly the non-empty worlds
+$W\sqsubseteq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
+  If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the provenance of an upward-closed family of sets is equal to the provenance of its family of minimal sets \lean{Having}{Having.absorbing_subfamily}. Here, the minimal satisfying worlds are:
 \begin{itemize}
 \item exactly the worlds of size $k$ for \sql{COUNT(*) >= k};
 \item exactly the worlds of size $k+1$ for \sql{COUNT(*) > k}.
 \end{itemize}
 Since $k$ is fixed, the number of such worlds is $\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{k}\text{ or }\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{k+1}$,
-which is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore the provenance can be computedi n polynomial time.
+which is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore the provenance can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 3: \sql{SUM(a) >= c} and \sql{SUM(a) > c} with $c\ge 0$, in absorptive m-semirings.}
-By correctness of Algorithm~\ref{alg:sum_dp}, the valid worlds are exactly the non-empty subsets
-$W\subseteq [|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|]$ such that $\sum_{r\in W} t((U^{\preceq}_{\angsem{\hat I}{q'},\vec v})_r[u])\ge c\text{ and }\sum_{r\in W} t((U^{\preceq}_{\angsem{\hat I}{q'},\vec v})_r[u])>c$ .
+By correctness of Algorithm~\ref{alg:sum_dp}, the valid worlds are exactly the non-empty worlds
+$W\sqsubseteq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ such that $\sum_{r\in W} t(u_r)\ge c$ (resp.\ $>c$).
 Since all values are nonnegative, these families are upward-closed under inclusion. Hence, in an absorptive m-semiring, it suffices to consider the minimal satisfying worlds.
-Let $W$ be a minimal satisfying world. If each selected occurrence contributes at least $c/k$, then the size of $W$ is at most $k$: indeed, if $|W|>k$, then the sum of the values in $W$ is already forced by more than $k$ non-negative contributions each at least $c/k$, contradicting minimality of $W$. Therefore every minimal satisfying $W$ has cardinality at most $k$.
+Let $W$ be a minimal satisfying world. By the hypothesis $c/a\le k$, every value is at least $c/k$, so any $k$ selected occurrences already contribute a sum at least $c$. For \sql{SUM(a) >= c}, this gives $|W|\le k$: if $|W|>k$, then any $k$-element subset of $W$ already has sum $\ge c$, contradicting minimality. For the strict comparison \sql{SUM(a) > c}, a $k$-element subset only guarantees a sum $\ge c$, so minimality allows one extra occurrence, giving $|W|\le k+1$.
 
-Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k}\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{i}$ ,
+Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k+1}\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{i}$ ,
 which is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
@@ -617,7 +615,20 @@ Since $k$ is fixed, the number of such worlds is bounded by
 With these 4 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
 \end{proof}
 
-\begin{proposition}
+Proposition~\ref{prop:algorithms} concerns the \emph{symbolic} provenance of a
+\sql{HAVING} comparison in an arbitrary (absorptive) m-semiring, computed by
+enumerating the relevant valid worlds. A complementary form of tractability
+arises in the \emph{probabilistic} setting. By
+Proposition~\ref{prop:pqe-equiv}, evaluating a \sql{HAVING} query over a
+tuple-independent instance amounts to computing the probability of its
+$\mathbb{B}[X]$-provenance under the possible-world semantics. When the
+contributors of a group are independent, this probability need not be obtained
+by enumerating worlds, whose number is in general exponential: the distribution
+of the aggregate over the group can instead be assembled by a convolution
+dynamic program, yielding the answer in polynomial time for several aggregates
+and \emph{all} comparison operators, as we now show.
+
+\begin{propositionrep}
 \label{prop:agg-cmp-poly-prob}
 Fix a $\mathbb{B}[X]$-instance $\hat I$ in which every input variable
 $x_u\in\mathbf X_{\hat I}$ carries an independent probability
@@ -645,7 +656,7 @@ deterministic procedures:
   \item \sql{MIN}$(t)\,\op\,C$ and \sql{MAX}$(t)\,\op\,C$, for any
         totally ordered value domain: in time $O(N)$.
 \end{itemize}
-\end{proposition}
+\end{propositionrep}
 
 \begin{proof}
 By the independence hypothesis and the equivalence between
