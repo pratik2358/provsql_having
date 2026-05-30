@@ -38,7 +38,7 @@ where $\varepsilon$ denotes duplicate elimination and $<^*$ denotes $<$ augmente
         $\angsem{\hat I_2}{Q^{\op C}_1}\neq\angsem{\hat I_2}{Q^{\op C}_2}$.
     \end{enumerate}
 \end{theoremrep}
-\begin{appendixproof}
+\begin{proof}
 We proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
 \paragraph*{Proof of (i)}
 For any $\mathbb{K}$-instance $\hat I$, we prove the equality $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing
@@ -87,7 +87,7 @@ $A_W\defeq\bigotimes_{w\in W}\alpha_w$, where $\alpha_w$ is the annotation
 of occurrence~$w$. Then
 \begin{align*}
 T_U(W)&\defeq\ A_W \otimes \Bigl(\mathbb{1}_{\mathbb{K}} \ominus \bigoplus_{w\in U\setminus W}\alpha_w\Bigr)\\
-&= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}} \;\textit{[ by distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$]}
+&= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}} \;\textit{[by distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$]}
 \end{align*}
 so that $\ann_U(W)=T_U(W)$.
 
@@ -108,7 +108,7 @@ S_C(U)\defeq\bigoplus_{\substack{W\sqsubseteq U \\|W|=C}} A_W
 Consider the query $Q^{\ge C}_2$.  A join-valuation contributing to the output
 tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
 attribute $a$ and strictly increasing second attributes (due to the chain of
-join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurrence attribute as in $U$ so that it is possible to select distinct tuple occurrences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
+join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurrence attribute as in $U$ so that it is possible to select distinct tuple occurrences with equal second attributes in increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
 $C$-element subset $W\sqsubseteq U$, which contributes the product $A_W$.
 Under multiset semantics, $\Pi_{\#1}$ produces one occurrence of the output tuple $(a)$ for each such subset; the duplicate elimination $\varepsilon$ then merges these occurrences into a single tuple whose annotation is their $\oplus$-sum.
 Therefore,
@@ -134,7 +134,7 @@ S_C(U) \ominus S_{C+1}(U),
 S_1(U) \ominus S_{C+1}(U).
 \tag{$J_{=,\le}$}
 \]
-\paragraph{\textbf{When $\op$ is $\ge$ :}}
+\paragraph{\textbf{When $\op$ is $\ge$:}}
 From \eqref{eq:pw_tw} with $\op = \ge$, we set
 $
 F_C(U)\defeq \bigoplus_{\substack{W\sqsubseteq U\\|W|\ge C}} T_{U}(W).
@@ -149,6 +149,11 @@ We already showed for the join query that
 \angsem{\hat I}{Q^{\ge C}_2}(a)=S_C(U)
 \tag{$J_{\ge}$}
 \]
+The quantities $A_W$, $T_U(W)$, $F_C(U)$ and $S_C(U)$ depend only on which
+occurrences are selected, not on their order; we may therefore regard $U$ as
+the finite \emph{set} of its occurrences and each possible world
+$W\sqsubseteq U$ as a subset $W\subseteq U$, as in
+Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}.
 By Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$,
 \[
 F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr).
@@ -176,14 +181,14 @@ quantity, which is not covered by the induction hypothesis but holds
 directly: $S_0(U')=A_\varnothing=\mathbb 1$, while
 $F_0(U')=\bigoplus_{W\subseteq U'}T_{U'}(W)=\mathbb 1$ because $\mathbb K$ is
 absorptive (so that $\mathbb 1\oplus x=\mathbb 1$)
-\lean{Having}{Having.F_zero_eq_one}; this is the only step where
-absorptivity is used. In every case the two right-hand sides coincide,
+\lean{Having}{Having.F_zero_eq_one}; this is the only step requiring
+absorptivity rather than just the idempotence it implies. In every case the two right-hand sides coincide,
 so $F_C(U)=S_C(U)$.
 Thus $F_C(U)=S_C(U)$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(J_{\ge})$,
 \[
 \angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
 \]
-\paragraph{\textbf{When $\op$ is $=$ :}}
+\paragraph{\textbf{When $\op$ is $=$:}}
 For $n\in\mathbb N$ we have,
 $
 \chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)
@@ -218,7 +223,7 @@ $
 \angsem{\hat I}{Q^{=C}_1}(a)=S_C(U)\ominus S_{C+1}(U)=\angsem{\hat I}{Q^{=C}_2}(a)
 $ by $(J_{=,\le})$.
 \paragraph{\textbf{When $\op$ is $\le$:}}
-For $n\ge 1$ we have $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$. Since groups produced by $\gamma^{\preceq}_{\#1}$ are nonempty, only $n=|W|\ge 1$ occurs.
+For $n\ge 1$ we have $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$. Since groups produced by $\gamma^{\preceq}_{\#1}$ are non-empty, only $n=|W|\ge 1$ occurs.
 Repeating the same argument as in the case where $\op$ is $=$, we obtain
 \[
 \angsem{\hat I}{Q^{\le C}_1}(a)
@@ -243,18 +248,21 @@ $\op\in\{\ge,=,\le\}$.
 \lean{Semirings/Why}{Why.counterexample_having}
 We show that there exists a $\mathbb{K}$-instance $\hat I$ such that
 $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
-Fix $C=2$ and $\op= \; =$.
-Since these queries are equivalent, both of them return groups which have 2 tuples. Say, in a certain $\hat I$ the result of the pre-aggregation subquery $q$ can form a valid group with group-key $u$ and $\mathbb K$-annotations $t_1,t_2,\text{ and }t_3$.
+Fix $C=2$ and the operator $\op$ to be~$=$.
+The result key~$u$ is then annotated by the provenance of the possible worlds
+in which its group has exactly two tuples. Suppose that in some $\hat I$ this
+group has three occurrences, carrying $\mathbb K$-annotations $t_1$, $t_2$,
+and $t_3$.
 Then
 \[
-  \angsem{\hat I}{Q^{= 2}_1}=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
+  \angsem{\hat I}{Q^{= 2}_1}(u)=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
 \]
 and,
 \[
-  \angsem{\hat I}{Q^{= 2}_2}=(t_1 \otimes t_2)\oplus (t_1 \otimes t_3)\oplus (t_2 \otimes t_3)
+  \angsem{\hat I}{Q^{= 2}_2}(u)=(t_1 \otimes t_2)\oplus (t_1 \otimes t_3)\oplus (t_2 \otimes t_3)
 \]
 Fix a Why-semiring valuation of $t_1, t_2, t_3$: $\{\{a\}\}, \{\{b\}\}, \{\emptyset\}$.
-So,
+So
 \begin{align*}
   &\angsem{\hat I}{Q^{= 2}_1}(u)=\\
   &((\{\{a\}\}\Cup \{\{b\}\})\Cup(\{\emptyset\}\setminus \{\emptyset\})) \cup ((\{\{a\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{b\}\})) \\
@@ -263,7 +271,7 @@ So,
   =&\{\{a\},\{b\}\}
 \end{align*}
 
-But,
+But:
 \begin{align*}
   &\angsem{\hat I}{Q^{= 2}_2}(u)=\\
   &(\{\{a\}\}\Cup\{\{b\}\})\cup(\{\{a\}\}\Cup\{\emptyset\})\cup(\{\{b\}\}\Cup\{\emptyset\})\\
@@ -297,7 +305,7 @@ t_1\oplus t_2
 =
 -1.
 \]
-But,
+But
 \[
 \angsem{\hat I}{Q^{\ge1}_1}(u)
 =
@@ -314,7 +322,7 @@ $
 \neq
 \angsem{\hat I}{Q^{\ge1}_2}.
 $
-\end{appendixproof}
+\end{proof}
 
 Note that this mismatch across m-semirings is to be expected: outside of
 the Boolean provenance world, semiring provenance depends on \emph{the way
@@ -377,7 +385,7 @@ Then $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)$
 for every $V\subseteq U$.
 \end{lemmarep}
 
-\begin{appendixproof}
+\begin{proof}
 From the properties of m-semirings $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in \mathbb K$,
 \begin{equation}\label{eq:residuation}
   x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
@@ -456,7 +464,7 @@ Combining with \eqref{eq:AV-bound} yields
 \]
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
-\end{appendixproof}
+\end{proof}
 With Lemma~\ref{lem:upward-expansion} in hand, we now establish matching
 recurrences for $F_C(U)$ and $S_C(U)$.
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
@@ -473,8 +481,8 @@ Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
 $F_C(U)=F_C(U')\oplus\bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
 \end{lemmarep}
 
-\begin{appendixproof}
-  Fix $u\in U$ such that $U'=U\setminus\{u\}$ and a $C\in\mathbb N^{\geq 1}$.
+\begin{proof}
+  Fix $u\in U$ such that $U'=U\setminus\{u\}$ and a $C\in\mathbb N_{\ge 1}$.
 Split  $F_C(U)$ according to whether $u\in W$:
 \begin{equation}\label{eq:split-I-II}
 F_C(U)
@@ -570,7 +578,7 @@ Together with \eqref{eq:leq-direction}, we get
 F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u),
 \]
 as required.
-\end{appendixproof}
+\end{proof}
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
@@ -582,7 +590,7 @@ Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
 $S_C(U)=S_C(U')\oplus\bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
 \end{lemmarep}
 
-\begin{appendixproof}
+\begin{proof}
 Fix $C\ge 1$ and $u\in U$, and write $U=U'\cup\{u\}$ with $U'=U\setminus\{u\}$.
 
 Define two index families:
@@ -671,7 +679,7 @@ Finally, combining \eqref{eq:split-SC}, \eqref{eq:A-part}, and \eqref{eq:B-part}
 S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr),
 \]
 as required.
-\end{appendixproof}
+\end{proof}
 By Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}, both
 $F_C(U)$ and $S_C(U)$ satisfy the same include/exclude recurrence
 $X_C(U)=X_C(U')\oplus\bigl(X_{C-1}(U')\otimes\alpha_u\bigr)$ for any
@@ -679,7 +687,8 @@ $u\in U$ and $U'=U\setminus\{u\}$. At $C=1$ this recurrence bottoms out
 at the count-$0$ terms: $S_0(U')=A_\varnothing=\mathbb 1$ is immediate,
 whereas $F_0(U')=\bigoplus_{W\subseteq U'}T_{U'}(W)=\mathbb 1$ holds only
 because $\mathbb K$ is absorptive (so that $\mathbb 1\oplus x=\mathbb 1$);
-this is the single point where absorptivity is needed
+this is the single point requiring absorptivity rather than just the
+idempotence it implies
 \lean{Having}{Having.F_zero_eq_one}. Together with the base case
 $|U|=0$, induction on $|U|$ then gives $F_C(U)=S_C(U)$
 \lean{Having}{Having.F_eq_S}. With the reduction of the $=$ and $\le$
@@ -791,10 +800,11 @@ which deciding whether a provenance is non-zero is NP-complete.
 \end{propositionrep}
 
 \begin{proof}
-  \emph{Membership.} We evaluate the provenance bottom-up, keeping an
-  unexpanded circuit over the variables and the standard semantics of
-  relational algebra operators in $\mathbb{K}$-semirings~\cite{sen2026provsql};
-  every operator other than \sql{HAVING} runs in polynomial time. For each
+  \emph{Membership.} We evaluate the provenance bottom-up using the standard
+  semantics of relational algebra operators in
+  $\mathbb{K}$-semirings~\cite{sen2026provsql}, keeping the circuit over the
+  variables unexpanded; every operator other than \sql{HAVING} runs in
+  polynomial time. For each
   \sql{HAVING}, instead of summing over all possible worlds in the formula of
   Definition~\ref{def:semantics}, we guess a single (polynomial-sized)
   possible world~$W$ and keep only its contribution
