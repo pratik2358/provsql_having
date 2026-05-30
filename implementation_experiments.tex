@@ -132,9 +132,9 @@ monotone $\geq k$ case, but is an order of magnitude slower for the $\leq k$
 case, where the non-monotone and larger provenance expressions become
 hard to process for the knowledge compiler. The \sql{JOIN} rewriting
 presents a similar profile in both cases (note the different scale of
-both graphs) -- interestingly, it is unable to exploit the fact that
+both graphs) -- note it is unable to exploit the fact that
 the query becomes vacuously true or false when $k$ is higher than the
-number of objects in the images, which both our implementations can do.
+number of objects in the images, which both our implementations can.
 
 \begin{toappendix}
   \section{Material for Section~\ref{sec:implementation_experiments}

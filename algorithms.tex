@@ -548,7 +548,7 @@ This establishes correctness.
 \end{appendixproof}
 
 We identify certain aggregate-comparison predicates for which the valid worlds can be constructed in polynomial time:
-\begin{proposition}
+\begin{propositionrep}
   \label{prop:algorithms}
   The provenance of \sql{HAVING} queries of the following forms can be computed
   in polynomial time in data complexity:
@@ -566,40 +566,40 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
     \item \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for $k$ a fixed
       constant, in arbitrary m-semirings.
   \end{itemize}
-\end{proposition}
+\end{propositionrep}
 \begin{proof}
-Fix an arbitrary $\mathbb K$-instance $\hat I$ and a group key $\vec v$.
-For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Since the queries are fixed, this implies polynomial time in data complexity.
+Fix an arbitrary $\mathbb K$-instance $\hat I$ and a group key $\vec v$, and write $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ for the sequence of group-member occurrences at~$\vec v$.
+For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $|U|$. Since the queries are fixed, this implies polynomial time in data complexity.
 We recall that the provenance of the \sql{HAVING} condition (equiv.\ selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
 and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 1: \sql{MIN(a)}$\op c$, \sql{MAX(a)}${}\op c$, and \fakesql{PICKFIRST}\texttt{(a)}$\op c$.}
-For these aggregates, validity of a world is determined directly from the occurrences in $U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$:
+For these aggregates, validity of a world is determined directly from the occurrences in $U$:
 \begin{itemize}
   \item for \sql{MIN(a)}${}\op c$, one checks whether the selected occurrences contain an admissible minimum value and exclude all values that would violate the comparison;
   \item \sql{MAX(a)}${}\op c$ is a dual to \sql{MIN(a)}${}\op c$;
   \item for \fakesql{PICKFIRST}\texttt{(a)}$\op c$ (the non-commutative aggregate of Example~\ref{ex:aggregates}), one checks which occurrence is the first and if its value satisfies the comparison.\end{itemize}
-The provenance can be computed by a direct scan over the occurrences in the group, using only polynomially many operations in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore these cases are in polynomial time for arbitrary m-semirings.
+The provenance can be computed by a direct scan over the occurrences in the group, using only polynomially many operations in $|U|$. Therefore these cases are in polynomial time for arbitrary m-semirings.
 
 \smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly the non-empty worlds
-$W\sqsubseteq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
+$W\sqsubseteq U$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
   If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the provenance of an upward-closed family of sets is equal to the provenance of its family of minimal sets \lean{Having}{Having.absorbing_subfamily}. Here, the minimal satisfying worlds are:
 \begin{itemize}
 \item exactly the worlds of size $k$ for \sql{COUNT(*) >= k};
 \item exactly the worlds of size $k+1$ for \sql{COUNT(*) > k}.
 \end{itemize}
-Since $k$ is fixed, the number of such worlds is $\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{k}\text{ or }\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{k+1}$,
-which is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore the provenance can be computed in polynomial time.
+Since $k$ is fixed, the number of such worlds is $\binom{|U|}{k}\text{ or }\binom{|U|}{k+1}$,
+which is polynomial in $|U|$. Therefore the provenance can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 3: \sql{SUM(a) >= c} and \sql{SUM(a) > c} with $c\ge 0$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:sum_dp}, the valid worlds are exactly the non-empty worlds
-$W\sqsubseteq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ such that $\sum_{r\in W} t(u_r)\ge c$ (resp.\ $>c$).
+$W\sqsubseteq U$ such that $\sum_{r\in W} t(u_r)\ge c$ (resp.\ $>c$).
 Since all values are nonnegative, these families are upward-closed under inclusion. Hence, in an absorptive m-semiring, it suffices to consider the minimal satisfying worlds.
 Let $W$ be a minimal satisfying world. By the hypothesis $c/a\le k$, every value is at least $c/k$, so any $k$ selected occurrences already contribute a sum at least $c$. For \sql{SUM(a) >= c}, this gives $|W|\le k$: if $|W|>k$, then any $k$-element subset of $W$ already has sum $\ge c$, contradicting minimality. For the strict comparison \sql{SUM(a) > c}, a $k$-element subset only guarantees a sum $\ge c$, so minimality allows one extra occurrence, giving $|W|\le k+1$.
 
-Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k+1}\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{i}$ ,
-which is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
+Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k+1}\binom{|U|}{i}$ ,
+which is polynomial in $|U|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
@@ -609,16 +609,48 @@ By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
 \item the worlds of sizes $1,\dots,k-1$ for \sql{COUNT(*) < k}.
 \end{itemize}
 Since $k$ is fixed, the number of such worlds is bounded by
-  $\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{k},\, \sum_{i=1}^{k}\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|}{i}$, respectively. Each of these bounds is polynomial in $|U^{\preceq}_{\angsem{\hat I}{q'},\vec v}|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
+  $\binom{|U|}{k},\, \sum_{i=1}^{k}\binom{|U|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U|}{i}$, respectively. Each of these bounds is polynomial in $|U|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
 
 \smallskip\noindent
 With these 4 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
 \end{proof}
+\begin{proofsketch}
+Fix the group key $\vec v$ and write $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. The provenance of the \sql{HAVING} condition is the semiring sum of the annotations of the valid non-empty worlds, so it suffices to enumerate the relevant worlds in time polynomial in $|U|$.
+For \sql{MIN(a)}, \sql{MAX(a)} and \fakesql{PICKFIRST}\texttt{(a)} (Case~1), the validity of a world is decided occurrence by occurrence, so the provenance is obtained by a single scan, in any m-semiring.
+For \sql{COUNT(*)}${}\ge k$ or ${}>k$ (Case~2) and \sql{SUM(a)}${}\ge c$ or ${}>c$ (Case~3), the valid worlds form an upward-closed family, whose provenance, in an \emph{absorptive} m-semiring, equals that of its minimal worlds \lean{Having}{Having.absorbing_subfamily}. These minimal worlds have bounded cardinality: $k$, or $k+1$ for the strict variants (using the hypothesis $c/a\le k$ for \sql{SUM}); so there are only $O(|U|^{k+1})$ of them.
+Finally, for \sql{COUNT(*)}${}=k$, $\le k$ or $<k$ (Case~4), the valid worlds are exactly those of cardinality at most $k$, again polynomially many, so no absorptivity is needed.
+\end{proofsketch}
 
-Proposition~\ref{prop:algorithms} concerns the \emph{symbolic} provenance of a
-\sql{HAVING} comparison in an arbitrary (absorptive) m-semiring, computed by
-enumerating the relevant valid worlds. A complementary form of tractability
-arises in the \emph{probabilistic} setting. By
+\begin{example}\label{ex:prop-simplification}
+  Consider as in Example~\ref{ex:semantics} a group of three occurrences,
+  this time with attribute values
+$a(u_1)=3$ and $a(u_2)=a(u_3)=2$, and annotated in the Boolean-function
+semiring $\mathbb B[X]$ by distinct variables $x_1,x_2,x_3$.
+Take the condition
+\sql{SUM(a)}${}\ge 5$. The valid non-empty worlds are $\{1,2\}$,
+$\{1,3\}$ and $\{1,2,3\}$, and the possible-world semantics sums their
+annotations:
+\[
+(x_1\land x_2\land\lnot x_3)\lor(x_1\land x_3\land\lnot x_2)
+\lor(x_1\land x_2\land x_3).
+\]
+This family of worlds is upward-closed, so the argument of Case~3
+applies: as $\mathbb B[X]$ is absorptive, the $\ominus$-factors are
+redundant, and the provenance equals the $\oplus$-sum over the two
+\emph{minimal} valid worlds $\{1,2\}$ and $\{1,3\}$ alone,
+\[
+(x_1\land x_2)\lor(x_1\land x_3)=x_1\land(x_2\lor x_3).
+\]
+Proposition~\ref{prop:algorithms} rests on this collapse: rather than the
+(in general exponentially many) valid worlds, it suffices to enumerate
+the minimal ones -- here those of size at most~$2$, and polynomially many
+for any fixed threshold -- giving a polynomial-time computation.
+\end{example}
+
+The tractability established by Proposition~\ref{prop:algorithms} is
+\emph{symbolic}: it computes the provenance of a \sql{HAVING} comparison in an
+arbitrary (absorptive) m-semiring by enumerating the relevant valid worlds. A
+complementary form of tractability arises in the \emph{probabilistic} setting. By
 Proposition~\ref{prop:pqe-equiv}, evaluating a \sql{HAVING} query over a
 tuple-independent instance amounts to computing the probability of its
 $\mathbb{B}[X]$-provenance under the possible-world semantics. When the
@@ -736,3 +768,32 @@ worlds, etc.) and the equality cases by intersecting two such tails;
 $\neq$ subtracts the equality from the nonempty mass
 $1-\prod_i(1-p_i)$.  All these algebraic combinations stay $O(N)$.
 \end{proof}
+
+\begin{example}\label{ex:poisson-binomial}
+Suppose the three contributors of Example~\ref{ex:semantics} are
+independent with marginals $p_1=\tfrac12$, $p_2=\tfrac14$ and
+$p_3=\tfrac13$, and consider $\text{\sql{COUNT(*)}}\ge 2$. Writing $\rho_n(j)$
+for the probability that exactly $j$ of the first $n$ contributors are
+present, so that $\rho_0(0)=1$ (and $\rho_0(j)=0$ for $j>0$), the
+recurrence $\rho_n(j)=(1-p_n)\,\rho_{n-1}(j)+p_n\,\rho_{n-1}(j-1)$ fills,
+row by row, the table
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+ & $j=0$ & $j=1$ & $j=2$ & $j=3$\\
+\midrule
+$\rho_0$ & $1$ & & & \\
+$\rho_1$ & $\tfrac12$ & $\tfrac12$ & & \\
+$\rho_2$ & $\tfrac38$ & $\tfrac12$ & $\tfrac18$ & \\
+$\rho_3$ & $\tfrac14$ & $\tfrac{11}{24}$ & $\tfrac14$ & $\tfrac1{24}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Hence
+$\Pr[\text{\sql{COUNT(*)}}\ge 2]=\rho_3(2)+\rho_3(3)=\tfrac14+\tfrac1{24}=\tfrac{7}{24}$,
+the probability of the Boolean provenance ``at least two of
+$x_1,x_2,x_3$'' obtained in Example~\ref{ex:semantics}. This
+Poisson-binomial CDF is exactly the quantity our implementation evaluates
+for probabilistic \sql{COUNT} comparisons
+(Section~\ref{sec:implementation_experiments}).
+\end{example}
