@@ -26,7 +26,12 @@ without \sql{HAVING}).
   the Boolean semiring $\mathbb B$:
   $(\{\top,\bot\},\lor,\land,\bot,\top)$;
   the Why-provenance semiring over some set of variables $X$:
-      $(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\})$ where $\Cup$ is defined as follows: $A\Cup B \defeq \{a\cup b \mid a\in A, b\in B\}$.
+      $(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\})$ where $\Cup$ is defined as follows: $A\Cup B \defeq \{a\cup b \mid a\in A, b\in B\}$;
+  the Boolean function semiring $\mathbb B[X]$ over a set of variables $X$
+  \cite{green2007provenance,senellart2017provenance}:
+  the set of Boolean functions over $X$ (equivalently, propositional
+  formulas over $X$ up to logical equivalence) with
+  $(\lor,\land,\bot,\top)$.
 \end{example}
 
 Following~\cite{geerts2010database}, we extend the definition of a semiring with a monus operation $\ominus$;
@@ -91,8 +96,7 @@ and can be extended to m-semirings; this is also the case for almost all
 semirings that have been used in works about data provenance.
 Table~\ref{tab:semirings} summarizes the definitions of the $\ominus$
 operator and whether they satisfy the other four properties above for
-the semirings in Example~\ref{ex:semirings}, along with the Boolean
-function semiring \cite{green2007provenance,senellart2017provenance}, the
+the semirings in Example~\ref{ex:semirings}, along with the
 Which[$X$] semiring \cite{green2017provenance}, the
 Temporal semiring of unions of intervals
 used in temporal databases

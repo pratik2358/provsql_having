@@ -695,87 +695,169 @@ from
 Table~\ref{tab:semirings}.
 \end{proofsketch}
 
-\begin{proposition}
+In addition to this important result, our m-semiring semantics
+for \sql{HAVING} also provides an implementable semantics for probabilistic query
+evaluation:
+
+\begin{propositionrep}
   \label{prop:pqe-equiv}
-Let $I$ be an instance where each input tuple $u$ is associated with an independent probability $Pr(u)\in [0,1]$, then the probabilistic query evaluation of a boolean \sql{HAVING} query $Q$ evaluated on $I$ is equivalent to the probability that the Boolean expression $\angsem{\hat I}{Q}$, where $\hat I$ is a $\mathbb{B}[X]$-instance, evaluates to true when every tuple $u \in\hat I$ is set to true with probability $Pr(u)$.
-\end{proposition}
+  Let $Q$ be an extended relational algebra query with \sql{HAVING} and
+  let $I$ be an instance where each input tuple $u$ is associated with an
+  independent probability $\Pr(u)\in [0,1]$. Then the probability
+  $\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$, where $\hat I$ is a
+  $\mathbb{B}[X]$-instance whose tuples are annotated with independent
+  variables $x\in X$ with the same probability as the corresponding tuple
+  in the probabilistic instance.
+\end{propositionrep}
 \begin{proof}
-By definition \cite{suciu2011probabilistic}, probabilistic query evaluation of a query $Q$ on an instance $I$, under the possible worlds semantics, consists in evaluating the probability \[Pr_{I}(Q)=\Sigma_{\substack{S\msubseteq I,\\ S\models Q }}\Bigl( \Pi_{u \in S}(Pr(u))\Pi_{u \in I\msetminus S }(1-Pr(u)) \Bigr),\]
-where $S\msubseteq I$ means that $S$ is a sub-instance of $I$ (i.e., $S$ is obtained from $I$ by removing some tuples, possibly with multiplicity if $I$ is a multiset), $S\models Q$ means that the query $Q$ evaluates to true on $S$, and the sum is taken over all sub-instances of $I$.
+By definition \cite{suciu2011probabilistic}, probabilistic query
+evaluation under the possible-world semantics is
+\[
+  \Pr(I\models Q)=\sum_{\substack{S\msubseteq I,\\ S\models Q}}\Pr(S),
+  \qquad
+  \Pr(S)\defeq\prod_{u\in S}\Pr(u)\prod_{u\in I\msetminus S}(1-\Pr(u)),
+\]
+where $S\msubseteq I$ ranges over the sub-instances of $I$ and $S\models Q$
+means that $Q$ evaluates to true on $S$. As $\hat I$ is tuple-independent,
+these sub-instances are in bijection with the valuations
+$\nu\colon X\to\{\bot,\top\}$ through
+$S_\nu\defeq\mset{u\in\hat I\mid\nu(x_u)=\top}$, with
+$\Pr(S_\nu)=\Pr(\nu)=\prod_{u:\,\nu(x_u)=\top}\Pr(u)\prod_{u:\,\nu(x_u)=\bot}(1-\Pr(u))$.
+Since, by definition, the probability of a Boolean function satisfies
+$\Pr(\angsem{\hat I}{Q})=\sum_{\nu\models\angsem{\hat I}{Q}}\Pr(\nu)$,
+comparing the two sums shows that the claim
+$\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$ is \emph{equivalent} to the
+characteristic property
+\begin{equation}\label{eq:char-prop}
+  \nu\bigl(\angsem{\hat I}{Q}\bigr)=\top
+  \iff
+  S_\nu\models Q
+  \qquad\text{for every valuation }\nu,
+\end{equation}
+i.e., that the Boolean provenance is true under $\nu$ exactly on the possible
+worlds where $Q$ holds.
 
-Now, evaluating provenance in $B[X]$ for the boolean query $Q$, using the possible-world semantics for provenance evaluation from Section~\ref{sec:semantics}  yields a Boolean formula over tuples in $\hat I$. This semantics is, in fact, defined by summing over possible worlds satisfying the aggregate comparison(s) in $Q$. Since $\hat I$ is tuple-independent, every valuation $\nu:\mathbf{X}_{\hat{I}}\rightarrow\{\top,\bot\}$ corresponding to a possible-world $W$ as in Definition~\ref{def:possible_world} has probability $
-  Pr(\nu)=\Pi_{\nu(\mathbf{x}_u\in \mathbf{X}_{\hat{I}})=\top}Pr(u)\Pi_{\nu(\mathbf{x}_u\in \mathbf{X}_{\hat{I}})=\bot}(1-Pr(u))$.\\
-By construction, the $\mathbb{B}[X]$-expression $\angsem{\hat I}{Q}$ is true under a valuation $\nu$ if and only if the corresponding sub-instance $S_\nu=\mset{u\in \hat I\mid \nu(\mathbf{x}_u)=\top}$
-satisfies $Q$, i.e.,
-$
-\nu(\angsem{\hat I}{Q})=\top
-\iff
-S_\nu\models Q
-.$
-This is the Boolean provenance of $Q$ by definition.
-Therefore,
-$
-Pr(\angsem{\hat I}{Q})
-=\Sigma_{\nu \models \angsem{\hat I}{Q}} Pr(\nu)=\Sigma_{\substack{S\msubseteq I,\\ S\models Q }}\Bigl(\Pi_{u \in S}Pr(u)\Pi_{u \in I\msetminus S }(1-Pr(u))\Bigr)=Pr_I(Q).$
+For every operator of $Q$ but the aggregate comparison, \eqref{eq:char-prop}
+is exactly the compatibility of the $\mathbb{B}[X]$-semantics with
+probabilistic query evaluation for queries \emph{without} aggregate
+comparison, established in~\cite[Theorem~12]{sen2026provsql}. It thus only
+remains to check that \eqref{eq:char-prop} is preserved by the
+aggregate-comparison selection of Definition~\ref{def:semantics}, i.e., that
+our \sql{HAVING} semantics matches the Boolean one.
 
+Let $\psi=(t\op t')$ be such a comparison over a group with possible-world
+sequence $U=U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, and fix a
+valuation~$\nu$. In $\mathbb{B}[X]$, where $\oplus=\lor$, $\otimes=\land$ and
+$a\ominus b=a\land\lnot b$, the annotation of a world $W\sqsubseteq U$ is
+\[
+  \ann_U(W)=\Bigl(\bigwedge_{(u,x_u)\in W}x_u\Bigr)\land
+            \Bigl(\bigwedge_{(u,x_u)\in U\setminus W}\lnot x_u\Bigr),
+\]
+which is true under $\nu$ if and only if $W$ is exactly the set of occurrences
+of the group present in $S_\nu$, namely
+$W=W_\nu\defeq\mset{(u,x_u)\in U\mid\nu(x_u)=\top}$. Hence, in the predicate
+provenance
+\(
+  \predsem{\hat I}{q}{\psi}(u)=\bigoplus_{\emptyset\neq W\sqsubseteq U}
+  \ann_U(W)\otimes\chi_{\op}(\mathrm{val}_t(W),\mathrm{val}_{t'}(W)),
+\)
+a single disjunct is active under $\nu$ -- the one for $W_\nu$ -- so
+\[
+  \nu\bigl(\predsem{\hat I}{q}{\psi}(u)\bigr)=\top
+  \iff
+  W_\nu\neq\emptyset \;\text{ and }\;
+  \mathrm{val}_t(W_\nu)\op\mathrm{val}_{t'}(W_\nu),
+\]
+that is, if and only if the group of~$u$ is non-empty in $S_\nu$ and its
+aggregate values there satisfy the comparison. This is precisely the ordinary
+Boolean evaluation of the \sql{HAVING} predicate $\psi$ on the possible
+world~$S_\nu$. Property~\eqref{eq:char-prop} is therefore preserved by the
+aggregate-comparison selection and, together
+with~\cite[Theorem~12]{sen2026provsql} for the remaining operators, holds for
+the whole query~$Q$. We conclude that
+$\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$.
 \end{proof}
-\begin{proposition}
-  For any $\mathbb{K}$-instance of characteristic~0, there exists a Boolean \sql{HAVING} query such that determining
-  whether the provenance of this query over a $\mathbb{K}$-instance is not
-  $\mathbb{0}_\mathbb{K}$ is NP-hard.
 
-  Furthermore, this problem is in NP for semirings such as
-  $\mathbb{N}$ or $\mathbb{B}[X]$.
-\end{proposition}
+Unsurprisingly, in semirings whose annotations may be \emph{independent
+generators} (so that distinct possible worlds carry distinct, non-cancelling
+annotations), evaluating the \sql{HAVING} semantics is intractable. This is
+the case of the provenance semirings $\mathbb{B}[X]$ and $\mathbb{N}[X]$, for
+which deciding whether a provenance is non-zero is NP-complete.
+
+\begin{propositionrep}\label{prop:having-nphard}
+  For $\mathbb{K}\in\{\mathbb{B}[X],\mathbb{N}[X]\}$, deciding whether the
+  provenance of a Boolean \sql{HAVING} query over a $\mathbb{K}$-instance is
+  non-$\mathbb{0}_\mathbb{K}$ is NP-complete.
+\end{propositionrep}
 
 \begin{proof}
-  Let's first show NP membership for $\mathbb{N}$ and $\mathbb{B}[X]$. We evaluate the provenance bottom-up in
-  $\mathbb{K}$ (keeping integers in $\mathbb{N}$ and unexpanded circuits for
-  the Boolean expressions in $\mathbb{B}[X]$) using the standard
-  semantics of relational algebra operators in $\mathbb{K}$-semirings
-  \cite{sen2026provsql}.
-  For all operators other than \sql{HAVING}, this is a polynomial-time
-  operation. For \sql{HAVING}, we guess (and keep only) one
-  (polynomial-sized) possible world in the
-  formula of Definition~\ref{def:semantics}. We obtain this way in
-  polynomial-time an element of $\mathbb{K}$. If $\mathbb{K}=\mathbb{N}$,
-  if the resulting number is non-$0$, we return True. If $\mathbb{K}=\mathbb{B}[X]$, we guess a
-  (polynomial-sized) valuation of the variables of the resulting Boolean circuit; if the
-  circuit is true under such a valuation, we return True. This
-  non-deterministic polynomial-time algorithm
-  returns True if and only if the provenance is not $\mathbb 0_{\mathbb{K}}$.
+  \emph{Membership.} We evaluate the provenance bottom-up, keeping an
+  unexpanded circuit over the variables and the standard semantics of
+  relational algebra operators in $\mathbb{K}$-semirings~\cite{sen2026provsql};
+  every operator other than \sql{HAVING} runs in polynomial time. For each
+  \sql{HAVING}, instead of summing over all possible worlds in the formula of
+  Definition~\ref{def:semantics}, we guess a single (polynomial-sized)
+  possible world~$W$ and keep only its contribution
+  $\ann_U(W)\otimes\chi_{\op}(\dots)$. As $\mathbb{B}[X]$ and $\mathbb{N}[X]$
+  have characteristic~$0$, the $\oplus$-sum over possible worlds is
+  non-$\mathbb{0}_\mathbb{K}$ if and only if one of its summands is (a~%
+  disjunction of Boolean functions for $\mathbb{B}[X]$, a sum of monomials
+  with non-negative coefficients for $\mathbb{N}[X]$, vanishes only when every
+  summand does), so it suffices to witness one non-$\mathbb{0}_\mathbb{K}$
+  summand. For $\mathbb{B}[X]$ we additionally guess a (polynomial-sized)
+  valuation of the variables and accept when the resulting Boolean circuit is
+  true under it; for $\mathbb{N}[X]$ we additionally guess a monomial together
+  with a derivation witnessing that it occurs in the resulting polynomial.
+  Both certificates are polynomial-sized and checkable in polynomial time, so
+  this non-deterministic procedure accepts exactly when the provenance is
+  non-$\mathbb{0}_\mathbb{K}$.
 
-  For hardness, we reduce from
-  subset-sum \cite{DBLP:conf/coco/Karp72}, a classic
-NP-hard problem. Take a finite multiset $M=\{\{m_1,\dots,m_n\}\}$ of $n$ natural integers and a
-  positive integer $B$. The subset-sum problem amounts to determining
-  whether there is a sub-multiset of $M$ that sums to exactly $B$.
+  \emph{Hardness.} We reduce from subset-sum \cite{DBLP:conf/coco/Karp72}, a
+  classic NP-hard problem: given a finite multiset $M=\mset{m_1,\dots,m_n}$ of
+  natural integers and a positive integer $B$, decide whether some
+  sub-multiset of $M$ sums to exactly~$B$.
 
-  We construct a $\mathbb N$-instance $D$ formed of a unary relation
-  $R(v)$ containing $n$ tuples $(m_{i_1}), \dots, (m_{i_n})$, each tuple $t_i$
-  being annotated with provenance $\mathbb{1}_\mathbb{K}$.
-
-  We fix the query
+  We construct a $\mathbb{K}$-instance $I$ formed of a unary relation $R(v)$
+  containing the $n$ tuples $(m_1),\dots,(m_n)$, annotating tuple $(m_i)$ with
+  a \emph{distinct variable} $x_i$, and fix the query
   \begin{minted}{postgresql}
 q: SELECT DISTINCT 1 FROM R HAVING SUM(v) = B
   \end{minted}
+  that is, in our extended relational algebra,
+  \[
+    q=\Pi_{1}\bigl(
+        \sigma_{\#1=B}\bigl(\gamma^{\preceq}[\#1{:}f_{\mathrm{SUM}}](R)\bigr)
+      \bigr),
+  \]
+  where $\gamma^{\preceq}[\#1{:}f_{\mathrm{SUM}}]$ groups all of $R$ into a
+  single group and aggregates its $v$-values with \sql{SUM},
+  $\sigma_{\#1=B}$ retains this group when the sum equals~$B$, and $\Pi_1$
+  projects onto the constant~$1$ (the order $\preceq$ being
+  irrelevant since \sql{SUM} is commutative).
 
-  The provenance of the result $(1)$ in this query is, following
-  Definition~\ref{def:semantics}:
-
-Let $U\defeq U^{\preceq}_{\angsem{\hat I}{R},()}$. Then the provenance is
+  Following Definition~\ref{def:semantics}, and writing
+  $U\defeq U^{\preceq}_{\angsem{I}{R},()}$, the provenance of the
+  result $(1)$ is
 \[
-   \bigoplus_{\emptyset\neq W\sqsubseteq U}
-\Bigl(
-  \mathbb{1}_{\mathbb K}\otimes
-  \chi_{\op}\bigl(\mathrm{agg}_{\#1,f_\Sigma}(W), B\bigr)
-\Bigr)
+   P\defeq\bigoplus_{\emptyset\neq W\sqsubseteq U}
+  \ann_U(W)\otimes
+  \chi_{=}\bigl(\mathrm{agg}_{\#1,f_{\mathrm{SUM}}}(W),\ B\bigr)
 =
-\bigoplus_{\emptyset\neq W\sqsubseteq U}
-\chi_{\op}\bigl(\Sigma_{j\in W} m_{i_j},\ B\bigr),
+\bigoplus_{\substack{\emptyset\neq W\sqsubseteq U\\ \sum_{(u,\alpha)\in W} u=B}}
+\ann_U(W),
 \]
-where the order $\preceq$ is irrelevant since the aggregate is commutative.
-This is non-zero if and only if one of the terms of the $\oplus$ sum is non-zero since
-$\mathbb K$ has characteristic 0, i.e., if the subset-sum instance has a
-solution.
+where $f_{\mathrm{SUM}}$ denotes the \sql{SUM} aggregate. Each possible world
+$W$ is a sub-multiset of~$M$, and because the $x_i$ are distinct variables its
+annotation is non-$\mathbb{0}_\mathbb{K}$ and the worlds do not cancel: in
+$\mathbb{B}[X]$, $\ann_U(W)=\bigwedge_{i\in W}x_i\wedge\bigwedge_{i\notin
+W}\lnot x_i$ are distinct minterms; in $\mathbb{N}[X]$, the monus factor
+$\mathbb{1}\ominus\bigoplus_{i\notin W}x_i$ reduces to $\mathbb{1}$ (the
+excluded variables have no constant term), so $\ann_U(W)=\bigotimes_{i\in
+W}x_i$ are distinct monomials. Hence $P\neq\mathbb{0}_\mathbb{K}$ if and only
+if some non-empty sub-multiset of~$M$ sums to~$B$, i.e., if and only if the
+subset-sum instance has a solution. The reduction is polynomial, which
+concludes.
 \end{proof}
+
+We shall see next, however, that we can isolate cases where the
+semantics can be evaluated tractably.
