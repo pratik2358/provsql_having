@@ -5,7 +5,7 @@ We implemented the algorithms described in Section~\ref{sec:algorithms}
 (Proposition~\ref{prop:algorithms})
 within ProvSQL in C++. Our implementation includes a number of optimizations. One such optimization is a
 generic \emph{range check}: for every aggregation operator, we determine
-what the minimum and maximum value it can take over all possible worlds (e.g., the sum of all
+what minimum and maximum value it can take over all possible worlds (e.g., the sum of all
 negative numbers and of all positive numbers respectively for \sql{SUM})
 and return either $\mathbb{0}$ if a condition is unsatisfiable, or the
 $\oplus$ of all possible worlds if a condition is necessarily
