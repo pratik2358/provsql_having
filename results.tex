@@ -812,7 +812,7 @@ which deciding whether a provenance is non-zero is NP-complete.
   have characteristic~$0$, the $\oplus$-sum over possible worlds is
   non-$\mathbb{0}_\mathbb{K}$ if and only if one of its summands is (a~%
   disjunction of Boolean functions for $\mathbb{B}[X]$, a sum of monomials
-  with non-negative coefficients for $\mathbb{N}[X]$, vanishes only when every
+  with nonnegative coefficients for $\mathbb{N}[X]$, vanishes only when every
   summand does), so it suffices to witness one non-$\mathbb{0}_\mathbb{K}$
   summand. For $\mathbb{B}[X]$ we additionally guess a (polynomial-sized)
   valuation of the variables and accept when the resulting Boolean circuit is
@@ -824,7 +824,7 @@ which deciding whether a provenance is non-zero is NP-complete.
 
   \emph{Hardness.} We reduce from subset-sum \cite{DBLP:conf/coco/Karp72}, a
   classic NP-hard problem: given a finite multiset $M=\mset{m_1,\dots,m_n}$ of
-  natural integers and a positive integer $B$, decide whether some
+  natural numbers and a positive integer $B$, decide whether some
   sub-multiset of $M$ sums to exactly~$B$.
 
   We construct a $\mathbb{K}$-instance $I$ formed of a unary relation $R(v)$

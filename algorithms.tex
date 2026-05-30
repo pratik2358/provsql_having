@@ -571,7 +571,7 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
 Fix an arbitrary $\mathbb K$-instance $\hat I$ and a group key $\vec v$, and write $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ for the sequence of group-member occurrences at~$\vec v$.
 For each case below, we show that the provenance for $\vec v$ can be computed in time polynomial in $|U|$. Since the queries are fixed, this implies polynomial time in data complexity.
 We recall that the provenance of the \sql{HAVING} condition (equiv.\ selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
-and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
+and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible-world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 1: \sql{MIN(a)}$\op c$, \sql{MAX(a)}${}\op c$, and \fakesql{PICKFIRST}\texttt{(a)}$\op c$.}
 For these aggregates, validity of a world is determined directly from the occurrences in $U$:

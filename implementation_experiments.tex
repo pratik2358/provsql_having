@@ -5,7 +5,7 @@ We implemented the algorithms described in Section~\ref{sec:algorithms}
 (Proposition~\ref{prop:algorithms})
 within ProvSQL in C++. Our implementation includes a number of optimizations. One such optimization is a
 generic \emph{range check}: for every aggregation operator, we determine
-what minimum and maximum value it can take over all possible worlds (e.g., the sum of all
+the minimum and maximum values it can take over all possible worlds (e.g., the sum of all
 negative numbers and of all positive numbers respectively for \sql{SUM})
 and return either $\mathbb{0}$ if a condition is unsatisfiable, or the
 $\oplus$ of all possible worlds if a condition is necessarily
@@ -14,7 +14,7 @@ true.
 Similarly, for \sql{SUM}, instead of running the dynamic programming up
 to the comparison constant $C$, the maximum tracked sum $J$ is defined in
 an optimized way (cf., lines 8--13 in Algorithm~\ref{alg:sum_dp}, for the
-case of non-negative integers).
+case of nonnegative integers).
 We also eliminate iterations over sums that are not yet reachable at a
 particular DP-iteration, reducing early-stage DP cost. We exploit when
 possible the absorptive nature of the m-semiring.
@@ -68,13 +68,13 @@ multiplication by $\mathbb 0$, etc.
 To test our implementation and validate the practical feasibility of the
 \sql{HAVING} semantics, we ran experiments on a probabilistic image-retrieval database. Following the method
 in~\cite{yunus2025using}, the database is built from object-detection
-output over the COCO 2017~\cite{lin2014microsoft} dataset: for each
+output over a dataset derived from COCO 2017~\cite{lin2014microsoft}: for each
 image, YOLOv5~\cite{ultralytics2021yolov5} detects objects,
 and each detected object is stored as one tuple in relation \sql{dataset} with
 a unique identifier \sql{id}, the image identifier \sql{img}, the object
 class \sql{obj}, and a probability derived from the detector
 confidence score. These object annotations are treated as independent
-probabilistic facts. The database contains $119{,}359$ images and $579{,}123$
+probabilistic facts. The database contains $239{,}377$ images and $1{,}570{,}565$
 object annotations.
 
 We compare execution times in ProvSQL for: (i)~provenance tracking (with
@@ -113,8 +113,8 @@ very small values of $k$, and then becomes slower than the \sql{HAVING}-based se
 phase shift around $k=6$ -- queries with a large number of joins can be
 slow for the query evaluator. For the ``\sql{COUNT(*) <= k}'' query, the
 \sql{JOIN}-based rewriting (which includes a non-monotone \sql{EXCEPT}) is again
-cheaper for very small values of $k$, but becomes several orders of
-magnitude more expensive than our semantics for larger
+cheaper for very small values of $k$, but becomes several times
+more expensive than our semantics for larger
 values of $k$. Thus, for provenance computation alone, the main
 observation is the stability of the runtime cost, which pays off as $k$
 increases.

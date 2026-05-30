@@ -68,7 +68,7 @@ An m-semiring $(\mathbb K, \oplus, \otimes, \ominus, \mathbb 0, \mathbb
       $(a\ominus b)\ominus c = a\ominus(b\oplus c)$;
     \item \lean{SemiringWithMonus}{monus_self}
       \lean{SemiringWithMonus}{zero_monus} $a\ominus a = \mathbb 0\ominus a=\mathbb 0$;
-    \item \lean{SemiringWithMonus}{monus_zero} $a\ominus 0=a$.
+    \item \lean{SemiringWithMonus}{monus_zero} $a\ominus \mathbb 0=a$.
   \end{itemize}
 \end{multicols}
 
@@ -132,7 +132,7 @@ those of characteristic~$0$
 \lean{SemiringWithMonus}{delta_exists_iff_charP_zero}.
 Intuitively, $\delta$ is used to capture the semantics of the
 existence of a group. Usual
-definitions of $\delta$ is $\delta(x)\defeq x$ (in
+definitions of $\delta$ are $\delta(x)\defeq x$ (in
 idempotent semirings only, where $\mathbb 1\oplus\dots\oplus\mathbb
 1=\mathbb 1$); or $\delta(x)=\mathbb 1$ for all $x\neq\mathbb 0$.
 
@@ -266,7 +266,7 @@ as required.
 
 We use the notion of annotated relations initially introduced in
 \cite{green2007provenance}, relying on the setting (in particular where
-relations are multiset of tuples) and definitions introduced in detail in
+relations are multisets of tuples) and definitions introduced in detail in
 \cite[Section IV]{sen2026provsql}.
 In short, if $\mathcal{V}$ is the (usually countably infinite) set of
 data values used within regular relations, given a commutative m-semiring
@@ -283,7 +283,7 @@ We adopt the unnamed perspective and consider, instead of attribute names, their
 A \emph{term} is then an expression involving values from $\mathcal V$
 and positional indices, and the \emph{max-index} of a term is the largest
 positional index appearing in it ($0$ if none appear). Given a tuple
-$u=(u_1,\dots,u_k)$ and a term $t$ of max-index $\leq k$ we can define $t(u)\in \mathcal V$ that evaluates the term expression after replacing the positional indices in it with the respective attribute values of the tuple. Given a finite sequence of tuples $(u_{i_1},\dots,u_{i_n})$ we define the pointwise evaluation of a well-defined term t on them as $\pi_{t}((u_{i_1},\dots,u_{i_n}))=(t(u_{i_1}),\dots,t(u_{i_n}))$.
+$u=(u_1,\dots,u_k)$ and a term $t$ of max-index $\leq k$ we can define $t(u)\in \mathcal V$ that evaluates the term expression after replacing the positional indices in it with the respective attribute values of the tuple. Given a finite sequence of tuples $(u_{i_1},\dots,u_{i_n})$ we define the pointwise evaluation of a well-defined term $t$ on them as $\pi_{t}((u_{i_1},\dots,u_{i_n}))=(t(u_{i_1}),\dots,t(u_{i_n}))$.
 
 The semantics of a query $q$ over annotated relations, denoted as
 $\angsem{\hat I}{q}$, is defined in \cite{sen2026provsql} over $\mathbb
