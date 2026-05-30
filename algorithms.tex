@@ -39,12 +39,12 @@ The algorithms can also be used to evaluate provenance for comparisons between t
   \caption{Enumeration of valid worlds for \sql{SUM}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:sum_dp}
 
-  \nlset{}\textbf{\textsc{ValidSum}$(U, t, C, \op, \omega)$}\;
+  \nlset{}\textbf{\textsc{ValidSum}}:\;
 
   \Input{a finite set of group-member occurrences $U \defeq U^{\hat I}_{q',\vec v}$, an arbitrary ordering $\omega$ of $U$, a term $t$ of max-index $\le k$ such that $t(U_r[u])\in\NN$ for all $r \in [|U|]$, a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
   \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma}(\pi_t((U_r[u])^{\omega}_{r\in W}))\op C\,\}$}
   \BlankLine
-  %\Fn{\textsc{SumDP}$(U,t,C,\op, \omega)$}{
+  \Fn{\textsc{ValidSum}$(U,t,C,\op, \omega)$}{
   \If{$\op = \neq$}{
     \Return $\textsc{ValidSum}(U,t,C,<, \omega) \cup \textsc{ValidSum}(U,t,C,>, \omega)$\;
   }
@@ -109,7 +109,7 @@ The algorithms can also be used to evaluate provenance for comparisons between t
   $\mathcal W \leftarrow \mathcal W \setminus \{\emptyset\}$\;
 
   \Return $\mathcal W$\;
-  %}
+  }
 \end{algorithm}
 \end{toappendix}
 
@@ -350,7 +350,7 @@ This establishes the correctness.
   \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
 
-  \nlset{}\textbf{\textsc{ValidCount}$(U,C,\op)$}\;
+  \nlset{}\textbf{\textsc{ValidCount}:}\;
 
   \Input{a finite set of group-member occurrences $U\defeq U^{\hat I}_{q'}$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
   \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,|W|\op C\,\}$}
