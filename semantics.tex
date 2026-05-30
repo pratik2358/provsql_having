@@ -47,33 +47,40 @@ functions, we also need to specify, along with the aggregation function,
 which ordering is used,
 similarly to the ``\sql{agg(...) WITHIN GROUP (ORDER BY ...)}'' standard SQL
 feature, or the ``\sql{agg(... ORDER BY ...)}'' feature of PostgreSQL.
-This ordering is irrelevant for commutative aggregates and can be ignored.
-
+This ordering is irrelevant for commutative aggregates and can be chosen
+arbitrarily in that case. We define possible worlds of a multiset of
+tuples under such an ordering:
 \begin{definition}\label{def:possible_world}
-Let $\hat I$ be a $\mathbb{K}$-instance. For $k\in \mathbb{N}$, a $k$-ary
-extended relational algebra query $q$, distinct grouping indices $(i_j)_{1\leq j \leq m}$ s.t. $1\leq i_j \leq k$ and any group $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, we define
-the multiset of tuples involved as a set of their occurrences, \[U^{\hat
-I}_{q,\vec v}\defeq \{(u,\alpha,o)|(u,\alpha) \text{ is the }o\text{th
-occurrence in }   \angsem{\hat I}{q}\text{ and }(u_{i_1},\dots,u_{i_m})=\vec v \}\]
-Fix an ordering function $\omega:U^{\hat I}_{q,\vec v}\rightarrowtail(\mathbb U,<)$ into a totally ordered set $(\mathbb U,<)$.
-Now, for an $\omega$-ordered sequence of $U^{\hat I}_{q,\vec v}$,
-\[
-  ((U^{\hat I}_{q,\vec v})_r)^\omega_{r\in[|U^{\hat I}_{q,\vec v}|]}\defeq((u_1,\alpha_1),\dots,(u_n,\alpha_n))^\omega \text{ such that, }\forall\, 1\leq p< s\leq n,\,\omega(u_p,\alpha_p,o_p)<_{\mathbb U}\omega(u_s,\alpha_s,o_s)
-\]
-and for any \emph{possible-world} of $\vec v$, $W\subseteq [|U^{\hat I}_{q,\vec v}|]$, we define its $\mathbb{K}-$annotation as,
-\[
-\ann^{\hat I}_{q,\vec v}(W) \defeq
-\Bigl( \bigotimes_{r\in W}(U^{\hat I}_{\substack{q,\vec v}})_r[\alpha] \Bigr)
- \otimes
- \Bigl( \mathbb{1} \ominus \bigoplus_{r\in [|U^{\hat I}_{q,\vec v}|]\setminus W}(U^{\hat I}_{q,\vec v})_r[\alpha] \Bigr)
-\]
-where, empty $\otimes$-products equal $\mathbb{1}$ and empty $\oplus$-sums equal $\mathbb{0}$.
+  Let $M$ be a multiset of tuples of arity $k+1\in\mathbb{N}$ over
+  $\mathcal{V}^k\times\mathbb{K}$, and
+$(i_j)_{1\leq j \leq m}$ s.t. $1\leq
+i_j \leq k$ be distinct \emph{grouping indices}.
+For any total order relation $\preceq$ over $\mathcal{V}$ and for
+and any group $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, we consider
+the sequence of all tuples of $M$ agreeing on coordinate $i_j$ with $v_j$
+for all $j$, with their multiplicity, ordered by $\preceq$, which we
+denote
+\(
+  U^{\preceq}_{M, \vec v}
+  \).
 
+  A \emph{possible world}~$W$ of $U^{\preceq}_{M, \vec v}$ is a subsequence
+  of $U^\preceq_{M, \vec v}$. For any such possible world $W$, its
+  \emph{$\mathbb{K}$-annotation} is:
+\[
+\ann(W) \defeq
+\left( \bigotimes_{(u,\alpha)\in W} \alpha\right)
+ \otimes
+\left( \mathbb{1} \ominus \bigoplus_{(u,\alpha)\in W} \alpha\right)
+\]
+where empty $\bigotimes$-products equal $\mathbb{1}$ and empty $\bigoplus$-sums equal $\mathbb{0}$.
 \end{definition}
 
-We now formalize a general semantics for $selection$, assuming that atomic comparisons inside \emph{selection} predicates- $t\op t'$ and $(t:f) \op (t':f')$, where $t, t'$ are terms of max-index $\leq k$ and $f,f'$ are arbitrary aggregate functions. We assume the predicates are well-defined: whenever such a comparison is evaluated on $u\in\mathcal V^k$, $t(u)$ and $t'(u)$  must lie in the domain on
-which $\op$ is defined (likewise, for $(t:f)\op(t':f')$).
-\begin{definition}[Semantics of Selection Predicate]
+We now formalize a general semantics for \emph{selection} over comparison
+predicates involving aggregate functions; we first consider for
+simplicity of presentation the case where the selection predicate is a
+single comparison.
+\begin{definition}
 Fix a $\mathbb K$-instance $\hat I$  and let $q\in \RA_k$.
 A \emph{selection predicate} $\psi$ over arity $k$ induces a function
   $\predsem{\hat I}{q}{\psi} : \mathcal V^k \to \mathbb{K}$,
