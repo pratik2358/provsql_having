@@ -432,41 +432,41 @@ For integers $i$ and $x$, and for a $W\subseteq [|U|]$, consider a call
 \]
 We claim that this call appends to $\mathcal W$ exactly the sets
 \[
-W'\subseteq U
+  W'\subseteq [|U|]
 \]
 such that:
 \begin{itemize}
 \item $W\subseteq W'$;
-\item every element of $W'\setminus W$ belongs to $\{(u_i,\alpha_i),\dots,(u_N,\alpha_N)\}$;
+\item every element of $W'\setminus W$ belongs to $\{i,\dots,|U|\}$;
 \item $|W'\setminus W|=x$.
 \end{itemize}
 Equivalently, it appends exactly the worlds of the form
 \[
 W\cup S
 \quad\text{with}\quad
-S\subseteq \{(u_i,\alpha_i),\dots,(u_N,\alpha_N)\}
+S\subseteq \{i,\dots,|U|\}
 \text{ and } |S|=x.
 \]
 
-We prove this by induction on the pair $(N-i+1,x)$.
+We prove this by induction on the pair $(|U|-i+1,x)$.
 
 \smallskip\noindent\emph{Base cases.}
 If $x=0$, it appends $W$ and returns. This is correct because the only way to extend $W$ by choosing exactly $0$ further occurrences is to keep $W$.
 
-If $i>N$, there are no remaining occurrences to choose from. Hence no extension of $W$ by a +venumber of further occurrences exists, so returning without appending anything is correct.
+If $i>|U|$, there are no remaining occurrences to choose from. Hence no extension of $W$ by a positive number of further occurrences exists, so returning without appending anything is correct.
 
-If $N-i+1<x$, then fewer than $x$ occurrences remain available. Thus it is impossible to choose exactly $x$ more occurrences, so returning without appending is again correct.
+If $|U|-i+1<x$, then fewer than $x$ occurrences remain available. Thus it is impossible to choose exactly $x$ more occurrences, so returning without appending is again correct.
 
 \smallskip\noindent\emph{Inductive step.}
-Assume now that $x>0$, $i\le N$, and $N-i+1\ge x$.
+Assume now that $x>0$, $i\le |U|$, and $|U|-i+1\ge x$.
 Any extension of $W$ by exactly $x$ occurrences chosen from
 \[
-\{(u_i,\alpha_i),\dots,(u_N,\alpha_N)\}
+\{i,\dots,|U|\}
 \]
 falls into one of two disjoint cases:
 \begin{itemize}
-\item it does \emph{not} contain $(u_i,\alpha_i)$;
-\item it \emph{does} contain $(u_i,\alpha_i)$.
+\item it does \emph{not} contain $i$;
+\item it \emph{does} contain $i$.
 \end{itemize}
 
 In the first case, the required worlds are exactly those produced by the recursive call
@@ -477,9 +477,9 @@ since one must still choose all $x$ required occurrences from the suffix startin
 
 In the second case, the desired worlds are exactly those produced by
 \[
-\textsc{Combinations}(i+1,x-1,W\cup\{(u_i,\alpha_i)\}),
+\textsc{Combinations}(i+1,x-1,W\cup\{i\}),
 \]
-since after selecting $(u_i,\alpha_i)$, one must select exactly $x-1$ further occurrences from the suffix starting at $i+1$.
+since after selecting $i$, one must select exactly $x-1$ further occurrences from the suffix starting at $i+1$.
 
 By the I.H, the first recursive call appends exactly the words of the first kind, and the second appends exactly the words of the second kind. Since the two cases are disjoint and exhaustive, \textsc{Combinations} appends exactly all desired words, each exactly once.
 
@@ -490,15 +490,15 @@ Consider a call \textsc{AddExact}$(x)$.
 
 If $x\le 0$, the procedure returns immediately. This is correct because the output requires $W\neq\emptyset$, so no word of size $0$ should be output, and no word has negative cardinality.
 
-If $x>N$, the procedure also returns immediately. This is correct because no subset of $U$ can have cardinality greater than $N$.
+If $x>|U|$, the procedure also returns immediately. This is correct because no subset of $[|U|]$ can have cardinality greater than $|U|$.
 
-If $1\le x\le N$, the procedure calls
+If $1\le x\le |U|$, the procedure calls
 \[
 \textsc{Combinations}(1,x,\emptyset).
 \]
 By the claim proved above, this appends exactly all sets
 \[
-W\subseteq U
+  W\subseteq [|U|]
 \quad\text{such that}\quad
 |W|=x.
 \]
@@ -508,35 +508,35 @@ Hence \textsc{AddExact}$(x)$ appends exactly the non-empty words of cardinality 
 We now inspect the final case distinction on $\op$.
 
 \begin{itemize}
-\item If $\op$ is $=$, the algorithm executes \textsc{AddExact}$(C)$, so by the correctness of \textsc{AddExact} it outputs exactly the non-empty worlds $W\subseteq U$ such that $|W|=C$.
+  \item If $\op$ is $=$, the algorithm executes \textsc{AddExact}$(C)$, so by the correctness of \textsc{AddExact} it outputs exactly the non-empty worlds $W\subseteq [|U|]$ such that $|W|=C$.
 
 \item If $\op$ is $>$, the algorithm executes \textsc{AddExact}$(x)$ for every
 \[
-x\in\{C+1,\dots,N\}.
+x\in\{C+1,\dots,|U|\}.
 \]
 Therefore it returns exactly the non-empty worlds whose cardinality is strictly greater than $C$.
 
 \item If $\op$ is $\ge$, the algorithm executes \textsc{AddExact}$(x)$ for every
 \[
-x\in\{C,\dots,N\}.
+x\in\{C,\dots,|U|\}.
 \]
 Since \textsc{AddExact} ignores values $x\le 0$, this outputs exactly the non-empty worlds whose cardinality is at least $C$.
 
 \item If $\op$ is $<$, the algorithm executes \textsc{AddExact}$(x)$ for every
 \[
-x\in\{1,\dots,\min(C-1,N)\}.
+x\in\{1,\dots,\min(C-1,|U|)\}.
 \]
 Thus it returns exactly the non-empty worlds whose cardinality is strictly less than $C$.
 
 \item If $\op$ is $\le$, the algorithm executes \textsc{AddExact}$(x)$ for every
 \[
-x\in\{1,\dots,\min(C,N)\}.
+x\in\{1,\dots,\min(C,|U|)\}.
 \]
 Thus it retunrs exactly the non-empty worlds whose cardinality is at most $C$.
 
 \item If $\op$ is $\neq$, the algorithm executes \textsc{AddExact}$(x)$ for every
 \[
-x\in\{1,\dots,N\}\setminus\{C\}.
+x\in\{1,\dots,|U|\}\setminus\{C\}.
 \]
 Hence it returns exactly the non-empty worlds whose cardinality is different from $C$.
 \end{itemize}
