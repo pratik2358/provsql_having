@@ -350,15 +350,11 @@ This establishes the correctness.
   \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
   \label{alg:count_enum}
 
-  \nlset{}\textbf{\textsc{ValidCount}$(U, t, C, \op, \omega)$}\;
+  \nlset{}\textbf{\textsc{ValidCount}$(U,C,\op)$}\;
 
-  \Input{a finite set of group-member occurrences $U\defeq U^{\hat I}_{q',\vec v}$, an arbitrary ordering $\omega$ of $U$, a term $t$ with max-index $\leq k$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
-  \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W}))\op C\,\}$}\quad \text{where $f_{\Sigma^*}(\pi_t((U_r[u])^{\omega}_{r\in W})) = |W|$}
-
-  \BlankLine
-  Consider the sequence $(U_r)^{\omega}_{r \in [|U|]}$ ordered by $\omega$\\
-
-  \BlankLine
+  \Input{a finite set of group-member occurrences $U\defeq U^{\hat I}_{q'}$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
+  \Output{$\mathcal W =\{\,W\subseteq [|U|]\mid W\neq\emptyset,|W|\op C\,\}$}
+    \BlankLine
   $\mathcal W \gets \emptyset$\;
 
   \SetKwFunction{Combinations}{Combinations}
