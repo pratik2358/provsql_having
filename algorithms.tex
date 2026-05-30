@@ -290,7 +290,7 @@ Since, by the I.H, those pre-existing worlds are exactly the elements of $\mathc
 \]
 
 $s=|dp[p]|$ is essential when $t(u_i)=0$, for then $p=j$.
-In that situation the algorithm appends new worlds to $dp[j]$ while scanning from $dp[j]$, but it scans only the first $s$ entries, i.e. exactly those worlds that were present before the append operations started.
+In that situation the algorithm appends new worlds to $dp[j]$ while scanning from $dp[j]$, but it scans only the first $s$ entries, i.e., exactly those worlds that were present before the append operations started.
 Hence each world in $\mathcal D_{i-1}(j)$ contributes exactly one extended world containing $i$, and none of the newly appended worlds is reused again during the same update.
 
 Therefore, after iteration $i$, the content of $dp[j]$ is exactly:
