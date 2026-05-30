@@ -1,17 +1,23 @@
 \section{Main Results}
 \label{sec:results}
-We show that our semantics as formalized in Section~\ref{sec:semantics} is compatible with the \sql{JOIN}-based semantics of \sql{HAVING}-like queries when our semiring of choice is absorptive and satisfies distributivity of $\otimes$ over $\ominus$.
+We show that our semantics as formalized in Section~\ref{sec:semantics}
+is compatible with the \sql{JOIN}-based semantics of simple \sql{HAVING}-like
+queries on \sql{COUNT} when our semiring of choice is absorptive and satisfies
+distributivity of $\otimes$ over $\ominus$. Since \sql{COUNT} is
+commutative, \sql{COUNT(*) ...
+GROUP BY #1} can
+be coded as $\gamma^{\preceq}_{\#1}[1:+]$ for an arbitrary order $\preceq$.
 \begin{theoremrep}\label{th:correctness}
   For any arity~$2$ query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
   =,\geq\}$ consider the queries:
 \begin{align*}
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))\\
-    Q^{\geq C}_2&=\begin{cases}\Pi_{\#1}(q) & \text{if } C=1,\\[1mm]\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<^*\#4}
-    q\bowtie_{\#1=\#5\land\#4<^*\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<^*\#(2C)}q) & \text{if }C\ge 2\end{cases}\\
-    Q^{\leq C}_2&= Q^{\geq 1}_2-Q_2^{\geq C+1}\\
-Q^{=C}_2&=Q_2^{\geq C} -Q_2^{\geq C+1}
+    Q^{\geq C}_2&=\begin{cases}\varepsilon(\Pi_{\#1}(q)) & \text{if } C=1,\\[1mm]\varepsilon(\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<^*\#4}
+    q\bowtie_{\#1=\#5\land\#4<^*\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<^*\#(2C)}q)) & \text{if }C\ge 2\end{cases}\\
+    Q^{\leq C}_2&= Q^{\geq 1}_2 - Q^{\geq (C+1)}_2\\
+Q^{=C}_2&=Q^{\geq C}_2 - Q^{\geq (C+1)}_2
 \end{align*}
-where $<^*$ denotes $<$ augmented with an occurrence-based tie-break, ensuring distinct matches under multiset semantics.
+where $\varepsilon$ denotes duplicate elimination and $<^*$ denotes $<$ augmented with an occurrence-based tie-break, ensuring distinct matches under multiset semantics.
     Then:
     \begin{enumerate}[(i)]
       \item
@@ -37,18 +43,18 @@ We proceed with our proof for part $(i)$ of Theorem~\ref{th:correctness}.
 \paragraph*{Proof of (i)}
 For any $\mathbb{K}$-instance $\hat I$, we prove the equality $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing
   that, for any tuple in the query result, the corresponding provenance expressions, instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are the same.
-    $\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ apply the same relational algebra operators to the same subquery $q$
-    and the provenance semantics defined for those operators are identical. The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically. Hence, it
-    suffices to show that for each group produced by
-    the grouping operator, the provenance annotation produced because of the aggregate comparison coincides with
+    In other words, we need to show that the provenance annotation of each group produced by
+    the grouping operator under our \sql{HAVING} semantics of
+    Definition~\ref{def:semantics} coincides with
     that produced by the self-join query.
-    Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where $u$ is $(u_1,u_2)$ and $\alpha\in \mathbb K$.
-Fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
-% \smallskip\noindent\emph{Note: }\textit{For simplicity, we assume set semantics, i.e, $q$ produces no duplicate output tuples. In this setting, for a fixed group key $a$ selecting $C$ tuples whose second attributes form a strict join chain is the same as requiring the existence of $C-$ distinct tuples in the group. The same proof idea can be extended to multiset-semantics by treating duplicate tuples as distinct tuple occurrences (e.g. by indexing inside groups) and refining the strict-ordering predicate in the join chain with this new tie-breaking attribute so that it is possible to select distinct tuple occurrences with equal second attributes in increasing order.}
+    Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat
+    I}{q}$ has the form $(u_1,u_2,\alpha)$ where $\alpha\in \mathbb K$.
+Fix an arbitrary group key $\vec v=(a)$.
 
-So, let $U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ be the sequence of
-occurrences of the group with key~$a$ in $\angsem{\hat I}{q}$, for some
+Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ be the sequence of
+occurrences of the group with key~$a$ in $\angsem{\hat I}{q}$ under
 order~$\preceq$ (Definition~\ref{def:possible_world}).
+
 \paragraph{Provenance of the \sql{HAVING} query using possible-world semantics:}
 For the query
 $
@@ -76,37 +82,26 @@ $
 where $f_\Sigma$ denotes the commutative \sql{COUNT} aggregate, so that
 $\mathrm{agg}_{1,f_\Sigma}(W)=|W|$.
 \\
-For each possible world $W\sqsubseteq U$, writing $\alpha_w$ for the
-annotation of occurrence~$w$, if we denote
+For each possible world $W\sqsubseteq U$, write
+$A_W\defeq\bigotimes_{w\in W}\alpha_w$, where $\alpha_w$ is the annotation
+of occurrence~$w$. Then
 \begin{align*}
-&A_W=\bigotimes_{w\in W}\alpha_w\\
-&B_W=\bigoplus_{w\in U\setminus W}\alpha_w\\
-\end{align*}
-then,
-\begin{align*}
-T_U(W)&:=\ A_W \otimes \bigl(\mathbb{1}_{\mathbb{K}} \ominus B_W\bigr)\\
+T_U(W)&\defeq\ A_W \otimes \Bigl(\mathbb{1}_{\mathbb{K}} \ominus \bigoplus_{w\in U\setminus W}\alpha_w\Bigr)\\
 &= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}} \;\textit{[ by distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$]}
 \end{align*}
-such that, $\ann_U(W)=T_U(W).$
-% By distributivity of $\otimes$ over $\ominus$ and then of $\otimes$ over $\oplus$,
-% \begin{align*}
-% T_U(W)
-%   &= (A_W\otimes \mathbb{1}_{\mathbb{K}})\ominus (A_W\otimes B_W) \\
-%   &= A_W\ominus\Bigl(A_W\otimes \bigoplus_{w\in U\setminus W}\alpha_w \Bigr) \\
-% &= A_W\ominus \bigoplus_{w\in U\setminus W}(A_W\otimes \alpha_w ) \\
-% &= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}.
-% \end{align*}
+so that $\ann_U(W)=T_U(W)$.
+
 \lean{Having}{Having.T_eq_mul_one_monus_sum}
 Since $\chi_{\op}(|W|,C)=\mathbb{1}_\mathbb{K}$ iff $|W|\op C$ is true and $\mathbb{0}_\mathbb{K}$ otherwise, \eqref{eq:Q1-prov} becomes
 \begin{equation}\label{eq:pw_tw}
 \angsem{\hat I}{Q^{\op C}_1}(a)
 =
-\bigoplus_{\substack{W\subseteq U,\\ W\neq\emptyset,\\|W|\op C}} T_{U}(W).
+\bigoplus_{\substack{W\sqsubseteq U,\\ W\neq\emptyset,\\|W|\op C}} T_{U}(W).
 \end{equation}
 \paragraph{Provenance of the \sql{JOIN} queries:}
-For every $W\subseteq U $ and $C\ge 1$ we define,
+For every $W\sqsubseteq U $ and $C\ge 1$ we define,
 \[
-S_C(U):=\bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W
+S_C(U)\defeq\bigoplus_{\substack{W\sqsubseteq U \\|W|=C}} A_W
 \quad
 (\text{with }S_C(U)=\mathbb{0}_\mathbb{K}\text{ if }C>|U|).
 \]
@@ -114,8 +109,8 @@ Consider the query $Q^{\ge C}_2$.  A join-valuation contributing to the output
 tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
 attribute $a$ and strictly increasing second attributes (due to the chain of
 join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurrence attribute as in $U$ so that it is possible to select distinct tuple occurrences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
-$C$-element subset $W\subseteq U$, and
-$\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.
+$C$-element subset $W\sqsubseteq U$, which contributes the product $A_W$.
+Under multiset semantics, $\Pi_{\#1}$ produces one occurrence of the output tuple $(a)$ for each such subset; the duplicate elimination $\varepsilon$ then merges these occurrences into a single tuple whose annotation is their $\oplus$-sum.
 Therefore,
 \[
 \angsem{\hat I}{Q^{\ge C}_2}(a)
@@ -124,9 +119,9 @@ Therefore,
 \]
 By definition,
 \[
-Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2,
+Q^{=C}_2 = Q^{\ge C}_2 - Q^{\ge (C+1)}_2,
 \qquad
-Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2,
+Q^{\le C}_2 = Q^{\ge 1}_2 - Q^{\ge (C+1)}_2,
 \]
 Hence, using $(J_{\ge})$,
 \[
@@ -142,7 +137,7 @@ S_1(U) \ominus S_{C+1}(U).
 \paragraph{\textbf{When $\op$ is $\ge$ :}}
 From \eqref{eq:pw_tw} with $\op = \ge$, we set
 $
-F_C(U)\defeq \bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_{U}(W).
+F_C(U)\defeq \bigoplus_{\substack{W\sqsubseteq U\\|W|\ge C}} T_{U}(W).
 $
 So,
 \begin{equation}\label{eq:PW_ge_equals_F}
@@ -165,18 +160,25 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)
 \qquad(C\ge 1).
 \tag{R$_S$}
 \]
-We prove that $F_C(U)=S_C(U)$ by induction on $|U|$,  for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}.
+We prove that $F_C(U)=S_C(U)$ by induction on $|U|$, for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}.
 If $|U|=0$ then $U=\varnothing$ and $F_C(\varnothing)=\mathbb 0=S_C(\varnothing)$ for $C\ge 1$
 (empty $\oplus$-sum).
 Assume $|U|>0$ and pick $u\in U$, let $U'=U\setminus\{u\}$.
-By the induction hypothesis, $F_C(U')=S_C(U')$ and $F_{C-1}(U')=S_{C-1}(U')$.
-Applying (R$_F$) and (R$_S$) gives
-$
-F_C(U)
-=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)
-=S_C(U')\oplus(S_{C-1}(U')\otimes\alpha_u)
-=S_C(U)
-$.
+Applying (R$_F$) and (R$_S$),
+\[
+F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u),
+\qquad
+S_C(U)=S_C(U')\oplus(S_{C-1}(U')\otimes\alpha_u).
+\]
+The induction hypothesis gives $F_C(U')=S_C(U')$, and for $C\ge 2$ also
+$F_{C-1}(U')=S_{C-1}(U')$. For $C=1$ the lower term is the count-$0$
+quantity, which is not covered by the induction hypothesis but holds
+directly: $S_0(U')=A_\varnothing=\mathbb 1$, while
+$F_0(U')=\bigoplus_{W\subseteq U'}T_{U'}(W)=\mathbb 1$ because $\mathbb K$ is
+absorptive (so that $\mathbb 1\oplus x=\mathbb 1$)
+\lean{Having}{Having.F_zero_eq_one}; this is the only step where
+absorptivity is used. In every case the two right-hand sides coincide,
+so $F_C(U)=S_C(U)$.
 Thus $F_C(U)=S_C(U)$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(J_{\ge})$,
 \[
 \angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
@@ -185,7 +187,7 @@ Thus $F_C(U)=S_C(U)$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(
 For $n\in\mathbb N$ we have,
 $
 \chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)
-$. Then for each $W\subseteq U$,
+$. Then for each $W\sqsubseteq U$,
 \begin{align*}
 T_{U}(W)\otimes \chi_{=}( |W|,C)
 &=
@@ -198,15 +200,15 @@ Summing over $W$ and using right-distributivity of $\ominus$ over $\oplus$ (whic
 \begin{align*}
 \angsem{\hat I}{Q^{=C}_1}(a)
 &=
-\bigoplus_{W\subseteq U}\bigl(T_{U}(W)\otimes\chi_{=}( |W|,C)\bigr)\\
+\bigoplus_{W\sqsubseteq U}\bigl(T_{U}(W)\otimes\chi_{=}( |W|,C)\bigr)\\
 &=
-\left(\bigoplus_{W\subseteq U} T_{U}(W)\otimes\chi_{\ge}(|W|,C)\right)
+\left(\bigoplus_{W\sqsubseteq U} T_{U}(W)\otimes\chi_{\ge}(|W|,C)\right)
 \ominus
-\left(\bigoplus_{W\subseteq U} T_{U}(W)\otimes\chi_{\ge}(|W|,C+1)\right)\\
+\left(\bigoplus_{W\sqsubseteq U} T_{U}(W)\otimes\chi_{\ge}(|W|,C+1)\right)\\
 &=
-\left(\bigoplus_{\substack{W\subseteq U,\\|W|\ge C}} T_{U}(W)\right)
+\left(\bigoplus_{\substack{W\sqsubseteq U,\\|W|\ge C}} T_{U}(W)\right)
 \ominus
-\left(\bigoplus_{\substack{W\subseteq U,\\|W|\ge C+1}} T_{U}(W)\right)\\
+\left(\bigoplus_{\substack{W\sqsubseteq U,\\|W|\ge C+1}} T_{U}(W)\right)\\
 &=
 \angsem{\hat I}{Q^{\ge C}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
 \end{align*}
@@ -243,7 +245,7 @@ We show that there exists a $\mathbb{K}$-instance $\hat I$ such that
 $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
 Fix $C=2$ and $\op= \; =$.
 Since these queries are equivalent, both of them return groups which have 2 tuples. Say, in a certain $\hat I$ the result of the pre-aggregation subquery $q$ can form a valid group with group-key $u$ and $\mathbb K$-annotations $t_1,t_2,\text{ and }t_3$.
-Then,
+Then
 \[
   \angsem{\hat I}{Q^{= 2}_1}=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
 \]
@@ -313,51 +315,70 @@ $
 \angsem{\hat I}{Q^{\ge1}_2}.
 $
 \end{appendixproof}
+
+Note that this mismatch across m-semirings is to be expected: outside of
+the Boolean provenance world, semiring provenance depends on \emph{the way
+a query is written}, not just on query equivalence.
+Theorem~\ref{th:correctness} shows that our semantics is correct for
+Boolean provenance (the Boolean function semiring is absorptive and has
+$\otimes$ distributive over $\ominus$) and generalizes this equivalence to
+other m-semirings. For m-semirings that do not satisfy the conditions of
+the theorem, we simply choose the proposed semantics as an implementable
+semantics for the \sql{HAVING} clause.
+
 \begin{proofsketch}
-For any $\mathbb{K}$-instance $\hat I$, we prove the equality  $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that the corresponding $\mathbb K$-provenance under the assumptions of $(i)$ is the same for any tuple in $\angsem{\hat I}{Q^{\op C}_1}$ and $\angsem{\hat I}{Q^{\op C}_2}$.
-$\angsem{\hat I}{Q^{\op C}_1}\text{ and }\angsem{\hat I}{Q^{\op C}_2}$ are equivalent queries and apply the same relational algebra operators to the same subquery $q$.
-Thus the provenance semantics defined for those operators are identical.
-The two queries differ only in their implementation of the aggregate comparison (\sql{HAVING}) condition; all other operators are interpreted identically.
-Hence, it suffices to show that for each group produced by the grouping operator in $Q^{\op C}_1$, the evaluated $\mathbb K$-provenance because of the aggregate comparison coincides with that produced by $Q^{\op C}_2$ for the corresponding tuple in $\angsem{\hat I}{Q^{\op C}_2}$.
-Since $q$ is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u,\alpha)$ where $u$ is $(u_1,u_2)$ and $\alpha\in \mathbb K$. We fix an arbitrary group-key $\vec v=(\#1(u)=a)$.
-$U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ is the sequence of occurrences of the group with key~$a$ (Definition~\ref{def:possible_world}). Following the semantics in Section~\ref{sec:semantics} we claim that
-$\angsem{\hat I}{Q^{\op C}_1}(a)=\predsem{\hat I}{\gamma^{\preceq}_{\#1}[1:+](q)}{\#2\op C}(u)$ is
-$\bigoplus_{\substack{W\subseteq U,\\ W\neq\emptyset,\\|W|\op C}} T_{U}(W)$ where,
-$T_{U}(W)= A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$
-is indeed the $\ann_U(W)$ for each possible-world $W\subseteq U$,
-$A_W$ is $\bigotimes_{w\in W}\alpha_w$ and
-$B_W$ is $\bigoplus_{w\in U\setminus W}\alpha_w$, writing $\alpha_w$ for the annotation of occurrence~$w$.
-For every $W\subseteq U $ and $C\ge 1$ we define
-$S_C(U):=\bigoplus_{\substack{W\subseteq U \\|W|=C}} A_W$ with $S_C(U)=\mathbb{0}_\mathbb{K}$ if $C>|U|$ and show that,
-$\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C(U)$.\\
-A join-valuation contributing to the output
-tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
-attribute $a$ and strictly increasing second attributes (due to the chain of
-join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurrence attribute as in $U$ so that it is possible to select distinct tuple occurrences with equal second attributes in an increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
-$C$-element subset $W\subseteq U$, and
-$\Pi_{\#1}$ then takes the $\oplus$-sum over all these subsets.\\
-By definition, $Q^{=C}_2 = Q^{\ge C}_2 \ominus Q^{\ge (C+1)}_2$ and $Q^{\le C}_2 = \Pi_{\#1}(q) \ominus Q^{\ge (C+1)}_2$.
-Since, $\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C(U)$, we write:
-\[
-\angsem{\hat I}{Q^{=C}_2}(a)
-=
-S_C(U) \ominus S_{C+1}(U)
-\text{ and }
-\angsem{\hat I}{Q^{\le C}_2}(a)
-=
-S_1(U) \ominus S_{C+1}(U).
-\]
-We now claim a weak bound on $\mathbb K$-element(s) implying joint tuple-presence in corresponding \emph{possible-worlds}.
+For any $\mathbb{K}$-instance $\hat I$, we prove the equality $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that, for any tuple in the query result, the corresponding provenance expressions, instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are the same.
+In other words, we need to show that the provenance annotation of each group produced by the grouping operator under our \sql{HAVING} semantics of Definition~\ref{def:semantics} coincides with that produced by the self-join query.
+Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u_1,u_2,\alpha)$ where $\alpha\in \mathbb K$.
+Fix an arbitrary group key $\vec v=(a)$.
+Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ be the sequence of
+occurrences of the group with key~$a$ in $\angsem{\hat I}{q}$ under
+order~$\preceq$ (Definition~\ref{def:possible_world}). For a possible world
+$W\sqsubseteq U$, write $A_W\defeq\bigotimes_{w\in W}\alpha_w$, where
+$\alpha_w$ is the annotation of occurrence~$w$. The argument revolves
+around three quantities:
+\begin{itemize}
+\item $T_U(W)\defeq A_W\ominus\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$,
+  the normal form of the possible-world annotation $\ann_U(W)$, i.e., the
+  contribution of $W$ to the possible-world sum;
+\item $F_C(U)\defeq\bigoplus_{\substack{W\sqsubseteq U\\|W|\ge C}} T_U(W)$,
+  the \emph{\sql{HAVING} side}: by Definition~\ref{def:semantics},
+  $\angsem{\hat I}{Q^{\ge C}_1}(a)=F_C(U)$;
+\item $S_C(U)\defeq\bigoplus_{\substack{W\sqsubseteq U\\|W|=C}} A_W$,
+  the \emph{join side}: $\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C(U)$,
+  since the self-join exhibits each $C$-subset $W$ once with annotation
+  $A_W$, the projection $\Pi_{\#1}$ repeats the key~$(a)$, and
+  $\varepsilon$ merges these occurrences by~$\oplus$.
+\end{itemize}
+The $=$ and $\le$ cases reduce to the $\ge$ case: from
+$\chi_{=}(n,C)=\chi_{\ge}(n,C)\ominus\chi_{\ge}(n,C+1)$ and
+$\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ominus\chi_{\ge}(n,C+1)$, together with
+$Q^{=C}_2=Q^{\ge C}_2 - Q^{\ge(C+1)}_2$ and
+$Q^{\le C}_2=Q^{\ge1}_2 - Q^{\ge(C+1)}_2$, both sides turn into the
+same differences ($F_C\ominus F_{C+1}$ on the \sql{HAVING} side versus
+$S_C\ominus S_{C+1}$ on the join side, and likewise $F_1\ominus F_{C+1}$
+versus $S_1\ominus S_{C+1}$). Hence it suffices to prove $F_C(U)=S_C(U)$.
+
+The order $\preceq$ plays no further role: $A_W$, $T_U(W)$, $F_C(U)$ and
+$S_C(U)$ depend only on \emph{which} occurrences are selected, not on their
+order. We therefore regard $U$ from now on as the finite \emph{set} of its
+occurrences and each possible world $W\sqsubseteq U$ as a subset
+$W\subseteq U$, and prove $F_C(U)=S_C(U)$ through a shared include/exclude
+recurrence; the key ingredient is the following bound.
 
 \begin{lemmarep}\label{lem:upward-expansion}
 \lean{Having}{Having.upward_expansion}
-Let $(K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring. Fix a finite set $U$ and elements $(\alpha)_{x\in U}\in \mathbb K$. For $W\subseteq U$ define
-$A_W := \bigotimes_{x\in W}\alpha_x$ and $T_U(W) := A_W \ominus \bigoplus_{x\in U\setminus W} A_{W\cup\{x\}}$.
-Then for every $V\subseteq U$, $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)$.
+Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+commutative idempotent m-semiring, $U$ a finite set, and
+$(\alpha_w)_{w\in U}$ a family of elements of $\mathbb K$. For
+$W\subseteq U$ define $A_W \defeq \bigotimes_{w\in W}\alpha_w$ and
+$T_U(W) \defeq A_W \ominus \bigoplus_{w\in U\setminus W} A_{W\cup\{w\}}$.
+Then $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)$
+for every $V\subseteq U$.
 \end{lemmarep}
 
 \begin{appendixproof}
-From the properties of m-semirings $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in K$,
+From the properties of m-semirings $\ominus$ is the (right) residual of $\oplus$, i.e.\ for all $x,y,z\in \mathbb K$,
 \begin{equation}\label{eq:residuation}
   x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
 \end{equation}
@@ -366,7 +387,7 @@ We prove
 \begin{equation}\label{eq:upward-expansion}
   A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
 \end{equation}
-by induction on $d:=|U\setminus V|$.
+by induction on $d\defeq|U\setminus V|$.
 
 \smallskip\noindent
 \textbf{Base case ($d=0$).}
@@ -374,7 +395,7 @@ Then $V=U$. Since $U\setminus U=\varnothing$ and $\bigoplus_{\varnothing}(\cdot)
 \[
   T_U(U)=A_U\ominus \mathbb 0.
 \]
-We claim $A_U\ominus\mathbb 0=A_U$. Indeed, by \eqref{eq:residuation}, for any $z\in K$,
+We claim $A_U\ominus\mathbb 0=A_U$. Indeed, by \eqref{eq:residuation}, for any $z\in \mathbb K$,
 \[
   A_U\ominus\mathbb 0 \le z \iff A_U \le \mathbb 0\oplus z = z,
 \]
@@ -391,11 +412,11 @@ Assume $d>0$ and that \eqref{eq:upward-expansion} holds for all pairs $(U,V')$
 with $V\subsetneq V'\subseteq U$ and $|U\setminus V'|<d$.
 Let
 \[
-  Y := \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}} \in K.
+  Y \defeq \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}} \in \mathbb K.
 \]
 From Lemma~\ref{lem:x<=y+(x-y)} we obtain the standard inequality
 \begin{equation}\label{eq:M2-lemma1}
-  X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in K,
+  X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in \mathbb K,
 \end{equation}
 by instantiating \eqref{eq:residuation} with $z=X\ominus Y$ (since $X\ominus Y\le X\ominus Y$).
 Applying \eqref{eq:M2-lemma1} to $X=A_V$ gives
@@ -404,26 +425,26 @@ Applying \eqref{eq:M2-lemma1} to $X=A_V$ gives
 \]
 By definition of $T_U(V)$ we have $A_V\ominus Y = T_U(V)$, hence
 \begin{equation}\label{eq:AV-bound}
-  A_V \le T_U(V)\ \oplus\ \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}}.
+  A_V \le T_U(V)\ \oplus\ \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}}.
 \end{equation}
 
-For each $x\in U\setminus V$ set $V_x:=V\cup\{x\}$. Then $|U\setminus V_x|=d-1$,
+For each $w\in U\setminus V$ set $V_w\defeq V\cup\{w\}$. Then $|U\setminus V_w|=d-1$,
 so the induction hypothesis yields
 \[
-  A_{V_x}\le \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W).
+  A_{V_w}\le \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W).
 \]
-Taking the $\oplus$-sum over all $x\in U\setminus V$ and using monotonicity of $\oplus$,
+Taking the $\oplus$-sum over all $w\in U\setminus V$ and using monotonicity of $\oplus$,
 \[
-  \bigoplus_{x\in U\setminus V} A_{V\cup\{x\}}
+  \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}}
   =
-  \bigoplus_{x\in U\setminus V} A_{V_x}
+  \bigoplus_{w\in U\setminus V} A_{V_w}
   \le
-  \bigoplus_{x\in U\setminus V}\ \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W).
+  \bigoplus_{w\in U\setminus V}\ \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W).
 \]
-Every $W$ appearing on the right satisfies $V\subseteq V_x\subseteq W\subseteq U$, hence $V\subseteq W\subseteq U$.
+Every $W$ appearing on the right satisfies $V\subseteq V_w\subseteq W\subseteq U$, hence $V\subseteq W\subseteq U$.
 Therefore, using associativity/commutativity/idempotence of $\oplus$ to ignore duplicates and reorder summands,
 \[
-  \bigoplus_{x\in U\setminus V}\ \bigoplus_{\substack{W:\;V_x\subseteq W\subseteq U}} T_U(W)
+  \bigoplus_{w\in U\setminus V}\ \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W)
   \le
   \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
 \]
@@ -436,20 +457,20 @@ Combining with \eqref{eq:AV-bound} yields
 since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
 This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{appendixproof}
-With $\op$ as $\ge$, in
-$\angsem{\hat I}{Q^{\op C}_1}(a)$ we set
-$F_C(U)\defeq \bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_{U}(W).
-$
-By virtue of Lemma~\ref{lem:upward-expansion} and other properties of m-semirings we state further lemmas that we will need in this proof to establish recurrences for $F_C(U)$ and $S_C(U)$.
+With Lemma~\ref{lem:upward-expansion} in hand, we now establish matching
+recurrences for $F_C(U)$ and $S_C(U)$.
 \begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 \lean{Having}{Having.FC_recurrence}
-Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an idempotent m-semiring satisfying distributivity of $\otimes$ over $\ominus$. Fix a non-empty finite set $U$ and elements $(\alpha)_{x\in U}\in \mathbb K$. For $W\neq\emptyset\subseteq U$ define
-$A_W:=\bigotimes_{x\in W}\alpha_x$ and $T_U(W):=A_W\ominus \bigoplus_{x\in U\setminus W}A_{W\cup\{x\}}$.
-Further for $C\in\mathbb N^{\geq 1}$ define
-$
-F_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W).
-$
-Then for an arbitrary choice of $u\in U$ such that $U'=U\setminus\{u\}$ $F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$.
+Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+commutative idempotent m-semiring in which $\otimes$ distributes over
+$\ominus$, $U$ a non-empty finite set, and $(\alpha_w)_{w\in U}$ a family
+of elements of~$\mathbb K$. For $W\subseteq U$ define
+$A_W\defeq\bigotimes_{w\in W}\alpha_w$ and
+$T_U(W)\defeq A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$, and
+for $C\ge 0$ set
+$F_C(U)\defeq\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W)$.
+Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
+$F_C(U)=F_C(U')\oplus\bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
 \end{lemmarep}
 
 \begin{appendixproof}
@@ -467,20 +488,20 @@ F_C(U)
 Fix $W'\subseteq U'$. Then $A_{W'\cup\{u\}}=A_{W'}\otimes\alpha_u$, and
 $U\setminus(W'\cup\{u\})=U'\setminus W'$. Hence, using distributivity of $\otimes$ over $\oplus$,
 \[
-\bigoplus_{x\in U\setminus(W'\cup\{u\})}A_{W'\cup\{u,x\}}
+\bigoplus_{w\in U\setminus(W'\cup\{u\})}A_{W'\cup\{u,w\}}
 =
-\bigoplus_{x\in U'\setminus W'}\bigl(A_{W'\cup\{x\}}\otimes\alpha_u\bigr)
+\bigoplus_{w\in U'\setminus W'}\bigl(A_{W'\cup\{w\}}\otimes\alpha_u\bigr)
 =
-\Bigl(\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\alpha_u.
+\Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u.
 \]
 Therefore, using distributivity of $\otimes$ over $\ominus$,
 \[
 T_U(W'\cup\{u\})
 =
 (A_{W'}\otimes\alpha_u)\ominus
-\Bigl(\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\alpha_u
+\Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u
 =
-\Bigl(A_{W'}\ominus\bigoplus_{x\in U'\setminus W'}A_{W'\cup\{x\}}\Bigr)\otimes\alpha_u
+\Bigl(A_{W'}\ominus\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u
 =
 T_{U'}(W')\otimes\alpha_u.
 \]
@@ -494,16 +515,16 @@ distributivity of $\otimes$ over $\oplus$ yields
 \paragraph{Relate $T_U(W)$ and $T_{U'}(W)$ for $W\subseteq U'$: }
 Fix $W\subseteq U'$. Since $U\setminus W=(U'\setminus W)\cup\{u\}$, we have
 \[
-\bigoplus_{x\in U\setminus W}A_{W\cup\{x\}}
+\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}
 =
-\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\Bigr)\oplus (A_W\otimes\alpha_u).
+\Bigl(\bigoplus_{w\in U'\setminus W}A_{W\cup\{w\}}\Bigr)\oplus (A_W\otimes\alpha_u).
 \]
 Using
 $x\ominus(y\oplus z)=(x\ominus y)\ominus z$, we get
 \begin{equation}\label{eq:TU-rewrite}
 T_U(W)
 =
-A_W\ominus\Bigl(\bigoplus_{x\in U'\setminus W}A_{W\cup\{x\}}\oplus(A_W\otimes\alpha_u)\Bigr)
+A_W\ominus\Bigl(\bigoplus_{w\in U'\setminus W}A_{W\cup\{w\}}\oplus(A_W\otimes\alpha_u)\Bigr)
 =
 T_{U'}(W)\ominus(A_W\otimes\alpha_u).
 \end{equation}
@@ -552,15 +573,13 @@ as required.
 \end{appendixproof}
 \begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
-Let $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1,\ominus)$ be an m-semiring.
-Fix a non-empty finite set $U$ and a family $(\alpha)_{x\in U}\in \mathbb K$.
-For $W\neq\emptyset\subseteq U$ define $A_W:=\bigotimes_{x\in W}\alpha_x$ and for $C\in\mathbb N^{\ge 1}$ define
-$
-S_C(U):=\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$.
-For an arbitrary choice of $u\in U$ such that $U'=U\setminus\{u\}$ for every $C\ge 1$,
-$
-S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr).
-$
+Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+commutative m-semiring, $U$ a non-empty finite set, and
+$(\alpha_w)_{w\in U}$ a family of elements of $\mathbb K$. For
+$W\subseteq U$ define $A_W\defeq\bigotimes_{w\in W}\alpha_w$, and for
+$C\ge 0$ set $S_C(U)\defeq\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$.
+Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
+$S_C(U)=S_C(U')\oplus\bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
 \end{lemmarep}
 
 \begin{appendixproof}
@@ -568,9 +587,9 @@ Fix $C\ge 1$ and $u\in U$, and write $U=U'\cup\{u\}$ with $U'=U\setminus\{u\}$.
 
 Define two index families:
 \[
-\mathcal A:=\{\,W\subseteq U \mid |W|=C,\ u\notin W\,\},
+\mathcal A\defeq\{\,W\subseteq U \mid |W|=C,\ u\notin W\,\},
 \qquad
-\mathcal B:=\{\,W\subseteq U \mid |W|=C,\ u\in W\,\}.
+\mathcal B\defeq\{\,W\subseteq U \mid |W|=C,\ u\in W\,\}.
 \]
 Then $\mathcal A$ and $\mathcal B$ are disjoint and their union is the full family
 \[
@@ -609,7 +628,7 @@ Define a map
 \[
 \phi:\{\,W'\subseteq U'\mid |W'|=C-1\,\}\longrightarrow \mathcal B,
 \qquad
-\phi(W'):=W'\cup\{u\}.
+\phi(W')\defeq W'\cup\{u\}.
 \]
 This map is a bijection:
 \begin{itemize}
@@ -618,7 +637,7 @@ $u\notin W'$ and thus $|W'\cup\{u\}|=|W'|+1=C$, and $\phi(W')$ contains $u$.
 \item It is injective because if $W'_1\cup\{u\}=W'_2\cup\{u\}$, removing $u$ gives
 $W'_1=W'_2$.
 \item It is surjective because if $W\in\mathcal B$, then $u\in W$ and setting
-$W':=W\setminus\{u\}$ gives $W'\subseteq U'$ and $|W'|=C-1$, with $W=\phi(W')$.
+$W'\defeq W\setminus\{u\}$ gives $W'\subseteq U'$ and $|W'|=C-1$, with $W=\phi(W')$.
 \end{itemize}
 Hence we may re-index the sum over $\mathcal B$ via $\phi$:
 \begin{equation}\label{eq:B-reindex}
@@ -632,7 +651,7 @@ For each $W'\subseteq U'$ we have, by commutativity and associativity of $\otime
 \[
 A_{W'\cup\{u\}}
 =
-\Bigl(\bigotimes_{x\in W'}\alpha_x \Bigr)\otimes \alpha_u
+\Bigl(\bigotimes_{w\in W'}\alpha_w \Bigr)\otimes \alpha_u
 =
 A_{W'}\otimes \alpha_u.
 \]
@@ -653,56 +672,28 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr),
 \]
 as required.
 \end{appendixproof}
-By Lemma~\ref{lem:FC_recurrence}, for an arbitrary choice of $u\in U$ with $U'=U\setminus\{u\}$, for all $C\ge 1$, $F_C(U)=F_C(U')\ \oplus\ \bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ and by Lemma~\ref{lem:SC_recurrence}, $S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$.
-We prove that $F_C(U)=S_C(U)$ by induction on $|U|$, for all finite $U$ and all $C\ge 1$ \lean{Having}{Having.F_eq_S}. Hence, $\angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a)$.
-For $n\in\mathbb N$ we have,
-$\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)$ and $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$.
-We show that
-$\angsem{\hat I}{Q^{=C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a)$
-and,
-$\angsem{\hat I}{Q^{\le C}_1}(a)=\angsem{\hat I}{Q^{\ge 1}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a)$.
-By the already established $\ge$-case,
-$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C(U)$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}(U)$.
-Therefore,
-$
-\angsem{\hat I}{Q^{=C}_1}(a)=S_C(U)\ominus S_{C+1}(U)=\angsem{\hat I}{Q^{=C}_2}(a)
-$. Similarly, $\angsem{\hat I}{Q^{\ge 1}_1}(a)=S_1(U)$ and
-$\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}(U)$. Hence,
-$
-\angsem{\hat I}{Q^{\le C}_1}(a)
-=
-S_1(U)\ominus S_{C+1}(U)
-=
-\angsem{\hat I}{Q^{\le C}_2}(a)
-$.\\
-Since group key $(a)$ was arbitrary, we conclude
+By Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}, both
+$F_C(U)$ and $S_C(U)$ satisfy the same include/exclude recurrence
+$X_C(U)=X_C(U')\oplus\bigl(X_{C-1}(U')\otimes\alpha_u\bigr)$ for any
+$u\in U$ and $U'=U\setminus\{u\}$. At $C=1$ this recurrence bottoms out
+at the count-$0$ terms: $S_0(U')=A_\varnothing=\mathbb 1$ is immediate,
+whereas $F_0(U')=\bigoplus_{W\subseteq U'}T_{U'}(W)=\mathbb 1$ holds only
+because $\mathbb K$ is absorptive (so that $\mathbb 1\oplus x=\mathbb 1$);
+this is the single point where absorptivity is needed
+\lean{Having}{Having.F_zero_eq_one}. Together with the base case
+$|U|=0$, induction on $|U|$ then gives $F_C(U)=S_C(U)$
+\lean{Having}{Having.F_eq_S}. With the reduction of the $=$ and $\le$
+cases noted above, this yields
 $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
-$\op\in\{\ge,=,\le\}$. This proves $(i)$.\\
-For (ii) and (iii) we choose the Why[$X$] semiring and the Tropical($\mathbb R$) semiring respectively, from  Table~\ref{tab:semirings} and establish counterexamples.
+$\op\in\{\ge,=,\le\}$; since the group key~$a$ was arbitrary, this
+proves~(i). For~(ii) and~(iii) we exhibit counterexamples in the
+Why[$X$] semiring
+\lean{Semirings/Why}{Why.counterexample_having}
+and the tropical semiring over~$\mathbb R$
+\lean{Semirings/Tropical}{TropicalR.F_ne_S}
+from
+Table~\ref{tab:semirings}.
 \end{proofsketch}
-
-% \begin{proof}[Proof sketch]
-% In this proof we are going to dilute some naming conventions used in our semantics for brevity. Further for simplicity we assume set semantics and later explain how our arguments can be extended to multiset semantics. The two queries $Q^{\op C}_1$ and $Q^{\op C}_2$  differ only in how they implement the \sql{HAVING} condition. So let us fix one group key value $a$ and compare the single provenance expression produced for that group; equality for every $a$ then implies equality of the full query results.
-%
-% Let us assume for now that $q$ has no duplicate tuple. For this fixed $a$, let $U$ be the finite collection of tuples of $q$ with first attribute $a$, with annotations $\alpha_u\in\mathbb K$. The query $Q^{\ge C}_2$ with strict self-join ordering predicate is designed to ``exhibit'' $C$ distinct tuples in the group: a satisfying valuation of these \sql{JOIN} conditions selects $C$ tuples (arranged by the strict inequalities in the join predicate), and the semantics contributes the product of their annotations. Summing over all satisfying valuations therefore yields the necessary provenance: the $\oplus$-sum of all products $\bigotimes_{u\in W}\alpha_u$( say $A_W$) over $C$-element choices $W\subseteq U$. Call this expression $S_C(U)$.
-%
-% The possible-world semantics of the \sql{HAVING} predicate looks quite different at first: it sums over all subsets $W\subseteq U$ (possible worlds), keeps those with $|W|\ge C$, and multiplies by a factor enforcing that tuples outside $W$ are "absent". Using distributivity of $\otimes$ over $\ominus$ and $\oplus$, the contribution associated with each $W$ can be rewritten in a normal form
-% \[
-% T_U(W)=A_W\ominus\bigoplus_{u\in U\setminus W}A_{W\cup\{u\}},
-% \]
-% so that the provenance becomes,
-% \[
-% F_C(U)=\bigoplus_{|W|\ge C}T_U(W).
-% \]
-% Intuitively, $T_U(W)$ takes the monomial for choosing exactly the tuples in $W$ and removes away all one-step extensions of $W$, which is precisely what the "absence" factor is meant to enforce.
-%
-% The crux is that, although $F_C(U)$ and $S_C(U)$ arise from very different-looking constructions, if we pick any $u\in U$, write $U'=U\setminus\{u\}$, and $\beta=\alpha_u$, then both expressions split into two disjoint contributions: those worlds that do not use $u$, and those that do use $u$. This yields the same include/exclude recurrence for both  $F_C(U)$ and $S_C(U)$  (for all $C\ge 1$):
-% \[
-% \square_C(U)=\square_C(U')\ \oplus\ \bigl(\square_{C-1}(U')\otimes\beta\bigr).
-% \]
-% For $S_C$ this is easy to obtain from partitioning $C$-subsets by membership of $u$. For $F_C$, establishing the same recurrence is the non-trivial part: it relies on the algebraic properties of $\ominus$ together with a bounding lemma: products $A_V$ are bounded by suitable $\oplus$-sums of the terms $T_U(W)$. Once both recurrences are in place and the base cases match, induction on $|U|$ gives $F_C(U)=S_C(U)$, proving the $\ge$ case.
-%
-% Finally, the cases $\op\in\{=,\le\}$ are reduced to the already established $\ge$ case by expressing the corresponding predicates as differences of $\ge$-predicates and lifting these boolean identities through the semantics using distributivity of $\otimes$ over $\ominus$ and right-distributivity of $\ominus$ over $\oplus$ (which follows from idempotence). Since $a$ was arbitrary, the provenance evaluated for both the queries agree for every output tuple. This proves (i). % \end{proof}
 
 \begin{proposition}
   \label{prop:pqe-equiv}
@@ -771,9 +762,6 @@ q: SELECT DISTINCT 1 FROM R HAVING SUM(v) = B
 
   The provenance of the result $(1)$ in this query is, following
   Definition~\ref{def:semantics}:
-
-  %\pierre{Review the notation, finalize the expression, and make sure they align after semantics
-  %have been revised.}
 
 Let $U\defeq U^{\preceq}_{\angsem{\hat I}{R},()}$. Then the provenance is
 \[
