@@ -19,8 +19,6 @@
 \DeclareMathDelimiter{\lAngle}{\mathopen}{fdsymdelims}{"92}{fdsymdelims}{"92}
 \DeclareMathDelimiter{\rAngle}{\mathclose}{fdsymdelims}{"98}{fdsymdelims}{"98}
 
-\newcommand{\tortangl}{\bigl\lgroup}
-\newcommand{\tortangr}{\bigr\rgroup}
 \usepackage[bb=boondox]{mathalfa}
 
 \usepackage[linesnumbered,algoruled,commentsnumbered,boxruled,noend]{algorithm2e}
@@ -33,7 +31,7 @@
 \newcommand{\llangle}{\langle\mkern-5mu\langle}
 \newcommand{\rrangle}{\rangle\mkern-5mu\rangle}
 \newcommand{\angsem}[2]{\lAngle #2\rAngle^{#1}}
-\newcommand{\predsem}[3]{\tortangl #3\tortangr^{#1}_{#2}}
+\newcommand{\predsem}[3]{\llbracket #3\rrbracket^{#1}_{#2}}
 \newcommand{\RA}{\mathsf{RA}}
 \newcommand{\SUM}{\mathrm{SUM}}
 

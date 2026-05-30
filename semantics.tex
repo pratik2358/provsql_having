@@ -36,7 +36,7 @@ An \emph{aggregate function} is a function  $f:\Seq(\mathcal{V})\to\mathcal{V}$.
 \end{definition}
 
 Sen et al.~\cite{sen2026provsql} provide a provenance semantics over annotated
-relations for the multiset relational alegbra extended with
+relations for the multiset relational algebra extended with
 \emph{terminal} aggregation,
 itself based on that of
 \cite{green2007provenance,geerts2010database,amsterdamer2011provenance}.
@@ -75,115 +75,112 @@ value-tuples being ordered arbitrarily).
 where $U\setminus W$ denotes the occurrences of $U$ not retained
 in~$W$, and empty $\bigotimes$-products (resp.\ $\bigoplus$-sums) equal
 $\mathbb{1}$ (resp.\ $\mathbb{0}$).
+Moreover, given a term $t$ and an aggregate function $f$, the
+\emph{aggregate value} of $f$ over $t$ in~$W$ is
+\[
+\mathrm{agg}_{t,f}(W)\defeq f\bigl((t(u))_{(u,\alpha)\in W}\bigr),
+\]
+i.e., $f$ applied to the sequence of $t$-values of the tuples of~$W$.
 \end{definition}
 
-We now give the semantics of \emph{selection} over comparison predicates
-involving aggregate functions. For simplicity of presentation we first
-consider the case where the selection predicate is a single comparison;
-the last two clauses below extend it to Boolean combinations of
-predicates.
+We now give the semantics of \emph{selection} over comparison predicates.
+A term of a query evaluates, on a tuple, to an element of the value
+domain $\mathcal V_{\mathbb K}\supseteq\mathcal V$ of $\mathbb
+K$-relations (Section~\ref{sec:preliminaries}): besides the
+\emph{regular} values of $\mathcal V$, this domain contains the
+\emph{non-regular} values produced by aggregation, i.e., aggregate values
+represented as formal aggregations of sequences of pairs formed of a
+value and a semiring element (the straightforward extension of the
+semimodule values of~\cite{amsterdamer2011provenance}). Whether a
+comparison is \emph{ordinary} or involves \emph{aggregate values} is
+determined by the \emph{type} of the compared terms: it is ordinary when
+both sides are of regular type, and is an aggregate comparison as soon as
+one side is of non-regular type. For simplicity of presentation we give
+the semantics of a single comparison applied directly to a grouping; we
+then discuss the
+general case.
 
 \begin{definition}[Provenance of selection over aggregate comparisons]
 \label{def:semantics}
 Let $\hat I$ be a $\mathbb K$-instance, $k\in\NN$, $q\in\RA_k$, and let
 $\psi$ be a selection predicate over arity~$k$. To $\psi$ we associate a
-\emph{predicate provenance} $\predsem{\hat I}{q}{\psi}\colon\mathcal V^k\to\mathbb K$,
-defined by induction on the structure of~$\psi$.
+\emph{predicate provenance} $\predsem{\hat I}{q}{\psi}\colon\mathcal V_{\mathbb K}^k\to\mathbb K$.
+An atomic comparison $t\op t'$ is treated according to whether $t$ and
+$t'$ evaluate, on the tuples of $\angsem{\hat I}{q}$, to regular or to
+non-regular (aggregate) values.
 
-\smallskip\noindent\emph{Ordinary comparison.}
-If $\psi=(t\op t')$ with $t,t'$ terms of index $\le k$, then
-\[
-\predsem{\hat I}{q}{\psi}(u)\defeq \chi_{\op}\bigl(t(u),t'(u)\bigr).
-\]
-
-\smallskip\noindent\emph{Aggregate comparison.}
-If $\psi$ compares aggregate values, then $q$ is a grouping query
-$q=\gamma_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q')$ with
-$q'\in\RA_{k'}$, and $\psi=(t:f)\op(t':f')$ or $\psi=(t:f)\op t'$ with
-$t,t'$ of index $\le k'$. Fix a total order $\preceq$ sorting each group
-(irrelevant when $f,f'$ are commutative). For an output tuple
-$u=(\vec v,a_1,\dots,a_n)$ with group key $\vec v=(v_1,\dots,v_m)$, let
-$U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\,\vec v}$; then
-\[
+If $\psi=(t\op t')$ with $t,t'$ of regular type (their values lie in
+$\mathcal V$), then
+\(\predsem{\hat I}{q}{\psi}(u)\defeq \chi_{\op}\bigl(t(u),t'(u)\bigr).\)
+If $\psi=(t\op t')$ with at least one of $t,t'$ of non-regular type, we
+require $q$ to be a grouping query
+$q=\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q')$ with
+$q'\in\RA_{k'}$, whose order $\preceq$ is the one used for non-commutative
+aggregates (and is irrelevant otherwise); its output column $m+l$ holds
+the non-regular aggregate value of $f_l$ over $t_l$, for $1\le l\le n$. For an output tuple
+$u=(\vec v,b_1,\dots,b_n)$ with group key $\vec v=(v_1,\dots,v_m)$, let
+$U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\,\vec v}$. For a side
+$s\in\{t,t'\}$ and a possible world $W\sqsubseteq U$, its \emph{value
+in~$W$}, $\mathrm{val}_s(W)$, is defined as $\mathrm{agg}_{t_l,f_l}(W)$ if
+$s$ is the aggregate column $m+l$, and $s(u)$ if $s$ is of regular type.
+Then
+\(
 \predsem{\hat I}{q}{\psi}(u)\defeq
 \bigoplus_{\emptyset\neq W\sqsubseteq U}
 \ann_U(W)\otimes
-\chi_{\op}\!\Bigl(f\bigl((t(u'))_{(u',\alpha')\in W}\bigr),\; g_W\Bigr),
-\]
-where $g_W\defeq f'\bigl((t'(u'))_{(u',\alpha')\in W}\bigr)$ if
-$\psi=(t:f)\op(t':f')$, and $g_W\defeq t'(u)$ if $\psi=(t:f)\op t'$.
-
-\smallskip\noindent\emph{Boolean combinations.}
-For selection predicates $\psi_1,\psi_2$ and $u\in\mathcal V^k$,
-\[
-\predsem{\hat I}{q}{\psi_1\land\psi_2}(u)\defeq
-  \predsem{\hat I}{q}{\psi_1}(u)\otimes\predsem{\hat I}{q}{\psi_2}(u),
-\quad
-\predsem{\hat I}{q}{\psi_1\lor\psi_2}(u)\defeq
-  \predsem{\hat I}{q}{\psi_1}(u)\oplus\predsem{\hat I}{q}{\psi_2}(u),
-\quad
-\predsem{\hat I}{q}{\neg\psi}(u)\defeq
-  \mathbb 1\ominus\predsem{\hat I}{q}{\psi}(u).
-\]
+\chi_{\op}\bigl(\mathrm{val}_t(W),\,\mathrm{val}_{t'}(W)\bigr).
+\)
 
 \smallskip\noindent
-The selection $\sigma_\psi(q)$ is then annotated by
+The semantics of the selection operator $\sigma_\psi(q)$ becomes:
 \[
 \angsem{\hat I}{\sigma_\psi(q)}\defeq
 \begin{cases}
-\mset{\,(u,\ \alpha\otimes\predsem{\hat I}{q}{\psi}(u))\mid(u,\alpha)\in\angsem{\hat I}{q}\,}
-  & \text{if $\psi$ has no aggregate-comparison atom,}\\[1ex]
-\mset{\,(u,\ \predsem{\hat I}{q}{\psi}(u))\mid(u,\alpha)\in\angsem{\hat I}{q}\,}
+\mset{(u,\ \alpha)\mid(u,\alpha)\in\angsem{\hat I}{q}, \psi(u)}
+  & \text{if $\psi$ has no aggregate comparison,}\\[1ex]
+\mset{(u,\ \predsem{\hat I}{q}{\psi}(u))\mid(u,\alpha)\in\angsem{\hat I}{q}}
   & \text{otherwise.}
 \end{cases}
 \]
 \end{definition}
-In the second case the annotation $\alpha$ of the grouped tuple is
+The first case is identical to the selection semantics
+of~\cite{sen2026provsql}.
+In the second case the annotation~$\alpha$ is
 dropped: the possible-world sum ranges over non-empty worlds only, so it
 already enforces group existence (the role of the $\delta(\cdot)$-type
-factor $\alpha$), making the extra $\otimes\,\alpha$ redundant.
+factor $\alpha$), making the extra $\otimes$ by $\alpha$ redundant.
 
-% \pierre{What precedes need to be made more formal (e.g., there should be
-%   a formal definition of a semiring with~$\delta$, and of a semimodule,
-%   probably in the previous section; this
-%   is important, for example for now it is not really explained how an
-%   aggregation is defined -- a formal sum is not an element of a
-% semimodule; we should talk about semimodule elements of a given specific
-% form, or have a normal form for semimodule elements.)}
-% \rjok{done}
+\paragraph*{Boolean combinations.}
+For selection predicates $\psi_1,\psi_2$ and $u\in\mathcal V_{\mathbb K}^k$,
+\[
+\predsem{\hat I}{q}{\psi_1\land\psi_2}(u)\defeq
+  \predsem{\hat I}{q}{\psi_1}(u)\otimes\predsem{\hat I}{q}{\psi_2}(u);
+\:
+\predsem{\hat I}{q}{\psi_1\lor\psi_2}(u)\defeq
+  \predsem{\hat I}{q}{\psi_1}(u)\oplus\predsem{\hat I}{q}{\psi_2}(u);
+\:
+\predsem{\hat I}{q}{\neg\psi}(u)\defeq
+  \mathbb 1\ominus\predsem{\hat I}{q}{\psi}(u).
+\]
 
-% \begin{definition}[Possible-World Semantics]\label{def:pw_semantics}
-%   \pierre{Every definition needs to be self-contained, and not depend on
-%     external variables; so we should say something like ``For any
-%     m-semiring $K$, for any additive monoid $M$, for any finite set of variables
-%   $\mathbf{X}$\dots'''}
+\paragraph*{Selection not immediately following aggregation.}
+Definition~\ref{def:semantics} covers a comparison applied directly to a
+grouping, which is the typical \sql{HAVING}. More generally, a non-regular
+aggregate value produced by some $\gamma^{\preceq}$ may be carried, as an
+element of $\mathcal V_{\mathbb K}$, through further operators (projection,
+renaming, join, union, additional selections) before being compared; this
+is supported in our implementation, where the aggregate value is
+materialized as a gate in the provenance circuit and the comparison is evaluated
+downstream. The intended semantics is unchanged: the possible worlds
+relevant to such a comparison are still those of the group of the
+originating $\gamma^{\preceq}$, so the predicate provenance is the same
+possible-world sum, taken over that originating group and combined
+with the provenance accumulated along the operators traversed
+in between.
 
-% For any two aggregations $\mathdutchcal{u},\mathdutchcal{v}$, we define the comparison operator $\oslash$ at the semimodule level as,
-% \[
-% [\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\mathit{op}\in\{ =, \neq , >, <, \geq, \leq\}}:\mathcal{M} \times \mathcal{M} \rightarrow K
-% \]
-% as:
-% \begin{multline*}
-% [\mathdutchcal{u} \oslash \mathdutchcal{v}]_{\op}=
-% \bigoplus_{W\subseteq\mathbf{X}}
-% \Biggl(
-%   \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Bigr) \;\otimes\; \Bigl( \bigotimes_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(K)} \Bigr)
-% \otimes
-%   \chi_{\mathrm{op}}\bigl(  {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(M)}, {\bigplus_M}_{W\cap\mathrm{supp}(\mathdutchcal{v})} \mathbf{x}^{(M)}   \bigr)
-% \;\otimes\;\\
-%   \Biggl(\mathbb{1}_K \ominus \Biggl( \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \;\oplus\; \bigoplus_{(\mathbf{X}\setminus W)\cap\mathrm{supp}(\mathdutchcal{u})} \mathbf{x}^{(K)} \Biggr)\Biggr)
-% \Biggr)
-% \end{multline*}
-% where, for any two elements $a, b\in M$,
-% $\chi_{\op}(a,b)
-% =
-% \begin{cases}
-% \mathbb{1}_K & \text{if } a\op b\\
-% \mathbb{0}_K & \text{otherwise.}
-% \end{cases}$
-% \end{definition}
-
-% \pierre{We need to use these definitions to actually define a semantics
-% for the $\sigma$ operator when one of the column is the result of an
-% aggregation.}
-% \rjok{done}
+\paragraph*{Limitations.} Grouping and ordering only make sense for
+regular values from $\mathcal{V}$, not for aggregate values; queries
+aggregating or grouping over aggregate values are thus rejected.
+Extending the semantics to support such queries is non-trivial,
+as order interacts in complex ways with uncertainty and provenance
+\cite{DBLP:journals/tcs/AmarilliBDS19}.
