@@ -201,7 +201,14 @@ T_{U}(W)\otimes\bigl(\chi_{\ge}(|W|,C)\ominus\chi_{\ge}(|W|,C+1)\bigr)\\
 (T_{U}(W)\otimes\chi_{\ge}(|W|,C))\ominus(T_{U}(W)\otimes\chi_{\ge}(|W|,C+1)),
 \end{align*}
 by distributivity of $\otimes$ over $\ominus$.
-Summing over $W$ and using right-distributivity of $\ominus$ over $\oplus$ (which holds because absorptivity in $\mathbb K$ implies idempotence), we obtain
+Summing over $W$ and using right-distributivity of $\ominus$ over $\oplus$
+(Proposition~\ref{prop:idempotent_iff_add_monus}, in the finite form of
+Corollary~\ref{lem:finite-add-monus}; this holds because absorptivity in
+$\mathbb K$ implies idempotence), we obtain
+% TODO: Corollary~\ref{lem:finite-add-monus} is currently stated with a
+% fixed subtrahend $c$, whereas here the subtrahend varies with $W$. It
+% should be generalized to $(\bigoplus_i a_i)\ominus(\bigoplus_i b_i) =
+% \bigoplus_i (a_i\ominus b_i)$ so that it literally covers this step.
 \begin{align*}
 \angsem{\hat I}{Q^{=C}_1}(a)
 &=
