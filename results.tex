@@ -324,12 +324,22 @@ $
 $
 \end{proof}
 
-Note that this mismatch across m-semirings is to be expected: outside of
+This mismatch across m-semirings is to be expected: outside of
 the Boolean provenance world, semiring provenance depends on \emph{the way
 a query is written}, not just on query equivalence.
 Theorem~\ref{th:correctness} shows that our semantics is correct for
 Boolean provenance (the Boolean-function m-semiring is absorptive and has
-$\otimes$ distributive over $\ominus$) and generalizes this equivalence to
+$\otimes$ distributive over $\ominus$) and generalizes%
+\footnote{This is proper generalization: the Tropical
+  m-semiring over $\mathbb{N}$, the Viterbi m-semiring, the Łukasiewicz
+  m-semiring are all absorptive and have $\otimes$ distributive over
+  $\ominus$ (see Table~\ref{tab:semirings}) but there is no semiring
+  homomorphism from $\mathbb{B}[X]$ to either of them sending variables
+  of $X$ to arbitrary values
+  \lean{Semirings/Tropical}{TropicalN.no_hom_from_BoolFunc}
+  \lean{Semirings/Viterbi}{Viterbi.no_hom_from_BoolFunc}
+\lean{Semirings/Lukasiewicz}{Lukasiewicz.no_hom_from_BoolFunc}.}
+this equivalence to
 other m-semirings. For m-semirings that do not satisfy the conditions of
 the theorem, we simply choose the proposed semantics as an implementable
 semantics for the \sql{HAVING} clause.
@@ -711,7 +721,7 @@ evaluation:
 \begin{propositionrep}
   \label{prop:pqe-equiv}
   Let $Q$ be an extended relational algebra query with \sql{HAVING} and
-  let $I$ be an instance where each input tuple $u$ is associated with an
+  $I$ an instance where each tuple $u$ is associated with an
   independent probability $\Pr(u)\in [0,1]$. Then the probability
   $\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$, where $\hat I$ is a
   $\mathbb{B}[X]$-instance whose tuples are annotated with independent
@@ -869,5 +879,5 @@ subset-sum instance has a solution. The reduction is polynomial, which
 concludes.
 \end{proof}
 
-We shall see next, however, that we can isolate cases where the
+We shall see next that we can isolate cases where the
 semantics can be evaluated tractably.
