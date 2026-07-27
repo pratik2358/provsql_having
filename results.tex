@@ -211,7 +211,8 @@ G_C(U)=S_C(U)\ominus S_{C+1}(U),
 \end{equation}
 which does not follow from the $\ge$-case alone: it is proven by combining
 a per-world upper bound (Lemma~\ref{lem:world-bound}) with
-right-distributivity of $\ominus$ over~$\oplus$.
+right-distributivity of $\ominus$ over~$\oplus$
+\lean{Having}{Having.G_eq_S_monus_S}.
 
 On the one hand, Lemma~\ref{lem:world-bound}, applied with $j=C$, gives
 $T_U(W)\le S_C(U)\ominus S_{C+1}(U)$ for every world $W\sqsubseteq U$ with
@@ -250,7 +251,8 @@ therefore amounts to the identity
 \bigoplus_{\substack{W\sqsubseteq U,\\ 1\le|W|\le C}} T_{U}(W)
 =S_1(U)\ominus S_{C+1}(U),
 \end{equation}
-which is proven like \eqref{eq:exactly-C}.
+which is proven like \eqref{eq:exactly-C}
+\lean{Having}{Having.atMost_eq_S_monus_S}.
 Lemma~\ref{lem:world-bound}, now applied with $j=1$, gives
 $T_U(W)\le S_1(U)\ominus S_{C+1}(U)$ for every $W$ with $1\le|W|\le C$,
 whence
@@ -728,12 +730,13 @@ upper bound: the contribution $T_U(W)$ of a single world $W$ of size at
 most~$C$ is below the difference $S_j(U)\ominus S_{C+1}(U)$, for every
 level $j\le|W|$.
 \begin{lemmarep}[Per-world upper bound]\label{lem:world-bound}
+\lean{Having}{Having.world_bound}
 Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
 commutative absorptive m-semiring in which $\otimes$ distributes over
 $\ominus$, $U$ a finite set, and $(\alpha_w)_{w\in U}$ a family of
 elements of~$\mathbb K$, with $A_W$, $T_U(W)$, and $S_C(U)$ defined as in
 Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}. Then for
-every $W\subseteq U$ and all integers $j,C$ with $1\le j\le|W|\le C$,
+every $W\subseteq U$ and all integers $j,C$ with $j\le|W|\le C$,
 \[
 T_U(W)\ \le\ S_j(U)\ominus S_{C+1}(U).
 \]
