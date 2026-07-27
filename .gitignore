@@ -1,6 +1,9 @@
 *synctex.*
 *.pyg
 *.axp
+*.dot
+*-proofgraph.map
+*-proofgraph.plain
 *.aux
 *.glo
 *.idx

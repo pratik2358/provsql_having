@@ -58,10 +58,10 @@ with Monus}
 
 \newcommand\complexity[1]{\textsf{\upshape #1}}
 
-\newcommand\leanmain{\href{https://anonymousprovenance.github.io/Provenance.html}{\fbox{\includegraphics[height=.6em]{lean}}}}
-%\newcommand\leanmain{\href{https://provsql.org/lean-docs/Provenance.html}{\fbox{\includegraphics[height=.6em]{lean}}}}
-\newcommand\lean[2]{\href{https://anonymousprovenance.github.io/Provenance/#1.html\##2}{\fbox{\includegraphics[height=.6em]{lean}}}}
-%\newcommand\lean[2]{\href{https://provsql.org/lean-docs/Provenance/#1.html\##2}{\fbox{\includegraphics[height=.6em]{lean}}}}
+%\newcommand\leanmain{\href{https://anonymousprovenance.github.io/Provenance.html}{\fbox{\includegraphics[height=.6em]{lean}}}}
+\newcommand\leanmain{\href{https://provsql.org/lean-docs/Provenance.html}{\fbox{\includegraphics[height=.6em]{lean}}}}
+%\newcommand\lean[2]{\href{https://anonymousprovenance.github.io/Provenance/#1.html\##2}{\fbox{\includegraphics[height=.6em]{lean}}}}
+\newcommand\lean[2]{\href{https://provsql.org/lean-docs/Provenance/#1.html\##2}{\fbox{\includegraphics[height=.6em]{lean}}}}
 
 \newcommand{\pierre}[1]{{\color{magenta}[\textbf{Pierre:} #1]}}
 \newcommand{\sil}[1]{{\color{teal}[\textbf{Silviu:} #1]}}
@@ -69,6 +69,21 @@ with Monus}
 \newcommand{\sql}{\mintinline{postgresql}}
 
 \usepackage[appendix=append,bibliography=common]{apxproof}
+
+% Dependency graph of the results, deferred to the appendix. tikz is loaded
+% only so that the nodes of the embedded graph become clickable links to the
+% results they stand for; autorun renders the graph with Graphviz whenever it
+% changes (shell-escape is needed anyway for minted).
+\usepackage{tikz}
+\usepackage[autorun,cite,citelabel=tag]{proofgraph}
+% Results are declared with \newtheoremrep, so they live in the "rep" flavour of
+% each environment; style both flavours so either can be used.
+\newcommand\pgphstyle[2]{\proofgraphstyle{#1}{#2}\proofgraphstyle{#1rep}{#2}}
+\pgphstyle{theorem}{shape=box,style=filled,fillcolor=gold,penwidth=2}
+\pgphstyle{proposition}{shape=box,style="rounded,filled",fillcolor=lightblue}
+\pgphstyle{corollary}{shape=box,style="rounded,filled",fillcolor=palegoldenrod}
+\pgphstyle{lemma}{shape=ellipse,style=filled,fillcolor=lightgray}
+
 \newtheoremrep{theorem}{Theorem}
 \newtheoremrep{proposition}[theorem]{Proposition}
 \newtheoremrep{corollary}[theorem]{Corollary}
@@ -117,6 +132,22 @@ processing}
 \input{related_work}
 
 \input{conclusion}
+
+\begin{toappendix}
+  \section{Dependency Graph of the Results}
+  \label{sec:proofgraph}
+
+  Figure~\ref{fig:proofgraph} summarizes how the results of this paper depend
+  on one another.
+
+  \begin{figure}[htbp]
+    \centering
+    \proofgraph[width=\linewidth]
+    \caption{Dependency graph of the results of the paper: an arrow from $A$
+    to $B$ means that the proof of $B$ uses $A$.}
+    \label{fig:proofgraph}
+  \end{figure}
+\end{toappendix}
 
 \clearpage
 
