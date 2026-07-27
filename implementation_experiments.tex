@@ -13,8 +13,7 @@ true.
 
 Similarly, for \sql{SUM}, instead of running the dynamic programming up
 to the comparison constant $C$, the maximum tracked sum $J$ is defined in
-an optimized way (cf., lines 8--13 in Algorithm~\ref{alg:sum_dp}, for the
-case of nonnegative integers).
+an optimized way, in the case of nonnegative integers.
 We also eliminate iterations over sums that are not yet reachable at a
 particular DP-iteration, reducing early-stage DP cost. We exploit when
 possible the absorptive nature of the m-semiring.

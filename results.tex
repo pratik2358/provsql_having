@@ -786,14 +786,16 @@ T_U(W)=A_W\otimes(\mathbb 1\ominus E_W)
 \le S_j(U)\ominus S_{C+1}(U).\qedhere
 \]
 \end{proof}
-Note the order of the steps in this last derivation: bounding $A_W$ by
+Note the order of the steps in the proof of
+Lemma~\ref{lem:world-bound}: writing
+$E_W\defeq\bigoplus_{w\in U\setminus W}\alpha_w$, bounding $A_W$ by
 $S_j(U)$ \emph{directly inside the subtrahend} of
 $T_U(W)=A_W\ominus(A_W\otimes E_W)$ would move the monus in the wrong
 direction; the bound is instead applied to the factored form
-\eqref{eq:TW-factored}, whose second factor does not depend on $A_W$,
-and distributivity of $\otimes$ over $\ominus$ is only used afterwards,
-when the subtrahend has grown to $S_j(U)\otimes E_W$, which dominates
-$S_{C+1}(U)$.
+$T_U(W)=A_W\otimes(\mathbb 1\ominus E_W)$, whose second factor does not
+depend on $A_W$, and distributivity of $\otimes$ over $\ominus$ is only
+used afterwards, when the subtrahend has grown to $S_j(U)\otimes E_W$,
+which dominates $S_{C+1}(U)$.
 
 By Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}, both
 $F_C(U)$ and $S_C(U)$ satisfy the same include/exclude recurrence
