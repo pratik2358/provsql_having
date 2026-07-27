@@ -230,7 +230,7 @@ Proposition~\ref{prop:idempotent_iff_add_monus} and the third uses the
 induction hypothesis.
 \end{appendixproof}
 
-Finally, we show two elementary inequalities on the residual
+Finally, we show a few elementary consequences of the residual
 characterization of $\ominus$ in m-semirings.
 \begin{lemmarep}\label{lem:x-y<=x}
   \lean{SemiringWithMonus}{monus_le}
@@ -260,6 +260,19 @@ since $x\ominus y\le x\ominus y$ holds trivially, we obtain
 x \le y\oplus (x\ominus y),
 \]
 as required.
+\end{appendixproof}
+
+\begin{lemmarep}\label{lem:monus-antitone}
+  In any m-semiring $\mathbb K$,
+  $\forall x,y,y'\in\mathbb K$, if $y\le y'$ then $x\ominus y'\le
+  x\ominus y$.
+\end{lemmarep}
+
+\begin{appendixproof}
+  By Lemma~\ref{lem:x<=y+(x-y)}, $x\le y\oplus(x\ominus y)$. Since
+  $y\le y'$ and $\oplus$ is monotone with respect to the natural order,
+  $x\le y'\oplus(x\ominus y)$. The residuation law (see
+  Definition~\ref{def:m-semiring}) then gives $x\ominus y'\le x\ominus y$.
 \end{appendixproof}
 
 \paragraph*{Annotated relations and semantics}

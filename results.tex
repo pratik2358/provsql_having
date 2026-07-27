@@ -189,63 +189,88 @@ Thus $F_C(U)=S_C(U)$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(
 \angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
 \]
 \paragraph{\textbf{When $\op$ is $=$:}}
-For $n\in\mathbb N$ we have,
-$
-\chi_{=}(n,C)=\chi_{\ge}(n,C)\ \ominus\ \chi_{\ge}(n,C+1)
-$. Then for each $W\sqsubseteq U$,
-\begin{align*}
-T_{U}(W)\otimes \chi_{=}( |W|,C)
-&=
-T_{U}(W)\otimes\bigl(\chi_{\ge}(|W|,C)\ominus\chi_{\ge}(|W|,C+1)\bigr)\\
-&=
-(T_{U}(W)\otimes\chi_{\ge}(|W|,C))\ominus(T_{U}(W)\otimes\chi_{\ge}(|W|,C+1)),
-\end{align*}
-by distributivity of $\otimes$ over $\ominus$.
-Summing over $W$ and using right-distributivity of $\ominus$ over $\oplus$
-(Proposition~\ref{prop:idempotent_iff_add_monus}, in the finite form of
-Corollary~\ref{lem:finite-add-monus}; this holds because absorptivity in
-$\mathbb K$ implies idempotence), we obtain
-% TODO: Corollary~\ref{lem:finite-add-monus} is currently stated with a
-% fixed subtrahend $c$, whereas here the subtrahend varies with $W$. It
-% should be generalized to $(\bigoplus_i a_i)\ominus(\bigoplus_i b_i) =
-% \bigoplus_i (a_i\ominus b_i)$ so that it literally covers this step.
-\begin{align*}
+Since $\chi_{=}(n,C)$ is $\mathbb 1$ when $n=C$ and $\mathbb 0$ otherwise, the
+\sql{HAVING} side is simply the restriction of the sum to the worlds of size
+exactly~$C$:
+\[
 \angsem{\hat I}{Q^{=C}_1}(a)
-&=
-\bigoplus_{W\sqsubseteq U}\bigl(T_{U}(W)\otimes\chi_{=}( |W|,C)\bigr)\\
-&=
-\left(\bigoplus_{W\sqsubseteq U} T_{U}(W)\otimes\chi_{\ge}(|W|,C)\right)
-\ominus
-\left(\bigoplus_{W\sqsubseteq U} T_{U}(W)\otimes\chi_{\ge}(|W|,C+1)\right)\\
-&=
-\left(\bigoplus_{\substack{W\sqsubseteq U,\\|W|\ge C}} T_{U}(W)\right)
-\ominus
-\left(\bigoplus_{\substack{W\sqsubseteq U,\\|W|\ge C+1}} T_{U}(W)\right)\\
-&=
-\angsem{\hat I}{Q^{\ge C}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
-\end{align*}
-By the already established $\ge$-case,
-$\angsem{\hat I}{Q^{\ge C}_1}(a)=S_C(U)$ and $\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}(U)$. Therefore,
-$
-\angsem{\hat I}{Q^{=C}_1}(a)=S_C(U)\ominus S_{C+1}(U)=\angsem{\hat I}{Q^{=C}_2}(a)
-$ by $(J_{=,\le})$.
+=\bigoplus_{W\sqsubseteq U}\bigl(T_{U}(W)\otimes\chi_{=}(|W|,C)\bigr)
+=\bigoplus_{\substack{W\sqsubseteq U,\\ |W|=C}} T_{U}(W)
+\defeq G_C(U).
+\]
+On the join side, $(J_{=,\le})$ together with the already established
+$\ge$-case gives
+\[
+\angsem{\hat I}{Q^{=C}_2}(a)
+=\angsem{\hat I}{Q^{\ge C}_2}(a)\ominus\angsem{\hat I}{Q^{\ge(C+1)}_2}(a)
+=S_C(U)\ominus S_{C+1}(U).
+\]
+The $=$ case therefore amounts to the identity
+\begin{equation}\label{eq:exactly-C}
+G_C(U)=S_C(U)\ominus S_{C+1}(U),
+\end{equation}
+which does not follow from the $\ge$-case alone: it is proven by combining
+a per-world upper bound (Lemma~\ref{lem:world-bound}) with
+right-distributivity of $\ominus$ over~$\oplus$.
+
+On the one hand, Lemma~\ref{lem:world-bound}, applied with $j=C$, gives
+$T_U(W)\le S_C(U)\ominus S_{C+1}(U)$ for every world $W\sqsubseteq U$ with
+$|W|=C$; taking the $\oplus$-sum over all such $W$ yields
+$G_C(U)\le S_C(U)\ominus S_{C+1}(U)$.
+
+On the other hand, for every $W\sqsubseteq U$ with $|W|=C$, each summand of
+$P_W\defeq\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$ is an $A_V$ with
+$|V|=C+1$, so $P_W\le S_{C+1}(U)$ and, by antitonicity of $\ominus$ in its
+second argument (Lemma~\ref{lem:monus-antitone}),
+$A_W\ominus S_{C+1}(U)\le A_W\ominus P_W=T_U(W)$.
+Corollary~\ref{lem:finite-add-monus}, applied to
+$S_C(U)=\bigoplus_{|W|=C}A_W$ with the \emph{fixed} subtrahend $S_{C+1}(U)$
+(legitimate because absorptivity implies idempotence), then yields
+\[
+S_C(U)\ominus S_{C+1}(U)
+=\bigoplus_{\substack{W\sqsubseteq U,\\|W|=C}}\bigl(A_W\ominus S_{C+1}(U)\bigr)
+\le\bigoplus_{\substack{W\sqsubseteq U,\\|W|=C}}T_U(W)=G_C(U).
+\]
+This proves \eqref{eq:exactly-C}, whence
+$\angsem{\hat I}{Q^{=C}_1}(a)=\angsem{\hat I}{Q^{=C}_2}(a)$.
+
 \paragraph{\textbf{When $\op$ is $\le$:}}
-For $n\ge 1$ we have $\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ \ominus\ \chi_{\ge}(n,C+1)$. Indeed, for $n\ge 1$ the condition $n\le C$ is equivalent to $n\ge 1$ and not $n\ge C+1$. Since groups produced by $\gamma^{\preceq}_{\#1}$ are non-empty, only $n=|W|\ge 1$ occurs.
-Repeating the same argument as in the case where $\op$ is $=$, we obtain
+Since groups produced by $\gamma^{\preceq}_{\#1}$ are non-empty, only
+$n=|W|\ge 1$ occurs, and for such $n$ the condition $n\le C$ is equivalent to
+$n\ge 1$ and not $n\ge C+1$. As in the $=$ case, the \sql{HAVING} side is the
+restriction of the sum to the worlds of size between $1$ and~$C$,
 \[
 \angsem{\hat I}{Q^{\le C}_1}(a)
-=
-\angsem{\hat I}{Q^{\ge 1}_1}(a)\ \ominus\ \angsem{\hat I}{Q^{\ge (C+1)}_1}(a).
+=\bigoplus_{\substack{W\sqsubseteq U,\\ 1\le|W|\le C}} T_{U}(W),
 \]
-By the $\ge$-case, $\angsem{\hat I}{Q^{\ge 1}_1}(a)=S_1(U)$ and
-$\angsem{\hat I}{Q^{\ge (C+1)}_1}(a)=S_{C+1}(U)$. Hence
-$
-\angsem{\hat I}{Q^{\le C}_1}(a)
-=
+while $(J_{=,\le})$ and the $\ge$-case give
+$\angsem{\hat I}{Q^{\le C}_2}(a)=S_1(U)\ominus S_{C+1}(U)$. The $\le$ case
+therefore amounts to the identity
+\begin{equation}\label{eq:at-most-C}
+\bigoplus_{\substack{W\sqsubseteq U,\\ 1\le|W|\le C}} T_{U}(W)
+=S_1(U)\ominus S_{C+1}(U),
+\end{equation}
+which is proven like \eqref{eq:exactly-C}.
+Lemma~\ref{lem:world-bound}, now applied with $j=1$, gives
+$T_U(W)\le S_1(U)\ominus S_{C+1}(U)$ for every $W$ with $1\le|W|\le C$,
+whence
+$\bigoplus_{1\le|W|\le C}T_U(W)\le S_1(U)\ominus S_{C+1}(U)$.
+Conversely, since $F_1(U)=S_1(U)$ by the $\ge$-case,
+Corollary~\ref{lem:finite-add-monus} yields
+\[
 S_1(U)\ominus S_{C+1}(U)
-=
-\angsem{\hat I}{Q^{\le C}_2}(a)
-$ by $(J_{=,\le})$.
+=\bigoplus_{\substack{W\sqsubseteq U,\\|W|\ge 1}}\bigl(T_U(W)\ominus S_{C+1}(U)\bigr).
+\]
+For $|W|\ge C+1$, we have $T_U(W)\le A_W\le A_{W'}\le S_{C+1}(U)$ where
+$W'$ is any subset of $W$ with $|W'|=C+1$ (using
+Lemma~\ref{lem:x-y<=x}, then the fact that in an absorptive m-semiring
+products only decrease as factors are added), so
+$T_U(W)\ominus S_{C+1}(U)=\mathbb 0$ by the residuation law; for
+$1\le|W|\le C$, $T_U(W)\ominus S_{C+1}(U)\le T_U(W)$ by
+Lemma~\ref{lem:x-y<=x}. Hence
+$S_1(U)\ominus S_{C+1}(U)\le\bigoplus_{1\le|W|\le C}T_U(W)$, proving
+\eqref{eq:at-most-C} and thus
+$\angsem{\hat I}{Q^{\le C}_1}(a)=\angsem{\hat I}{Q^{\le C}_2}(a)$.
 
 \smallskip
 Since group key $(a)$ was arbitrary, we conclude
@@ -375,14 +400,15 @@ around three quantities:
   $A_W$, the projection $\Pi_{\#1}$ repeats the key~$(a)$, and
   $\varepsilon$ merges these occurrences by~$\oplus$.
 \end{itemize}
-The $=$ and $\le$ cases reduce to the $\ge$ case: from
-$\chi_{=}(n,C)=\chi_{\ge}(n,C)\ominus\chi_{\ge}(n,C+1)$ and
-$\chi_{\le}(n,C)=\chi_{\ge}(n,1)\ominus\chi_{\ge}(n,C+1)$, together with
+For the $=$ and $\le$ cases, the \sql{HAVING} side is the restriction of
+the possible-world sum to the worlds of size exactly~$C$ (resp.\ between
+$1$ and~$C$), while the join side, from
 $Q^{=C}_2=Q^{\ge C}_2 - Q^{\ge(C+1)}_2$ and
-$Q^{\le C}_2=Q^{\ge1}_2 - Q^{\ge(C+1)}_2$, both sides turn into the
-same differences ($F_C\ominus F_{C+1}$ on the \sql{HAVING} side versus
-$S_C\ominus S_{C+1}$ on the join side, and likewise $F_1\ominus F_{C+1}$
-versus $S_1\ominus S_{C+1}$). Hence it suffices to prove $F_C(U)=S_C(U)$.
+$Q^{\le C}_2=Q^{\ge1}_2 - Q^{\ge(C+1)}_2$, is the difference
+$S_C\ominus S_{C+1}$ (resp.\ $S_1\ominus S_{C+1}$); their equality
+follows from the $\ge$ case together with a per-world upper bound
+(Lemma~\ref{lem:world-bound} below). Hence the main task is to prove
+$F_C(U)=S_C(U)$.
 
 The order $\preceq$ plays no further role: $A_W$, $T_U(W)$, $F_C(U)$ and
 $S_C(U)$ depend only on \emph{which} occurrences are selected, not on their
@@ -697,6 +723,75 @@ S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr),
 \]
 as required.
 \end{proof}
+The last ingredient, used for the $=$ and $\le$ cases, is a per-world
+upper bound: the contribution $T_U(W)$ of a single world $W$ of size at
+most~$C$ is below the difference $S_j(U)\ominus S_{C+1}(U)$, for every
+level $j\le|W|$.
+\begin{lemmarep}[Per-world upper bound]\label{lem:world-bound}
+Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+commutative absorptive m-semiring in which $\otimes$ distributes over
+$\ominus$, $U$ a finite set, and $(\alpha_w)_{w\in U}$ a family of
+elements of~$\mathbb K$, with $A_W$, $T_U(W)$, and $S_C(U)$ defined as in
+Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}. Then for
+every $W\subseteq U$ and all integers $j,C$ with $1\le j\le|W|\le C$,
+\[
+T_U(W)\ \le\ S_j(U)\ominus S_{C+1}(U).
+\]
+\end{lemmarep}
+
+\begin{proof}
+First note that, since $\mathbb K$ is absorptive, every $y\in\mathbb K$
+satisfies $y\le\mathbb 1$, so by monotonicity of $\otimes$ (a consequence
+of its distributivity over $\oplus$) we have $x\otimes y\le x$ for all
+$x,y$: products only decrease as factors are added.
+
+Write $E_W\defeq\bigoplus_{w\in U\setminus W}\alpha_w$. By distributivity
+of $\otimes$ over $\oplus$,
+$\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}=A_W\otimes E_W$, so by
+distributivity of $\otimes$ over $\ominus$,
+\begin{equation}\label{eq:TW-factored}
+T_U(W)=A_W\ominus(A_W\otimes E_W)=A_W\otimes(\mathbb 1\ominus E_W).
+\end{equation}
+
+We now make two observations.
+
+\emph{(1) $A_W\le S_j(U)$.} Choose any $W'\subseteq W$ with $|W'|=j$.
+Then $A_W=A_{W'}\otimes A_{W\setminus W'}\le A_{W'}\le S_j(U)$, the last
+step because $A_{W'}$ is one of the summands of $S_j(U)$.
+
+\emph{(2) $S_{C+1}(U)\le S_j(U)\otimes E_W$.} Let $V\subseteq U$ with
+$|V|=C+1$ (if no such $V$ exists, $S_{C+1}(U)=\mathbb 0$ and the claim is
+trivial). Since $|V|>|W|$, there is some $v\in V\setminus W$, and since
+$|V\setminus\{v\}|=C\ge j$, there is some $V'\subseteq V\setminus\{v\}$
+with $|V'|=j$. Then
+\[
+A_V=A_{V'}\otimes\alpha_v\otimes A_{V\setminus(V'\cup\{v\})}
+\le A_{V'}\otimes\alpha_v\le S_j(U)\otimes E_W,
+\]
+using $A_{V'}\le S_j(U)$, $\alpha_v\le E_W$ (as $v\in U\setminus W$), and
+monotonicity of $\otimes$. Taking the $\oplus$-sum over all such $V$
+(idempotence) proves the claim.
+
+Combining: by \eqref{eq:TW-factored}, observation (1) and monotonicity of
+$\otimes$, then distributivity of $\otimes$ over $\ominus$, then
+observation (2) and antitonicity of $\ominus$ in its second argument
+(Lemma~\ref{lem:monus-antitone}),
+\[
+T_U(W)=A_W\otimes(\mathbb 1\ominus E_W)
+\le S_j(U)\otimes(\mathbb 1\ominus E_W)
+= S_j(U)\ominus\bigl(S_j(U)\otimes E_W\bigr)
+\le S_j(U)\ominus S_{C+1}(U).\qedhere
+\]
+\end{proof}
+Note the order of the steps in this last derivation: bounding $A_W$ by
+$S_j(U)$ \emph{directly inside the subtrahend} of
+$T_U(W)=A_W\ominus(A_W\otimes E_W)$ would move the monus in the wrong
+direction; the bound is instead applied to the factored form
+\eqref{eq:TW-factored}, whose second factor does not depend on $A_W$,
+and distributivity of $\otimes$ over $\ominus$ is only used afterwards,
+when the subtrahend has grown to $S_j(U)\otimes E_W$, which dominates
+$S_{C+1}(U)$.
+
 By Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}, both
 $F_C(U)$ and $S_C(U)$ satisfy the same include/exclude recurrence
 $X_C(U)=X_C(U')\oplus\bigl(X_{C-1}(U')\otimes\alpha_u\bigr)$ for any
@@ -708,8 +803,15 @@ this is the single point requiring absorptivity rather than just the
 idempotence it implies
 \lean{Having}{Having.F_zero_eq_one}. Together with the base case
 $|U|=0$, induction on $|U|$ then gives $F_C(U)=S_C(U)$
-\lean{Having}{Having.F_eq_S}. With the reduction of the $=$ and $\le$
-cases noted above, this yields
+\lean{Having}{Having.F_eq_S}, settling the $\ge$ case. For the $=$ case,
+Lemma~\ref{lem:world-bound} with $j=C$ bounds the contribution of each
+world of size~$C$ by $S_C(U)\ominus S_{C+1}(U)$, while
+right-distributivity of $\ominus$ over $\oplus$
+(Corollary~\ref{lem:finite-add-monus}, with fixed subtrahend
+$S_{C+1}(U)$) and antitonicity of $\ominus$
+(Lemma~\ref{lem:monus-antitone}) give the converse inequality; the
+$\le$ case is proven in the same way, using
+Lemma~\ref{lem:world-bound} with $j=1$ and $F_1(U)=S_1(U)$. This yields
 $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
 $\op\in\{\ge,=,\le\}$; since the group key~$a$ was arbitrary, this
 proves~(i). For~(ii) and~(iii) we exhibit counterexamples in the
@@ -808,12 +910,17 @@ Unsurprisingly, in semirings whose annotations may be \emph{independent
 generators} (so that distinct possible worlds carry distinct, non-cancelling
 annotations), evaluating the \sql{HAVING} semantics is intractable. This is
 the case of the provenance semirings $\mathbb{B}[X]$ and $\mathbb{N}[X]$, for
-which deciding whether a provenance is non-zero is NP-complete.
+which deciding whether a provenance is non-zero is NP-complete, and this
+already in \emph{data} complexity, i.e., for a single fixed query.
 
 \begin{propositionrep}\label{prop:having-nphard}
   For $\mathbb{K}\in\{\mathbb{B}[X],\mathbb{N}[X]\}$, deciding whether the
   provenance of a Boolean \sql{HAVING} query over a $\mathbb{K}$-instance is
-  non-$\mathbb{0}_\mathbb{K}$ is NP-complete.
+  non-$\mathbb{0}_\mathbb{K}$ is NP-complete. Membership holds in combined
+  complexity, and hardness already in data complexity: there is a fixed
+  Boolean \sql{HAVING} query~$q$ such that deciding, given a
+  $\mathbb{K}$-instance~$\hat I$ as sole input, whether the provenance
+  of~$q$ over~$\hat I$ is non-$\mathbb{0}_\mathbb{K}$, is NP-hard.
 \end{propositionrep}
 
 \begin{proof}
@@ -837,43 +944,54 @@ which deciding whether a provenance is non-zero is NP-complete.
   with a derivation witnessing that it occurs in the resulting polynomial.
   Both certificates are polynomial-sized and checkable in polynomial time, so
   this non-deterministic procedure accepts exactly when the provenance is
-  non-$\mathbb{0}_\mathbb{K}$.
+  non-$\mathbb{0}_\mathbb{K}$. The procedure takes the query and the instance
+  as input, so membership holds in combined complexity, hence a fortiori in
+  data complexity for every fixed query.
 
   \emph{Hardness.} We reduce from subset-sum \cite{DBLP:conf/coco/Karp72}, a
   classic NP-hard problem: given a finite multiset $M=\mset{m_1,\dots,m_n}$ of
   natural numbers and a positive integer $B$, decide whether some
   sub-multiset of $M$ sums to exactly~$B$.
 
-  We construct a $\mathbb{K}$-instance $I$ formed of a unary relation $R(v)$
-  containing the $n$ tuples $(m_1),\dots,(m_n)$, annotating tuple $(m_i)$ with
-  a \emph{distinct variable} $x_i$, and fix the query
+  The reduction outputs an \emph{instance only}: the query below is fixed
+  once and for all, and the target~$B$ is carried by the data. We construct a
+  $\mathbb{K}$-instance $\hat I$ formed of a binary relation $R(b,v)$
+  containing the $n$ tuples $(B,m_1),\dots,(B,m_n)$, annotating tuple
+  $(B,m_i)$ with a \emph{distinct variable} $x_i$, and take the query
   \begin{minted}{postgresql}
-q: SELECT DISTINCT 1 FROM R HAVING SUM(v) = B
+q: SELECT DISTINCT 1 FROM R GROUP BY b HAVING SUM(v) = b
   \end{minted}
   that is, in our extended relational algebra,
   \[
     q=\Pi_{1}\bigl(
-        \sigma_{\#1=B}\bigl(\gamma^{\preceq}[\#1{:}f_{\mathrm{SUM}}](R)\bigr)
+        \sigma_{\#2=\#1}\bigl(
+          \gamma^{\preceq}_{\#1}[\#2{:}f_{\mathrm{SUM}}](R)\bigr)
       \bigr),
   \]
-  where $\gamma^{\preceq}[\#1{:}f_{\mathrm{SUM}}]$ groups all of $R$ into a
-  single group and aggregates its $v$-values with \sql{SUM},
-  $\sigma_{\#1=B}$ retains this group when the sum equals~$B$, and $\Pi_1$
-  projects onto the constant~$1$ (the order $\preceq$ being
-  irrelevant since \sql{SUM} is commutative).
+  where $\gamma^{\preceq}_{\#1}[\#2{:}f_{\mathrm{SUM}}]$ groups $R$ by its
+  first column and aggregates the $v$-values of each group with \sql{SUM}, so
+  that an output tuple is $(b,s)$ with $b$ the group key and $s$ the
+  aggregate column; $\sigma_{\#2=\#1}$ compares the aggregate column with the
+  regular column~$\#1$, which Definition~\ref{def:semantics} permits since
+  the value in a world~$W$ of a side of regular type is $s(u)$, a data value
+  read off the output tuple rather than a query constant; and $\Pi_1$
+  projects onto the constant~$1$ (the order $\preceq$ being irrelevant since
+  \sql{SUM} is commutative).
 
+  All $n$ tuples carry the same group key~$B$, so there is a single group.
   Following Definition~\ref{def:semantics}, and writing
-  $U\defeq U^{\preceq}_{\angsem{I}{R},()}$, the provenance of the
+  $U\defeq U^{\preceq}_{\angsem{\hat I}{R},(B)}$, the provenance of the
   result $(1)$ is
 \[
    P\defeq\bigoplus_{\emptyset\neq W\sqsubseteq U}
   \ann_U(W)\otimes
-  \chi_{=}\bigl(\mathrm{agg}_{\#1,f_{\mathrm{SUM}}}(W),\ B\bigr)
+  \chi_{=}\bigl(\mathrm{agg}_{\#2,f_{\mathrm{SUM}}}(W),\ B\bigr)
 =
-\bigoplus_{\substack{\emptyset\neq W\sqsubseteq U\\ \sum_{(u,\alpha)\in W} u=B}}
+\bigoplus_{\substack{\emptyset\neq W\sqsubseteq U\\ \sum_{(u,\alpha)\in W} u_2=B}}
 \ann_U(W),
 \]
-where $f_{\mathrm{SUM}}$ denotes the \sql{SUM} aggregate. Each possible world
+where $f_{\mathrm{SUM}}$ denotes the \sql{SUM} aggregate and $u_2$ the
+$v$-value of the tuple~$u$. Each possible world
 $W$ is a sub-multiset of~$M$, and because the $x_i$ are distinct variables its
 annotation is non-$\mathbb{0}_\mathbb{K}$ and the worlds do not cancel: in
 $\mathbb{B}[X]$, $\ann_U(W)=\bigwedge_{i\in W}x_i\wedge\bigwedge_{i\notin
@@ -882,8 +1000,9 @@ $\mathbb{1}\ominus\bigoplus_{i\notin W}x_i$ reduces to $\mathbb{1}$ (the
 excluded variables have no constant term), so $\ann_U(W)=\bigotimes_{i\in
 W}x_i$ are distinct monomials. Hence $P\neq\mathbb{0}_\mathbb{K}$ if and only
 if some non-empty sub-multiset of~$M$ sums to~$B$, i.e., if and only if the
-subset-sum instance has a solution. The reduction is polynomial, which
-concludes.
+subset-sum instance has a solution. The reduction is polynomial and, the
+query~$q$ being independent of the subset-sum instance, it establishes
+hardness in data complexity, which concludes.
 \end{proof}
 
 We shall see next that we can isolate cases where the
