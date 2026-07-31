@@ -128,24 +128,41 @@ this comparison with the example.
 reviewer is right that this is not the usual formulation, and we should
 have justified it. In the usual one a K-relation is a function on tuple
 values, so there is exactly one entry per value and multiplicity, when it
-is wanted, is pushed into the annotation, as in ℕ or ℕ[X]. That is
-adequate in theory but not for a system computing provenance for actual
-SQL, which is evaluated under bag semantics: a projection such as SELECT
+is wanted, is pushed into the annotation, as in ℕ or ℕ[X].
+
+The first reason is aggregation itself, and it has nothing to do with
+provenance: an aggregate is computed on the occurrences of a group, not
+on its distinct values. On a group where the attribute a takes the value
+5 three times, SUM(a) is 15 and COUNT(*) is 3, whereas the function
+formulation offers a single entry for the value 5. The multiplicity has
+to be recorded somewhere, and [6] records it in the annotation: their
+aggregate value is the semimodule sum k1 ⊠ m1 + … + kn ⊠ mn over the
+distinct values, in which the annotation acts on the value. This works,
+but under a condition they make explicit: K and the aggregation monoid M
+must be compatible, i.e. ι: M → K ⊗ M must be injective, and when ⊕ is
+idempotent a compatible M is idempotent as well [6, Proposition 3.11];
+already in B ⊗ SUM, ι(4) = ι(2) + ι(2) = ι(2). A non-idempotent
+aggregate such as SUM or COUNT thus requires a semiring admitting a
+homomorphism to ℕ [6, Theorem 3.13]. But absorptive semirings are
+idempotent (take b = 1 in a ⊕ (a ⊗ b) = a), and so is B[X], which we
+need for probabilistic evaluation: COUNT(*) is exactly a non-idempotent
+aggregate over an idempotent semiring, and the annotations cannot carry
+the multiplicities for us. We keep them in the data instead, a group
+being a sequence of occurrences and annotations being attached to
+possible worlds W ⊑ U rather than folded into the aggregate value, so
+that idempotence of ⊕ costs nothing: it is W that records how many
+occurrences are counted.
+
+The second reason is that a system computing provenance for actual SQL
+must follow bag semantics: a projection such as SELECT
 a FROM R turns two distinct rows of R agreeing on a into two occurrences
-of a single value tuple, carrying different provenance x1 and x2. A
-function into K has to merge them into one entry annotated x1 ⊕ x2, and
-that merge is faithful only in semirings that encode multiplicity. It is
-not faithful in B[X], where x1 ⊕ x2 records merely that the tuple is
-present under x1 or under x2, and B[X] is exactly the semiring needed for
-Boolean provenance and for probabilistic evaluation (Proposition 17).
-HAVING is what makes the loss observable: on the merged entry the group
-has a single member, so COUNT(*) >= 2 gives the semiring zero, whereas on
-the two occurrences it gives x1 ∧ x2. This is why the setting of [31,
+of a single value tuple, carrying different provenance x1 and x2, which
+a function into K has to merge into one entry annotated x1 ⊕ x2. HAVING
+is what makes the loss observable: on the merged entry the group has a
+single member, so COUNT(*) >= 2 gives the semiring zero in B[X], whereas
+on the two occurrences it gives x1 ∧ x2. This is why the setting of [31,
 Section IV], which we inherit, keeps occurrences distinct, each with its
-own provenance identifier. A second and independent reason is that our
-aggregate functions take sequences of values as input, so we must be able
-to speak of the occurrences of a group and of their order, which a
-function into K does not provide. We will spell this out.
+own provenance identifier. We will spell all of this out.
 
 4. Line 143, human-readable proofs for Table 1. The reviewer is right
 that they are not in the appendix: the table is verified in Lean only,
