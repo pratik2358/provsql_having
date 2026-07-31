@@ -43,19 +43,19 @@ The algorithms can also be used to evaluate provenance for comparisons between t
   \Output{$\mathcal W =\{\,W\sqsubseteq U\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}$}
   \BlankLine
   \Fn{\textsc{ValidSum}$(U,t,C,\op, \preceq)$}{
-  \If{$\op = \neq$}{
+  \If{$\op$ is $\neq$}{
     \Return $\textsc{ValidSum}(U,t,C,<, \preceq) \cup \textsc{ValidSum}(U,t,C,>, \preceq)$\;
   }
  \BlankLine
   Let $((u_r,\alpha_r))_{r \in [|U|]}$ be the occurrences of $U$ ordered by $\preceq$\\
   $T \gets \mathrm{agg}_{t,f_\Sigma}([|U|]) = \sum_{r=1}^{|U|} t(u_r)$\;
-  \If{$(\op = = \textbf{ and } C > T)$ \textbf{or} $(\op = > \textbf{ and } C \ge T)$ \textbf{or} $(\op = \ge \textbf{ and } C > T)$ \textbf{or} $(\op = < \textbf{ and } C = 0)$}{
+  \If{($\op$ is $=$ \textbf{and} $C > T$) \textbf{or} ($\op$ is $>$ \textbf{and} $C \ge T$) \textbf{or} ($\op$ is $\ge$ \textbf{and} $C > T$) \textbf{or} ($\op$ is $<$ \textbf{and} $C = 0$)}{
     \Return $\emptyset$\;
   }
   \If{$\op\in\{>,\ge\}$}{
     $J \gets T$\;
   }
-  \ElseIf{$\op=<$}{
+  \ElseIf{$\op$ is $<$}{
     $J \gets \min(C-1,\ T)$\;
   }
   \Else{
@@ -88,16 +88,16 @@ The algorithms can also be used to evaluate provenance for comparisons between t
   }
 
   \BlankLine
-  \If{$\op = =$}{
+  \If{$\op$ is $=$}{
     $\mathcal W \leftarrow dp[C]$\;
   }
-  \ElseIf{$\op = >$}{
+  \ElseIf{$\op$ is $>$}{
     $\mathcal W \leftarrow \bigcup_{j=C+1}^{J} dp[j]$\;
   }
-  \ElseIf{$\op = <$}{
+  \ElseIf{$\op$ is $<$}{
     $\mathcal W \leftarrow \bigcup_{j=0}^{C-1} dp[j]$\;
   }
-  \ElseIf{$\op = \ge$}{
+  \ElseIf{$\op$ is $\ge$}{
     $\mathcal W \leftarrow \bigcup_{j=C}^{J} dp[j]$\;
   }
   \Else{
@@ -134,8 +134,8 @@ Write
   T\defeq \mathrm{agg}_{t,f_\Sigma}([|U|])=\sum_{r=1}^{|U|} t(u_r).
 \]
 
-\smallskip\noindent\textbf{Case $\op=\neq$.}
-If $\op=\neq$, the algorithm returns
+\smallskip\noindent\textbf{Case $\op$ is $\neq$.}
+If $\op$ is $\neq$, the algorithm returns
 \[
 \textsc{ValidSum}(U,t,C,<, \preceq)\cup\textsc{ValidSum}(U,t,C,>, \preceq).
 \]
@@ -149,7 +149,7 @@ Since for every integer $x$ one has $x\neq C$ iff $x<C$ or $x>C$, the latter uni
 \[
   \{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W}t(u_r)\neq C\,\}.
 \]
-Hence the theorem holds for $\op=\neq$.
+Hence the theorem holds when $\op$ is $\neq$.
 
 \smallskip\noindent
 The remainder of the proof establishes correctness for $\op\in\{=,>,<,\ge,\le\}$.

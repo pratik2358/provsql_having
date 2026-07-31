@@ -216,7 +216,7 @@ Definition~\ref{def:semantics} covers a comparison applied directly to a
 grouping, which is the typical \sql{HAVING}. More generally, a non-regular
 aggregate value produced by some $\gamma^{\preceq}$ may be carried, as an
 element of $\mathcal V_{\mathbb K}$, through further operators (projection,
-renaming, join, union, additional selections) before being compared; this
+join, union, additional selections) before being compared; this
 is supported in our implementation, where the aggregate value is
 materialized as a gate in the provenance circuit and the comparison is evaluated
 downstream. The intended semantics is unchanged: the possible worlds
