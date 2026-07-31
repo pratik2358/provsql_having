@@ -1,0 +1,198 @@
+Dear Pierre,
+
+Thank you for your submission to PODS2027. The PODS2027 rebuttal period will be between July 29 and Aug 1 AoE.
+
+During this time, you will have access to the current state of your reviews and have the opportunity to submit a response. Please keep in mind the following during this process:
+
+  - The response must focus on any factual errors in the reviews and any questions posed by the reviewers. It must not provide new research results or reformulate the presentation. Try to be as concise and to the point as possible.
+  - The reviews are as submitted by the PC members, with minimal if any coordination between them. Thus, there may be inconsistencies. Furthermore, these are not the final versions of the reviews. The reviews can later be updated to take into account the discussions at the program committee meeting, and we may find it necessary to solicit other outside reviews after the rebuttal period.
+  - The program committee will read your responses carefully and take this information into account during the discussions. On the other hand, the program committee will not directly respond to your responses and may not be textually reflected in the final versions of the reviews.
+  - Your response will be seen by all PC members who have access to the discussion of your paper, so please try to be polite and constructive.
+
+The reviews on your paper are attached to this letter. To submit your response you should log on the EasyChair Web page for PODS2027 and select your submission on the menu.
+
+Best regards,
+EasyChair
+
+Please be aware that this is an unmonitored email alias, so please do not reply to this email
+To contact EasyChair use our contact page https://easychair.org/contact.
+
+----------------------- REVIEW 1 ---------------------
+
+SUBMISSION: 3003
+TITLE: Provenance of HAVING Queries in Semirings with Monus
+
+----------- Overall evaluation -----------
+SCORE: -2 (reject)
+----- TEXT:
+Paper introduces an approach to provenance for query with HAVING, building heavily upon earlier work [31].  The nice thing is that the authors are perfectly familiar with all the related and previous work (and correct some wrong statements).  The actual framework proposed is very general, but very heavy and unattractive.  The main semantics definitions 10 and 11 are quite horrendous and lack motivation.
+
+There are results and algorithms on computing the annotation propagation efficiently under favorable conditions on the semirings or the queries, but I am not convinced by the framework in itself, nor by the writing and presentation of the paper.
+
+Section 2 is great, but it goes downhill after that.
+
+General comments:
+
+The previous work [31] only did it for "terminal" aggregation, you say, but it would have been nice to recall what that entails and why adding HAVING is so much better.
+
+Also any clear comparison to Amsterdamer, Deutch, Tannen, with convincing examples of what does not work well with their approach but works well with yours, is missing.
+
+You define an annotated relation as a subset (or even multiset) over V_K^k x K.  So it does not have to be a partial function from V_K^k to K?  That is nonstandard, right?  Also, please motivate why one would want a multiset?  Normally we use counts to represent a multiset, but in your framework already the underlying relation can already be a multiset?  Can you motivate the need for this?
+
+Detailed comments:
+
+Line 143, do you also have human-readable proofs for Table 1? I couldn't find them in the Appendix.
+
+Line 226, a star is a rather poor choice of symbol for a comparison operator?
+
+In Definition 10 you suddenly talk about a multiset of annotated tuples, is that the same thing as what you call a K-relation on page 4?
+
+Definition 10, what is a "sequence of tuples taken with their multiplicity"?  In the expression for ann_U(W), you don't seem to do anything with these multiplicities.  Also, in that expression, I take you mean to do the multiplications over (u,alpha) in W of alpha in the order as they appear in the sequence W?  It would be good to note that explicitly.
+
+Definition 10, the terminology "value part" is only used here.  Please try to use more consistent formalism, notation, terminology.
+
+In Definition 10, where does W come from?  The reader does not receive any intuition.
+
+The discussion preceding Definition 11 is unclear and lacks a rigorous description of what is assumed about the syntax and type system for terms.
+
+It also does not seem to be consistent with Definition 11, which suggests that whether a comparison is ordinary or not is treated based on the values of its arguments, and not based on the types of the terms.  
+
+Definition 11 uses the terminology "regular" for comparison, in the preceding discussion it is "ordinary".  It clarifies that regular means, values in V, but if I take, for example, the sum of three ordinary values, that can still be an ordinary value in itself?  To make a joke out of it, is 42 an ordinary value or an aggregate value?  I am mightily confused here.
+
+In Definition 11 you use the notation gamma for a grouping operator, which bizarrely, you did not actually define like that in Definition 10.
+
+In Definition 11, you consider the case where "s is the aggregate column m+l", but, before, s was announced to be a term?
+
+Example 12 is again hard to follow, it uses notations \vec v, u1, u2, u3, and u, which I understand are all the same thing?  
+
+I cannot understand (and found no explanations in the paper) why possible worlds are needed.  The grouping is done on the value tuples.  There is no incomplete information.  So in my way of thinking, W always equals U (using the notation of Definition 10).  Sure, you have to find a way to provide an annotation to the result of the grouping.  That is then given, following Definition 10 for W=U, by the product of the annotations.
+
+When we do a selection ("HAVING") following the grouping, we know which aggregation values satisfy the selection, so also which "pre-aggregate" groups as you call them.
+
+
+----------------------- REVIEW 2 ---------------------
+
+SUBMISSION: 3003
+TITLE: Provenance of HAVING Queries in Semirings with Monus
+
+----------- Overall evaluation -----------
+SCORE: -1 (weak reject)
+----- TEXT:
+# BRIEF SUMMARY
+
+The paper proposes a semantics of HAVING queries by using the provenance framework and semirings extended with a monus operator. The semantics of the HAVING clause is related to aggregation, so understanding it in the provenance framework makes sense. Then the paper introduces a new semantics by then comparing it with the JOIN-based semantics when the COUNT(*) is used. The paper also presents algorithms for evaluating their semantics and implements them in ProvSQL, demonstrating the advantages of these semantics and algorithms in a real-world database.
+
+# DISCUSSION
+
+## Strong points
+
+- The paper studies an important problem of understanding the HAVING clause in SQL. Personally, aggregation and, in particular, the HAVING clause are not well understood from the theory side, and this paper makes progress in this direction. 
+
+- The paper presents a convincing story with a semantics for HAVING, comparison with the standard semantics, algorithms, and implementation. 
+
+- The paper includes an implementation and the use of LEAN, which is not very usual in PODS, but I personally appreciate the effort. 
+
+
+## Weak points
+
+- The formal definition of the semantics is hard to follow. Indeed, I couldn't totally understand it. See more comments below. 
+
+- The paper omits several important definitions, like the definition of other frameworks like relational algebra, or the provenance framework, or the JOIN-based semantics of HAVING, which are later referred to or used in the paper. This makes it very difficult to compare their semantics with the previous proposals (which are not given).
+
+- The presentation of the paper is not the best. From Section 3, the paper is hard to follow, and the definitions, including the semantics, lack sufficient motivation for their purpose. 
+
+- The main results are hard to parse or to understand. For instance, I couldn't fully follow Theorem 13 (the equivalence between the semantics and the previous proposal), and the algorithms in Section 5 are only briefly sketched and explained in the appendix.
+
+
+## Recommendation
+
+Given the presentation problems explained above, it is difficult to assess whether the new semantics of HAVING is the right one and how the technical results fit into the paper's story. The paper has serious presentation problems, which is why I believe it is not ready to be presented at PODS.  
+
+
+# MAJOR COMMENTS
+
+- I appreciate the use of LEAN for computationally checking some statements. Still, it feels a bit overused throughout the paper. For instance, it suffices in Table 1 to state that all statements were proven using LEAN. Indeed, it is even better if you remove all places where LEAN is used, and only point out the places where LEAN was crucial to prove (or disprove) a statement. 
+
+- The paper lacks the syntax of the languages used at different levels. For instance, what is the syntax of the language that includes HAVING? What is the syntax of previous languages? What is the syntax of a term? Further, the paper informally refers to SQL syntax and operators without providing definitions or examples, or being more specific about which subfragment of SQL is used.  
+
+- The semantics of relational algebra or SQL with HAVING should be given to compare it with the proposed semantics. For example, the aggregation operator gamma is used without first introducing it.
+
+- There is a lack of motivation or care in introducing the semantics. For example, Definitions 10 and 11 present several definitions, and it isn't clear what their purpose is or why these definitions should serve as the language's semantics. Further, it would help if the paper presented some examples of the concepts and explained why they are the correct semantics. Indeed, Example 12 is not very helpful for this purpose. 
+
+- After all definitions, what is the definition of the HAVING operator? Where is the definition of the HAVING operator finally defined? Unfortunately, this is not clear in Section 3 (probably because the syntax of the HAVING operator is never given). 
+
+- Theorem 13 should be one of the main results, but I could not follow it. The paper explains before the statement that their semantics are compatible with the JOIN-based semantics. However, the JOIN-based semantics are not given or explained. 
+
+- Algorithms 1 and 2 should be presented and fully explained in the paper. 
+
+
+# SOME MORE SPECIFIC AND MINOR COMMENTS
+
+- l95-96. "we refer [31] for a full description...". It would be helpful to have this description to compare it with the proposed semantics.
+
+- l131. "this is also the case for almost all semirings that have been used in works about data provenance". Please be more specific. Indeed, this is not true for rings, is it?
+
+- l190. In the literature, a K-relation is usually defined as a function from tuples to K. Please explain why you need a multiset of tuples over the product of tuples and K. Further, it will be good to explain how the algebra over K-relations is extended in this setting.
+
+- l195-201. Define formally what a term is and how to evaluate a term.  
+
+- l209. "Semantics". Please provide a more informative title. 
+
+- l246. The definition of U also depends on the indices i_j, isn't it? Also, the abbreviation for U is bad, since you are hiding M and \bar{v}, which are not mentioned later in the definitions (e.g., see the definition of possible worlds).
+
+- l251. Why is the monus operator needed for ann_U(W)?
+
+- l269. Define what a selection predicate is. 
+
+- l274. What is gamma? I assumed it was the aggregation operator in relational algebra, but a formal definition should be provided before using it. 
+
+- l309-311. Please provide more motivation for these definitions. 
+
+- l331. What is \gamma[1:+]?
+
+- l332. A query q under which language?
+
+- l417. Proposition 17. What is an extended relational algebra query with HAVING?
+
+- l419. What is Pr(I \models Q)? why should it be equivalent to Pr(<<Q>>^I)?
+
+- Theorems 19 and 20 are hard to understand, and it is not clear why they prove the correctness of ValidSum and ValidCount.
+
+
+----------------------- REVIEW 3 ---------------------
+
+SUBMISSION: 3003
+TITLE: Provenance of HAVING Queries in Semirings with Monus
+
+----------- Overall evaluation -----------
+SCORE: 2 (accept)
+----- TEXT:
+The paper proposes a semantics for queries with non-terminal aggregation (having) clauses by using semirings with a monus (m-semirings). This extension using m-semirings leads to three main advantages as compared to using a comparison operator (1) aggregate functions do not have to be commutative or based on a monoid (2) comparison operators do not have to be defined for every combination of semiring and aggregation monoid (3) semantics are provided for non-terminal aggregations.
+
+The paper shows that the semantics coincide with join based semantics for simple having count(*) queries when m-semirings are absorptive and the times operator distributes over the monus.Furthermore, the paper shows (and implements) the proposed semantics through a method that enumerates all valid possible worlds (using dynamic programming for sum and count, and brute force otherwise). It shows some explicit cases where the provenance can be computed in i.e., cases in which the minimal satisfying worlds can be enumerated efficiently (by using absorption). 
+
+Most of the proofs are in the appendix but look reasonably well-written. The proof sketches for the main results are very useful to understand the main ideas of the proofs.
+
+The formalization of properties of m-semirings in LEAN is a very nice accompanying contribution - Table 1 is also a very nice summary of m-semirings and the properties they enjoy. 
+
+The paper is well-written and easy to follow, with helpful illustrative examples. The introduction and preliminaries in particular are very thorough, and provide a good background for the concepts being built upon. 
+
+Comments and questions
+
+L89: "statements presupposing a Lean implementation of HAVING" - could you clarify what this means? I assume this has something to do with why the shown semantics are not verified in Lean (example theorem 12)
+
+Theorem 13: The notation here is a little dense and some explanation right before would help. In particular, explicitly mentioning that Q_1^{\star C} is a class of queries. There is also an unexplained logical jump here - on why these queries denote all simple having-like queries. It would help to begin slowly explicitly specifying the class of queries that are simple having-like queries and converting them to this arity 2 construction and explaining why it suffices. 
+
+Proposition 21: Could you comment on the case of absorptive m-semirings for SUM(a) <=/</= c? I would have expected it to be in PTIME similar to the counting case, is there something that goes wrong?
+
+
+Typos and minor comments:
+
+L64: as provenance annotation framework -> as a provenance annotation framework
+L193: Could you clarify the notation \mathcal{D}(R)
+L257 : An example here would be welcome
+Example 12: Very nice - it may also be useful to include the provenance prior to simplification as well
+
+
+------------------------------------------------------
+

@@ -1,0 +1,432 @@
+We thank the three reviewers for their careful reading. Two points
+underlie much of the criticism, and we take them first; in both, we think
+a name we chose badly is the cause. We then answer the individual
+questions, and close with the presentation issues, which we accept.
+
+
+A. WHY THE ANNOTATION OF AN AGGREGATE COMPARISON MUST BE DECOMPOSED
+(Reviewer 1, last two comments)
+
+Reviewer 1 writes that W always equals U since there is no incomplete
+information, and that after grouping we know which aggregate values
+satisfy the selection. We think this is mistaken, and as it is the heart
+of the paper we set out why.
+
+We have to decompose an aggregate comparison, for a reason that has
+nothing to do with uncertainty: whether COUNT(*) >= 2 holds on a group is
+not a function of the annotations of that group taken as a whole. Those
+annotations can be combined by ⊕ and ⊗ into a single element of K, but no
+such element records how many occurrences are being counted, so there is
+nothing to apply the comparison to unless the group is split first.
+Definition 10 performs that split, and ann_U(W) weights each part by
+“these occurrences contribute (⊗) and the others do not (⊖)”, the ⊖ being
+what makes distinct parts incompatible so that the ⊕ does not count the
+same situation twice.
+
+Which decomposition is the right one is settled in an arbitrary
+m-semiring, without reference to worlds. A query with COUNT(*) ★ C can
+also be written with self-joins and no aggregation at all, and the
+provenance of that query is fixed by [18, 15] (and [31] for duplicate
+elimination). On a group of three occurrences annotated x1, x2, x3, with
+the predicate COUNT(*) >= 2, the self-join query has provenance
+
+    (x1 ⊗ x2) ⊕ (x1 ⊗ x3) ⊕ (x2 ⊗ x3),
+
+and Theorem 13(i) shows our definition returns exactly this, in every
+commutative absorptive m-semiring where ⊗ distributes over ⊖. The reading
+W = U instead gives x1 ⊗ x2 ⊗ x3, a different element of K: in the
+tropical semiring over ℕ, which satisfies both hypotheses, the first is
+min(x1+x2, x1+x3, x2+x3) and the second x1+x2+x3, so the two disagree on
+the cheapest way of witnessing the answer. Parts (ii) and (iii) of the
+theorem show that both hypotheses on the semiring are needed for our
+definition and the self-join rewriting to agree at all.
+
+Our name “possible world” is borrowed from the Boolean reading of
+annotations and may be misleading outside it: in ℕ an annotation is a
+multiplicity and in the tropical semiring a cost, and only in B and B[X]
+do the W's denote sub-instances. That special case is nonetheless the one
+that yields Proposition 17: there the two elements above are the majority
+function and x1 ∧ x2 ∧ x3, and the latter is false on the sub-instance
+{x1, x2}, where the group has two occurrences and does satisfy the
+predicate. This is why our definition, and not the W = U reading, gives
+correct probabilistic evaluation.
+
+On the second remark: after grouping we do not know which aggregate
+values satisfy the selection, because the aggregate value of a group is
+not a value of V but a formal object of V_K, determined only once one
+knows which occurrences of the group contribute. This is exactly why [6]
+introduced an uninterpreted comparison operator rather than evaluating
+the comparison. Our contribution is to give that operator a value in K.
+
+
+B. THE “JOIN-BASED SEMANTICS” IS NOT A COMPETING PROPOSAL (Reviewer 2, M6
+and Theorem 13)
+
+Our terminology misled Reviewer 2, and we apologise for it. There is no
+second semantics of HAVING in the paper. The queries Q2 of Theorem 13
+contain no aggregation and no HAVING at all: they are ordinary queries of
+the extended relational algebra of Section 2 (self-joins, projection,
+duplicate elimination, difference), and their provenance is the
+pre-existing semantics of [18, 15, 31] recalled there. Theorem 13 is thus
+a soundness check: on COUNT(*) ★ C our semantics returns exactly the
+provenance a user obtains today by hand-writing the self-join rewriting
+(as the authors of [38] had to do, precisely because no semantics for
+HAVING existed, cf. Section 6.2), in every commutative absorptive
+m-semiring where ⊗ distributes over ⊖; parts (ii) and (iii) show both
+hypotheses are necessary. In the revision we will call it “the self-join
+rewriting” and recall its (standard) semantics before the theorem.
+
+Relatedly (Reviewer 2, M5): there is no HAVING operator in the paper
+because HAVING is not a new operator. A HAVING clause is a selection σ_ψ
+whose predicate ψ compares aggregate values. The syntax of queries is
+that of [31], unchanged, and our contribution modifies exactly one rule
+of its semantics, that of σ (Definition 11, second case). We should have
+said this explicitly.
+
+
+REVIEWER 1
+
+1. Terminal aggregation. It means that γ may occur only as the outermost
+operator of a query, so no selection, join or further grouping may be
+applied to an aggregate value; in particular HAVING is not expressible.
+The restriction is a severe one in practice, since HAVING is an ordinary
+part of SQL: two of the twenty-two queries of TPC-H, Q11 and Q18, use it.
+The query family of our experiments illustrates the same point: “return
+the images containing at least k objects of class c” is not expressible
+with terminal aggregation, which is why [38], on the same probabilistic
+image database, had to encode it as an iterated self-join. We will recall
+this explicitly in Section 2.
+
+2. Comparison with Amsterdamer, Deutch, Tannen [6]. Concretely: (a) their
+aggregates must be commutative monoid operations, since aggregation is
+lifted as the semimodule sum, which excludes AVG, ARRAY_AGG/LISTAGG and
+the non-commutative aggregates we support (we allow any function on
+sequences of values); (b) most importantly, their comparison operator is
+left uninterpreted, and no definition is supplied for any combination of
+semiring and aggregation monoid. On the example above, with COUNT(*)
+modelled by the aggregation monoid (ℕ, +), the aggregate value of the
+group is in [6] the semimodule element x1 ⊠ 1 + x2 ⊠ 1 + x3 ⊠ 1, and the
+annotation [6] attaches to the result of the comparison is
+
+    δ(x1 ⊕ x2 ⊕ x3) ⊗ [ x1 ⊠ 1 + x2 ⊠ 1 + x3 ⊠ 1  ≥  ι(2) ]
+
+(⊠ is the tensor of an annotation with a value, + the semimodule sum, ⊕
+and ⊗ the semiring operations, δ the operator of [6] marking the
+existence of the group, and ι(2) the constant 2 viewed as a semimodule
+element). The bracket is a fresh indeterminate of an extended polynomial
+semiring. It receives a value only under a homomorphism into a semiring
+where the aggregate becomes a concrete value, as in their ℕ[X] → ℕ
+example; within K itself it stays symbolic, so for K = B[X] the
+annotation remains a polynomial in such indeterminates rather than a
+Boolean function. Definition 11 gives that same comparison the value (x1
+∧ x2) ∨ (x1 ∧ x3) ∨ (x2 ∧ x3). That is what makes probability evaluation
+(Proposition 17) and an implementation possible, and [29], which follows
+[6], indeed stops at storing such expressions as strings. We will add
+this comparison with the example.
+
+3. Multiset over V_K^k × K rather than a partial function V_K^k → K. The
+reviewer is right that this is not the usual formulation, and we should
+have justified it. In the usual one a K-relation is a function on tuple
+values, so there is exactly one entry per value and multiplicity, when it
+is wanted, is pushed into the annotation, as in ℕ or ℕ[X]. That is
+adequate in theory but not for a system computing provenance for actual
+SQL, which is evaluated under bag semantics: a projection such as SELECT
+a FROM R turns two distinct rows of R agreeing on a into two occurrences
+of a single value tuple, carrying different provenance x1 and x2. A
+function into K has to merge them into one entry annotated x1 ⊕ x2, and
+that merge is faithful only in semirings that encode multiplicity. It is
+not faithful in B[X], where x1 ⊕ x2 records merely that the tuple is
+present under x1 or under x2, and B[X] is exactly the semiring needed for
+Boolean provenance and for probabilistic evaluation (Proposition 17).
+HAVING is what makes the loss observable: on the merged entry the group
+has a single member, so COUNT(*) >= 2 gives the semiring zero, whereas on
+the two occurrences it gives x1 ∧ x2. This is why the setting of [31,
+Section IV], which we inherit, keeps occurrences distinct, each with its
+own provenance identifier. A second and independent reason is that our
+aggregate functions take sequences of values as input, so we must be able
+to speak of the occurrences of a group and of their order, which a
+function into K does not provide. We will spell this out.
+
+4. Line 143, human-readable proofs for Table 1. The reviewer is right
+that they are not in the appendix: the table is verified in Lean only,
+each entry hyperlinked to its machine-checked counterpart. It records,
+for 13 m-semirings, the definition of ⊖ together with four properties,
+i.e. on the order of sixty individually routine verifications. We will
+add readable proofs for the two entries that correct the literature ([15,
+Example 4] and [5, Axiom A13]).
+
+5. Line 226, the ★ symbol. We will change it. Two things make it a bad
+choice beyond taste: * is the closure operator in the semiring
+literature, and the paper itself uses a star in an unrelated sense in the
+statement of Theorem 13, where <* denotes < augmented with an
+occurrence-based tie-break. We will use θ, the usual metavariable for a
+comparison operator in relational algebra, as in θ-joins. The symbol is
+not an operator of the language but a metavariable ranging over {<, ≤, =,
+≥, >, ≠}, so that a single definition covers all six.
+
+6. Definition 10, “multiset of annotated tuples” vs. K-relation. Yes,
+these are the same object; we will use “K-relation” throughout.
+
+7. Definition 10, “sequence of tuples taken with their multiplicity”, and
+the order of the products. U is the K-relation of the group linearised
+into a sequence, each occurrence contributing as many elements as its
+multiplicity, ordered by ≼ on the value component (ties broken
+arbitrarily). Multiplicities are used: the ⊗-product and ⊕-sum in
+ann_U(W) range over the elements of the sequences W and U∖W, so a tuple
+occurring three times contributes three factors, and multiplicities
+determine the aggregate value (COUNT(*) counts occurrences). The product
+is indeed taken in the order of W, but this is immaterial since we
+restrict to commutative m-semirings (Section 2); the order matters only
+for agg_{t,f} with a non-commutative f. We will state both points
+explicitly.
+
+8. “Value part”. Agreed; we will simply write “the tuple u of the
+annotated tuple (u, α)”.
+
+9. Where W comes from. W is universally quantified: Definition 10 defines
+the possible worlds of U to be all subsequences W ⊑ U, and Definition 11
+sums over all of them. Nothing is left dangling, but we agree that the
+intuition (paragraph A above) is missing and must precede the formalism.
+
+10. Ordinary vs. regular, types vs. values, and “is 42 an ordinary
+value?”. The inconsistency is ours and we will fix it. There is a single
+distinction and it is static: V_K ⊇ V, the values of V are the regular
+ones and the values of V_K∖V are the formal aggregate values produced by
+γ. A term has non-regular type if and only if it refers to an output
+column m+l of a grouping operator; constants, group-key attributes and
+arithmetic over them are regular. So 42 is a regular value, the sum of
+three regular values is regular, and the aggregate produced by γ is
+non-regular even though in each individual world it evaluates to a
+number, precisely because it is not determined by the K-instance.
+Definition 11 phrases the test in terms of the values reached, which is
+the same criterion but is stated inconsistently with the text preceding
+it; we will phrase it as type-based in both places and drop “ordinary” in
+favour of “regular”/“non-regular”.
+
+11. γ in Definition 11. γ is not introduced by Definition 10, and it is
+not our notation: it is the standard operator for extending the
+relational algebra with grouping and aggregation, due to Libkin [25],
+transposed to annotated relations by [31] and recalled in our Section 2.
+Definition 10 only fixes the ingredients γ needs, namely the grouping
+indices and the order ≼. We will give the definition of
+γ^≼_{i1,…,im}[t1:f1,…,tn:fn] explicitly.
+
+12. “s is the aggregate column m+l”, but s was announced to be a term. s
+ranges over the two sides {t, t'} of the comparison and both are terms;
+the phrase abbreviates “s is the positional term #(m+l)”. We will write
+it that way.
+
+13. Example 12: v, u1, u2, u3, u. These are three different objects, and
+the example never says so. v is the group key; u1, u2, u3 are the
+pre-aggregation occurrences forming the group, i.e. the elements of U,
+each with its annotation xi; and u = (v, b1, …, bn) is the tuple output
+by γ, on which the predicate is evaluated. The omission is u, which
+appears only inside the final expression, with no sentence introducing
+it. We will fix this.
+
+
+REVIEWER 2
+
+M1, Lean. The hyperlinks are there so that a reader can check a
+statement: each one leads to the formal statement and to its
+machine-checked proof. Short of writing out some sixty small
+verifications on paper, that is the only way an entry of Table 1 can be
+checked, and a sentence saying that everything was proved in Lean would
+assert as much while letting no one verify it. We would therefore keep
+the links (Reviewer 3 also found the formalisation and Table 1 valuable).
+We grant the visual point: the Lean markers make the table heavy. In the
+revision we will drop the separate marker in Table 1 and make the cell
+contents themselves the links, which lightens the table and keeps every
+entry checkable. We will also single out, as the reviewer suggests, the
+two places where Lean was decisive rather than confirmatory, both
+corrections of published claims found because the development refused to
+close the proof: [15, Example 4] states that the tropical semiring over ℝ
+cannot be equipped with ⊖ (it can), and [5, Axiom A13] asserts
+distributivity of ⊗ over ⊖ in ℕ[X] and Why[X] (it fails).
+
+M2 and M3, syntax and semantics of the languages. This also covers the
+minor points l95-96, l195-201, l269 and l274 below. The language is the
+extended relational algebra RA_k of [31] recalled in Section 2 (unnamed
+perspective, multiset semantics, σ, Π, ⋈, ∪, −, duplicate elimination)
+together with the grouping operator γ, the aggregation operator of
+relational algebra. Terms are defined at the end of Section 2
+(expressions over values of V and positional indices #i, with t(u) their
+evaluation on a tuple), and a selection predicate is a Boolean
+combination of atomic comparisons t ★ t'. We agree all of this is stated
+far too tersely. We will give the grammars and the inherited semantic
+rules, self-contained, keeping in the body the rule we change and the
+observation of paragraph B that it is the only one; see PRESENTATION at
+the end of this response for how this fits in the page limit.
+
+M4, motivation of Definitions 10 and 11 and Example 12. Accepted; see
+paragraph A for the motivation we will put before the formalism.
+
+M5, M6. See paragraph B.
+
+M7, Algorithms 1 and 2 in the body. We would prefer to keep the full
+listings in the appendix: they take close to a page each, and the body
+already describes their state, the induction they perform and how the
+comparison operators are combined. If the committee considers the
+listings indispensable in the body, we would make room by moving the
+implementation-details paragraph of Section 6.1 and part of Section 7 to
+the appendix.
+
+l95-96, the description of [31]. See M2 and M3. The point specific to
+this line is that [31] defines σ only for predicates over regular values,
+and that Definition 11 extends it to predicates containing aggregates.
+
+l131, rings. The reviewer is right that a ring is never an m-semiring: in
+a ring a ≤ b holds for every a and b, so the natural preorder is not
+antisymmetric and the semiring is not naturally ordered. We do not think
+this makes the sentence wrong, though, since rings are not among the
+structures used to annotate tuples in the semiring-provenance literature,
+which is what the sentence is about. We will do as asked.
+
+l190, multisets and the algebra over them. See Reviewer 1, point 3; the
+operators over multisets of annotated tuples are those of [31, Section
+IV].
+
+l195-201, what a term is and how it is evaluated. See M2 and M3; terms
+are defined at the end of Section 2, and we will give the grammar there.
+
+l209, section title. Agreed: “A possible-world semantics for aggregate
+comparisons”.
+
+l246, U also depends on the indices i_j. Correct on both counts: U
+depends on the grouping indices (those of the γ of Definition 11) as well
+as on M and v, and the abbreviation hides them. We will fix the notation.
+
+l251, why the monus. Because ann_U(W) must express not only that the
+occurrences of W contribute, which is the ⊗-product, but also that the
+remaining occurrences of the group do not, and that second half is what ⊖
+provides. It is also what makes distinct W's incompatible, so that the
+⊕-sum does not count the same situation twice, as paragraph A explains.
+
+l269, what a selection predicate is. See M2 and M3: a Boolean combination
+of atomic comparisons t ★ t'.
+
+l274, what γ is. See M2 and M3: the grouping-and-aggregation operator of
+[31], which we will define before using it.
+
+l309-311, Boolean combinations. The motivation is that a HAVING clause
+need not be a single comparison: SQL allows an arbitrary Boolean
+combination, as in HAVING COUNT(*) >= 2 AND SUM(a) < 10, and these three
+definitions are what extend Definition 11 to such clauses. They interpret
+∧, ∨ and ¬ by the operations already used for join, union and difference
+of annotated relations, which in B[X] are literally conjunction,
+disjunction and negation. We will say this.
+
+l331, γ[1:+]. Grouping with a single aggregated expression whose term is
+the constant 1 and whose aggregate function is addition: summing 1 over
+the occurrences of a group is COUNT(*).
+
+l332, which language. q ∈ RA_2, an arity-2 query of the extended
+relational algebra of Section 2.
+
+l417, extended relational algebra query with HAVING. A query of RA_k
+extended with γ and with selections whose predicates may contain
+aggregate atoms, subject to the restriction at the end of Section 3 (no
+grouping or ordering over aggregate values).
+
+l419, Pr(I ⊨ Q). This is the standard probability of a Boolean query over
+a tuple-independent instance, the sum of Pr(S) over the sub-instances S
+of I with S ⊨ Q; Pr(⟦Q⟧^Î) is the probability that the Boolean provenance
+is true. Their equality is the correctness of intensional probabilistic
+evaluation and is not automatic: it is exactly the characteristic
+property of paragraph A, and what has to be established for the new σ
+rule. The proof is in the appendix. We will give the definition in the
+body.
+
+Theorems 19 and 20. They state that ValidSum and ValidCount return
+exactly the set {W ⊑ U : W ≠ ∅, agg_{t,f}(W) ★ C} of non-empty valid
+worlds. By Definition 11 the predicate provenance is the ⊕-sum of
+ann_U(W) over exactly that set, so the two theorems say that the
+algorithms enumerate precisely the terms of that sum, which is what
+correctness means here. We will make this link explicit.
+
+
+REVIEWER 3
+
+L89, “statements presupposing a Lean implementation of HAVING”. The Lean
+development formalises m-semirings, the properties of Table 1 and the
+combinatorial core of our proofs. We have not formalised the query
+language, K-instances or the semantics of Definition 11, so a statement
+such as ⟦Q1⟧ = ⟦Q2⟧ has no counterpart in the development as it stands;
+what is machine-checked in those cases is its mathematical core, for
+instance the identity F_C = S_C between the possible-world sum and the
+self-join sum inside the proof of Theorem 13. We will state this
+explicitly.
+
+Theorem 13, notation and the class of queries. Agreed. Q_1^{★C} and
+Q_2^{★C} are families parameterised by an arbitrary arity-2 query q, by C
+and by ★. Arity 2 is not a restriction on the pre-aggregation query but
+what the self-join rewriting requires: the second column carries the
+tie-break <* enforcing distinct matches under multiset semantics. We will
+present the class of simple HAVING queries first and explain the
+reduction, instead of starting from the arity-2 form.
+
+Proposition 21, SUM(a) ≤ / < / = c in absorptive m-semirings. The reason
+those cases are absent is not absorptivity.
+
+ - For COUNT(*) ≤ k, < k, = k with k fixed, the valid worlds are exactly
+   those of size at most k, so there are only O(N^k) of them in total.
+   This is why Case 4 of the proof needs no assumption on the semiring at
+   all: tractability there comes from the bound on the size of the
+   worlds, not from absorptivity.
+ - Absorptivity helps only for upward-closed families (the ≥ and >
+   cases), where it lets us keep only the minimal valid worlds. For ≤, <
+   and = the family is not upward-closed, so absorptivity buys nothing,
+   and without a further hypothesis the valid worlds are exponentially
+   many: if all values of a are 0, every non-empty world is valid for
+   SUM(a) ≤ c.
+ - However, under the very hypothesis we already make in Case 3 (every
+   value a of the attribute satisfies c/a ≤ k, with c > 0, so a ≥ c/k),
+   any world whose sum is ≤ c, < c or = c has at most k occurrences, and
+   the counting argument of Case 4 applies verbatim. These three cases
+   are therefore in PTIME as well, and in arbitrary m-semirings rather
+   than only absorptive ones. No new algorithm is required: ValidSum
+   already covers the six comparisons, and for ≤, < and = its dynamic
+   programme is bounded by the constant c, so it enumerates exactly the
+   polynomially many valid worlds. The absorptivity-based pruning, both
+   in the proof and in our implementation, applies only to the ≥ and >
+   cases, which is the asymmetry the reviewer noticed. We will add these
+   cases to the proposition.
+
+L193, D(R). D is the database schema; in the unnamed perspective it maps
+each relation name to its arity, and D(R) is the arity of R. We will
+clarify.
+
+L257, an example. Agreed. Line 257 is the end of Definition 10, and the
+first illustration of the machinery, Example 12, comes only after
+Definition 11. We will add a short example immediately after Definition
+10, giving U, one possible world W, its annotation ann_U(W) and the
+aggregate value agg_{t,f}(W).
+
+Example 12: agreed, we will display the ⊕-sum of the four world
+annotations before simplification, next to the simplified result.
+
+
+PRESENTATION
+
+We accept the criticism of Reviewers 1 and 2 on the presentation from
+Section 3 onwards. We promise a good many additions above, so we should
+say how they fit in the page limit.
+
+Most of them cost no space at all, being local rewordings: the symbol and
+terminology changes (★, “ordinary” against “regular”, “value part”,
+“multiset of annotated tuples”, the U notation, the section title), the
+corrected sentences on rings and on l246, and the missing sentence
+introducing u in Example 12. The one real addition to the body is what
+both reviewers ask for first, and what we think would have prevented most
+of the rest: motivation before the formalism at the start of Section 3,
+together with the observation of paragraph B that we modify exactly one
+rule of an existing semantics. That is a paragraph, not a section.
+
+The bulky item is the language we inherit: its syntax, its terms and
+predicates, and the rules of [31] we leave unchanged. We will recall it
+self-contained in the appendix and keep in the body only the rule we
+modify. This is not the situation Reviewer 2 objects to in M7: Algorithms
+1 and 2 are a contribution of ours, whereas this is background recalled
+from prior work. Should the committee prefer either in the body, the room
+can come from the implementation-details paragraph of Section 6.1 and
+from part of Section 7.
