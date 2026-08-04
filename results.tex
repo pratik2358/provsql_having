@@ -21,17 +21,22 @@ where $\varepsilon$ denotes duplicate elimination and $<^*$ denotes $<$ augmente
     Then:
     \begin{enumerate}[(i)]
       \item
+        \lean{HavingQueryCorrectness}{Query.joinCount_correct}
         For any commutative m-semiring $\mathbb{K}$ which is
         absorptive and such that $\otimes$ is
         distributive over $\ominus$, for any
         $\mathbb{K}$-instance $\hat I$,
         $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$.
-      \item There exists a commutative m-semiring $\mathbb{K}_1$ which is
+      \item
+        \lean{Semirings/Why}{Why.counterexample_having}
+        There exists a commutative m-semiring $\mathbb{K}_1$ which is
         idempotent but does
         not have distributivity of $\otimes$ over $\ominus$, and a
         $\mathbb{K}_1$-instance $\hat I_1$, such that
         $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_2}$.
-      \item There exists a commutative m-semiring $\mathbb{K}_2$ that has
+      \item
+        \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}
+        There exists a commutative m-semiring $\mathbb{K}_2$ that has
         distributivity of $\otimes$ over $\ominus$ and that is idempotent but not
         absorptive, and a
         $\mathbb{K}_2$-instance $\hat I_2$, such that
@@ -1020,10 +1025,13 @@ $v$-value of the tuple~$u$. Each possible world
 $W$ is a sub-multiset of~$M$, and because the $x_i$ are distinct variables its
 annotation is non-$\mathbb{0}_\mathbb{K}$ and the worlds do not cancel: in
 $\mathbb{B}[X]$, $\ann_U(W)=\bigwedge_{i\in W}x_i\wedge\bigwedge_{i\notin
-W}\lnot x_i$ are distinct minterms; in $\mathbb{N}[X]$, the monus factor
+W}\lnot x_i$ are distinct minterms
+\lean{HavingComplexity}{havingSumProvBool_ne_zero_iff}; in
+$\mathbb{N}[X]$, the monus factor
 $\mathbb{1}\ominus\bigoplus_{i\notin W}x_i$ reduces to $\mathbb{1}$ (the
 excluded variables have no constant term), so $\ann_U(W)=\bigotimes_{i\in
-W}x_i$ are distinct monomials. Hence $P\neq\mathbb{0}_\mathbb{K}$ if and only
+W}x_i$ are distinct monomials
+\lean{HavingComplexity}{havingSumProv_ne_zero_iff}. Hence $P\neq\mathbb{0}_\mathbb{K}$ if and only
 if some non-empty sub-multiset of~$M$ sums to~$B$, i.e., if and only if the
 subset-sum instance has a solution. The reduction is polynomial and, the
 query~$q$ being independent of the subset-sum instance, it establishes
