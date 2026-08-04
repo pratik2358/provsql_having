@@ -557,11 +557,13 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
     \sql{MAX(a)}${}\op c$,
 \fakesql{PICKFIRST}\texttt{(a)}${}\op c$
       with
-      $\op\in\{<,\leq,=,\geq,>,\neq\}$ for any arbitrary m-semiring;
+      $\op\in\{<,\leq,=,\geq,>,\neq\}$ in absorptive m-semirings in which
+      $\otimes$ distributes over $\ominus$;
     \item \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for $k$ a fixed constant, in absorptive
       m-semirings;
-\item \sql{SUM(a) >= }$c$ and \sql{SUM(a) > }$c$ with $c\geq 0$ when for every value $a$
-  of the attribute \texttt{a}, $\frac ca\leq k$ where $k\geq 0$ is a fixed constant, in absorptive
+\item \sql{SUM(a) >= }$c$ and \sql{SUM(a) > }$c$ with $c\in\NN$, for an $\NN$-valued
+  attribute \texttt{a} in which every nonzero value $a$ satisfies
+  $\frac ca\leq k$ where $k\geq 0$ is a fixed constant, in absorptive
       m-semirings;
     \item \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for $k$ a fixed
       constant, in arbitrary m-semirings.
@@ -579,13 +581,28 @@ For these aggregates, validity of a world is determined directly from the occurr
   \item for \sql{MIN(a)}${}\op c$, one checks whether the selected occurrences contain an admissible minimum value and exclude all values that would violate the comparison;
   \item \sql{MAX(a)}${}\op c$ is a dual to \sql{MIN(a)}${}\op c$;
   \item for \fakesql{PICKFIRST}\texttt{(a)}$\op c$ (the non-commutative aggregate of Example~\ref{ex:aggregates}), one checks which occurrence is the first and if its value satisfies the comparison.\end{itemize}
-The provenance can be computed by a direct scan over the occurrences in the group, using only polynomially many operations in $|U|$. Therefore these cases are in polynomial time for arbitrary m-semirings.
+In an absorptive m-semiring in which $\otimes$ distributes over
+$\ominus$, the possible-world sum then collapses to a closed form
+combining at most two running $\oplus$-sums over the occurrences of the
+group \lean{HavingMinMax}{Having.minScan_correct}
+\lean{HavingMinMax}{Having.maxScan_correct}
+\lean{HavingMinMax}{Having.firstScan_correct}, computed by a single scan
+using $O(|U|)$ semiring operations. Both hypotheses are needed:
+absorptivity fails in the tropical m-semiring over
+$\mathbb R\cup\{\infty\}$ (idempotent and distributive), where the scan
+value differs from the possible-world provenance already for
+\sql{MIN(a)}${}\ge c$ on a two-occurrence group
+\lean{Semirings/Tropical}{TropicalR.minScan_ne_prov}; and distributivity
+of $\otimes$ over $\ominus$ is what identifies the factored world
+annotation with its expanded form, an identification that fails in
+absorptive m-semirings without it
+\lean{Semirings/ChainFive}{ChainFive.not_world_bound}.
 
 \smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}
 (Theorem~\ref{thm:count-enum-correct}), the valid worlds are exactly the non-empty worlds
 $W\sqsubseteq U$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
-  If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the provenance of an upward-closed family of sets is equal to the provenance of its family of minimal sets \lean{Having}{Having.absorbing_subfamily}. Here, the minimal satisfying worlds are:
+  If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the possible-world provenance of an upward-closed family of worlds (the $\oplus$-sum of their world annotations) is equal to the $\oplus$-sum of the monomials of its minimal worlds \lean{Having}{Having.upward_closed_collapse}; for the family of worlds of size at least $k$ this collapse is exactly the identity $F_k(U)=S_k(U)$ of Section~\ref{sec:results} \lean{Having}{Having.F_eq_S}. Here, the minimal satisfying worlds are:
 \begin{itemize}
 \item exactly the worlds of size $k$ for \sql{COUNT(*) >= k};
 \item exactly the worlds of size $k+1$ for \sql{COUNT(*) > k}.
@@ -597,10 +614,12 @@ which is polynomial in $|U|$. Therefore the provenance can be computed in polyno
 By correctness of Algorithm~\ref{alg:sum_dp}
 (Theorem~\ref{thm:sumdp-correct}), the valid worlds are exactly the non-empty worlds
 $W\sqsubseteq U$ such that $\sum_{r\in W} t(u_r)\ge c$ (resp.\ $>c$).
-Since all values are nonnegative, these families are upward-closed under inclusion. Hence, in an absorptive m-semiring, it suffices to consider the minimal satisfying worlds.
-Let $W$ be a minimal satisfying world. By the hypothesis $c/a\le k$, every value is at least $c/k$, so any $k$ selected occurrences already contribute a sum at least $c$. For \sql{SUM(a) >= c}, this gives $|W|\le k$: if $|W|>k$, then any $k$-element subset of $W$ already has sum $\ge c$, contradicting minimality. For the strict comparison \sql{SUM(a) > c}, a $k$-element subset only guarantees a sum $\ge c$, so minimality allows one extra occurrence, giving $|W|\le k+1$.
+Since all values are nonnegative, these families are upward-closed under inclusion. Hence, in an absorptive m-semiring, the provenance collapses to the $\oplus$-sum of the monomials of the minimal satisfying worlds
+\lean{Having}{Having.sum_ge_collapse} \lean{Having}{Having.sum_gt_collapse}.
+Let $W$ be a minimal satisfying world. A zero-valued occurrence never belongs to $W$: removing it leaves the sum unchanged, contradicting minimality. Hence every value $a$ of an occurrence of $W$ is nonzero and satisfies $\frac ca\le k$, i.e., $c\le k\cdot a$, so any $k$ selected occurrences of $W$ already contribute a sum at least $c$. For \sql{SUM(a) >= c}, this gives $|W|\le k$: if $|W|>k$, then any $k$-element subset of $W$ already has sum $\ge c$, contradicting minimality \lean{Having}{Having.minimal_card_le_of_sum_ge}. For the strict comparison \sql{SUM(a) > c}, a $k$-element subset only guarantees a sum $\ge c$, and one further (nonzero) occurrence makes the inequality strict -- covering in particular the boundary case $c=0$ -- so minimality gives $|W|\le k+1$ \lean{Having}{Having.minimal_card_le_of_sum_gt}.
 
-Therefore the number of minimal satisfying worlds is bounded by $\sum_{i=1}^{k+1}\binom{|U|}{i}$ ,
+Therefore the number of minimal satisfying worlds is bounded by $\sum_{i\le k+1}\binom{|U|}{i}$
+\lean{Having}{Having.card_minimal_sum_ge_le},
 which is polynomial in $|U|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
@@ -611,15 +630,15 @@ By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
 \item the worlds of sizes $1,\dots,k-1$ for \sql{COUNT(*) < k}.
 \end{itemize}
 Since $k$ is fixed, the number of such worlds is bounded by
-  $\binom{|U|}{k},\, \sum_{i=1}^{k}\binom{|U|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U|}{i}$, respectively. Each of these bounds is polynomial in $|U|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
+  $\binom{|U|}{k},\, \sum_{i=1}^{k}\binom{|U|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U|}{i}$, respectively \lean{Having}{Having.card_powerset_filter_card_le}. Each of these bounds is polynomial in $|U|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
 
 \smallskip\noindent
 With these 4 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
 \end{proof}
 \begin{proofsketch}
 Fix the group key $\vec v$ and write $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. The provenance of the \sql{HAVING} condition is the semiring sum of the annotations of the valid non-empty worlds, so it suffices to enumerate the relevant worlds in time polynomial in $|U|$.
-For \sql{MIN(a)}, \sql{MAX(a)} and \fakesql{PICKFIRST}\texttt{(a)} (Case~1), the validity of a world is decided occurrence by occurrence, so the provenance is obtained by a single scan, in any m-semiring.
-For \sql{COUNT(*)}${}\ge k$ or ${}>k$ (Case~2) and \sql{SUM(a)}${}\ge c$ or ${}>c$ (Case~3), the valid worlds form an upward-closed family, whose provenance, in an \emph{absorptive} m-semiring, equals that of its minimal worlds \lean{Having}{Having.absorbing_subfamily}. These minimal worlds have bounded cardinality: $k$, or $k+1$ for the strict variants (using the hypothesis $c/a\le k$ for \sql{SUM}); so there are only $O(|U|^{k+1})$ of them.
+For \sql{MIN(a)}, \sql{MAX(a)} and \fakesql{PICKFIRST}\texttt{(a)} (Case~1), the validity of a world is decided occurrence by occurrence, so in an absorptive m-semiring with $\otimes$ distributive over $\ominus$ the provenance is obtained by a single scan \lean{HavingMinMax}{Having.minScan_correct}.
+For \sql{COUNT(*)}${}\ge k$ or ${}>k$ (Case~2) and \sql{SUM(a)}${}\ge c$ or ${}>c$ (Case~3), the valid worlds form an upward-closed family, whose provenance, in an \emph{absorptive} m-semiring, collapses to the $\oplus$-sum of the monomials of its minimal worlds \lean{Having}{Having.upward_closed_collapse}. These minimal worlds have bounded cardinality: $k$, or $k+1$ for the strict variants (using the hypothesis $\frac ca\le k$ on nonzero values for \sql{SUM}); so there are only $O(|U|^{k+1})$ of them.
 Finally, for \sql{COUNT(*)}${}=k$, $\le k$ or $<k$ (Case~4), the valid worlds are exactly those of cardinality at most $k$, again polynomially many, so no absorptivity is needed.
 \end{proofsketch}
 
