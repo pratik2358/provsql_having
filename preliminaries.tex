@@ -36,14 +36,17 @@ without \sql{HAVING}).
 
 Following~\cite{geerts2010database}, we extend the definition of a semiring with a monus operation $\ominus$;
 note that this definition, when possible, uniquely defines such an
-operation:
+operation \lean{SemiringWithMonus}{monus_unique}:
 \begin{definition} \label{def:m-semiring}
   Let $(\mathbb K, \oplus, \otimes, \mathbb 0, \mathbb 1)$ be a semiring.
   For $a, b\in\mathbb K$, define
 $a\le b$ as $\exists c\in\mathbb K, b = a\oplus c$. If~$\leq$ is an order
 relation,\footnote{$\leq$ is always a
-pre-order, but not always antisymmetric. Consequently, not all semirings
-are naturally ordered.}
+pre-order, but not always antisymmetric: on the ring $\mathbb Z$ of
+integers, any two elements are related in both directions, e.g.\
+$0\le 1\le 0$ with $0\neq 1$
+\lean{SemiringWithMonus}{natural_preorder_not_antisymm}. Consequently,
+not all semirings are naturally ordered.}
 it is called
 the \emph{natural order} of the semiring, and the semiring is said to be
 \emph{naturally ordered}.
