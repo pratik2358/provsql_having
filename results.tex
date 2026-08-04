@@ -291,26 +291,26 @@ Then
 \[
   \angsem{\hat I}{Q^{= 2}_1}(u)=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
 \]
-and,
+and, since $Q^{=2}_2=Q^{\geq 2}_2 - Q^{\geq 3}_2$ and the difference is
+interpreted by the monus,
 \[
-  \angsem{\hat I}{Q^{= 2}_2}(u)=(t_1 \otimes t_2)\oplus (t_1 \otimes t_3)\oplus (t_2 \otimes t_3)
+  \angsem{\hat I}{Q^{= 2}_2}(u)=\bigl((t_1 \otimes t_2)\oplus (t_1 \otimes t_3)\oplus (t_2 \otimes t_3)\bigr)\ominus(t_1\otimes t_2\otimes t_3).
 \]
-Fix a Why-semiring valuation of $t_1, t_2, t_3$: $\{\{a\}\}, \{\{b\}\}, \{\emptyset\}$.
+Fix a Why-semiring valuation $t_1 = t_2 = t_3 = \{\{a\}\}$.
+Every product of the $t_i$ then equals $\{\{a\}\}$, and every factor
+$\mathbb 1\ominus t_i=\{\emptyset\}\setminus\{\{a\}\}=\{\emptyset\}=\mathbb 1$.
 So
 \begin{align*}
-  &\angsem{\hat I}{Q^{= 2}_1}(u)=\\
-  &((\{\{a\}\}\Cup \{\{b\}\})\Cup(\{\emptyset\}\setminus \{\emptyset\})) \cup ((\{\{a\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{b\}\})) \\
-  &\cup((\{\{b\}\}\Cup \{\emptyset\})\Cup(\{\emptyset\}\setminus \{\{a\}\}))\\
-  =&(\{\{a\}\}\Cup \{\{b\}\}\Cup \emptyset) \cup (\{\{a\}\}\Cup \{\emptyset\}) \cup (\{\{b\}\}\Cup \{\emptyset\})\\
-  =&\{\{a\},\{b\}\}
+  \angsem{\hat I}{Q^{= 2}_1}(u)
+  &=(\{\{a\}\}\Cup\mathbb 1)\cup(\{\{a\}\}\Cup\mathbb 1)\cup(\{\{a\}\}\Cup\mathbb 1)
+  =\{\{a\}\},
 \end{align*}
-
-But:
+but on the join side the difference of the two $\ge$-chains cancels the
+surviving witness:
 \begin{align*}
-  &\angsem{\hat I}{Q^{= 2}_2}(u)=\\
-  &(\{\{a\}\}\Cup\{\{b\}\})\cup(\{\{a\}\}\Cup\{\emptyset\})\cup(\{\{b\}\}\Cup\{\emptyset\})\\
-  =&\{\{a, b\}\} \cup \{\{a\}\} \cup \{\{b\}\}\\
-  =&\{\{a\}, \{b\}, \{a, b\}\}
+  \angsem{\hat I}{Q^{= 2}_2}(u)
+  &=\bigl(\{\{a\}\}\cup\{\{a\}\}\cup\{\{a\}\}\bigr)\setminus\{\{a\}\}
+  =\emptyset=\mathbb 0.
 \end{align*}
 Hence, $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
 \paragraph*{Proof of (iii)}
@@ -834,8 +834,9 @@ evaluation:
 
 \begin{propositionrep}
   \label{prop:pqe-equiv}
-  Let $Q$ be an extended relational algebra query with \sql{HAVING} and
-  $I$ an instance where each tuple $u$ is associated with an
+  \lean{HavingProbability}{HavingProbability.booleanHaving_pqe}
+  Let $Q$ be a Boolean extended relational algebra query with
+  \sql{HAVING} and $I$ be an instance where each tuple $u$ is associated with an
   independent probability $\Pr(u)\in [0,1]$. Then the probability
   $\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$, where $\hat I$ is a
   $\mathbb{B}[X]$-instance whose tuples are annotated with independent
@@ -843,6 +844,10 @@ evaluation:
   in the probabilistic instance.
 \end{propositionrep}
 \begin{proof}
+  For simplicity, we assume that the \sql{HAVING} predicate is applied at
+  the top level of the query, i.e.,
+$Q=\sigma_\psi(\gamma^{\preceq}(q'))$.
+
 By definition \cite{suciu2011probabilistic}, probabilistic query
 evaluation under the possible-world semantics is
 \[
@@ -904,8 +909,22 @@ a single disjunct is active under $\nu$ -- the one for $W_\nu$ -- so
 that is, if and only if the group of~$u$ is non-empty in $S_\nu$ and its
 aggregate values there satisfy the comparison. This is precisely the ordinary
 Boolean evaluation of the \sql{HAVING} predicate $\psi$ on the possible
-world~$S_\nu$. Property~\eqref{eq:char-prop} is therefore preserved by the
-aggregate-comparison selection and, together
+world~$S_\nu$.
+
+For a Boolean combination $\psi$ of aggregate comparisons over the same
+grouping, the claim extends by structural induction: negation is pushed
+to the atoms (Definition~\ref{def:semantics}), where it complements the
+comparison operator, and since $\otimes=\land$ and $\oplus=\lor$ act
+pointwise on $\mathbb B[X]$ while all atoms share the same group, hence
+the same active world $W_\nu$, the predicate provenance
+$\predsem{\hat I}{q}{\psi}(u)$ is true under $\nu$ if and only if
+$W_\nu\neq\emptyset$ and $\psi$ holds classically on $W_\nu$.
+
+Finally, $\nu(\angsem{\hat I}{Q})=\top$ if and only if the annotation
+of some output row is true under~$\nu$, i.e., if and only if some group
+is non-empty in $S_\nu$ and satisfies $\psi$ there; that is, exactly
+when the output of $Q$ on $S_\nu$ is non-empty. Property~\eqref{eq:char-prop}
+is therefore preserved by the aggregate-comparison selection and, together
 with~\cite[Theorem~12]{sen2026provsql} for the remaining operators, holds for
 the whole query~$Q$. We conclude that
 $\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$.
@@ -919,6 +938,7 @@ which deciding whether a provenance is non-zero is NP-complete, and this
 already in \emph{data} complexity, i.e., for a single fixed query.
 
 \begin{propositionrep}\label{prop:having-nphard}
+  \lean{HavingComplexity}{havingSumNonzero_NP_complete}
   For $\mathbb{K}\in\{\mathbb{B}[X],\mathbb{N}[X]\}$, deciding whether the
   provenance of a Boolean \sql{HAVING} query over a $\mathbb{K}$-instance is
   non-$\mathbb{0}_\mathbb{K}$ is NP-complete. Membership holds in combined
