@@ -198,18 +198,18 @@ and this simplification fails.
 
 \paragraph*{Boolean combinations.}
 For selection predicates $\psi_1,\psi_2$ and $u\in\mathcal V_{\mathbb K}^k$,
-\begin{small}
 \[
 \predsem{\hat I}{q}{\psi_1\land\psi_2}(u)\defeq
   \predsem{\hat I}{q}{\psi_1}(u)\otimes\predsem{\hat I}{q}{\psi_2}(u);
-\:
+\qquad
 \predsem{\hat I}{q}{\psi_1\lor\psi_2}(u)\defeq
-  \predsem{\hat I}{q}{\psi_1}(u)\oplus\predsem{\hat I}{q}{\psi_2}(u);
-\:
-\predsem{\hat I}{q}{\neg\psi}(u)\defeq
-  \mathbb 1\ominus\predsem{\hat I}{q}{\psi}(u).
+  \predsem{\hat I}{q}{\psi_1}(u)\oplus\predsem{\hat I}{q}{\psi_2}(u).
 \]
-\end{small}
+Negation is pushed to the atoms: $\neg$ traverses $\land$ and $\lor$ by
+De Morgan duality, and on an atomic comparison
+$\neg(t\op t')\defeq(t\,\overline{\op}\,t')$, where $\overline{\op}$
+is the negated comparison operator (e.g., $\overline{\le}$
+is~$>$).
 
 \paragraph*{Selection not immediately following aggregation.}
 Definition~\ref{def:semantics} covers a comparison applied directly to a
