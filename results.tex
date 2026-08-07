@@ -1208,7 +1208,10 @@ excluded variables have no constant term), so $\ann_U(W)=\bigotimes_{i\in
 W}x_i$ are distinct monomials
 \lean{HavingComplexity}{Provenance.Complexity.havingSumProv_ne_zero_iff}. Hence $P\neq\mathbb{0}_\mathbb{K}$ if and only
 if some non-empty sub-multiset of~$M$ sums to~$B$, i.e., if and only if the
-subset-sum instance has a solution. The reduction is polynomial and, the
+subset-sum instance has a solution. The reduction is polynomial
+\lean{HavingComplexity}{Provenance.Complexity.havingSumNonzeroBool_faithful}%
+\lean{HavingComplexity}{Provenance.Complexity.havingSumNonzeroHow_faithful}
+and, the
 query~$q$ being independent of the subset-sum instance, it establishes
 hardness in data complexity, which concludes.
 \end{proof}
