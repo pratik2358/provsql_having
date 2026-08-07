@@ -85,8 +85,9 @@ m-semirings}. In more detail:
 \item We show that this semantics coincides with a natural \sql{JOIN}-based
   semantics for \sql{HAVING} queries involving the \sql{COUNT(*)}
   aggregate, in the case where the m-semiring
-  is absorptive and $\otimes$ distributes over $\ominus$. We also show
-  that our
+  is absorptive and $\otimes$ distributes over $\ominus$. We show that it
+  commutes with homomorphisms of m-semirings, so that provenance
+  computed once can still be specialized to any m-semiring, and that our
   semantics is compatible with probabilistic query evaluation.
   Unsurprisingly, this semantics results in intractable query evaluation
   in the general case. (Section

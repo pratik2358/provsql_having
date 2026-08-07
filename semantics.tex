@@ -46,9 +46,8 @@ the first value of its input, is \emph{non-commutative}: its result
 depends on the order of the sequence.
 \end{example}
 
-Sen et al.~\cite{sen2026provsql} provide a provenance semantics over annotated
-relations for the multiset relational algebra extended with
-\emph{terminal} aggregation,
+Sen et al.~\cite{sen2026provsql} provide a provenance semantics over
+annotated relations for aggregate queries,
 itself based on that of
 \cite{green2007provenance,geerts2010database,amsterdamer2011provenance}.
 We extend the semantics of the \emph{selection} operator to allow
@@ -106,14 +105,16 @@ semimodule values of~\cite{amsterdamer2011provenance}). Whether a
 comparison is \emph{ordinary} or involves \emph{aggregate values} is
 determined by the \emph{type} of the compared terms: it is ordinary when
 both sides are of regular type, and is an aggregate comparison as soon as
-one side is of non-regular type. For simplicity of presentation we give
+one side is of non-regular type. For simplicity
+of presentation we give
 the semantics of a single comparison applied directly to a grouping; we
 then discuss the
 general case.
 
-\begin{definition}[Provenance of selection over aggregate comparisons]
+\begin{definition}
 \label{def:semantics}
-Let $\hat I$ be a $\mathbb K$-instance, $k\in\NN$, $q\in\RA_k$, and let
+Let $\hat I$ be a $\mathbb K$-instance, $k\in\NN$, $q$ an arity-$k$
+query, and let
 $\psi$ be a selection predicate over arity~$k$. To $\psi$ we associate a
 \emph{predicate provenance} $\predsem{\hat I}{q}{\psi}\colon\mathcal V_{\mathbb K}^k\to\mathbb K$.
 An atomic comparison $t\op t'$ is treated according to whether $t$ and
@@ -126,7 +127,8 @@ $\mathcal V$), then
 If $\psi=(t\op t')$ with at least one of $t,t'$ of non-regular type, we
 require $q$ to be a grouping query
 $q=\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q')$ with
-$q'\in\RA_{k'}$, whose order $\preceq$ is the one used for non-commutative
+$q'$ an arity-$k'$ \emph{aggregate-free} query, i.e., one without
+grouping and aggregation, whose order $\preceq$ is the one used for non-commutative
 aggregates (and is irrelevant otherwise); its output column $m+l$ holds
 the non-regular aggregate value of $f_l$ over $t_l$, for $1\le l\le n$. For an output tuple
 $u=(\vec v,b_1,\dots,b_n)$ with group key $\vec v=(v_1,\dots,v_m)$, let
@@ -211,20 +213,158 @@ $\neg(t\op t')\defeq(t\,\overline{\op}\,t')$, where $\overline{\op}$
 is the negated comparison operator (e.g., $\overline{\le}$
 is~$>$).
 
-\paragraph*{Selection not immediately following aggregation.}
+\paragraph*{Selections not immediately following aggregation.}
 Definition~\ref{def:semantics} covers a comparison applied directly to a
 grouping, which is the typical \sql{HAVING}. More generally, a non-regular
 aggregate value produced by some $\gamma^{\preceq}$ may be carried, as an
 element of $\mathcal V_{\mathbb K}$, through further operators (projection,
-join, union, additional selections) before being compared; this
-is supported in our implementation, where the aggregate value is
-materialized as a gate in the provenance circuit and the comparison is evaluated
-downstream. The intended semantics is unchanged: the possible worlds
-relevant to such a comparison are still those of the group of the
-originating $\gamma^{\preceq}$, so the predicate provenance is the same
-possible-world sum, taken over that originating group and combined
-with the provenance accumulated along the operators traversed
-in between.
+join, union, additional selections) before being compared;
+our implementation materializes the aggregate value as a gate in
+the provenance circuit and evaluates the comparison downstream. The
+intended semantics is unchanged: the possible worlds relevant to such a
+comparison are still those of the group of the originating
+$\gamma^{\preceq}$. We give in the \hyperref[appendix:semantics]{Appendix} a general semantics for
+arbitrary \sql{HAVING} queries that extends
+Definition~\ref{def:semantics}, along with the query rewriting
+on provenance circuits.
+
+\begin{toappendix}
+\label{appendix:semantics}
+Three ingredients make the general semantics precise: aggregate values
+carry the occurrences of the group that produced them, so that a
+comparison performed arbitrarily far downstream can still range over that
+group's possible worlds; the columns holding them are distinguished from
+regular ones by a \emph{kind}, so that the scope restrictions become
+typing conditions rather than side conditions on queries; and the
+group-existence factor $\delta(\cdot)$ of a group is kept \emph{pending}
+in the annotation until a downstream comparison supersedes it, as in the
+second case of Definition~\ref{def:semantics}.
+
+\begin{definition}[General semantics]\label{def:general}
+\lean{AggQuery}{AggQuery.evaluate}
+Every output column of a query has a \emph{kind}: \emph{regular} (a value
+of~$\mathcal V$),
+\emph{aggregate} (a token, see below), or \emph{provenance} (a value used
+as an annotation), mirroring the regular, aggregate-token and \sql{uuid}
+column types of ProvSQL. Queries are indexed by the vector of kinds of
+their columns, so that the scope restrictions
+are typing conditions: $\gamma^{\preceq}$ groups and aggregates an
+all-regular input, $\varepsilon$ and $-$ apply to all-regular relations,
+projection copies aggregate columns verbatim, and a selection atom is
+either a comparison between terms over regular columns, or a comparison
+of one bare aggregate column against a term over regular columns.
+
+An \emph{aggregate token} is a pair
+$\lAngle f, U\rAngle$ of an aggregate function and the $\preceq$-ordered
+occurrence sequence of the group that produced it, each occurrence
+recording the value $t(u)$ of the aggregated term together with its
+annotation; its value in a world $W\sqsubseteq U$ is
+$\mathrm{agg}_{t,f}(W)$.
+
+The annotation of a tuple is kept in \emph{factored} form
+$\lAngle\beta,P\rAngle$, with $\beta\in\mathbb K$
+and $P$ a multiset of occurrence sequences, one for each group whose
+tokens have not been compared yet. It denotes the element
+\(
+  \beta\otimes\bigotimes_{U\in P}
+    \delta\bigl(\bigoplus_{(u,\alpha)\in U}\alpha\bigr)
+\)
+of $\mathbb K$. Operators act as follows:
+\begin{compactitem}
+\item $\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n]$
+  produces one tuple per group, carrying the group key followed by the
+  tokens $\lAngle f_l,U\rAngle$, annotated by $\lAngle\mathbb 1,\{U\}\rAngle$:
+  as long as it is not compared, a group is annotated by
+  $\delta(\bigoplus_{(u,\alpha)\in U}\alpha)$, which is the terminal-aggregation
+  semantics of~\cite{sen2026provsql}.
+\item A selection $\sigma_\psi$ whose predicate has no aggregate atom
+  filters classically. Otherwise it multiplies the predicate provenance
+  $\predsem{\hat I}{q}{\psi}$ into~$\beta$, an aggregate atom
+  contributing the possible-world sum of Definition~\ref{def:semantics}
+  over the occurrence sequence of \emph{its own} token, and Boolean
+  connectives being
+  interpreted as above. It removes an
+  occurrence sequence $U$ from~$P$ exactly when every token compared
+  by~$\psi$ has occurrence sequence~$U$ and $\psi$ \emph{entails the
+  existence} of the group: the
+  possible-world sum then already ranges over the non-empty worlds
+  of~$U$, so it subsumes the factor $\delta(\bigoplus_{(u,\alpha)\in
+  U}\alpha)$, which the $\delta$-absorption axiom of Section~\ref{sec:preliminaries}
+  makes redundant, and which would otherwise be counted twice in a
+  non-idempotent m-semiring. A predicate comparing tokens of several
+  groups, or one that can hold in a world where the group is empty --
+  an aggregate atom disjoined with a regular atom -- entails no such
+  existence and supersedes nothing.
+\item The other operators combine the concrete parts~$\beta$ exactly as
+  in~\cite{sen2026provsql} and concatenate the pending sequences; a
+  projection dropping the last copy of an aggregate column multiplies the
+  corresponding pending factor into~$\beta$, that group being no longer
+  comparable.
+\end{compactitem}
+\end{definition}
+
+We call \emph{site} a selection with an aggregate comparison applied
+directly to a grouping, $\sigma_\psi(\gamma^{\preceq}(q'))$; a comparison
+occurring further downstream has the same predicate provenance as the
+site formed by that comparison and its originating grouping.
+Definition~\ref{def:general} is a conservative extension of
+Definition~\ref{def:semantics}: the two agree on every site.
+\begin{proposition}\label{prop:general-agrees}
+  \lean{AggQueryBridges}{AggQuery.havingSite_evaluateAnnotated}
+  Let $\psi$ be a single aggregate comparison and
+  \[
+    Q=\sigma_\psi\bigl(
+        \gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q')
+      \bigr).
+  \]
+  Then, under Definition~\ref{def:general}, $\angsem{\hat I}{Q}$ consists
+  of one tuple per group key of $\angsem{\hat I}{q'}$, carrying the key
+  followed by the whole-group aggregate values, annotated by
+  $\predsem{\hat I}{\gamma^{\preceq}(q')}{\psi}$ as given by
+  Definition~\ref{def:semantics}.
+\end{proposition}
+\begin{proof}
+  A single aggregate atom compares one token, whose occurrence sequence
+  is that of the pending factor $\{U\}$ introduced by $\gamma^{\preceq}$,
+  and an aggregate atom entails the existence of its group; the factor is
+  therefore superseded and the annotation is the predicate provenance
+  alone. The aggregate columns are read at the whole-group world, which
+  gives the aggregate values of Definition~\ref{def:semantics}.
+\end{proof}
+
+Consequently every result of Section~\ref{sec:results}, stated for a
+comparison applied to a grouping, applies verbatim to the corresponding
+site of an arbitrary query.
+
+\paragraph*{Materializing a site in the provenance circuit.} The
+implementation does not compute the possible-world sum eagerly: it
+rewrites the query so that the aggregate columns hold tokens built by
+ProvSQL's aggregate-token constructor and the provenance column of a
+grouping holds its group-existence guard. A predicate $\psi$ with at
+least one aggregate atom is then compiled into a
+\emph{gate term}~$\llbracket\psi\rrbracket$: an aggregate atom becomes a
+comparison gate applied to the token and to the compared regular term, a
+regular atom becomes an indicator gate $\chi_{\op}$, $\land$ becomes
+$\otimes$, $\lor$ becomes $\oplus$, and $\neg$ is pushed to the atoms
+with complementation of the comparison operator. The provenance column of
+the rewritten site is then
+$\llbracket\psi\rrbracket$ alone when $\psi$ entails the existence of the
+group, and $\llbracket\psi\rrbracket$ times the guard otherwise -- the
+same dichotomy as in Definition~\ref{def:general}, now realized on gates.
+\begin{proposition}\label{prop:site-rewriting}
+  \lean{AggQueryClosure}{AggQuery.havingPredRew_valid}
+  For an arbitrary selection predicate with at least one aggregate atom,
+  regular atoms mixed in included, the rewritten site computes the
+  annotation that Definition~\ref{def:general} assigns to
+  $\sigma_\psi(\gamma^{\preceq}(q'))$, relative to the comparison and
+  indicator gates.
+\end{proposition}
+\noindent
+Correctness relative to the two gate primitives is exactly the sense in
+which a rewriting-based system such as ProvSQL can be correct: the gates
+are the primitives that the evaluation of the circuit, and hence
+Section~\ref{sec:algorithms}, has to implement.
+\end{toappendix}
 
 \paragraph*{Limitations.} Grouping and ordering only make sense for
 regular values from $\mathcal{V}$, not for aggregate values; queries

@@ -1,14 +1,14 @@
 \section{Main Results}
 \label{sec:results}
 We show that our semantics as formalized in Section~\ref{sec:semantics}
-is compatible with the \sql{JOIN}-based semantics of simple \sql{HAVING}-like
+is compatible with the \sql{JOIN}-based semantics of simple \sql{HAVING}
 queries on \sql{COUNT} when our semiring of choice is absorptive and satisfies
 distributivity of $\otimes$ over $\ominus$. Since \sql{COUNT} is
 commutative, \sql{COUNT(*) ...
 GROUP BY #1} can
 be coded as $\gamma^{\preceq}_{\#1}[1:+]$ for an arbitrary order $\preceq$.
 \begin{theoremrep}\label{th:correctness}
-  For any arity~$2$ query $q$, for any $C\in\mathbb{N}_{\ge1}$, for $\op\in \{\leq,
+  For any arity~$2$ aggregate-free query $q$, $C\in\mathbb{N}_{\ge1}$, $\op\in \{\leq,
   =,\geq\}$ consider the queries:
 \begin{align*}
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))\\
@@ -833,15 +833,166 @@ from
 Table~\ref{tab:semirings}.
 \end{proofsketch}
 
+\paragraph*{Specialization, probabilistic evaluation, and complexity.}
+Much of the practical value of semiring provenance comes from the fact
+that provenance computed once in a sufficiently general semiring can be
+specialized to any other one by applying a homomorphism, instead of
+re-evaluating the query. This is the ``compile once, evaluate many''
+principle that ProvSQL implements by storing a single provenance circuit
+and evaluating it in the semiring of interest~\cite{sen2026provsql}. The
+principle survives the introduction of aggregate comparisons.
+For a homomorphism of m-semirings $h:\mathbb K\to\mathbb K'$, we write $h(\hat I)$ for the $\mathbb
+K'$-instance obtained from $\hat I$ by applying $h$ to every annotation.
+
+\begin{propositionrep}\label{prop:hom}
+  \lean{AggQueryHom}{AggQuery.evaluateAnnotated_hom}
+  Let $h:\mathbb K\to\mathbb K'$ be an m-semiring homomorphism. Then, for
+  every \sql{HAVING} query $Q$
+  and every $\mathbb K$-instance $\hat I$,
+  \(
+    \angsem{h(\hat I)}{Q}=h\bigl(\angsem{\hat I}{Q}\bigr).
+  \)
+\end{propositionrep}
+
+\begin{appendixproof}
+The syntax of Definition~\ref{def:general} mentions no annotation, so both
+sides evaluate the same query and only the instance differs; we proceed
+by structural induction on~$Q$. The induction hypothesis cannot be an
+equality of intermediate results, because the semantics does not only
+combine annotations, it also \emph{inspects} them, in two places:
+\begin{compactenum}[(a)]
+\item the supersede condition tests occurrence sequences for equality,
+  so a non-injective $h$ may identify two groups that $\mathbb K$
+  distinguishes, and drop on the $\mathbb K'$ side a pending factor that
+  the $\mathbb K$ side keeps;
+\item Definition~\ref{def:possible_world} orders occurrences of equal
+  value-tuples arbitrarily; any concrete choice may break ties using the
+  annotations, and $h$ need not preserve it.
+\end{compactenum}
+
+\smallskip\noindent\emph{The invariant.} Say that an annotated tuple
+$(u',\alpha')$ over $\mathbb K'$ \emph{simulates} an annotated tuple
+$(u,\alpha)$ over $\mathbb K$ when
+\begin{compactenum}[(i)]
+\item $u'$ and $u$ agree on their regular columns;
+\item in each aggregate column, the two tokens have the same aggregate
+  function, and the occurrence sequence of the one in~$u'$ is obtained
+  from the $h$-image of the one in~$u$ by permuting occurrences
+  \emph{within blocks of equal value};
+\item $\alpha'=h(\alpha)$, where the annotations are the elements of
+  $\mathbb K'$ and $\mathbb K$ \emph{denoted} by the factored forms of
+  Definition~\ref{def:general}, i.e., taken after the pending factors
+  have been multiplied in.
+\end{compactenum}
+We prove by induction on $Q$ that the tuples of
+$\angsem{h(\hat I)}{Q}$ and those of $\angsem{\hat I}{Q}$ are in a
+multiplicity-preserving bijection under which each simulates its
+counterpart. This suffices: (i) and (ii) give equal data parts, since the
+value of an aggregate column is the aggregate of the values of its
+token's occurrences and a permutation within blocks of equal value leaves
+that sequence of values unchanged, and (iii) is the required equality of
+annotations.
+
+\smallskip\noindent\emph{Two neutrality lemmas.} Both say that a
+rearrangement of the factored annotation does not change the element it
+denotes, on either side separately.
+\begin{compactenum}[(1)]
+\item \emph{Cashing is neutral} \lean{AggQueryHom}{GenAnn.finalize_cash}:
+  for a factored annotation $\lAngle\beta,P\rAngle$ and any
+  $P_0\msubseteq P$, the pair
+  $\lAngle\beta\otimes\bigotimes_{U\in P_0}\delta(\bigoplus_{(u,\alpha)\in
+  U}\alpha),\,P\msetminus P_0\rAngle$ denotes the same element, by
+  associativity and commutativity of~$\otimes$.
+\item \emph{Superseding is neutral}
+  \lean{AggQueryHom}{GenPred.predsem_delta_absorb}: if $\psi$ entails the
+  existence of the group of $U$ and every token it compares has
+  occurrence sequence~$U$, then
+  \(
+    \predsem{\hat I}{q}{\psi}(u)\otimes
+      \delta\bigl(\bigoplus_{(u,\alpha)\in U}\alpha\bigr)
+    =\predsem{\hat I}{q}{\psi}(u).
+  \)
+  Dropping the pending factor of $U$ next to $\predsem{\hat
+  I}{q}{\psi}(u)$ is therefore invisible, whether or not the evaluation
+  actually drops it.
+\end{compactenum}
+Lemma~(2) is the substantive use of the $\delta$-absorption axiom of
+Section~\ref{sec:preliminaries}. Negation being pushed to the atoms,
+$\psi$ is a $\land/\lor$-combination of atoms. For an aggregate atom, by
+distributivity of $\otimes$ over $\oplus$ it suffices to absorb the guard
+into one summand $\ann_U(W)\otimes\chi_{\op}(\cdots)$ of the
+possible-world sum, with $W\neq\emptyset$: picking an occurrence $w\in W$,
+its annotation $\alpha_w$ is a factor of $\ann_U(W)$, and, writing
+$\bigoplus_{(u,\alpha)\in U}\alpha=\alpha_w\oplus\gamma$, $\delta$-absorption gives
+$\alpha_w\otimes\delta(\alpha_w\oplus\gamma)=\alpha_w$. A conjunction
+entails existence as soon as one conjunct does, and that conjunct absorbs
+the guard while the other factor is left untouched; a disjunction entails
+only when both disjuncts do, and then each summand absorbs it. A regular
+atom entails nothing, and indeed its characteristic value $\chi_{\op}$
+does not absorb the guard -- which is why the entailment test is part of
+the semantics.
+
+\smallskip\noindent\emph{The induction.} We record first that the
+operators which inspect \emph{data} -- $\varepsilon$, $-$ and
+$\gamma^{\preceq}$ -- apply to all-regular relations by the kind
+discipline of Definition~\ref{def:general}. Clause~(ii) is vacuous there,
+so on their inputs simulation is plain equality of tuples together with
+$\alpha'=h(\alpha)$.
+\begin{compactitem}
+\item \emph{Base relations.} Every tuple of $h(\hat I)$ is the $h$-image
+  of the corresponding tuple of $\hat I$, with nothing pending.
+\item \emph{$\gamma^{\preceq}$.} By the remark above the two inputs carry
+  the same tuples, so the two sides produce the same group keys. Fix a
+  key: the occurrence sequence built on the $\mathbb K'$ side and the
+  $h$-image of the one built on the $\mathbb K$ side are both sorted by
+  the value part and contain the same occurrences, hence differ only
+  inside blocks of equal value-tuples; as the aggregated term reads the
+  value part only, this is a permutation of the kind allowed by~(ii).
+  This is where obstruction~(b) is discharged. The output annotation is
+  $\delta(\bigoplus_{(u,\alpha)\in U}\alpha)$ on either side, and $h$
+  commutes with $\oplus$ and with~$\delta$, which gives~(iii).
+\item \emph{Selection.} If $\psi$ has no aggregate atom, its terms range
+  over regular columns only, whose values simulation preserves by~(i), so
+  the two sides retain matching tuples. Otherwise, by
+  lemmas~(1) and~(2), the annotation produced on each side denotes
+  $\predsem{\hat I}{q}{\psi}(u)$ times the element denoted by the input
+  annotation, \emph{regardless of which pending factors that side
+  superseded}; this discharges obstruction~(a). It remains to see that
+  the predicate provenance itself commutes with~$h$, which it does
+  because it is built from $\oplus$, $\otimes$, $\ominus$ and values
+  $\chi_{\op}$ that are $\mathbb 0$ or $\mathbb 1$ on either side, the
+  aggregate values being untouched by the pushforward; and it is
+  invariant under the permutations of~(ii), by the same argument as in
+  the $\gamma^{\preceq}$ case.
+\item \emph{Projection.} Terms over regular columns evaluate equally
+  by~(i) and~(ii), and aggregate columns are copied verbatim. The two
+  sides may cash different pending factors, since they compare occurrence
+  sequences, but by lemma~(1) this does not change the denoted
+  annotation.
+\item \emph{Product and union.} The product multiplies the concrete parts
+  of the two annotations and concatenates their pending factors, so the
+  denoted annotations are multiplied, and $h$ commutes with $\otimes$;
+  the union is the multiset sum of the two results and combines no
+  annotation at all.
+\item \emph{$\varepsilon$ and $-$.} All-regular, so by the remark above
+  the two inputs have equal data parts and $h$-related annotations.
+  Duplicate elimination $\oplus$-sums the annotations of equal tuples,
+  and $h$ commutes with $\oplus$; difference subtracts them with
+  $\ominus$, and $h$ commutes with $\ominus$ by definition.
+\end{compactitem}
+Every operator of Definition~\ref{def:general} is covered, which
+concludes the induction and the proof.
+\end{appendixproof}
+
 In addition to this important result, our m-semiring semantics
 for \sql{HAVING} also provides an implementable semantics for probabilistic query
 evaluation:
 
 \begin{propositionrep}
   \label{prop:pqe-equiv}
-  \lean{HavingProbability}{HavingProbability.booleanHaving_pqe}
-  Let $Q$ be a Boolean extended relational algebra query with
-  \sql{HAVING} and $I$ be an instance where each tuple $u$ is associated with an
+  \lean{AggQueryProbability}{AggQuery.boolean_pqe}
+  Let $Q$ be a \emph{Boolean} \sql{HAVING} query
+  and $I$ be an instance where each tuple $u$ is associated with an
   independent probability $\Pr(u)\in [0,1]$. Then the probability
   $\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$, where $\hat I$ is a
   $\mathbb{B}[X]$-instance whose tuples are annotated with independent
@@ -849,9 +1000,11 @@ evaluation:
   in the probabilistic instance.
 \end{propositionrep}
 \begin{proof}
-  For simplicity, we assume that the \sql{HAVING} predicate is applied at
-  the top level of the query, i.e.,
-$Q=\sigma_\psi(\gamma^{\preceq}(q'))$.
+  No restriction is placed on where the aggregate comparisons occur:
+  $Q$ is interpreted by Definition~\ref{def:general}, so a comparison may
+  be applied to tokens carried through projections, joins, unions and
+  further selections, arbitrarily far from the grouping that produced
+  them.
 
 By definition \cite{suciu2011probabilistic}, probabilistic query
 evaluation under the possible-world semantics is
@@ -888,9 +1041,11 @@ remains to check that \eqref{eq:char-prop} is preserved by the
 aggregate-comparison selection of Definition~\ref{def:semantics}, i.e., that
 our \sql{HAVING} semantics matches the Boolean one.
 
-Let $\psi=(t\op t')$ be such a comparison over a group with possible-world
-sequence $U=U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, and fix a
-valuation~$\nu$. In $\mathbb{B}[X]$, where $\oplus=\lor$, $\otimes=\land$ and
+Let $\psi=(t\op t')$ be such a comparison, and let $U$ be the occurrence
+sequence carried by the token it compares, i.e., the possible-world
+sequence $U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ of the group of the
+originating $\gamma^{\preceq}(q')$, wherever that grouping sits in $Q$.
+Fix a valuation~$\nu$. In $\mathbb{B}[X]$, where $\oplus=\lor$, $\otimes=\land$ and
 $a\ominus b=a\land\lnot b$, the annotation of a world $W\sqsubseteq U$ is
 \[
   \ann_U(W)=\Bigl(\bigwedge_{(u,x_u)\in W}x_u\Bigr)\land
@@ -916,22 +1071,42 @@ aggregate values there satisfy the comparison. This is precisely the ordinary
 Boolean evaluation of the \sql{HAVING} predicate $\psi$ on the possible
 world~$S_\nu$.
 
-For a Boolean combination $\psi$ of aggregate comparisons over the same
-grouping, the claim extends by structural induction: negation is pushed
+For a Boolean combination $\psi$ of atoms over the same grouping, the
+claim extends by structural induction: negation is pushed
 to the atoms (Definition~\ref{def:semantics}), where it complements the
 comparison operator, and since $\otimes=\land$ and $\oplus=\lor$ act
-pointwise on $\mathbb B[X]$ while all atoms share the same group, hence
-the same active world $W_\nu$, the predicate provenance
+pointwise on $\mathbb B[X]$ while all aggregate atoms of that grouping
+share the same active world $W_\nu$, the predicate provenance
 $\predsem{\hat I}{q}{\psi}(u)$ is true under $\nu$ if and only if
-$W_\nu\neq\emptyset$ and $\psi$ holds classically on $W_\nu$.
+$W_\nu\neq\emptyset$ and $\psi$ holds classically on $W_\nu$. A regular
+atom mixed into $\psi$ contributes its characteristic value
+$\chi_{\op}$, i.e., its classical truth value on the output tuple, so the
+same equivalence holds -- except that $\psi$ may then be satisfied in a
+world where the group is empty, which is exactly the case in which
+Definition~\ref{def:general} keeps the group's pending factor.
+
+It remains to account for those pending factors. A group whose tokens are
+never compared, or that is compared by a predicate not entailing its
+existence, contributes to the annotation of a row the factor
+$\delta\bigl(\bigoplus_{(u,x_u)\in U}x_u\bigr)$ of
+Definition~\ref{def:general}. Over $\mathbb B[X]$ the operator $\delta$ is
+the identity (Section~\ref{sec:preliminaries}), so this factor is
+$\bigvee_{(u,x_u)\in U}x_u$, which is true under $\nu$ if and only if
+$W_\nu\neq\emptyset$, i.e., if and only if the group is non-empty in
+$S_\nu$ -- precisely the condition under which the grouping produces that
+row on $S_\nu$. This is where the choice $\delta\defeq\mathrm{id}$ over
+$\mathbb B[X]$ is used: the support indicator would make the factor true
+in every world.
 
 Finally, $\nu(\angsem{\hat I}{Q})=\top$ if and only if the annotation
-of some output row is true under~$\nu$, i.e., if and only if some group
-is non-empty in $S_\nu$ and satisfies $\psi$ there; that is, exactly
-when the output of $Q$ on $S_\nu$ is non-empty. Property~\eqref{eq:char-prop}
-is therefore preserved by the aggregate-comparison selection and, together
-with~\cite[Theorem~12]{sen2026provsql} for the remaining operators, holds for
-the whole query~$Q$. We conclude that
+of some output row is true under~$\nu$, i.e., by the two paragraphs
+above, if and only if some row of $Q$ on $S_\nu$ survives every
+comparison it undergoes and every group it depends on is non-empty in
+$S_\nu$; that is, exactly when the output of $Q$ on $S_\nu$ is non-empty.
+Property~\eqref{eq:char-prop} is therefore preserved by every operator of
+Definition~\ref{def:general} and, together
+with~\cite[Theorem~12]{sen2026provsql} for the operators already covered
+there, holds for the whole query~$Q$. We conclude that
 $\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$.
 \end{proof}
 
@@ -943,7 +1118,7 @@ which deciding whether a provenance is non-zero is NP-complete, and this
 already in \emph{data} complexity, i.e., for a single fixed query.
 
 \begin{propositionrep}\label{prop:having-nphard}
-  \lean{HavingComplexity}{havingSumNonzero_NP_complete}
+  \lean{HavingComplexity}{Provenance.Complexity.havingSumNonzero_NP_complete}
   For $\mathbb{K}\in\{\mathbb{B}[X],\mathbb{N}[X]\}$, deciding whether the
   provenance of a Boolean \sql{HAVING} query over a $\mathbb{K}$-instance is
   non-$\mathbb{0}_\mathbb{K}$ is NP-complete. Membership holds in combined
@@ -991,7 +1166,7 @@ already in \emph{data} complexity, i.e., for a single fixed query.
   \begin{minted}{postgresql}
 q: SELECT DISTINCT 1 FROM R GROUP BY b HAVING SUM(v) = b
   \end{minted}
-  that is, in our extended relational algebra,
+  that is, in our relational algebra,
   \[
     q=\Pi_{1}\bigl(
         \sigma_{\#2=\#1}\bigl(
@@ -1026,12 +1201,12 @@ $W$ is a sub-multiset of~$M$, and because the $x_i$ are distinct variables its
 annotation is non-$\mathbb{0}_\mathbb{K}$ and the worlds do not cancel: in
 $\mathbb{B}[X]$, $\ann_U(W)=\bigwedge_{i\in W}x_i\wedge\bigwedge_{i\notin
 W}\lnot x_i$ are distinct minterms
-\lean{HavingComplexity}{havingSumProvBool_ne_zero_iff}; in
+\lean{HavingComplexity}{Provenance.Complexity.havingSumProvBool_ne_zero_iff}; in
 $\mathbb{N}[X]$, the monus factor
 $\mathbb{1}\ominus\bigoplus_{i\notin W}x_i$ reduces to $\mathbb{1}$ (the
 excluded variables have no constant term), so $\ann_U(W)=\bigotimes_{i\in
 W}x_i$ are distinct monomials
-\lean{HavingComplexity}{havingSumProv_ne_zero_iff}. Hence $P\neq\mathbb{0}_\mathbb{K}$ if and only
+\lean{HavingComplexity}{Provenance.Complexity.havingSumProv_ne_zero_iff}. Hence $P\neq\mathbb{0}_\mathbb{K}$ if and only
 if some non-empty sub-multiset of~$M$ sums to~$B$, i.e., if and only if the
 subset-sum instance has a solution. The reduction is polynomial and, the
 query~$q$ being independent of the subset-sum instance, it establishes

@@ -4,11 +4,9 @@
   \label{appendix}
 \end{toappendix}
 
-We start with preliminaries on (m-)semirings, annotated relations,
-and extended relational algebra queries; we refer to
-\cite{sen2026provsql} for a full description of the semantics of
-extended relational algebra queries with terminal aggregation (i.e.,
-without \sql{HAVING}).
+We start with preliminaries on (m-)semirings, annotated relations, and
+queries; we refer to \cite{sen2026provsql} for a full description of the
+semantics of aggregate queries, as defined below.
 
 \begin{definition} \label{def:semiring}
   A \emph{semiring} is an algebraic structure $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
@@ -128,16 +126,32 @@ are one of our contributions.
 For queries with grouping and aggregation, an additional useful notion
 \cite{amsterdamer2011provenance} is that of \emph{$\delta$-semirings},
 which is a semiring with an additional unary operator $\delta:\mathbb
-K\to \mathbb K$ having the following two properties: (i) $\delta(\mathbb
+K\to \mathbb K$, used to capture the semantics of the existence of a
+group. Two properties are required in \cite{amsterdamer2011provenance}:
+(i) $\delta(\mathbb
 0)=\mathbb 0$ and (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb
-1)=\mathbb 1$. Semirings in which a $\delta$ can be defined are exactly
+1)=\mathbb 1$. Non-trivial semirings in which such a $\delta$ can be defined are exactly
 those of characteristic~$0$
 \lean{SemiringWithMonus}{delta_exists_iff_charP_zero}.
-Intuitively, $\delta$ is used to capture the semantics of the
-existence of a group. Usual
-definitions of $\delta$ are $\delta(x)\defeq x$ (in
-idempotent semirings only, where $\mathbb 1\oplus\dots\oplus\mathbb
-1=\mathbb 1$); or $\delta(x)=\mathbb 1$ for all $x\neq\mathbb 0$.
+These properties leave $\delta$ largely underdetermined. We require one
+further axiom, \emph{$\delta$-absorption}: $\forall a,b\in\mathbb K$,
+$a\otimes\delta(a\oplus b)=a$; a group-existence factor is thus redundant
+next to any annotation that already contains an occurrence of that group.
+The characterization above is unaffected by this strengthening: in an
+m-semiring, a $\delta$ satisfying all three axioms exists exactly when the
+characteristic is~$0$, since the support indicator (see below) satisfies
+them all \lean{SemiringWithMonus}{delta_absorb_indicator}.
+The two usual definitions of $\delta$ are the identity,
+$\delta(x)\defeq x$, and the \emph{support indicator},
+$\delta(x)\defeq\mathbb 1$ for $x\neq\mathbb 0$ and
+$\delta(\mathbb 0)\defeq\mathbb 0$. We choose the former whenever it
+satisfies all properties (e.g., in $\mathbb{B}[X]$), the latter
+otherwise.
+
+A \emph{homomorphism of m-semirings}
+\lean{SemiringWithMonus}{SemiringWithMonusHom} is a semiring
+homomorphism $h:\mathbb K\to\mathbb K'$ that also commutes with
+$\ominus$ and with~$\delta$.
 
 \paragraph*{Useful results on m-semirings} We discuss now some
 additional results on m-semirings that we use later. First we show that idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
@@ -307,10 +321,12 @@ $\angsem{\hat I}{q}$, is defined in \cite{sen2026provsql} over $\mathbb
 K$-relations for each operator of the relational
 algebra extended with a grouping and aggregation operator inspired by
 \cite{DBLP:journals/tcs/Libkin03}.
-There, semantics of aggregation queries were defined only for
-\emph{terminal aggregation}, i.e., when aggregation is the last operator of the query.
-In this paper, we extend the semantics of the selection operator to the
-case where selection is applied to aggregate expressions (\sql{HAVING}
-conditions), by comparing an aggregate with either a constant or
-another
-aggregate.
+We use three classes of queries throughout: an \emph{aggregate-free
+query} uses no grouping and aggregation; an \emph{aggregate query} may
+use it, but only as its last operator (\emph{terminal aggregation}),
+which is the case covered by \cite{sen2026provsql}; and a
+\emph{\sql{HAVING} query} may in addition apply a selection to aggregate
+expressions (\sql{HAVING} conditions), comparing an aggregate with either
+a constant or another aggregate, wherever in the query the comparison
+occurs. Giving a provenance semantics to \sql{HAVING} queries is the
+object of this paper.
