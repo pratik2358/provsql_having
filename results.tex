@@ -34,6 +34,47 @@ where $\varepsilon$ denotes duplicate elimination and $<^*$ denotes $<$ augmente
         not have distributivity of $\otimes$ over $\ominus$, and a
         $\mathbb{K}_1$-instance $\hat I_1$, such that
         $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_2}$.
+        \pierre{We should use \textsf{ChainFive} here instead of
+        Why$[X]$. As stated, this item does not show that distributivity is
+        \emph{needed}: Why$[X]$ is neither absorptive nor
+        $\otimes$/$\ominus$-distributive (Table~\ref{tab:semirings}), so it
+        fails \emph{both} hypotheses of~(i) and only shows that idempotence
+        alone is insufficient. Item~(iii) is sharp by contrast -- it keeps
+        distributivity and drops absorptivity. The five-element chain
+        \textsf{ChainFive} of the Lean development is absorptive (hence
+        idempotent) but not $\otimes$/$\ominus$-distributive, so it isolates
+        the right hypothesis and makes (ii) and~(iii) the symmetric pair
+        ``distributivity is needed'' / ``absorptivity is needed'' that
+        \textsf{HavingQueryCounterexamples} already uses in its module
+        docstring. Beyond retargeting the Lean reference to
+        \textsf{Semirings/ChainFive} (\textsf{ChainFive.query\_counterexample}),
+        this needs a \emph{new human-readable proof}: the one below fixes
+        $C=2$ and a Why$[X]$ valuation, whereas the \textsf{ChainFive} witness
+        is at $C=1$, so neither the instance nor the two closed forms carry
+        over. Sketch to write up: let $\mathbb K_1$ be the chain
+        $\mathbb 0<\mathsf{lo}<\mathsf{mid}<\mathsf{hi}<\mathbb 1$ with
+        $\oplus=\max$, $a\ominus b=\mathbb 0$ if $a\leq b$ and $a$ otherwise,
+        and $\otimes$ commutative with
+        $\mathsf{hi}\otimes\mathsf{hi}=\mathsf{hi}$,
+        $\mathsf{hi}\otimes\mathsf{mid}=\mathsf{hi}\otimes\mathsf{lo}
+        =\mathsf{lo}$, and every other product of elements strictly between
+        $\mathbb 0$ and $\mathbb 1$ equal to $\mathbb 0$; it is absorptive but
+        $\mathsf{hi}\otimes(\mathbb 1\ominus\mathsf{hi})=\mathsf{hi}$ while
+        $(\mathsf{hi}\otimes\mathbb 1)\ominus(\mathsf{hi}\otimes\mathsf{hi})
+        =\mathbb 0$. Take $C=1$, $\op$ to be~$=$, and one group of three
+        occurrences annotated $(\mathsf{mid},\mathsf{hi},\mathsf{hi})$. For
+        $C=1$ the two closed forms are
+        $\angsem{\hat I_1}{Q^{=1}_1}(u)=\bigoplus_i \alpha_i\otimes
+        (\mathbb 1\ominus\bigoplus_{j\neq i}\alpha_j)$ and
+        $\angsem{\hat I_1}{Q^{=1}_2}(u)=(\bigoplus_i\alpha_i)\ominus
+        (\bigoplus_{i<j}\alpha_i\otimes\alpha_j)$. Since
+        $\mathbb 1\ominus\mathsf{hi}=\mathbb 1$, the first is
+        $\mathsf{mid}\oplus\mathsf{hi}\oplus\mathsf{hi}=\mathsf{hi}$, while
+        the second is
+        $\mathsf{hi}\ominus(\mathsf{lo}\oplus\mathsf{lo}\oplus\mathsf{hi})
+        =\mathsf{hi}\ominus\mathsf{hi}=\mathbb 0$. We should also decide
+        whether to keep the Why$[X]$ computation as a second, weaker
+        counterexample (idempotence is not enough) or drop it.}
       \item
         \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}
         There exists a commutative m-semiring $\mathbb{K}_2$ that has
