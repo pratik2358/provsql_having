@@ -4,8 +4,7 @@ We show that our semantics as formalized in Section~\ref{sec:semantics}
 is compatible with the \sql{JOIN}-based semantics of simple \sql{HAVING}
 queries on \sql{COUNT} when our semiring of choice is absorptive and satisfies
 distributivity of $\otimes$ over $\ominus$. Since \sql{COUNT} is
-commutative, \sql{COUNT(*) ...
-GROUP BY #1} can
+commutative, \sql{COUNT(*) ... GROUP BY #1} can
 be coded as $\gamma^{\preceq}_{\#1}[1:+]$ for an arbitrary order $\preceq$.
 \begin{theoremrep}\label{th:correctness}
   For any arity~$2$ aggregate-free query $q$, $C\in\mathbb{N}_{\ge1}$, $\op\in \{\leq,
@@ -359,7 +358,49 @@ surviving witness:
   =\emptyset=\mathbb 0.
 \end{align*}
 Hence, $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
+
+\rjok{\emph{Correct proof of (ii)}
+\lean{Semirings/ChainFive}{ChainFive.query_counterexample}
+To isolate distributvity we give an \emph{absorptive} counterexample.
+Let $\mathbb K_1$ be the five-element chain
+$\mathbb 0=e_0<e_1<e_2<e_3<e_4=\mathbb 1$ with
+\begin{itemize}
+  \item $e_i\oplus e_j=e_{\max(i,j)}$, 
+  \item $e_i\ominus e_j=\mathbb 0$ if $i\le j$ and $e_i\ominus e_j=e_i$ otherwise, 
+  \item $\otimes$ commutative, of unit~$e_4$ and annihilator~$e_0$, defined on the remaining elements by $e_3\otimes e_3=e_3$, $e_3\otimes e_2=e_3\otimes e_1=e_1$, and $e_i\otimes e_j=\mathbb 0$ for all other $1\le i,j\le 3$.
+\end{itemize} 
+Since $e_i\otimes e_j\le e_{\min(i,j)}$, the semiring $\mathbb K_1$ is
+absorptive, hence idempotent. It is not $\otimes$/$\ominus$-distributive: since
+$\mathbb 1\ominus e_3=\mathbb 1$, we get
+$e_3\otimes(\mathbb 1\ominus e_3)=e_3$, whereas
+$(e_3\otimes\mathbb 1)\ominus(e_3\otimes e_3)=e_3\ominus e_3=\mathbb 0$.
+Fix $C=1$ and the operator $\op$ to be~$=$, and let $\hat I_1$ have a group with
+key~$u$ consisting of three occurrences annotated $\alpha_1=e_2$ and
+$\alpha_2=\alpha_3=e_3$. For $C=1$ only the singleton possible worlds
+satisfy the \sql{HAVING} condition, so
+\[
+\angsem{\hat I_1}{Q^{=1}_1}(u)
+=\bigoplus_{i}\alpha_i\otimes\Bigl(\mathbb 1\ominus\bigoplus_{j\neq i}\alpha_j\Bigr),
+\qquad
+\angsem{\hat I_1}{Q^{=1}_2}(u)
+=\Bigl(\bigoplus_i\alpha_i\Bigr)\ominus\Bigl(\bigoplus_{i<j}\alpha_i\otimes\alpha_j\Bigr),
+\]
+the latter because $Q^{=1}_2=Q^{\ge1}_2-Q^{\ge2}_2$ annotates~$u$ by
+$\bigoplus_i\alpha_i$ minus $\bigoplus_{i<j}\alpha_i\otimes\alpha_j$.
+Here $\bigoplus_{j\neq i}\alpha_j=e_3$ for every~$i$ and
+$\mathbb 1\ominus e_3=\mathbb 1$, so
+\[
+\angsem{\hat I_1}{Q^{=1}_1}(u)
+=e_2\oplus e_3\oplus e_3=e_3,
+\]
+while $\bigoplus_i\alpha_i=e_3$ and
+$\bigoplus_{i<j}\alpha_i\otimes\alpha_j=e_1\oplus e_1\oplus e_3=e_3$, so
+\[
+\angsem{\hat I_1}{Q^{=1}_2}(u)=e_3\ominus e_3=\mathbb 0\neq e_3.
+\]
+Hence $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_1}$}.
 \paragraph*{Proof of (iii)}
+\rjok{To isolate absorptivity we give a \emph{distributive} counterexample.}
 \lean{Semirings/Tropical}{TropicalR.F_ne_S} Consider the tropical semiring
 $\mathbb K_2=(\mathbb{R}\cup\{\infty\},\min,+,\infty,0)$.
 It is idempotent, $\otimes$ distributes over $\ominus$ and is non-absorptive.
