@@ -46,6 +46,27 @@ the first value of its input, is \emph{non-commutative}: its result
 depends on the order of the sequence.
 \end{example}
 
+\rjok{
+A \sql{HAVING} predicate cannot be evaluated on the annotations of a
+group taken as a whole. Those annotations may be combined by $\oplus$
+and $\otimes$ into a single element of $\mathbb K$, but no
+$\mathbb K-$element observs \emph{how many} occurrences are being counted, so
+there is nothing to which a predicate such as \sql{COUNT(*)}${}\geq 2$
+could be applied. Equivalently, the aggregate of a group is not a
+value of $\mathcal V$ but a formal object of $\mathcal V_{\mathbb K}$,
+determined only once one knows which occurrences of the group
+contribute; this is precisely why~\cite{amsterdamer2011provenance}
+introduces an uninterpreted comparison operator rather than evaluating
+the comparison. Our contribution is to give that comparison a value in
+$\mathbb K$, and for this the group must first be split into parts, each
+of which determines both a number of occurrences and an annotation.
+
+Definition~\ref{def:possible_world} performs that split. A part (\emph{possible-world}) is a
+subsequence $W$ of the group, on which the aggregate is an ordinary
+value and the comparison an ordinary test; its annotation weights it by "these occurrences contribute, and the others do not". 
+Which split is the right one is settled in an arbitrary m-semiring,
+without reference to the parts. }
+
 Sen et al.~\cite{sen2026provsql} provide a provenance semantics over
 annotated relations for aggregate queries,
 itself based on that of
