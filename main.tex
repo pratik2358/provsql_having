@@ -27,9 +27,14 @@
 
 \newcommand{\NN}{\mathbb{N}}
 \newcommand{\mset}[1]{\{\!\{\,#1\,\}\!\}}
+% \llbracket/\rrbracket are not provided by unicode-math, which names the
+% white square brackets \lBrack/\rBrack.
+\let\llbracket\lBrack
+\let\rrbracket\rBrack
+% LibertinusMath has no U+22D3, so build \Cup out of two overlapping cups.
+% (unicode-math installs its own \Cup at \begin{document}, hence the hook.)
+\AtBeginDocument{\renewcommand{\Cup}{\mathbin{\cup\mkern-6.5mu\cup}}}
 \newcommand{\ansem}[2]{\llbracket #2 \rrbracket_{#1}}
-\newcommand{\llangle}{\langle\mkern-5mu\langle}
-\newcommand{\rrangle}{\rangle\mkern-5mu\rangle}
 \newcommand{\angsem}[2]{\lAngle #2\rAngle^{#1}}
 \newcommand{\predsem}[3]{\llbracket #3\rrbracket^{#1}_{#2}}
 \newcommand{\SUM}{\mathrm{SUM}}
