@@ -38,7 +38,7 @@ operation \lean{SemiringWithMonus}{monus_unique}:
 \begin{definition} \label{def:m-semiring}
   Let $(\mathbb K, \oplus, \otimes, \mathbb 0, \mathbb 1)$ be a semiring.
   For $a, b\in\mathbb K$, define
-$a\le b$ as $\exists c\in\mathbb K, b = a\oplus c$. If~$\leq$ is an order
+$a\le b$ as $\exists c\in\mathbb K, b = a\oplus c$. If $\leq$ is an order
 relation,\footnote{$\leq$ is always a
 pre-order, but not always antisymmetric: on the ring $\mathbb Z$ of
 integers, any two elements are related in both directions, e.g.\
@@ -82,7 +82,7 @@ In addition to these, m-semirings may have other properties. Useful ones are:
     \lean{SemiringWithMonus}{mul_sub_left_distributive} $\forall a,b,c\in
     \mathbb K$, $a\otimes (b\ominus c) = (a\otimes b) \ominus (a\otimes
     c)$.
-  \item \textbf{Characteristic~$0$:} \(\forall n\geq 1,
+  \item \textbf{Characteristic $0$:} \(\forall n\geq 1,
     \bigoplus_{i=1}^n\mathbb{1}\neq \mathbb{0}\).
 \end{itemize}
 
@@ -108,7 +108,7 @@ used in temporal databases
 We note that only the Boolean, Boolean-function, Temporal, Tropical (over
 $\mathbb{N}$), Viterbi, and \L
 ukasiewicz m-semirings are idempotent, absorptive and have $\otimes$
-distributive over~$\ominus$.
+distributive over $\ominus$.
 These properties will be important for the semantics of \sql{HAVING}
 queries. Note that this table, along with the formal Lean proofs that
 ensure its validity, definitively fixes
@@ -121,7 +121,86 @@ both $\mathbb{N}[X]$ and Why[$X$] had $\otimes$ distributive over $\ominus$
 (called Axiom A13 in~\cite{amsterdamer2011limitations}). Such errors are
 easy to make given some counter-intuitive properties of
 these basic building blocks; clean, formally proven statements
-are one of our contributions.
+are one of our contributions. \rjok{We give three handwritten arguments corresponding to the LEAN developments
+in the \hyperref[appendix:corrections]{Appendix} that justify these errors.}
+
+\begin{toappendix}
+  \subsection{Corrections to the Literature}
+  \label{appendix:corrections}
+  \rjok{\paragraph*{The tropical semiring over $\mathbb R$ admits a monus
+  \lean{Semirings/Tropical}{instCommSemiringWithMonusTropicalWithTopReal}.}
+  Write $\mathbb K \defeq \mathbb R\cup\{+\infty\}$ with $a\oplus b\defeq
+  \min(a,b)$, $\mathbb 0\defeq+\infty$, $a\otimes b\defeq a+b$ and $\mathbb
+  1\defeq 0$; we write $\leq_{\mathbb R}$ for the usual order on $\mathbb K$,
+  to distinguish it from the natural order $\leq$ of
+  Definition~\ref{def:m-semiring}.
+
+  The natural order is the \emph{reverse} of the usual one. Indeed, $a\leq b$
+  holds iff $\min(a,c)=b$ for some $c\in\mathbb K$: if $b\leq_{\mathbb R}a$,
+  take $c\defeq b$; and if $b>_{\mathbb R}a$ then $\min(a,c)\leq_{\mathbb
+  R}a<_{\mathbb R}b$ for every $c$, so no such $c$ exists. Hence $a\leq b$
+  iff $b\leq_{\mathbb R}a$, and therefore the semiring is naturally ordered.
+
+  Now, 
+  \[
+    a\ominus b\defeq
+    \begin{cases}
+      +\infty & \text{if $a\geq_{\mathbb R}b$,}\\
+      a & \text{otherwise.}
+    \end{cases}
+  \]
+  We observe by the residuation law $a\ominus b\leq c\iff a\leq b\oplus c$, which,
+  rewritten in the usual order, is $c\leq_{\mathbb R}a\ominus b\iff
+  \min(b,c)\leq_{\mathbb R}a$. If $a\geq_{\mathbb R}b$, the left-hand side is
+  $c\leq_{\mathbb R}+\infty$ and the right-hand side follows from
+  $\min(b,c)\leq_{\mathbb R}b\leq_{\mathbb R}a$, so both hold. If
+  $a<_{\mathbb R}b$, the left-hand side is $c\leq_{\mathbb R}a$; when
+  $c\leq_{\mathbb R}a$ we get $\min(b,c)\leq_{\mathbb R}c\leq_{\mathbb R}a$,
+  and when $c>_{\mathbb R}a$ both $b$ and $c$ exceed $a$, so
+  $\min(b,c)>_{\mathbb R}a$. The two sides therefore agree in every case, and
+  $\mathbb K$ is an m-semiring.
+
+  Nothing above uses any property of $\mathbb R$ beyond it being a linearly
+  ordered commutative additive monoid, so the same construction equips the
+  tropical semiring over $\mathbb Q$, and over $\mathbb N$, with a monus.
+
+  \paragraph*{In $\mathbb N[X]$, $\otimes$ does not distribute over $\ominus$
+  \lean{Semirings/How}{How.not_mul_sub_left_distributive}.}
+  Here $\ominus$ is coefficient-wise truncated subtraction: for every
+  monomial $M$, $c_M(a\ominus b)=\max\bigl(c_M(a)-c_M(b),0\bigr)$, writing
+  $c_M(\cdot)$ for the coefficient of $M$. A single variable $x$ suffices.
+  Take $b\defeq x$, $c\defeq\mathbb 1$ and $a\defeq b\oplus c=x+1$. Then
+  $b\ominus c=x$, since $c_x(b)-c_x(c)=1-0$ and $c_{\mathbb 1}(b)-c_{\mathbb
+  1}(c)=0-1$ truncates to $0$, so
+  \[
+    a\otimes(b\ominus c)=(x+1)\,x=x^2+x .
+  \]
+  On the other hand $a\otimes b=x^2+x$ and $a\otimes c=x+1$, so
+  \[
+    (a\otimes b)\ominus(a\otimes c)=(x^2+x)\ominus(x+1)=x^2 ,
+  \]
+  the coefficient of $x$ truncating to $1-1=0$. The two results differ in the
+  coefficient of $x$.
+
+  \paragraph*{In Why[$X$], $\otimes$ does not distribute over $\ominus$
+  \lean{Semirings/Why}{Why.not_mul_sub_left_distributive}.}
+  Recall the semiring $(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\})$ of
+  Example~\ref{ex:semirings}, whose monus is set difference, $A\ominus
+  B=A\setminus B$. We note that $\mathbb 0=\emptyset$ is the empty set whereas $\mathbb 1=\{\emptyset\}$ is the singleton containing
+  the empty set. Again one variable $x$ suffices: take
+  $a\defeq\{\{x\}\}$, $b\defeq\{\emptyset\}$ and $c\defeq\{\{x\}\}$. Then
+  $b\ominus c=\{\emptyset\}$ and
+  \[
+    a\otimes(b\ominus c)=\{\{x\}\}\Cup\{\emptyset\}=\{\{x\}\cup\emptyset\}
+    =\{\{x\}\} .
+  \]
+  But $a\otimes b=\{\{x\}\}\Cup\{\emptyset\}=\{\{x\}\}$ and $a\otimes
+  c=\{\{x\}\}\Cup\{\{x\}\}=\{\{x\}\cup\{x\}\}=\{\{x\}\}$, so
+  \[
+    (a\otimes b)\ominus(a\otimes c)=\{\{x\}\}\setminus\{\{x\}\}=\emptyset ,
+  \]
+and $\{\{x\}\}\neq\emptyset$. }
+\end{toappendix}
 
 For queries with grouping and aggregation, an additional useful notion
 \cite{amsterdamer2011provenance} is that of \emph{$\delta$-semirings},
@@ -131,7 +210,7 @@ group. Two properties are required in \cite{amsterdamer2011provenance}:
 (i) $\delta(\mathbb
 0)=\mathbb 0$ and (ii) $\delta(\mathbb 1 \oplus \dots \oplus \mathbb
 1)=\mathbb 1$. Non-trivial semirings in which such a $\delta$ can be defined are exactly
-those of characteristic~$0$
+those of characteristic $0$
 \lean{SemiringWithMonus}{delta_exists_iff_charP_zero}.
 These properties leave $\delta$ largely underdetermined. We require one
 further axiom, \emph{$\delta$-absorption}: $\forall a,b\in\mathbb K$,
@@ -139,7 +218,7 @@ $a\otimes\delta(a\oplus b)=a$; a group-existence factor is thus redundant
 next to any annotation that already contains an occurrence of that group.
 The characterization above is unaffected by this strengthening: in an
 m-semiring, a $\delta$ satisfying all three axioms exists exactly when the
-characteristic is~$0$, since the support indicator (see below) satisfies
+characteristic is $0$, since the support indicator (see below) satisfies
 them all \lean{SemiringWithMonus}{delta_absorb_indicator}.
 The two usual definitions of $\delta$ are the identity,
 $\delta(x)\defeq x$, and the \emph{support indicator},
@@ -151,14 +230,14 @@ otherwise.
 A \emph{homomorphism of m-semirings}
 \lean{SemiringWithMonus}{SemiringWithMonusHom} is a semiring
 homomorphism $h:\mathbb K\to\mathbb K'$ that also commutes with
-$\ominus$ and with~$\delta$.
+$\ominus$ and with $\delta$.
 
 \paragraph*{Useful results on m-semirings} We discuss now some
 additional results on m-semirings that we use later. First we show that idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
 \begin{propositionrep}\label{prop:idempotent_iff_add_monus}
   \lean{SemiringWithMonus}{idempotent_iff_add_monus}
   An m-semiring $\mathbb K$ is idempotent if and only if $\ominus$
-  is right-distributive over~$\oplus$ in $\mathbb K$, i.e., if and only
+  is right-distributive over $\oplus$ in $\mathbb K$, i.e., if and only
   if $\forall a, b,
 c\in\mathbb K, (a\oplus b)\ominus c=(a\ominus c)\oplus (b\ominus c)$.
 \end{propositionrep}
