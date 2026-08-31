@@ -942,7 +942,7 @@ sides evaluate the same query and only the instance differs; we proceed
 by structural induction on~$Q$. The induction hypothesis cannot be an
 equality of intermediate results, because the semantics does not only
 combine annotations, it also \emph{inspects} them, in two places:
-\begin{compactenum}[(a)]
+\begin{enumerate}[(a)]
 \item the supersede condition tests occurrence sequences for equality,
   so a non-injective $h$ may identify two groups that $\mathbb K$
   distinguishes, and drop on the $\mathbb K'$ side a pending factor that
@@ -950,12 +950,12 @@ combine annotations, it also \emph{inspects} them, in two places:
 \item Definition~\ref{def:possible_world} orders occurrences of equal
   value-tuples arbitrarily; any concrete choice may break ties using the
   annotations, and $h$ need not preserve it.
-\end{compactenum}
+\end{enumerate}
 
 \smallskip\noindent\emph{The invariant.} Say that an annotated tuple
 $(u',\alpha')$ over $\mathbb K'$ \emph{simulates} an annotated tuple
 $(u,\alpha)$ over $\mathbb K$ when
-\begin{compactenum}[(i)]
+\begin{enumerate}[(i)]
 \item $u'$ and $u$ agree on their regular columns;
 \item in each aggregate column, the two tokens have the same aggregate
   function, and the occurrence sequence of the one in~$u'$ is obtained
@@ -965,7 +965,7 @@ $(u,\alpha)$ over $\mathbb K$ when
   $\mathbb K'$ and $\mathbb K$ \emph{denoted} by the factored forms of
   Definition~\ref{def:general}, i.e., taken after the pending factors
   have been multiplied in.
-\end{compactenum}
+\end{enumerate}
 We prove by induction on $Q$ that the tuples of
 $\angsem{h(\hat I)}{Q}$ and those of $\angsem{\hat I}{Q}$ are in a
 multiplicity-preserving bijection under which each simulates its
@@ -978,7 +978,7 @@ annotations.
 \smallskip\noindent\emph{Two neutrality lemmas.} Both say that a
 rearrangement of the factored annotation does not change the element it
 denotes, on either side separately.
-\begin{compactenum}[(1)]
+\begin{enumerate}[(1)]
 \item \emph{Cashing is neutral} \lean{AggQueryHom}{GenAnn.finalize_cash}:
   for a factored annotation $\lAngle\beta,P\rAngle$ and any
   $P_0\msubseteq P$, the pair
@@ -997,7 +997,7 @@ denotes, on either side separately.
   Dropping the pending factor of $U$ next to $\predsem{\hat
   I}{q}{\psi}(u)$ is therefore invisible, whether or not the evaluation
   actually drops it.
-\end{compactenum}
+\end{enumerate}
 Lemma~(2) is the substantive use of the $\delta$-absorption axiom of
 Section~\ref{sec:preliminaries}. Negation being pushed to the atoms,
 $\psi$ is a $\land/\lor$-combination of atoms. For an aggregate atom, by
@@ -1020,7 +1020,7 @@ $\gamma^{\preceq}$ -- apply to all-regular relations by the kind
 discipline of Definition~\ref{def:general}. Clause~(ii) is vacuous there,
 so on their inputs simulation is plain equality of tuples together with
 $\alpha'=h(\alpha)$.
-\begin{compactitem}
+\begin{itemize}
 \item \emph{Base relations.} Every tuple of $h(\hat I)$ is the $h$-image
   of the corresponding tuple of $\hat I$, with nothing pending.
 \item \emph{$\gamma^{\preceq}$.} By the remark above the two inputs carry
@@ -1061,7 +1061,7 @@ $\alpha'=h(\alpha)$.
   Duplicate elimination $\oplus$-sums the annotations of equal tuples,
   and $h$ commutes with $\oplus$; difference subtracts them with
   $\ominus$, and $h$ commutes with $\ominus$ by definition.
-\end{compactitem}
+\end{itemize}
 Every operator of Definition~\ref{def:general} is covered, which
 concludes the induction and the proof.
 \end{appendixproof}

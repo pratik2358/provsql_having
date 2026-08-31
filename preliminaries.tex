@@ -412,7 +412,7 @@ The full syntax of $\RA_k$ and the definition of $\angsem{\hat
 I}{\cdot}$ on every operator are recalled in the
 \hyperref[appendix:algebra]{Appendix}; we describe here only the
 aggregation operator, on which this paper builds.
-\begin{compactdesc}
+\begin{description}
   \item[syntax] for $k\in\mathbb N$, $q\in\RA_k$, distinct grouping
     indices $(i_j)_{1\leq j\leq m}$ with $1\leq i_j\leq k$, terms
     $t_1,\dots,t_n$ of max-index $\leq k$, and monoid aggregate functions
@@ -440,7 +440,7 @@ aggregation operator, on which this paper builds.
     group key isannotated by $\delta(\beta)$, with $\beta$ the
     $\oplus$-sum of the annotations of the tuples of the group: the group
     exists exactly when one of its tuples does.
-\end{compactdesc}
+\end{description}
 Indeed we take
 $\mathcal V_{\mathbb K}$ to be $\mathcal V$ extended with the
 \emph{aggregate values}, introduced by the aggregation
@@ -499,7 +499,7 @@ object of this paper.
   Given a database schema $\mathcal{D}$, the language $\RA_k$ of
   extended relational algebra queries of arity $k\in\mathbb{N}$ is
   defined recursively as follows \lean{Query}{Query}:
-  \begin{compactdesc}
+  \begin{description}
     \item[relation] for any relation $R$ in the domain of $\mathcal{D}$,
       $R\in\RA_{\mathcal{D}(R)}$;
     \item[projection] for $k\in\mathbb N$, $q\in\RA_{k}$,
@@ -521,12 +521,10 @@ object of this paper.
       t_n$ of max-index $\leq k$, functions $f_1,\dots,f_n$ from finite
       multisets of values to values,
       $\gamma_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)\in\RA_{m+n}$.
-  \end{compactdesc}
+  \end{description}
   Some other operators are syntactic sugar:
-  \begin{inparadesc}
-    \item[join] $q_1\bowtie_\phi q_2 \defeq \sigma_\phi(q_1\times q_2)$;
-    \item[set union] $q_1\cup q_2\defeq \epsilon(q_1\uplus q_2)$.
-  \end{inparadesc}
+  the \emph{join} $q_1\bowtie_\phi q_2 \defeq \sigma_\phi(q_1\times q_2)$ and
+  the \emph{set union} $q_1\cup q_2\defeq \epsilon(q_1\uplus q_2)$.
   Note that the multiset difference above is neither the usual one nor
   the one of the \sql{EXCEPT ALL} operator of SQL, but the one of the
   \sql{NOT IN} operator: the standard definition
@@ -539,7 +537,7 @@ object of this paper.
   over $\mathcal{D}$, where a relation of arity $k$ is a finite multiset
   of tuples of $\mathcal{V}^k$, is defined by induction
   \lean{Query}{Query.evaluate}:
-  \begin{compactdesc}
+  \begin{description}
     \item[relation] $\ansem{I}{R}\defeq I(R)$;
     \item[projection] $\ansem{I}{\Pi_{t_1,\dots,t_n}(q)}\defeq
       \mset{(t_1(u),\dots,t_n(u))\mid u\in\ansem{I}{q}}$;
@@ -562,7 +560,7 @@ object of this paper.
         v)),\dots,f_n(B_n(\vec v))\bigr)\ \Big|\
         \vec v\in\ansem{I}{\epsilon(\Pi_{\#i_1,\dots,\#i_m}(q))}\,\Bigr\}.
       \]
-  \end{compactdesc}
+  \end{description}
 
   \paragraph*{Semantics over annotated relations.} The semantics
   $\angsem{\hat I}{\cdot}$ of extended relational algebra queries on a
@@ -572,7 +570,7 @@ object of this paper.
   operator, and a $\delta$-semiring for the aggregation operator (we say
   that $\mathbb{K}$ is \emph{appropriate} for $q$ if this is the case)
   \lean{QueryAnnotatedDatabase}{Query.evaluateAnnotated}:
-  \begin{compactdesc}
+  \begin{description}
     \item[relation] $\angsem{\hat I}{R}\defeq\hat I(R)$;
     \item[projection] $\angsem{\hat I}{\Pi_{t_1,\dots,t_n}(q)}\defeq
       \mset{(t_1(u),\dots,t_n(u), \alpha) \mid (u,\alpha)\in\angsem{\hat
@@ -618,5 +616,5 @@ object of this paper.
       values in $\mathcal{V}$ to values in $\mathcal{V}_\mathbb{K}$.
       See~\cite{amsterdamer2011provenance} for details about provenance
       semimodules.
-  \end{compactdesc}
+  \end{description}
 \end{toappendix}

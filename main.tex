@@ -1,16 +1,52 @@
-\documentclass[acmsmall,review,anonymous]{acmart}
+\documentclass[a4paper,UKenglish,anonymous]{lipics-v2021}
 
-\usepackage{paralist}
+\pdfoutput=1
+
+\bibliographystyle{plainurl}
+
+
+\title{Provenance of HAVING Queries in Semirings with Monus}
+\titlerunning{Provenance of HAVING Queries in Semirings with Monus}
+
+
+\author{Aryak Sen}{TODO Affiliation, todo}{TODO}{}{}
+\author{Pratik Karmakar}{National University of Singapore, Singapore}%
+  {todo}{}{}
+\author{Silviu Maniu}{Universit\'e Grenoble Alpes, France}%
+  {todo}{}{}
+\author{Pierre Senellart}{TODO, France}{pierre@senellart.com}{}{}
+\author{Angelo Saadeh}{TODO, France}{todo}{}{}
+
+
+\ccsdesc[500]{Theory of computation~Data provenance}
+\ccsdesc[500]{Information systems~Data provenance}
+\ccsdesc[300]{Theory of computation~Incomplete, inconsistent, and uncertain databases}
+\ccsdesc[300]{Information systems~Database query processing}
+
+\keywords{Data provenance, probabilistic database, aggregate query, query
+processing}
+
+\category{}
+
+\relatedversion{}
+
+%\supplement{}
+
+%\funding{}
+
+%\acknowledgements{}
+
 \usepackage{minted}
-\usepackage{graphicx}
-\usepackage{xcolor}
 \usepackage{multicol}
 \usepackage{upgreek}
+\usepackage{booktabs}
+\usepackage{pifont}
 \setlength{\multicolsep}{2pt}
-\captionsetup{skip=2pt}
 
-% Borrow only \lAngle/\rAngle from the FdSymbolF delimiter font, without
-% loading fdsymbol (which would redefine \mathcal, \leq, etc.).
+
+\usepackage[only,llbracket,rrbracket]{stmaryrd}
+
+
 \DeclareFontFamily{U}{FdSymbolF}{}
 \DeclareFontShape{U}{FdSymbolF}{m}{n}{
   <-7.1> FdSymbolF-Book
@@ -23,38 +59,21 @@
 \usepackage[bb=boondox]{mathalfa}
 
 \usepackage[linesnumbered,algoruled,commentsnumbered,boxruled,noend]{algorithm2e}
-\usepackage{booktabs}
 \newcommand{\fakesql}[1]{\texttt{#1}}
 
 \newcommand{\NN}{\mathbb{N}}
 \newcommand{\RA}{\mathsf{RA}}
 \newcommand{\mset}[1]{\{\!\{\,#1\,\}\!\}}
-% \llbracket/\rrbracket are not provided by unicode-math, which names the
-% white square brackets \lBrack/\rBrack.
-\let\llbracket\lBrack
-\let\rrbracket\rBrack
-% LibertinusMath has no U+22D3, so build \Cup out of two overlapping cups.
-% (unicode-math installs its own \Cup at \begin{document}, hence the hook.)
-\AtBeginDocument{\renewcommand{\Cup}{\mathbin{\cup\mkern-6.5mu\cup}}}
 \newcommand{\ansem}[2]{\llbracket #2 \rrbracket_{#1}}
 \newcommand{\angsem}[2]{\lAngle #2\rAngle^{#1}}
 \newcommand{\predsem}[3]{\llbracket #3\rrbracket^{#1}_{#2}}
 \newcommand{\SUM}{\mathrm{SUM}}
 
-\usepackage{pifont}
 \newcommand{\ok}{\text{\color{green!50!black}\ding{51}}}
 \newcommand{\ko}{\text{\color{red!50!black}\ding{55}}}
 
 \newcommand{\dq}[1]{\text{\enquote{#1}}}
 \newcommand{\op}{\mathrel{\uptheta}}
-\makeatletter
-\newcommand{\mline}[1]{%
-  \begin{multiline}
-    #1
-  \end{multiline}
-}
-\title{Provenance of HAVING Queries in Semirings
-with Monus}
 
 \renewcommand{\epsilon}{\varepsilon}
 \renewcommand{\le}{\leqslant}
@@ -74,29 +93,8 @@ with Monus}
 \newcommand{\rjok}[1]{{\color{red}[\textbf{Aryak:} #1]}}
 \newcommand{\sql}{\mintinline{postgresql}}
 
-\usepackage[appendix=append,bibliography=common]{apxproof}
-
-% Dependency graph of the results, deferred to the appendix. tikz is loaded
-% only so that the nodes of the embedded graph become clickable links to the
-% results they stand for; autorun renders the graph with Graphviz whenever it
-% changes (shell-escape is needed anyway for minted).
-\usepackage{tikz}
-\usepackage[autorun,cite,citelabel=tag]{proofgraph}
-% Results are declared with \newtheoremrep, so they live in the "rep" flavour of
-% each environment; style both flavours so either can be used.
-\newcommand\pgphstyle[2]{\proofgraphstyle{#1}{#2}\proofgraphstyle{#1rep}{#2}}
-\pgphstyle{theorem}{shape=box,style=filled,fillcolor=gold,penwidth=2}
-\pgphstyle{proposition}{shape=box,style="rounded,filled",fillcolor=lightblue}
-\pgphstyle{corollary}{shape=box,style="rounded,filled",fillcolor=palegoldenrod}
-\pgphstyle{lemma}{shape=ellipse,style=filled,fillcolor=lightgray}
-
-\newtheoremrep{theorem}{Theorem}
-\newtheoremrep{proposition}[theorem]{Proposition}
-\newtheoremrep{corollary}[theorem]{Corollary}
-\newtheoremrep{lemma}[theorem]{Lemma}
 \newcommand{\Bag}{\mathrm{Bag}}
 \newcommand{\Seq}{\mathrm{Seq}}
-
 \newcommand{\msetminus}{\setminus_{\Bag}}
 \newcommand{\msubseteq}{\subseteq_{\Bag}}
 \newcommand{\ann}{\mathrm{ann}}
@@ -104,24 +102,39 @@ with Monus}
 \newcommand{\defeq}{\mathrel{\mathop:}=}
 
 \RestyleAlgo{boxed}
-\SetAlgoCaptionSeparator{:}
 \DontPrintSemicolon
 \SetKwInOut{Input}{Input}
 \SetKwInOut{Output}{Output}
 \SetKwProg{Fn}{Function}{}{}
+\usepackage[appendix=append,bibliography=common]{apxproof}
+
+
+\usepackage{tikz}
+\usepackage[autorun,cite,citelabel=tag]{proofgraph}
+
+\newcommand\pgphstyle[2]{\proofgraphstyle{#1}{#2}\proofgraphstyle{#1rep}{#2}}
+\pgphstyle{theorem}{shape=box,style=filled,fillcolor=gold,penwidth=2}
+\pgphstyle{proposition}{shape=box,style="rounded,filled",fillcolor=lightblue}
+\pgphstyle{corollary}{shape=box,style="rounded,filled",fillcolor=palegoldenrod}
+\pgphstyle{lemma}{shape=ellipse,style=filled,fillcolor=lightgray}
+
+
+\makeatletter
+\@for\axp@env:={theorem,lemma,corollary,proposition}\do{%
+  \expandafter\let\csname\axp@env\endcsname\@undefined
+  \expandafter\let\csname end\axp@env\endcsname\@undefined
+}
+\makeatother
+\newtheoremrep{theorem}{Theorem}
+\newtheoremrep{proposition}[theorem]{Proposition}
+\newtheoremrep{corollary}[theorem]{Corollary}
+\newtheoremrep{lemma}[theorem]{Lemma}
 
 \begin{document}
-\input{abstract}
 
 \maketitle
 
-\ccsdesc{Theory of computation~Data provenance}
-\ccsdesc{Information systems~Data provenance}
-\ccsdesc{Theory of computation~Incomplete, inconsistent, and uncertain databases}
-\ccsdesc{Information systems~Database query processing}
-
-\keywords{Data provenance, probabilistic database, aggregate query, query
-processing}
+\input{abstract}
 
 \input{introduction}
 
@@ -155,9 +168,6 @@ processing}
   \end{figure}
 \end{toappendix}
 
-\clearpage
-
-\bibliographystyle{ACM-Reference-Format}
 \bibliography{ref}
 
 \end{document}

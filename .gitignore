@@ -44,3 +44,7 @@ _minted*/
 *.fls
 *.fdb_latexmk
 .vscode/
+
+# LIPIcs assets required to build
+!lipics-logo-bw.pdf
+!cc-by.pdf
