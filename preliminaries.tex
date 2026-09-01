@@ -332,48 +332,24 @@ induction hypothesis.
 
 Finally, we show a few elementary consequences of the residual
 characterization of $\ominus$ in m-semirings.
-\begin{lemmarep}\label{lem:x-y<=x}
-  \lean{SemiringWithMonus}{monus_le}
-  In any m-semiring $\mathbb K$,
-$\forall x,y\in \mathbb K$, $x\ominus y \le x$.
+\begin{lemmarep}\label{lem:monus-basic}
+  In any m-semiring $\mathbb K$, for all $x,y,y'\in\mathbb K$:
+  (i)~$x\ominus y \le x$ \lean{SemiringWithMonus}{monus_le};
+  (ii)~$x \le y\oplus (x\ominus y)$ \lean{SemiringWithMonus}{le_plus_monus};
+  (iii)~if $y\le y'$ then $x\ominus y'\le x\ominus y$
+  \lean{SemiringWithMonus}{monus_antitone}.
 \end{lemmarep}
 
 \begin{appendixproof}
-  By the residuation law (see Definition~\ref{def:m-semiring}) with $z=x$, we have
-\[
-x\ominus y \le x \quad\Longleftrightarrow\quad x \le y\oplus x.
-\]
-But $x\le y\oplus x$ holds by definition of $\leq$ (and commutativity of
-$\oplus$).
-\end{appendixproof}
-
-\begin{lemmarep}\label{lem:x<=y+(x-y)}
-  \lean{SemiringWithMonus}{le_plus_monus}
-  In any m-semiring $\mathbb K$,
-  $\forall x,y\in \mathbb K$, $x \le y\oplus (x\ominus y)$.
-\end{lemmarep}
-
-\begin{appendixproof}
-  Apply the residuation law (see Definition \ref{def:m-semiring}) with $z=x\ominus y$:
-since $x\ominus y\le x\ominus y$ holds trivially, we obtain
-\[
-x \le y\oplus (x\ominus y),
-\]
-as required.
-\end{appendixproof}
-
-\begin{lemmarep}\label{lem:monus-antitone}
-  \lean{SemiringWithMonus}{monus_antitone}
-  In any m-semiring $\mathbb K$,
-  $\forall x,y,y'\in\mathbb K$, if $y\le y'$ then $x\ominus y'\le
-  x\ominus y$.
-\end{lemmarep}
-
-\begin{appendixproof}
-  By Lemma~\ref{lem:x<=y+(x-y)}, $x\le y\oplus(x\ominus y)$. Since
-  $y\le y'$ and $\oplus$ is monotone with respect to the natural order,
-  $x\le y'\oplus(x\ominus y)$. The residuation law (see
-  Definition~\ref{def:m-semiring}) then gives $x\ominus y'\le x\ominus y$.
+  (i)~By the residuation law (Definition~\ref{def:m-semiring}) with
+  $z=x$, $x\ominus y\le x$ if and only if $x\le y\oplus x$, which holds by
+  definition of $\leq$ and commutativity of $\oplus$.
+  (ii)~Apply the residuation law with $z=x\ominus y$: since
+  $x\ominus y\le x\ominus y$, we obtain $x\le y\oplus(x\ominus y)$.
+  (iii)~By~(ii), $x\le y\oplus(x\ominus y)$; since $y\le y'$ and $\oplus$
+  is monotone with respect to the natural order,
+  $x\le y'\oplus(x\ominus y)$, and the residuation law gives
+  $x\ominus y'\le x\ominus y$.
 \end{appendixproof}
 
 \textbf{Annotated relations and semantics.}

@@ -254,7 +254,7 @@ $G_C(U)\le S_C(U)\ominus S_{C+1}(U)$.
 On the other hand, for every $W\sqsubseteq U$ with $|W|=C$, each summand of
 $P_W\defeq\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$ is an $A_V$ with
 $|V|=C+1$, so $P_W\le S_{C+1}(U)$ and, by antitonicity of $\ominus$ in its
-second argument (Lemma~\ref{lem:monus-antitone}),
+second argument (Lemma~\ref{lem:monus-basic}(iii)),
 $A_W\ominus S_{C+1}(U)\le A_W\ominus P_W=T_U(W)$.
 Corollary~\ref{lem:finite-add-monus}, applied to
 $S_C(U)=\bigoplus_{|W|=C}A_W$ with the \emph{fixed} subtrahend $S_{C+1}(U)$
@@ -297,11 +297,11 @@ S_1(U)\ominus S_{C+1}(U)
 \]
 For $|W|\ge C+1$, we have $T_U(W)\le A_W\le A_{W'}\le S_{C+1}(U)$ where
 $W'$ is any subset of $W$ with $|W'|=C+1$ (using
-Lemma~\ref{lem:x-y<=x}, then the fact that in an absorptive m-semiring
+Lemma~\ref{lem:monus-basic}(i), then the fact that in an absorptive m-semiring
 products only decrease as factors are added), so
 $T_U(W)\ominus S_{C+1}(U)=\mathbb 0$ by the residuation law; for
 $1\le|W|\le C$, $T_U(W)\ominus S_{C+1}(U)\le T_U(W)$ by
-Lemma~\ref{lem:x-y<=x}. Hence
+Lemma~\ref{lem:monus-basic}(i). Hence
 $S_1(U)\ominus S_{C+1}(U)\le\bigoplus_{1\le|W|\le C}T_U(W)$, proving
 \eqref{eq:at-most-C} and thus
 $\angsem{\hat I}{Q^{\le C}_1}(a)=\angsem{\hat I}{Q^{\le C}_2}(a)$.
@@ -471,7 +471,7 @@ $\bigoplus_{1\le|W|\le C}T_U(W)=S_1(U)\ominus S_{C+1}(U)$
 per-world bound $T_U(W)\le S_j(U)\ominus S_{C+1}(U)$ for $j\le|W|\le C$
 (proved in the appendix), the other from the right-distributivity of
 $\ominus$ over $\oplus$ (Corollary~\ref{lem:finite-add-monus}) and the
-antitonicity of $\ominus$ (Lemma~\ref{lem:monus-antitone}). The key $a$
+antitonicity of $\ominus$ (Lemma~\ref{lem:monus-basic}(iii)). The key $a$
 being arbitrary, this proves~(i). For~(ii) we exhibit a counterexample in
 a five-element absorptive chain in which $\otimes$ does not distribute
 over $\ominus$
@@ -532,7 +532,7 @@ Let
 \[
   Y \defeq \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}} \in \mathbb K.
 \]
-From Lemma~\ref{lem:x<=y+(x-y)} we obtain the standard inequality
+From Lemma~\ref{lem:monus-basic}(ii) we obtain the standard inequality
 \begin{equation}\label{eq:M2-lemma1}
   X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in \mathbb K,
 \end{equation}
@@ -647,7 +647,7 @@ T_{U'}(W)\ominus(A_W\otimes\alpha_u).
 \end{equation}
 
 \paragraph{Show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)$: }
-  By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$ (shown in Lemma~\ref{lem:x-y<=x}),
+  By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$ (shown in Lemma~\ref{lem:monus-basic}(i)),
 we have $T_U(W)\le T_{U'}(W)$ for all $W\subseteq U'$.
 Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ yields $(I)\le F_C(U')$.
 Together with \eqref{eq:split-I-II} and \eqref{eq:II-simplifies}, this gives
@@ -657,7 +657,7 @@ F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u).
 
 \paragraph{Show $F_C(U')\le F_C(U)$: }
 Fix $W\subseteq U'$ with $|W|\ge C$.
-By the inequality $x\le y\oplus(x\ominus y)$ (shown in Lemma~\ref{lem:x<=y+(x-y)}) applied to
+By the inequality $x\le y\oplus(x\ominus y)$ (shown in Lemma~\ref{lem:monus-basic}(ii)) applied to
 $x=T_{U'}(W)$ and $y=A_W\otimes\alpha_u$, and using \eqref{eq:TU-rewrite}, we get
 \begin{equation}\label{eq:TUprime-bound}
 T_{U'}(W)\le (A_W\otimes\alpha_u)\oplus T_U(W).
@@ -842,7 +842,7 @@ monotonicity of $\otimes$. Taking the $\oplus$-sum over all such $V$
 Combining: by \eqref{eq:TW-factored}, observation (1) and monotonicity of
 $\otimes$, then distributivity of $\otimes$ over $\ominus$, then
 observation (2) and antitonicity of $\ominus$ in its second argument
-(Lemma~\ref{lem:monus-antitone}),
+(Lemma~\ref{lem:monus-basic}(iii)),
 \[
 T_U(W)=A_W\otimes(\mathbb 1\ominus E_W)
 \le S_j(U)\otimes(\mathbb 1\ominus E_W)

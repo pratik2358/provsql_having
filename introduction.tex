@@ -1,7 +1,6 @@
 \section{Introduction}
-As phrased by Peter Buneman, Sanjeev Khanna, and Wang-Chiew Tan, data
-provenance is information on ``where a piece of data came from and the
-process by which it arrived in the database''~\cite{bunemankt01}. Data
+Data provenance is information on ``where a piece of data came from and
+the process by which it arrived in the database''~\cite{bunemankt01}. Data
 provenance has numerous applications, in particular with respect to
 understandability, reproducibility, and quality management of a
 data-handling process~\cite{herschel2017survey}. A particular form of
@@ -67,14 +66,11 @@ an implementable semantics for the comparison operator from
 queries) \emph{in arbitrary commutative
 m-semirings}. In more detail:
 \begin{enumerate}[(i)]
-\item We provide a systematic account of most commutative m-semirings
-  used in the literature, with, for each, a machine-checked Lean proof
-  of the validity of their definition (including the~$\ominus$
-  operator) and of important properties.
-  This is important as it
-  fixes erroneous claims made in previous papers
-  \cite{geerts2010database,amsterdamer2011limitations}.
-  (Section~\ref{sec:preliminaries})
+\item We give a systematic account of the commutative m-semirings used
+  in the literature, each with a machine-checked Lean proof of its
+  definition and properties, which corrects erroneous claims
+  of~\cite{geerts2010database,amsterdamer2011limitations}
+  (Section~\ref{sec:preliminaries}).
 
   \item We introduce a new semantics for the provenance of \sql{HAVING} queries
   in any
@@ -82,32 +78,23 @@ m-semirings}. In more detail:
   function (not necessarily commutative or based on a monoid). (Section
   \ref{sec:semantics})
 
-\item We show that, for \sql{HAVING} queries on the \sql{COUNT(*)}
-  aggregate, this semantics agrees with the standard provenance of their
-  aggregation-free self-join rewriting, in the case where the m-semiring
-  is absorptive and $\otimes$ distributes over $\ominus$. We show that it
-  commutes with homomorphisms of m-semirings, so that provenance
-  computed once can still be specialized to any m-semiring, and that our
-  semantics is compatible with probabilistic query evaluation.
-  Unsurprisingly, this semantics results in intractable query evaluation
-  in the general case. (Section
-  \ref{sec:results})
+\item We show that, on \sql{COUNT(*)} comparisons, this semantics
+  agrees with the standard provenance of the aggregation-free self-join
+  rewriting when the m-semiring is absorptive and $\otimes$ distributes
+  over $\ominus$; that it commutes with homomorphisms, so that provenance
+  computed once can be specialized to any m-semiring; and that it is
+  compatible with probabilistic query evaluation. Evaluating it is
+  intractable in general (Section~\ref{sec:results}).
 
-\item We provide algorithms implementing our semantics: a general
-  exponential-time
-  algorithm based on possible-world enumeration; algorithms specialized
-  for common aggregate functions such as \sql{COUNT}, \sql{SUM},
-  \sql{MIN}, and \sql{MAX} and optimizations
-  thereof to obtain polynomial-time parameterized complexity in some
-  cases
-  (especially for absorptive m-semirings). (Section
-  \ref{sec:algorithms})
+\item We give algorithms for this semantics: possible-world enumeration
+  in general, and algorithms specialized for \sql{COUNT}, \sql{SUM},
+  \sql{MIN} and \sql{MAX} that are polynomial in identified cases,
+  especially for absorptive m-semirings (Section~\ref{sec:algorithms}).
 
-\item We implement these algorithms within ProvSQL and explain the relevant
-  implementation issues.
-We present experiments which show
-  the viability of the approach on a real-world database, including for probabilistic
-  query evaluation. (Section \ref{sec:implementation_experiments}).
+\item We implement these algorithms within ProvSQL and show
+  experimentally the viability of the approach on a real-world database,
+  including for probabilistic query evaluation
+  (Section~\ref{sec:implementation_experiments}).
 \end{enumerate}
 
 Related work is discussed in Section~\ref{sec:related_work}.

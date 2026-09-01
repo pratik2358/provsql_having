@@ -678,29 +678,16 @@ Finally, for $\text{\sql{COUNT(*)}}=k$, $\le k$ or $<k$ (Case~4), the valid worl
 \end{proofsketch}
 
 \begin{example}\label{ex:prop-simplification}
-  Consider as in Example~\ref{ex:semantics} a group of three occurrences,
-  this time with attribute values
-$a(u_1)=3$ and $a(u_2)=a(u_3)=2$, and annotated in the Boolean-function
-semiring $\mathbb B[X]$ by distinct variables $x_1,x_2,x_3$.
-Take the condition
-$\text{\sql{SUM(a)}}\ge 5$. The valid non-empty worlds are $\{1,2\}$,
-$\{1,3\}$ and $\{1,2,3\}$, and the possible-world semantics sums their
-annotations:
-\[
-(x_1\land x_2\land\lnot x_3)\lor(x_1\land x_3\land\lnot x_2)
-\lor(x_1\land x_2\land x_3).
-\]
-This family of worlds is upward-closed, so the argument of Case~3
-applies: as $\mathbb B[X]$ is absorptive, the $\ominus$-factors are
-redundant, and the provenance equals the $\oplus$-sum over the two
-\emph{minimal} valid worlds $\{1,2\}$ and $\{1,3\}$ alone,
-\[
-(x_1\land x_2)\lor(x_1\land x_3)=x_1\land(x_2\lor x_3).
-\]
-Proposition~\ref{prop:algorithms} rests on this collapse: rather than the
-(in general exponentially many) valid worlds, it suffices to enumerate
-the minimal ones -- here those of size at most~$2$, and polynomially many
-for any fixed threshold -- giving a polynomial-time computation.
+Consider as in Example~\ref{ex:semantics} a group of three occurrences,
+now with values $a(u_1)=3$ and $a(u_2)=a(u_3)=2$, and the condition
+$\text{\sql{SUM(a)}}\ge 5$. The valid worlds are $\{1,2\}$, $\{1,3\}$
+and $\{1,2,3\}$, with possible-world provenance
+$(x_1\land x_2\land\lnot x_3)\lor(x_1\land x_3\land\lnot x_2)\lor(x_1\land
+x_2\land x_3)$; the family is upward-closed and $\mathbb B[X]$
+absorptive, so this equals the $\oplus$-sum over the minimal valid
+worlds $\{1,2\}$ and $\{1,3\}$, namely $x_1\land(x_2\lor x_3)$.
+Proposition~\ref{prop:algorithms} rests on this collapse: it suffices to
+enumerate the minimal worlds, polynomially many for a fixed threshold.
 \end{example}
 
 The tractability established by Proposition~\ref{prop:algorithms} is
@@ -718,32 +705,20 @@ and \emph{all} comparison operators, as we now show.
 
 \begin{propositionrep}
 \label{prop:agg-cmp-poly-prob}
-Fix a $\mathbb{B}[X]$-instance $\hat I$ in which every input variable
-$x_u\in\mathbf X_{\hat I}$ carries an independent probability
-$\Pr(x_u)\in[0,1]$, a group key $\vec v$, and let
-$U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=((u_i,\alpha_i))_{1\le i\le N}$ be the
-pre-aggregation occurrences at that group key.
-Assume the contributors are \emph{independent}: the sets of input
-variables of the annotations $(\alpha_i)_{1\le i\le N}$ are pairwise
-disjoint and disjoint from the variables of every other annotation in
-$\angsem{\hat I}{q}$.  Write $p_i\defeq\Pr(\alpha_i)$ for the
-contributor marginals (each computable in polynomial time when
-$\alpha_i$ is a read-once Boolean tree).
-Then, for every comparison operator
-$\op\in\{=,\neq,<,\le,>,\ge\}$ and threshold $C\in\NN$, the probability
-of the aggregate-comparison atom on the contributors of group $\vec v$
-under the possible-world semantics can be computed by the following
-deterministic procedures:
-\begin{itemize}
-  \item \sql{COUNT(*)}\,$\op\,C$: in time
-        $O\bigl(N\cdot\min(C,\,N-C)\bigr)$;
-  \item \sql{SUM}$(t)\,\op\,C$ with $t(u_i)\in\NN$ and
-        $S\defeq\sum_{i=1}^N t(u_i)$: in time $O(N\cdot S)$, hence
-        polynomial in $N$ whenever $\max_i t(u_i)$ is polynomial in
-        $N$;
-  \item \sql{MIN}$(t)\,\op\,C$ and \sql{MAX}$(t)\,\op\,C$, for any
-        totally ordered value domain: in time $O(N)$.
-\end{itemize}
+Let $\hat I$ be a $\mathbb{B}[X]$-instance whose variables carry
+independent probabilities, $\vec v$ a group key and
+$U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=((u_i,\alpha_i))_{1\le i\le N}$
+its occurrences; assume the contributors \emph{independent}, i.e., the
+$\alpha_i$ have pairwise disjoint sets of variables, disjoint from those
+of every other annotation in $\angsem{\hat I}{q}$, and write
+$p_i\defeq\Pr(\alpha_i)$. For every comparison operator $\op$ and
+threshold $C\in\NN$, the probability of the aggregate comparison on the
+group under the possible-world semantics is computable in time
+$O\bigl(N\cdot\min(C,N-C)\bigr)$ for $\text{\sql{COUNT(*)}}\op C$, in
+time $O(N\cdot S)$ for $\text{\sql{SUM}}(t)\op C$ with $t(u_i)\in\NN$
+and $S\defeq\sum_{i=1}^N t(u_i)$, and in time $O(N)$ for
+$\text{\sql{MIN}}(t)\op C$ and $\text{\sql{MAX}}(t)\op C$ over any
+totally ordered value domain.
 \end{propositionrep}
 
 \begin{proof}
