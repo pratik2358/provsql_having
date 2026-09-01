@@ -500,8 +500,13 @@ which is the case covered by \cite{sen2026provsql}; and a
 \emph{\sql{HAVING} query} may in addition apply a selection to aggregate
 expressions (\sql{HAVING} conditions), comparing terms over the
 aggregate values of a group with constants, with the group key, or with
-each other, wherever in the query the comparison occurs. Giving a provenance semantics to \sql{HAVING} queries is the
-object of this paper.
+each other, wherever in the query the comparison occurs. Terminal
+aggregation excludes any selection, join or further grouping on an
+aggregate value, and in particular \sql{HAVING}, an ordinary part of SQL
+(two of the 22 TPC-H queries, Q11 and Q18, use it) and the only natural
+way to express the queries of our experiments
+(Section~\ref{sec:implementation_experiments}). Giving a provenance
+semantics to \sql{HAVING} queries is the object of this paper.
 
 
 \begin{toappendix}
