@@ -65,8 +65,7 @@ For any $\mathbb{K}$-instance $\hat I$, we prove the equality $\angsem{\hat I}{Q
     group key \lean{HavingQueryCorrectness}{Query.joinCount_correct} and,
     row for row, for $Q^{\op C}_2$ padded with a $\mathbb 0$-annotated
     row per group key
-    \lean{HavingJoinCompositional}{joinCountQueryPadded_correct}; it also
-    covers the operators $<$, $>$ and $\neq$.
+    \lean{HavingJoinCompositional}{joinCountQueryPadded_correct}.
     Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat
     I}{q}$ has the form $(u_1,u_2,\alpha)$ where $\alpha\in \mathbb K$.
 Fix an arbitrary group key $\vec v=(a)$.
@@ -406,7 +405,8 @@ The three operators of the theorem suffice: \sql{COUNT(*)}${}>C$ is
 \sql{COUNT(*)}${}\geq C+1$, \sql{COUNT(*)}${}<C$ is
 \sql{COUNT(*)}${}\leq C-1$, and $\neq C$ is the disjunction of the two,
 both for $Q_1$ (Definition~\ref{def:semantics}) and for the self-join
-rewriting (set union $\cup$ of the two rewritings).
+rewriting (set union $\cup$ of the two rewritings); the Lean statement
+covers the six operators directly.
 
 This mismatch across m-semirings is to be expected: outside of
 the Boolean provenance world, semiring provenance depends on \emph{the way
