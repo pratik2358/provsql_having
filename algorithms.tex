@@ -8,10 +8,10 @@ In this section we describe specialized procedures for evaluating the valid poss
 % Under this invariant, the multiset of group member occurrences can be treated as a finite \emph{set}, and possible worlds are then ordinary subsets.
 % This does not change our semantics: multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
-All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group-member occurrences $U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ of the \emph{pre-aggregation} sub-query $q'$.
+All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group-member occurrences~$U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ of the \emph{pre-aggregation} sub-query $q'$.
 We represent these group-member occurrences as an $\preceq$-ordered sequence as in Definition~\ref{def:possible_world}.
 By Definition~\ref{def:possible_world}, a possible world is a subsequence $W\sqsubseteq U$; since the order $\preceq$ is fixed, we identify each $W\sqsubseteq U$ with its set of positions in the sequence, an index set $W\subseteq [|U|]$, which is the representation the algorithms manipulate.
-Any term $t$ handled by these procedures is evaluated on tuples produced by $q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
+Any term $t$ handled by these procedures is evaluated on tuples produced by~$q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
 
 We first provide a dynamic programming algorithm for \sql{SUM} comparisons that incrementally constructs all possible worlds producing the desired sum, named \textsc{ValidSum}.
 It processes each tuple iteratively and maintains, for every possible value of the sum, the collection of worlds that realize it.
@@ -19,15 +19,15 @@ For a new tuple, previously constructed possible worlds can either remain unchan
 After all the tuples have been encountered, the algorithm returns a collection of non-empty worlds whose total sum satisfies the desired comparison.
 The full listing of this algorithm is presented in Algorithm~\ref{alg:sum_dp} of the \hyperref[appendix:algorithms]{Appendix}.
 
-The algorithm works also for the special case where $t=1$, i.e., \sql{COUNT(*)}${}\op C$ comparisons.
+The algorithm works also for the special case where $t=1$, i.e., $\text{\sql{COUNT(*)}}\op C$ comparisons.
 However, for this case we can use a more efficient enumeration algorithm, named \textsc{ValidCount}, exploiting the unit-weight sum structure of \sql{COUNT} aggregates.
-For \sql{COUNT(*)}${}\op C$ we only rely on the fact that the result of a \sql{COUNT} depends only on the number of occurrences of the group key values of the selected tuples.
+For $\text{\sql{COUNT(*)}}\op C$ we only rely on the fact that the result of a \sql{COUNT} depends only on the number of occurrences of the group key values of the selected tuples.
 Our algorithm recursively constructs worlds by deciding for each tuple-occurrence if it is included in or excluded from the current world.
 This enumerates subsets of the desired sizes.
 Finally, depending on the comparison operator, we combine the appropriate size-ranges to get a collection of non-empty worlds that satisfy the comparison.
 The full listing of this algorithm is presented in Algorithm~\ref{alg:count_enum} of the \hyperref[appendix:algorithms]{Appendix}.
 
-For other aggregate functions, using brute-force enumeration of non-empty worlds $W\sqsubseteq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ will always give the correct answer by our semantics.
+For other aggregate functions, using brute-force enumeration of non-empty worlds $W\sqsubseteq\nobreak U$ will always give the correct answer by our semantics.
 When a side of the comparison mentions several aggregates of the group, as in \sql{SUM(a) > 2 * COUNT(*)}, the valid worlds are those $W$ on which the two sides, both read in~$W$, compare as required; \textsc{ValidSum} and \textsc{ValidCount} do not apply, and our implementation enumerates the worlds by brute force.
 \begin{toappendix}
 \label{appendix:algorithms}
@@ -114,7 +114,7 @@ When a side of the comparison mentions several aggregates of the group, as in \s
 The following two theorems state that \textsc{ValidSum} and \textsc{ValidCount} return exactly the set $\{W\sqsubseteq U\mid W\neq\emptyset,\ \mathrm{agg}_{t,f}(W)\op C\}$ of valid worlds, i.e., the index set of the $\oplus$-sum of Definition~\ref{def:semantics}; the predicate provenance is then the $\oplus$-sum of $\ann_U(W)$ over the returned worlds.
 \begin{theoremrep}[Correctness of \textsc{ValidSum}]\label{thm:sumdp-correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
-Fix a $\mathbb K$-instance $\hat I$, an aggregate-free query $q'$ of arity~$k$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=((u_r,\alpha_r))_{r\in[|U|]}$ be the $\preceq$-ordered sequence of group-member occurrences.
+Fix a $\mathbb K$-instance $\hat I$, an aggregate-free query $q'$ of arity~$k$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq\nobreak U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=\nobreak((u_r,\alpha_r))_{r\in[|U|]}$ be the $\preceq$-ordered sequence of group-member occurrences.
 Let $t$ be a term of max-index $\le k$ such that $t(u_r)\in\NN$ for all $r \in [|U|]$.
 Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
 Let $\mathcal W$ be the output of \textsc{ValidSum} on input $(U,t,C,\op,\preceq)$.
@@ -410,7 +410,7 @@ This establishes the correctness.
 
 \begin{theoremrep}[Correctness of \textsc{ValidCount}]\label{thm:count-enum-correct}
 \lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
-Fix a $\mathbb K$-instance $\hat I$, an aggregate-free query $q'$, a group key $\vec v$, an ordering $\preceq$, $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,C,\op)$.
+Fix a $\mathbb K$-instance $\hat I$, an aggregate-free query $q'$, a group key $\vec v$, an ordering $\preceq$, $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$. Let $U\defeq\nobreak U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,C,\op)$.
 Then
 \[
 \mathcal W
@@ -552,9 +552,9 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
   The provenance of \sql{HAVING} queries of the following forms can be computed
   in polynomial time in data complexity:
   \begin{itemize}
-    \item \sql{MIN(a)}${}\op c$,
-    \sql{MAX(a)}${}\op c$,
-\fakesql{PICKFIRST}\texttt{(a)}${}\op c$
+    \item $\text{\sql{MIN(a)}}\op c$,
+    $\text{\sql{MAX(a)}}\op c$,
+$\text{\fakesql{PICKFIRST}\texttt{(a)}}\op c$
       with
       $\op\in\{<,\leq,=,\geq,>,\neq\}$ in absorptive m-semirings in which
       $\otimes$ distributes over $\ominus$;
@@ -578,7 +578,7 @@ For each case below, we show that the provenance for $\vec v$ can be computed in
 We recall that the provenance of the \sql{HAVING} condition (equiv.\ selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
 and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible-world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
-\smallskip\noindent\textbf{Case 1: \sql{MIN(a)}$\op c$, \sql{MAX(a)}${}\op c$, and \fakesql{PICKFIRST}\texttt{(a)}$\op c$.}
+\smallskip\noindent\textbf{Case 1: $\text{\sql{MIN(a)}}\op c$, $\text{\sql{MAX(a)}}\op c$, and $\text{\fakesql{PICKFIRST}\texttt{(a)}}\op c$.}
 Write $\alpha_i$ and $a_i$ for the annotation and the value of
 attribute~\texttt{a} of the $i$-th occurrence of~$U$, occurrences being
 indexed in the order~$\preceq$, and
@@ -586,7 +586,7 @@ $L\defeq\bigoplus_{a_i<c}\alpha_i$, $L'\defeq\bigoplus_{a_i\le c}\alpha_i$,
 $G\defeq\bigoplus_{a_i\ge c}\alpha_i$, $G'\defeq\bigoplus_{a_i>c}\alpha_i$,
 $E\defeq\bigoplus_{a_i=c}\alpha_i$. In an absorptive m-semiring in which
 $\otimes$ distributes over $\ominus$, the possible-world sum for
-\sql{MIN(a)}${}\op c$ has the closed form
+$\text{\sql{MIN(a)}}\op c$ has the closed form
 \lean{HavingMinMax}{Having.minScan_correct}
 \[
 \begin{array}{r@{\ }l@{\qquad}r@{\ }l@{\qquad}r@{\ }l}
@@ -594,14 +594,14 @@ $\otimes$ distributes over $\ominus$, the possible-world sum for
 {\ge}c: & (\mathbb 1\ominus L)\otimes G, & {>}c: & (\mathbb 1\ominus L')\otimes G', & {=}c: & (\mathbb 1\ominus L)\otimes E;
 \end{array}
 \]
-for instance, \sql{MIN(a)}${}<c$ holds in a world exactly when some
+for instance, $\text{\sql{MIN(a)}}<c$ holds in a world exactly when some
 occurrence with $a_i<c$ is present, and absorptivity reduces the sum over
-these worlds to the sum over the singletons, whereas \sql{MIN(a)}${}\ge c$
+these worlds to the sum over the singletons, whereas $\text{\sql{MIN(a)}}\ge c$
 additionally requires that no occurrence with $a_i<c$ be present, whence
-the factor $\mathbb 1\ominus L$. The closed form for \sql{MAX(a)}${}\op c$
+the factor $\mathbb 1\ominus L$. The closed form for $\text{\sql{MAX(a)}}\op c$
 is the mirror image, exchanging $<$ and~$>$
 \lean{HavingMinMax}{Having.maxScan_correct}, and for
-\fakesql{PICKFIRST}\texttt{(a)}${}\op c$ (the non-commutative aggregate of
+$\text{\fakesql{PICKFIRST}\texttt{(a)}}\op c$ (the non-commutative aggregate of
 Example~\ref{ex:aggregates}) it is
 $\bigoplus_{i:\,a_i\op c}(\mathbb 1\ominus\bigoplus_{j<i}\alpha_j)\otimes\alpha_i$,
 one term per satisfying occurrence that comes first
@@ -610,7 +610,7 @@ single scan of~$U$ using $O(|U|)$ semiring operations. Both hypotheses
 are used: absorptivity fails in the tropical m-semiring over
 $\mathbb R\cup\{\infty\}$ (idempotent and distributive), where the scan
 value differs from the possible-world provenance already for
-\sql{MIN(a)}${}\ge c$ on a two-occurrence group
+$\text{\sql{MIN(a)}}\ge c$ on a two-occurrence group
 \lean{Semirings/Tropical}{TropicalR.minScan_ne_prov}; distributivity of
 $\otimes$ over $\ominus$ identifies the world annotation $\ann_U(W)$ with
 the expanded form $T_U(W)$ of Section~\ref{sec:results}
@@ -673,8 +673,8 @@ With these 5 cases, provenance can be computed in polynomial time for all the \s
 \begin{proofsketch}
 Fix the group key $\vec v$ and write $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. The provenance of the \sql{HAVING} condition is the semiring sum of the annotations of the valid non-empty worlds, so it suffices to enumerate the relevant worlds in time polynomial in $|U|$.
 For \sql{MIN(a)}, \sql{MAX(a)} and \fakesql{PICKFIRST}\texttt{(a)} (Case~1), the validity of a world is decided occurrence by occurrence, so in an absorptive m-semiring with $\otimes$ distributive over $\ominus$ the provenance is obtained by a single scan \lean{HavingMinMax}{Having.minScan_correct}.
-For \sql{COUNT(*)}${}\ge k$ or ${}>k$ (Case~2) and \sql{SUM(a)}${}\ge c$ or ${}>c$ (Case~3), the valid worlds form an upward-closed family, whose provenance, in an \emph{absorptive} m-semiring, collapses to the $\oplus$-sum of the monomials of its minimal worlds \lean{Having}{Having.upward_closed_collapse}. These minimal worlds have bounded cardinality: $k$, or $k+1$ for the strict variants (using the hypothesis $\frac ca\le k$ on nonzero values for \sql{SUM}); so there are only $O(|U|^{k+1})$ of them.
-Finally, for \sql{COUNT(*)}${}=k$, $\le k$ or $<k$ (Case~4), the valid worlds are exactly those of cardinality at most $k$, again polynomially many, so no absorptivity is needed; likewise for \sql{SUM(a)}${}=c$, $\le c$ or $<c$ when all values are at least $\frac ck$ (Case~5).
+For $\text{\sql{COUNT(*)}}\ge k$ or ${}>k$ (Case~2) and $\text{\sql{SUM(a)}}\ge c$ or ${}>c$ (Case~3), the valid worlds form an upward-closed family, whose provenance, in an \emph{absorptive} m-semiring, collapses to the $\oplus$-sum of the monomials of its minimal worlds \lean{Having}{Having.upward_closed_collapse}. These minimal worlds have bounded cardinality: $k$, or $k+1$ for the strict variants (using the hypothesis $\frac ca\le k$ on nonzero values for \sql{SUM}); so there are only $O(|U|^{k+1})$ of them.
+Finally, for $\text{\sql{COUNT(*)}}=k$, $\le k$ or $<k$ (Case~4), the valid worlds are exactly those of cardinality at most $k$, again polynomially many, so no absorptivity is needed; likewise for $\text{\sql{SUM(a)}}=c$, $\le c$ or $<c$ when all values are at least $\frac ck$ (Case~5).
 \end{proofsketch}
 
 \begin{example}\label{ex:prop-simplification}
@@ -683,7 +683,7 @@ Finally, for \sql{COUNT(*)}${}=k$, $\le k$ or $<k$ (Case~4), the valid worlds ar
 $a(u_1)=3$ and $a(u_2)=a(u_3)=2$, and annotated in the Boolean-function
 semiring $\mathbb B[X]$ by distinct variables $x_1,x_2,x_3$.
 Take the condition
-\sql{SUM(a)}${}\ge 5$. The valid non-empty worlds are $\{1,2\}$,
+$\text{\sql{SUM(a)}}\ge 5$. The valid non-empty worlds are $\{1,2\}$,
 $\{1,3\}$ and $\{1,2,3\}$, and the possible-world semantics sums their
 annotations:
 \[
@@ -778,7 +778,7 @@ always evaluate the tail on whichever side of $C$ is shorter, giving
 the announced bound $O\bigl(N\cdot\min(C,N-C)\bigr)$.
 The empty-world mass $\Pr[B=0]=\prod_i(1-p_i)$ is obtained as a
 by-product (linear time) and subtracted in the branches whose
-satisfaction interval contains $0$ (i.e.\ $\le$, $<$, $\neq$, and $\ge$
+satisfaction interval contains $0$ (i.e., $\le$, $<$, $\neq$, and $\ge$
 with $C\le0$).
 
 \smallskip\noindent\textbf{(2) \sql{SUM}$(t)\,\op\,C$ with integer
@@ -819,7 +819,7 @@ threshold check independently:
 \end{align*}
 each computable by a single scan in $O(N)$.
 The remaining operators are obtained by complementation
-(``\sql{MAX}$>C$'' is the negation of ``\sql{MAX}$\le C$'' on the nonempty
+(``$\text{\sql{MAX}}>C$'' is the negation of ``$\text{\sql{MAX}}\le C$'' on the nonempty
 worlds, etc.) and the equality cases by intersecting two such tails;
 $\neq$ subtracts the equality from the nonempty mass
 $1-\prod_i(1-p_i)$.  All these algebraic combinations stay $O(N)$.
@@ -827,10 +827,10 @@ $1-\prod_i(1-p_i)$.  All these algebraic combinations stay $O(N)$.
 
 \begin{example}\label{ex:poisson-binomial}
 Suppose the three contributors of Example~\ref{ex:semantics} are
-independent with marginals $p_1=\tfrac12$, $p_2=\tfrac14$ and
+independent with marginals~$p_1=\tfrac12$, $p_2=\tfrac14$ and
 $p_3=\tfrac13$, and consider $\text{\sql{COUNT(*)}}\ge 2$. Writing $\rho_n(j)$
 for the probability that exactly $j$ of the first $n$ contributors are
-present, so that $\rho_0(0)=1$ (and $\rho_0(j)=0$ for $j>0$), the
+present, so that $\rho_0(0)=1$ (and~$\rho_0(j)=0$ for~$j>0$), the
 recurrence $\rho_n(j)=(1-p_n)\,\rho_{n-1}(j)+p_n\,\rho_{n-1}(j-1)$ fills,
 row by row, the table
 \begin{center}

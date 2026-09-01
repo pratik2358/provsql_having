@@ -22,7 +22,7 @@ with a formal non-commutative algebraic structure.
 
 We fix a commutative m-semiring
 $(\mathbb{K},\oplus,\otimes,\ominus,\mathbb{0},\mathbb{1})$, as discussed in the preliminaries, along with a data domain $\mathcal{V}$.
-For any set~$S$, we write $\Seq(S)$ the set of finite sequences over $S$.
+For any set~$S$, we write $\Seq(S)$ the set of finite sequences over~$S$.
 We define aggregate functions and comparison operators:
 \begin{definition}
 An \emph{aggregate function} is a function  $f:\Seq(\mathcal{V})\to\mathcal{V}$.
@@ -50,7 +50,7 @@ A \sql{HAVING} predicate cannot be evaluated on the annotations of a
 group taken as a whole: they can be combined by $\oplus$ and $\otimes$
 into a single element of $\mathbb K$, but no element of $\mathbb K$
 records how many occurrences are counted or which values are summed, so
-there is nothing to which \sql{COUNT(*)}${}\geq 2$ could be applied. This
+there is nothing to which $\text{\sql{COUNT(*)}}\geq 2$ could be applied. This
 is why~\cite{amsterdamer2011provenance} leaves the comparison
 uninterpreted, as a formal expression over semimodule elements. To give it
 a value in $\mathbb K$ instead, we split the group into its
@@ -197,7 +197,7 @@ Their $\oplus$-sum is
 (x_1\land x_2)\lor(x_1\land x_3)\lor(x_2\land x_3),
 \]
 the Boolean function ``at least two of $x_1,x_2,x_3$ hold'', as one would
-expect of \sql{COUNT(*)}${}\ge 2$. Notice that the negative factors
+expect of $\text{\sql{COUNT(*)}}\ge 2$. Notice that the negative factors
 $\lnot x_i$ have cancelled out: since $\mathbb B[X]$ is absorptive, the
 provenance is already captured by the \emph{minimal} satisfying worlds
 (here the three pairs), with no use of $\ominus$. This is precisely the
