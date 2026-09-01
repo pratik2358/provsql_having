@@ -113,7 +113,7 @@ When a side of the comparison mentions several aggregates of the group, as in \s
 \end{toappendix}
 
 
-The correctness of \textsc{ValidSum} and \textsc{ValidCount} are ensured by the following two theorems.
+The following two theorems state that \textsc{ValidSum} and \textsc{ValidCount} return exactly the set $\{W\sqsubseteq U\mid W\neq\emptyset,\ \mathrm{agg}_{t,f}(W)\op C\}$ of valid worlds, i.e., the index set of the $\oplus$-sum of Definition~\ref{def:semantics}; the predicate provenance is then the $\oplus$-sum of $\ann_U(W)$ over the returned worlds.
 \begin{theoremrep}[Correctness of \textsc{ValidSum}]\label{thm:sumdp-correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
 Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=((u_r,\alpha_r))_{r\in[|U|]}$ be the $\preceq$-ordered sequence of group-member occurrences.
@@ -567,7 +567,11 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
   $\frac ca\leq k$ where $k\geq 0$ is a fixed constant, in absorptive
       m-semirings;
     \item \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for $k$ a fixed
-      constant, in arbitrary m-semirings.
+      constant, in arbitrary m-semirings;
+    \item \sql{SUM(a) = }$c$, \sql{SUM(a) <= }$c$, and \sql{SUM(a) < }$c$
+      with $c\in\NN$, for an $\NN$-valued attribute \texttt{a} whose
+      values are all nonzero and satisfy $\frac ca\leq k$ where $k\geq 0$
+      is a fixed constant, in arbitrary m-semirings.
   \end{itemize}
 \end{propositionrep}
 \begin{proof}
@@ -651,14 +655,27 @@ By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
 Since $k$ is fixed, the number of such worlds is bounded by
   $\binom{|U|}{k},\, \sum_{i=1}^{k}\binom{|U|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U|}{i}$, respectively \lean{Having}{Having.card_powerset_filter_card_le}. Each of these bounds is polynomial in $|U|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
 
+\smallskip\noindent\textbf{Case 5: \sql{SUM(a) = }$c$, \sql{SUM(a) <= }$c$, and \sql{SUM(a) < }$c$ with all values nonzero and $\frac ca\le k$, in arbitrary m-semirings.}
+By correctness of Algorithm~\ref{alg:sum_dp}
+(Theorem~\ref{thm:sumdp-correct}), the valid worlds are exactly the
+non-empty worlds $W\sqsubseteq U$ whose sum is equal to, at most, or less
+than~$c$. If $c=0$ there is none, all values being nonzero. Otherwise, a
+valid world $W$ satisfies $|W|\cdot\frac ck\le\sum_{r\in W}t(u_r)\le c$,
+since every value is at least $\frac ck$, hence $|W|\le k$. The valid
+worlds are therefore among the $\sum_{i=1}^{k}\binom{|U|}{i}$ worlds of
+size at most~$k$ \lean{Having}{Having.card_powerset_filter_card_le},
+polynomially many for fixed~$k$, and \textsc{ValidSum}, whose table is
+bounded by~$c$, enumerates exactly them. No assumption on the m-semiring
+is needed.
+
 \smallskip\noindent
-With these 4 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
+With these 5 cases, provenance can be computed in polynomial time for all the \sql{HAVING} queries described in the proposition.
 \end{proof}
 \begin{proofsketch}
 Fix the group key $\vec v$ and write $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. The provenance of the \sql{HAVING} condition is the semiring sum of the annotations of the valid non-empty worlds, so it suffices to enumerate the relevant worlds in time polynomial in $|U|$.
 For \sql{MIN(a)}, \sql{MAX(a)} and \fakesql{PICKFIRST}\texttt{(a)} (Case~1), the validity of a world is decided occurrence by occurrence, so in an absorptive m-semiring with $\otimes$ distributive over $\ominus$ the provenance is obtained by a single scan \lean{HavingMinMax}{Having.minScan_correct}.
 For \sql{COUNT(*)}${}\ge k$ or ${}>k$ (Case~2) and \sql{SUM(a)}${}\ge c$ or ${}>c$ (Case~3), the valid worlds form an upward-closed family, whose provenance, in an \emph{absorptive} m-semiring, collapses to the $\oplus$-sum of the monomials of its minimal worlds \lean{Having}{Having.upward_closed_collapse}. These minimal worlds have bounded cardinality: $k$, or $k+1$ for the strict variants (using the hypothesis $\frac ca\le k$ on nonzero values for \sql{SUM}); so there are only $O(|U|^{k+1})$ of them.
-Finally, for \sql{COUNT(*)}${}=k$, $\le k$ or $<k$ (Case~4), the valid worlds are exactly those of cardinality at most $k$, again polynomially many, so no absorptivity is needed.
+Finally, for \sql{COUNT(*)}${}=k$, $\le k$ or $<k$ (Case~4), the valid worlds are exactly those of cardinality at most $k$, again polynomially many, so no absorptivity is needed; likewise for \sql{SUM(a)}${}=c$, $\le c$ or $<c$ when all values are at least $\frac ck$ (Case~5).
 \end{proofsketch}
 
 \begin{example}\label{ex:prop-simplification}
