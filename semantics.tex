@@ -73,26 +73,14 @@ itself based on that of
 \cite{green2007provenance,geerts2010database,amsterdamer2011provenance}.
 We extend the semantics of the \emph{selection} operator to allow
 comparisons of aggregate values (i.e., non-terminal aggregates) using
-possible-world semantics. As we allow non-commutative aggregation
-functions, we also need to specify, along with the aggregation function,
-which ordering is used,
-similarly to the ``\sql{AGG(...) WITHIN GROUP (ORDER BY ...)}'' standard SQL
-feature, or the ``\sql{AGG(... ORDER BY ...)}'' feature of PostgreSQL.
-This ordering is irrelevant for commutative aggregates and can be chosen
-arbitrarily in that case. We define possible worlds of a multiset of
-tuples under such an ordering:
+possible-world semantics. We define possible worlds of the sequence of
+occurrences of a group:
 \begin{definition}\label{def:possible_world}
-  Let $M$ be a multiset of annotated tuples over
-  $\mathcal{V}^k\times\mathbb{K}$ (with $k\in\mathbb{N}$), let
-  $(i_j)_{1\leq j \leq m}$ with $1\leq i_j \leq k$ be distinct
-  \emph{grouping indices}, and let $\preceq$ be a total order on
-  $\mathcal{V}^k$.
-For any group $\vec v=(v_1,\dots,v_m)\in\mathcal{V}^m$, we denote by
-$U^{\preceq}_{M, \vec v}$, abbreviated~$U$ when $M$, $\preceq$, $\vec v$
-are clear from context, the sequence of all tuples $(u,\alpha)\in M$
-such that $u_{i_j}=v_j$ for all $j$, taken with their multiplicity and
-ordered by $\preceq$ on the value part~$u$ (occurrences of equal
-value-tuples being ordered arbitrarily).
+  Let $M$ be a $\mathbb K$-relation of arity~$k$ over $\mathcal V$,
+  $(i_j)_{1\leq j \leq m}$ be distinct grouping indices, $\preceq$ a
+  total order on $\mathcal{V}^k$, $\vec v\in\mathcal V^m$ a group key,
+  and $U\defeq U^{\preceq}_{M,\vec v}$ the $\preceq$-ordered sequence of
+  the occurrences of the group (Section~\ref{sec:preliminaries}).
 
   A \emph{possible world}~$W$ of $U$ is a subsequence
   of $U$, denoted $W\sqsubseteq U$. Its \emph{$\mathbb{K}$-annotation} is:

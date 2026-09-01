@@ -391,16 +391,14 @@ considered absent: two $\mathbb K$-relations that differ only by tuples
 annotated by $\mathbb 0$ are identified.
 A $\mathbb K$-instance, usually denoted as $\hat I$, over a database
 schema $\mathcal D$, is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
-\rjok{
 The elements of $\mathcal V$ are the \emph{regular data values}: those
-that a term can denote and that a comparison can test directly. }
+that a term can denote and that a comparison can test directly.
 We adopt the unnamed perspective and consider, instead of attribute names, their \emph{positional indices}, denoted by $\#i$ for $i\in \mathbb N^*$.
 A \emph{term} is then an expression involving values from $\mathcal V$
 and positional indices, and the \emph{max-index} of a term is the largest
 positional index appearing in it ($0$ if none appear). Given a tuple
 $u=(u_1,\dots,u_k)$ and a term $t$ of max-index $\leq k$ we can define $t(u)\in \mathcal V$ that evaluates the term expression after replacing the positional indices in it with the respective attribute values of the tuple. Given a finite sequence of tuples $(u_{i_1},\dots,u_{i_n})$ we define the pointwise evaluation of a well-defined term $t$ on them as $\pi_{t}((u_{i_1},\dots,u_{i_n}))=(t(u_{i_1}),\dots,t(u_{i_n}))$.
 
-\rjok{
 Queries are written in the relational algebra under multiset semantics,
 extended with a duplicate elimination operator $\epsilon$
 \cite{DBLP:conf/pods/DayalGK82,DBLP:journals/iandc/GrumbachM99}, a
@@ -408,54 +406,65 @@ multiset difference operator $-$, and a grouping and aggregation
 operator $\gamma$ inspired by \cite{DBLP:journals/tcs/Libkin03}; we write
 $\RA_k$ for the set of queries of arity $k\in\mathbb N$.
 The semantics of a query $q$ over annotated relations $\hat I$, denoted as
-$\angsem{\hat I}{q}$, is defined in \cite{sen2026provsql} over $\mathbb
-K$-relations by induction on these operators, extending
+$\angsem{\hat I}{q}$, is defined over $\mathbb K$-relations by induction
+on these operators, following \cite{sen2026provsql}, which extends
 \cite{green2007provenance,geerts2010database,amsterdamer2011provenance}.
 The full syntax of $\RA_k$ and the definition of $\angsem{\hat
 I}{\cdot}$ on every operator are recalled in the
 \hyperref[appendix:algebra]{Appendix}; we describe here only the
-aggregation operator, on which this paper builds.
+aggregation operator, on which this paper builds. Since we allow
+aggregate functions that are not commutative (Section~\ref{sec:semantics}),
+the operator carries a total order~$\preceq$ on tuples fixing the order
+in which the values of a group are aggregated, as the standard SQL
+``\sql{AGG(...) WITHIN GROUP (ORDER BY ...)}'' clause or PostgreSQL's
+``\sql{AGG(... ORDER BY ...)}'' do; the order is irrelevant for
+commutative aggregates.
 \begin{description}
   \item[syntax] for $k\in\mathbb N$, $q\in\RA_k$, distinct grouping
     indices $(i_j)_{1\leq j\leq m}$ with $1\leq i_j\leq k$, terms
-    $t_1,\dots,t_n$ of max-index $\leq k$, and monoid aggregate functions
-    $f_1,\dots,f_n$ from finite multisets of values to values,
-    $\gamma_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)\in\RA_{m+n}$;
-  \item[semantics] writing $\vec v\defeq (v_1,\dots,v_m)$ and, for
-    $1\leq l\leq n$,
-    \[
-      A_l(\vec v)\defeq\mset{t_l(u)*\alpha \mid
-      (u,\alpha)\in\angsem{\hat I}{q},\
-      (u_{i_1},\dots,u_{i_m})=\vec v},
-    \]
+    $t_1,\dots,t_n$ of max-index $\leq k$, aggregate functions
+    $f_1,\dots,f_n$ from finite sequences of values to values, and a
+    total order $\preceq$ on $\mathcal V^k$,
+    $\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)\in\RA_{m+n}$;
+  \item[semantics] for a group key $\vec v\defeq (v_1,\dots,v_m)$, let
+    $U^{\preceq}_{\angsem{\hat I}{q},\vec v}$, abbreviated~$U$, be the
+    sequence of the tuples $(u,\alpha)\in\angsem{\hat I}{q}$ such that
+    $(u_{i_1},\dots,u_{i_m})=\vec v$, taken with their multiplicity and
+    ordered by~$\preceq$ on~$u$ (occurrences of equal tuples in an
+    arbitrary order). Then
     \begin{align*}
-      &\angsem{\hat I}{\gamma_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)}\defeq\\
-      &\quad\Bigl\{\,\bigl(v_1,\dots,v_m,\hat f_1(A_1(\vec
-      v)),\dots,\hat f_n(A_n(\vec v)),\delta(\beta)\bigr)\ \Big|\
-      (v_1,\dots,v_m,\beta)\in\angsem{\hat
+      &\angsem{\hat I}{\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)}\defeq\\
+      &\quad\Bigl\{\,\bigl(\vec v,\lAngle f_1,t_1,U\rAngle,\dots,
+      \lAngle f_n,t_n,U\rAngle,\delta(\beta)\bigr)\ \Big|\
+      (\vec v,\beta)\in\angsem{\hat
       I}{\epsilon(\Pi_{\#i_1,\dots,\#i_m}(q))}\,\Bigr\}
     \end{align*}
-    where ``$*$'' is the tensor product combining data values
-    of $\mathcal V$ with $\delta$-semiring annotations from $\mathbb K$
-    in the semimodule $\mathcal V_{\mathbb K}$, and $\hat f_l$ is the monoid
-    aggregate function $f_l$ lifted from values of $\mathcal V$ to values
-    of $\mathcal V_{\mathbb K}$ \cite{amsterdamer2011provenance}. The
-    group key isannotated by $\delta(\beta)$, with $\beta$ the
-    $\oplus$-sum of the annotations of the tuples of the group: the group
-    exists exactly when one of its tuples does.
+    where the \emph{aggregate value} $\lAngle f_l,t_l,U\rAngle$ is a
+    formal object recording the aggregate function $f_l$ together with
+    the annotated sequence $\bigl((t_l(u),\alpha)\bigr)_{(u,\alpha)\in U}$
+    of the values it applies to. The group key is annotated by
+    $\delta(\beta)$, with $\beta$ the $\oplus$-sum of the annotations of
+    the tuples of the group: the group exists exactly when one of its
+    tuples does.
 \end{description}
-Indeed we take
-$\mathcal V_{\mathbb K}$ to be $\mathcal V$ extended with the
-\emph{aggregate values}, introduced by the aggregation
-operator $\gamma$: such a value records an aggregate function together
-with the annotated sequence of values it was applied to, and cannot be
-compared directly. We accordingly call an attribute, a term, or a side
-of a comparison \emph{regular} when its value lies in $\mathcal V$, and
-\emph{aggregate} otherwise; in the absence of aggregation, $\mathcal
+An aggregate value is not a value of~$\mathcal V$ and cannot be compared
+directly: which values are actually aggregated depends on which
+occurrences of the group are present, and this is what the annotations
+record. In \cite{sen2026provsql}, following
+\cite{amsterdamer2011provenance}, aggregate functions are commutative
+monoid operations and the aggregate value is the element
+$\bigoplus_{(u,\alpha)\in U}t_l(u)*\alpha$ of a semimodule, ``$*$''
+being a tensor product combining a value with an annotation; that element
+is determined by $\lAngle f_l,t_l,U\rAngle$.
+We take $\mathcal V_{\mathbb K}$ to be $\mathcal V$ extended with the
+aggregate values, and call an attribute, a term, or a side of a
+comparison \emph{regular} when it only involves values of~$\mathcal V$,
+and \emph{aggregate} otherwise; in the absence of aggregation, $\mathcal
 V_{\mathbb K}=\mathcal V$ and everything is regular.
 
-Every operator of this algebra, $\gamma$ included, retains in this paper
-the semantics of \cite{sen2026provsql}. The \emph{only} operator whose
+Every operator of this algebra retains in this paper the semantics of
+\cite{sen2026provsql}, up to this representation of aggregate values. The
+\emph{only} operator whose
 semantics we change is \emph{selection}: where
 \cite{sen2026provsql} defines
 \(
@@ -468,14 +477,7 @@ predicates $\psi$ that may in addition compare \emph{aggregate} values,
 i.e., \sql{HAVING} conditions, assigning them a $\mathbb K$-annotation
 instead of filtering on them. A predicate $\phi$ of the algebra above is
 exactly a $\psi$ with no aggregate comparison; the extension is
-conservative, such that, on those, the two definitions coincide. Two
-minor adjustments accompany it, discussed in
-Section~\ref{sec:semantics}: aggregate functions become arbitrary
-functions over \emph{sequences} of values rather than semimodule-lifted
-monoid operations, and $\gamma$ is introduced with the total order
-$\preceq$ used to build those sequences, which is inconsequential for
-commutative aggregates.
-}
+conservative, such that, on those, the two definitions coincide.
 We use three classes of queries throughout: an \emph{aggregate-free
 query} uses no grouping and aggregation; an \emph{aggregate query} may
 use it, but only as its last operator (\emph{terminal aggregation}),
@@ -488,11 +490,11 @@ object of this paper.
 
 
 \begin{toappendix}
-  \subsection{Extended Relational Algebra and its Semantics}
+  \subsection{Relational Algebra with Aggregation and its Semantics}
   \label{appendix:algebra}
 
-  We recall in this subsection, for self-containedness, the extended
-  relational algebra of \cite{sen2026provsql} and its semantics over
+  We recall in this subsection, for self-containedness, the relational
+  algebra with aggregation of \cite{sen2026provsql} and its semantics over
   ordinary and over annotated relations. All of this material is from
   \cite{sen2026provsql}, itself building
   on \cite{green2007provenance,geerts2010database,amsterdamer2011provenance};
@@ -500,8 +502,10 @@ object of this paper.
   operator.
 
   Given a database schema $\mathcal{D}$, the language $\RA_k$ of
-  extended relational algebra queries of arity $k\in\mathbb{N}$ is
-  defined recursively as follows \lean{Query}{Query}:
+  queries of arity $k\in\mathbb{N}$ is
+  defined recursively as follows (\lean{Query}{Query} for the
+  aggregate-free fragment, \lean{AggQuery}{AggQuery} with the aggregation
+  operator):
   \begin{description}
     \item[relation] for any relation $R$ in the domain of $\mathcal{D}$,
       $R\in\RA_{\mathcal{D}(R)}$;
@@ -520,10 +524,11 @@ object of this paper.
     \item[multiset difference] for $k\in\mathbb N$, $q_1,q_2\in\RA_k$,
       $q_1 - q_2\in\RA_k$;
     \item[aggregation] for $k\in\mathbb N$, $q\in\RA_k$, distinct
-      $(i_j)_{1\leq j\leq m}$ with $1\leq i_j\leq k$, terms $t_1,\dots
+      $(i_j)_{1\leq j\leq m}$ with $1\leq i_j\leq k$, terms $t_1,\dots,
       t_n$ of max-index $\leq k$, functions $f_1,\dots,f_n$ from finite
-      multisets of values to values,
-      $\gamma_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)\in\RA_{m+n}$.
+      sequences of values to values, and a total order $\preceq$ on
+      $\mathcal V^k$,
+      $\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)\in\RA_{m+n}$.
   \end{description}
   Some other operators are syntactic sugar:
   the \emph{join} $q_1\bowtie_\phi q_2 \defeq \sigma_\phi(q_1\times q_2)$ and
@@ -539,7 +544,7 @@ object of this paper.
   $\ansem{I}{\cdot}$ of these queries on an ordinary instance $I$
   over $\mathcal{D}$, where a relation of arity $k$ is a finite multiset
   of tuples of $\mathcal{V}^k$, is defined by induction
-  \lean{Query}{Query.evaluate}:
+  \lean{Query}{Query.evaluate} \lean{AggQuery}{AggQuery.evaluatePlain}:
   \begin{description}
     \item[relation] $\ansem{I}{R}\defeq I(R)$;
     \item[projection] $\ansem{I}{\Pi_{t_1,\dots,t_n}(q)}\defeq
@@ -555,24 +560,26 @@ object of this paper.
     \item[multiset difference] $\ansem{I}{q_1-q_2}$ maps $u$ to $0$ if
       $\ansem{I}{q_2}(u)>0$, and to $\ansem{I}{q_1}(u)$ otherwise;
     \item[aggregation] with $\vec v\defeq(v_1,\dots,v_m)$ and
-      $B_l(\vec v)\defeq\mset{t_l(u)\mid u\in\ansem{I}{q},\
-      (u_{i_1},\dots,u_{i_m})=\vec v}$,
+      $B_l(\vec v)$ the sequence of the values $t_l(u)$ for
+      $u\in\ansem{I}{q}$ with $(u_{i_1},\dots,u_{i_m})=\vec v$, taken
+      with their multiplicity and ordered by $\preceq$,
       \[
-        \ansem{I}{\gamma_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)}
-        \defeq\Bigl\{\,\bigl(v_1,\dots,v_m,f_1(B_1(\vec
+        \ansem{I}{\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)}
+        \defeq\Bigl\{\,\bigl(\vec v,f_1(B_1(\vec
         v)),\dots,f_n(B_n(\vec v))\bigr)\ \Big|\
         \vec v\in\ansem{I}{\epsilon(\Pi_{\#i_1,\dots,\#i_m}(q))}\,\Bigr\}.
       \]
   \end{description}
 
   \paragraph*{Semantics over annotated relations.} The semantics
-  $\angsem{\hat I}{\cdot}$ of extended relational algebra queries on a
+  $\angsem{\hat I}{\cdot}$ of queries on a
   $\mathbb{K}$-instance $\hat I$ over $\mathcal{D}$ is defined by
   induction as follows; for the definition to be meaningful, $\mathbb{K}$
   needs to be a semiring, an m-semiring for the multiset difference
   operator, and a $\delta$-semiring for the aggregation operator (we say
   that $\mathbb{K}$ is \emph{appropriate} for $q$ if this is the case)
-  \lean{QueryAnnotatedDatabase}{Query.evaluateAnnotated}:
+  \lean{QueryAnnotatedDatabase}{Query.evaluateAnnotated}
+  \lean{AggQuery}{AggQuery.evaluateAnnotated}:
   \begin{description}
     \item[relation] $\angsem{\hat I}{R}\defeq\hat I(R)$;
     \item[projection] $\angsem{\hat I}{\Pi_{t_1,\dots,t_n}(q)}\defeq
@@ -601,23 +608,25 @@ object of this paper.
         \mset{\bigl(u,\alpha\ominus\bigoplus_{\beta\mid(u,\beta)\in\angsem{\hat
         I}{q_2}}\beta\bigr)\mid(u,\alpha)\in \angsem{\hat I}{q_1}};
       \)
-    \item[aggregation] with $\vec v\defeq(v_1,\dots,v_m)$ and
-      $A_l(\vec v)\defeq\mset{t_l(u)*\alpha \mid
-      (u,\alpha)\in\angsem{\hat I}{q},\ (u_{i_1},\dots,u_{i_m})=\vec v}$,
+    \item[aggregation] as in Section~\ref{sec:preliminaries}: with
+      $\vec v\defeq(v_1,\dots,v_m)$ and $U\defeq U^{\preceq}_{\angsem{\hat
+      I}{q},\vec v}$,
       \begin{align*}
         &\angsem{\hat
-        I}{\gamma_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)}\defeq\\
-        &\quad\Bigl\{\,\bigl(v_1,\dots,v_m,\hat f_1(A_1(\vec
-        v)),\dots,\hat f_n(A_n(\vec v)),\delta(\beta)\bigr)\ \Big|\
-        (v_1,\dots,v_m,\beta)\in\angsem{\hat
-        I}{\epsilon(\Pi_{\#i_1,\dots,\#i_m}(q))}\,\Bigr\}
+        I}{\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)}\defeq\\
+        &\quad\Bigl\{\,\bigl(\vec v,\lAngle f_1,t_1,U\rAngle,\dots,
+        \lAngle f_n,t_n,U\rAngle,\delta(\beta)\bigr)\ \Big|\
+        (\vec v,\beta)\in\angsem{\hat
+        I}{\epsilon(\Pi_{\#i_1,\dots,\#i_m}(q))}\,\Bigr\}.
       \end{align*}
-      where ``$*$'' denotes a tensor product used to combine the data
-      values of $\mathcal{V}$ with the $\delta$-semiring annotations from
-      $\mathbb{K}$ in a semimodule $\mathcal{V}_{\mathbb{K}}$, and, for
-      any monoid aggregate function $f_l$, $\hat f_l$ is a new aggregate function lifted from
-      values in $\mathcal{V}$ to values in $\mathcal{V}_\mathbb{K}$.
-      See~\cite{amsterdamer2011provenance} for details about provenance
-      semimodules.
+      In \cite{sen2026provsql}, the $f_l$ are commutative monoid
+      operations, $\gamma$ carries no order, and the aggregate value is the
+      semimodule element $\hat f_l\bigl(\mset{t_l(u)*\alpha \mid
+      (u,\alpha)\in U}\bigr)$, where ``$*$'' denotes the tensor product
+      combining data values of $\mathcal{V}$ with $\delta$-semiring
+      annotations from $\mathbb{K}$ in a semimodule
+      $\mathcal{V}_{\mathbb{K}}$, and $\hat f_l$ is $f_l$ lifted to
+      $\mathcal{V}_\mathbb{K}$; see~\cite{amsterdamer2011provenance} for
+      details about provenance semimodules.
   \end{description}
 \end{toappendix}

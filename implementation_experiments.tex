@@ -186,7 +186,7 @@ SELECT * FROM (
 \end{minted}
 
 The ``\sql{<= k}'' case is non-monotone and is rewritten as
-“at least one match”~\sql{EXCEPT}~“at least~$k+1$ matches”:
+``at least one match''~\sql{EXCEPT}~``at least~$k+1$ matches'':
 \begin{minted}[fontsize=\small, breaklines, escapeinside=||]{postgresql}
 SELECT * FROM (
   SELECT img, sr_formula(provenance(), 'image_mapping') AS prov
