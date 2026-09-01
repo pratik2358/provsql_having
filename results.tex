@@ -330,9 +330,19 @@ $\bigoplus_{i<j}\alpha_i\otimes\alpha_j=e_1\oplus e_1\oplus e_3=e_3$, so
 Hence $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_2}$.
 \paragraph*{Proof of (iii)}
 To isolate absorptivity we give a \emph{distributive} counterexample.
-\lean{Semirings/Tropical}{TropicalR.F_ne_S} Consider the tropical semiring
-$\mathbb K_2=(\mathbb{R}\cup\{\infty\},\min,+,\infty,0)$.
-It is idempotent, $\otimes$ distributes over $\ominus$ and is non-absorptive.
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}
+Consider the tropical semiring
+$\mathbb K_2=(\mathbb{Z}\cup\{\infty\},\min,+,\infty,0)$ over the
+integers, equipped with the same monus as the tropical semiring over
+$\mathbb R$ of Table~\ref{tab:semirings} (the construction of
+Appendix~\ref{appendix:corrections} applies to any linearly ordered
+commutative additive monoid); the computation below is identical over
+$\mathbb R$ \lean{Semirings/Tropical}{TropicalR.F_ne_S}.
+It is idempotent, $\otimes$ distributes over $\ominus$
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.mul_sub_left_distributive}, and it is
+not absorptive
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.not_absorptive_witness}:
+$\mathbb 1\oplus(-1)=\min(0,-1)=-1\neq\mathbb 1$.
 We show that there exists a $\mathbb K_2$-instance $\hat I$ such that
 \[
 \angsem{\hat I}{Q^{\op C}_1}
@@ -838,9 +848,8 @@ $\op\in\{\ge,=,\le\}$; since the group key~$a$ was arbitrary, this
 proves~(i). For~(ii) we exhibit a counterexample in a five-element
 absorptive chain in which $\otimes$ does not distribute over $\ominus$
 \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_counterexample},
-and for~(iii) one in the tropical semiring over~$\mathbb R$ of
-Table~\ref{tab:semirings}
-\lean{Semirings/Tropical}{TropicalR.F_ne_S}.
+and for~(iii) one in the tropical semiring over~$\mathbb Z\cup\{\infty\}$
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}.
 \end{proofsketch}
 
 \paragraph*{Specialization, probabilistic evaluation, and complexity.}
