@@ -577,27 +577,43 @@ We recall that the provenance of the \sql{HAVING} condition (equiv.\ selection p
 and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible-world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 1: \sql{MIN(a)}$\op c$, \sql{MAX(a)}${}\op c$, and \fakesql{PICKFIRST}\texttt{(a)}$\op c$.}
-For these aggregates, validity of a world is determined directly from the occurrences in $U$:
-\begin{itemize}
-  \item for \sql{MIN(a)}${}\op c$, one checks whether the selected occurrences contain an admissible minimum value and exclude all values that would violate the comparison;
-  \item \sql{MAX(a)}${}\op c$ is a dual to \sql{MIN(a)}${}\op c$;
-  \item for \fakesql{PICKFIRST}\texttt{(a)}$\op c$ (the non-commutative aggregate of Example~\ref{ex:aggregates}), one checks which occurrence is the first and if its value satisfies the comparison.\end{itemize}
-In an absorptive m-semiring in which $\otimes$ distributes over
-$\ominus$, the possible-world sum then collapses to a closed form
-combining at most two running $\oplus$-sums over the occurrences of the
-group \lean{HavingMinMax}{Having.minScan_correct}
-\lean{HavingMinMax}{Having.maxScan_correct}
-\lean{HavingMinMax}{Having.firstScan_correct}, computed by a single scan
-using $O(|U|)$ semiring operations. Both hypotheses are needed:
-absorptivity fails in the tropical m-semiring over
+Write $\alpha_i$ and $a_i$ for the annotation and the value of
+attribute~\texttt{a} of the $i$-th occurrence of~$U$, occurrences being
+indexed in the order~$\preceq$, and
+$L\defeq\bigoplus_{a_i<c}\alpha_i$, $L'\defeq\bigoplus_{a_i\le c}\alpha_i$,
+$G\defeq\bigoplus_{a_i\ge c}\alpha_i$, $G'\defeq\bigoplus_{a_i>c}\alpha_i$,
+$E\defeq\bigoplus_{a_i=c}\alpha_i$. In an absorptive m-semiring in which
+$\otimes$ distributes over $\ominus$, the possible-world sum for
+\sql{MIN(a)}${}\op c$ has the closed form
+\lean{HavingMinMax}{Having.minScan_correct}
+\[
+\begin{array}{r@{\ }l@{\qquad}r@{\ }l@{\qquad}r@{\ }l}
+{<}c: & L, & {\le}c: & L', & {\ne}c: & L\oplus(\mathbb 1\ominus L')\otimes G',\\
+{\ge}c: & (\mathbb 1\ominus L)\otimes G, & {>}c: & (\mathbb 1\ominus L')\otimes G', & {=}c: & (\mathbb 1\ominus L)\otimes E;
+\end{array}
+\]
+for instance, \sql{MIN(a)}${}<c$ holds in a world exactly when some
+occurrence with $a_i<c$ is present, and absorptivity reduces the sum over
+these worlds to the sum over the singletons, whereas \sql{MIN(a)}${}\ge c$
+additionally requires that no occurrence with $a_i<c$ be present, whence
+the factor $\mathbb 1\ominus L$. The closed form for \sql{MAX(a)}${}\op c$
+is the mirror image, exchanging $<$ and~$>$
+\lean{HavingMinMax}{Having.maxScan_correct}, and for
+\fakesql{PICKFIRST}\texttt{(a)}${}\op c$ (the non-commutative aggregate of
+Example~\ref{ex:aggregates}) it is
+$\bigoplus_{i:\,a_i\op c}(\mathbb 1\ominus\bigoplus_{j<i}\alpha_j)\otimes\alpha_i$,
+one term per satisfying occurrence that comes first
+\lean{HavingMinMax}{Having.firstScan_correct}. Each is computed by a
+single scan of~$U$ using $O(|U|)$ semiring operations. Both hypotheses
+are used: absorptivity fails in the tropical m-semiring over
 $\mathbb R\cup\{\infty\}$ (idempotent and distributive), where the scan
 value differs from the possible-world provenance already for
 \sql{MIN(a)}${}\ge c$ on a two-occurrence group
-\lean{Semirings/Tropical}{TropicalR.minScan_ne_prov}; and distributivity
-of $\otimes$ over $\ominus$ is what identifies the factored world
-annotation with its expanded form, an identification that fails in
-absorptive m-semirings without it
-\lean{Semirings/ChainFive}{ChainFive.not_world_bound}.
+\lean{Semirings/Tropical}{TropicalR.minScan_ne_prov}; distributivity of
+$\otimes$ over $\ominus$ identifies the world annotation $\ann_U(W)$ with
+the expanded form $T_U(W)$ of Section~\ref{sec:results}
+\lean{HavingSemantics}{Having.worldAnn_eq_T}, on which the closed forms
+are established.
 
 \smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}
@@ -619,9 +635,11 @@ Since all values are nonnegative, these families are upward-closed under inclusi
 \lean{Having}{Having.sum_ge_collapse} \lean{Having}{Having.sum_gt_collapse}.
 Let $W$ be a minimal satisfying world. A zero-valued occurrence never belongs to $W$: removing it leaves the sum unchanged, contradicting minimality. Hence every value $a$ of an occurrence of $W$ is nonzero and satisfies $\frac ca\le k$, i.e., $c\le k\cdot a$, so any $k$ selected occurrences of $W$ already contribute a sum at least $c$. For \sql{SUM(a) >= c}, this gives $|W|\le k$: if $|W|>k$, then any $k$-element subset of $W$ already has sum $\ge c$, contradicting minimality \lean{Having}{Having.minimal_card_le_of_sum_ge}. For the strict comparison \sql{SUM(a) > c}, a $k$-element subset only guarantees a sum $\ge c$, and one further (nonzero) occurrence makes the inequality strict -- covering in particular the boundary case $c=0$ -- so minimality gives $|W|\le k+1$ \lean{Having}{Having.minimal_card_le_of_sum_gt}.
 
-Therefore the number of minimal satisfying worlds is bounded by $\sum_{i\le k+1}\binom{|U|}{i}$
-\lean{Having}{Having.card_minimal_sum_ge_le},
-which is polynomial in $|U|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
+Therefore the number of minimal satisfying worlds is bounded by
+$\sum_{i\le k}\binom{|U|}{i}$ for \sql{SUM(a) >= c}
+\lean{Having}{Having.card_minimal_sum_ge_le} and by
+$\sum_{i\le k+1}\binom{|U|}{i}$ for \sql{SUM(a) > c}, which is
+polynomial in $|U|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
 
 \smallskip\noindent\textbf{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
