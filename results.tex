@@ -1162,39 +1162,36 @@ already in \emph{data} complexity, i.e., for a single fixed query.
 
 \begin{propositionrep}\label{prop:having-nphard}
   \lean{HavingComplexity}{Provenance.Complexity.havingSumNonzero_NP_complete}
-  For $\mathbb{K}\in\{\mathbb{B}[X],\mathbb{N}[X]\}$, deciding whether the
-  provenance of a Boolean \sql{HAVING} query over a $\mathbb{K}$-instance is
-  non-$\mathbb{0}_\mathbb{K}$ is NP-complete. Membership holds in combined
-  complexity, and hardness already in data complexity: there is a fixed
-  Boolean \sql{HAVING} query~$q$ such that deciding, given a
-  $\mathbb{K}$-instance~$\hat I$ as sole input, whether the provenance
-  of~$q$ over~$\hat I$ is non-$\mathbb{0}_\mathbb{K}$, is NP-hard.
+  Let $\mathbb{K}\in\{\mathbb{B}[X],\mathbb{N}[X]\}$. There is a fixed
+  Boolean \sql{HAVING} query~$q$ such that deciding, given as sole input a
+  $\mathbb{K}$-instance~$\hat I$ whose tuples are annotated by distinct
+  variables, whether the provenance of~$q$ over~$\hat I$ is
+  non-$\mathbb{0}_\mathbb{K}$, is NP-complete. Moreover, for every fixed
+  \sql{HAVING} query, deciding whether its provenance over an arbitrary
+  $\mathbb B[X]$-instance is non-$\mathbb 0$ is in NP.
 \end{propositionrep}
 
 \begin{proof}
-  \emph{Membership.} We evaluate the provenance bottom-up using the standard
-  semantics of relational algebra operators in
-  $\mathbb{K}$-semirings~\cite{sen2026provsql}, keeping the circuit over the
-  variables unexpanded; every operator other than \sql{HAVING} runs in
-  polynomial time. For each
-  \sql{HAVING}, instead of summing over all possible worlds in the formula of
-  Definition~\ref{def:semantics}, we guess a single (polynomial-sized)
-  possible world~$W$ and keep only its contribution
-  $\ann_U(W)\otimes\chi_{\op}(\dots)$. As $\mathbb{B}[X]$ and $\mathbb{N}[X]$
-  have characteristic~$0$, the $\oplus$-sum over possible worlds is
-  non-$\mathbb{0}_\mathbb{K}$ if and only if one of its summands is (a~%
-  disjunction of Boolean functions for $\mathbb{B}[X]$, a sum of monomials
-  with nonnegative coefficients for $\mathbb{N}[X]$, vanishes only when every
-  summand does), so it suffices to witness one non-$\mathbb{0}_\mathbb{K}$
-  summand. For $\mathbb{B}[X]$ we additionally guess a (polynomial-sized)
-  valuation of the variables and accept when the resulting Boolean circuit is
-  true under it; for $\mathbb{N}[X]$ we additionally guess a monomial together
-  with a derivation witnessing that it occurs in the resulting polynomial.
-  Both certificates are polynomial-sized and checkable in polynomial time, so
-  this non-deterministic procedure accepts exactly when the provenance is
-  non-$\mathbb{0}_\mathbb{K}$. The procedure takes the query and the instance
-  as input, so membership holds in combined complexity, hence a fortiori in
-  data complexity for every fixed query.
+  \emph{Membership.} Let first $\mathbb K=\mathbb B[X]$ and $Q$ be an
+  arbitrary fixed \sql{HAVING} query. Guess a valuation
+  $\nu\colon X\to\{\bot,\top\}$ of the variables of~$\hat I$. Evaluation
+  under~$\nu$ is an m-semiring homomorphism $h_\nu\colon\mathbb
+  B[X]\to\mathbb B$ (it commutes with $\lor$, $\land$, $\land\lnot$ and
+  with $\delta=\mathrm{id}$), so by Proposition~\ref{prop:hom},
+  $h_\nu(\angsem{\hat I}{Q})=\angsem{h_\nu(\hat I)}{Q}$, the
+  $\mathbb B$-provenance of $Q$ over the sub-instance $S_\nu$ of the tuples
+  annotated $\top$ (those annotated $\bot$ being absent). By
+  Proposition~\ref{prop:pqe-equiv}, applied with all probabilities equal
+  to~$1$, this is $\top$ if and only if $S_\nu\models Q$, which is decided
+  in polynomial time in data complexity. Since $\angsem{\hat I}{Q}\neq\mathbb
+  0$ if and only if some valuation makes it true, the problem is in NP.
+  For $\mathbb K=\mathbb N[X]$, the fixed query~$q$ below, and an instance
+  annotated by distinct variables, every factor $\mathbb
+  1\ominus\bigoplus_{i\notin W}x_i$ equals~$\mathbb 1$, so the provenance is
+  a polynomial with nonnegative coefficients whose monomials are exactly the
+  valid worlds; guessing one world and checking its sum places the problem
+  in NP
+  \lean{HavingComplexity}{Provenance.Complexity.havingSumNonzero_mem_NP}.
 
   \emph{Hardness.} We reduce from subset-sum \cite{DBLP:conf/coco/Karp72}, a
   classic NP-hard problem: given a finite multiset $M=\mset{m_1,\dots,m_n}$ of
@@ -1251,9 +1248,10 @@ excluded variables have no constant term), so $\ann_U(W)=\bigotimes_{i\in
 W}x_i$ are distinct monomials
 \lean{HavingComplexity}{Provenance.Complexity.havingSumProv_ne_zero_iff}. Hence $P\neq\mathbb{0}_\mathbb{K}$ if and only
 if some non-empty sub-multiset of~$M$ sums to~$B$, i.e., if and only if the
-subset-sum instance has a solution. The reduction is polynomial
+subset-sum instance has a solution. The reduction is polynomial, the
+values being written in binary
 \lean{HavingComplexity}{Provenance.Complexity.havingSumNonzeroBool_faithful}%
-\lean{HavingComplexity}{Provenance.Complexity.havingSumNonzeroHow_faithful}
+\lean{HavingComplexity}{Provenance.Complexity.havingSumNonzeroHow_faithful},
 and, the
 query~$q$ being independent of the subset-sum instance, it establishes
 hardness in data complexity, which concludes.
