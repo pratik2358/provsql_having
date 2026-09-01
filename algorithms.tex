@@ -698,12 +698,14 @@ Proposition~\ref{prop:pqe-equiv}, evaluating a \sql{HAVING} query over a
 tuple-independent instance amounts to computing the probability of its
 $\mathbb{B}[X]$-provenance under the possible-world semantics. When the
 contributors of a group are independent, this probability need not be obtained
-by enumerating worlds, whose number is in general exponential: the distribution
-of the aggregate over the group can instead be assembled by a convolution
-dynamic program, yielding the answer in polynomial time for several aggregates
-and \emph{all} comparison operators, as we now show.
+by enumerating worlds, whose number is in general exponential: as Ré and
+Suciu~\cite{re2009trichotomy} showed in the base case of their safe plans,
+the distribution of the aggregate over the group can be assembled by a
+convolution of marginal distributions, yielding the answer in polynomial
+time for several aggregates and \emph{all} comparison operators. In our
+terms:
 
-\begin{propositionrep}
+\begin{propositionrep}[after~\cite{re2009trichotomy}]
 \label{prop:agg-cmp-poly-prob}
 Let $\hat I$ be a $\mathbb{B}[X]$-instance whose variables carry
 independent probabilities, $\vec v$ a group key and
@@ -715,8 +717,8 @@ $p_i\defeq\Pr(\alpha_i)$. For every comparison operator $\op$ and
 threshold $C\in\NN$, the probability of the aggregate comparison on the
 group under the possible-world semantics is computable in time
 $O\bigl(N\cdot\min(C,N-C)\bigr)$ for $\text{\sql{COUNT(*)}}\op C$, in
-time $O(N\cdot S)$ for $\text{\sql{SUM}}(t)\op C$ with $t(u_i)\in\NN$
-and $S\defeq\sum_{i=1}^N t(u_i)$, and in time $O(N)$ for
+time $O(N\cdot\min(C,S))$ for $\text{\sql{SUM}}(t)\op C$ with
+$t(u_i)\in\NN$ and $S\defeq\sum_{i=1}^N t(u_i)$, and in time $O(N)$ for
 $\text{\sql{MIN}}(t)\op C$ and $\text{\sql{MAX}}(t)\op C$ over any
 totally ordered value domain.
 \end{propositionrep}
@@ -768,12 +770,12 @@ variable.  The same convolution generalizes
 0\le s\le S,
 \]
 where $\sigma_n(s)\defeq\Pr\bigl[\sum_{i\le n}t(u_i)X_i=s\bigr]$.
-Filling $\sigma_N(\cdot)$ on $[0,S]$ takes $O(N\cdot S)$ time and gives
-all atoms $\Pr[\Sigma=s]$, hence every $\Pr[\Sigma\op C]$ by a single
-length-$O(S)$ summation; the empty-world adjustment is the same
-$\prod_i(1-p_i)$ as before.  (When $C\le S/2$ a smaller-tail trick
-analogous to~(1) reduces the constant; we state the looser bound for
-clarity.)
+Only the indices $s\le\min(C,S)$ are needed, the mass of $\Sigma\ge C$
+being obtained by complementation (this is the saturation at~$C$ of the
+semiring $S_{C+1}$ of~\cite{re2009trichotomy}), so filling
+$\sigma_N(\cdot)$ on $[0,\min(C,S)]$ takes $O(N\cdot\min(C,S))$ time and
+gives every $\Pr[\Sigma\op C]$ by a single summation; the empty-world
+adjustment is the same $\prod_i(1-p_i)$ as before.
 
 \smallskip\noindent\textbf{(3) \sql{MIN}$(t)\,\op\,C$ and
 \sql{MAX}$(t)\,\op\,C$.}

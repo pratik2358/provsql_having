@@ -13,6 +13,7 @@ provenance. Algorithms for specific aggregate functions and comparison
 operators, together with experiments, show the feasibility of the
 approach, which yields the first end-to-end provenance-aware
 implementation of selection on aggregate values. A natural next step is
-to combine this work with the query-shape tractability results
-of~\cite{re2009trichotomy}, to guarantee polynomial-time probabilistic
-evaluation of safe \sql{HAVING} queries.
+to lift the safe plans of~\cite{re2009trichotomy}, whose base case
+Proposition~\ref{prop:agg-cmp-poly-prob} restates, to our provenance
+circuits, so that the probabilistic evaluation of safe \sql{HAVING}
+queries over joins remains polynomial.

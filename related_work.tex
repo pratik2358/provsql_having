@@ -42,11 +42,13 @@ a probabilistic database.
 \textbf{Aggregation in probabilistic databases.}
 \cite{re2009trichotomy} characterizes which aggregate conjunctive queries
 with a single \sql{HAVING} atom can be evaluated or approximated in
-polynomial time over probabilistic databases, a classification by query
-shape orthogonal to Section~\ref{sec:algorithms}, which classifies
-combinations of semirings and aggregates;
-Proposition~\ref{prop:agg-cmp-poly-prob} addresses the comparison alone,
-for independent contributors. \cite{abiteboul2011capturing} studies
+polynomial time over probabilistic databases, by the shape of the query;
+the base case of its safe plans, the convolution of the marginal
+distributions of independent tuples in a small semiring, is what
+Proposition~\ref{prop:agg-cmp-poly-prob} restates in our setting, whereas
+Section~\ref{sec:algorithms} classifies combinations of semirings and
+aggregates for symbolic provenance, which~\cite{re2009trichotomy} does
+not consider. \cite{abiteboul2011capturing} studies
 aggregation over probabilistic XML, for terminal aggregates only. Closest
 to us, \cite{fink2012aggregation} extends the construction
 of~\cite{amsterdamer2011provenance} for probability evaluation and
