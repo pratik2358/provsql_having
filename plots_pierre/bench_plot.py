@@ -164,7 +164,7 @@ def main() -> None:
         plt.close(fig)
         print(f"wrote {fname}")
 
-    fig, axes = plt.subplots(2, 2, figsize=(7.0, 4.6))
+    fig, axes = plt.subplots(2, 2, figsize=(7.0, 3.8))
     for ax, (semi, op, title, _) in zip(axes.flat, FIGS):
         plot_panel(ax, data, op, semi, title=title)
     fig.tight_layout(pad=0.4)
