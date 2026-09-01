@@ -1,10 +1,13 @@
 #!/bin/bash
 # Scratch benchmark: HAVING COUNT(obj) >= K  vs  K self-joins, on the coco DB.
-# Reports median execution time + output row count over REPS reps.
+# Reports median execution and planning times + output row count over REPS
+# reps.
 #
 # Timing comes from EXPLAIN (ANALYZE, TIMING OFF, ...) so result rows are not
 # shipped to the client (no client I/O in the timing) but the projection
 # expression (sr_formula / probability_evaluate) is still fully evaluated.
+# Both "Execution Time" and "Planning Time" are recorded: the planning of the
+# self-join rewriting is far from free once geqo is off (see below).
 #
 #   ./bench_having_vs_join.sh                       # formula, >=, K=1..13
 #   SEMI=prob ./bench_having_vs_join.sh             # probability_evaluate
@@ -18,8 +21,9 @@
 # genetic optimizer may order the self-joins so that the `id >` chain is
 # applied late, and the intermediate results then explode (the k=12 JOIN
 # went from 3 s to over 300 s).  Exhaustive planning is slower (up to 20 s
-# at k=15) but only Execution Time is measured.  lc_messages = 'C' keeps the
-# statement-timeout check below working on a non-English server.
+# at k=15), which is why the planning time is reported alongside.
+# lc_messages = 'C' keeps the statement-timeout check below working on a
+# non-English server.
 
 set -uo pipefail
 
@@ -113,7 +117,8 @@ EOF
 
 # ---------- runner ---------------------------------------------------------
 
-# Echoes "<ms> <rows>", "TIMEOUT 0", or returns non-zero on error.
+# Echoes "<exec_ms> <plan_ms> <rows>", "TIMEOUT 0 0", or returns non-zero on
+# error.
 # Second arg (optional) is extra SET statements to issue before the EXPLAIN
 # (e.g. "SET provsql.cmp_probability_evaluation = off;").
 run_once() {
@@ -131,21 +136,22 @@ PSQL
   rc=$?
   if (( rc != 0 )); then
     if echo "$out" | grep -q 'canceling statement due to statement timeout'; then
-      echo "TIMEOUT 0"; return 0
+      echo "TIMEOUT 0 0"; return 0
     fi
     echo >&2 "psql error (rc=$rc):"
     echo >&2 "$out"
     return 1
   fi
-  local ms rows
+  local ms plan rows
   ms=$(echo "$out"   | grep -oE 'Execution Time: [0-9.]+ ms' | awk '{print $3}')
+  plan=$(echo "$out" | grep -oE 'Planning Time: [0-9.]+ ms'  | awk '{print $3}')
   rows=$(echo "$out" | grep -oE 'actual rows=[0-9]+'         | head -1 | cut -d= -f2)
-  if [[ -z $ms || -z $rows ]]; then
+  if [[ -z $ms || -z $plan || -z $rows ]]; then
     echo >&2 "could not parse EXPLAIN output:"
     echo >&2 "$out"
     return 1
   fi
-  echo "$ms $rows"
+  echo "$ms $plan $rows"
 }
 
 # For SEMI=prob, materialise both shapes into temp tables, FULL JOIN on img,
@@ -230,27 +236,28 @@ median() {
     }'
 }
 
-# Echoes "<median_ms> <rows>" (or "TIMEOUT ?" / "ERROR ?").
-# Third arg (optional) is extra SETs passed through to run_once.
+# Echoes "<median_exec_ms> <median_plan_ms> <rows>" (or "TIMEOUT ? ?" /
+# "ERROR ? ?").  Third arg (optional) is extra SETs passed through to run_once.
 measure() {
   local label=$1 sql=$2 extra=${3:-}
-  local times=() rows="?" res r
+  local times=() plans=() rows="?" res r ms plan
   for ((r=1; r<=REPS; r++)); do
     if ! res=$(run_once "$sql" "$extra"); then
       echo >&2 "  $label rep $r: error"
-      echo "ERROR ?"; return 0
+      echo "ERROR ? ?"; return 0
     fi
     if [[ $res == TIMEOUT* ]]; then
       echo >&2 "  $label rep $r: TIMEOUT"
-      echo "TIMEOUT ?"; return 0
+      echo "TIMEOUT ? ?"; return 0
     fi
-    times+=("${res% *}")
-    rows="${res#* }"
-    echo >&2 "  $label rep $r: ${res% *} ms (rows=$rows)"
+    read -r ms plan rows <<< "$res"
+    times+=("$ms"); plans+=("$plan")
+    echo >&2 "  $label rep $r: $ms ms (plan=$plan ms, rows=$rows)"
   done
-  local med
+  local med pmed
   med=$(printf '%s\n' "${times[@]}" | median)
-  echo "$med $rows"
+  pmed=$(printf '%s\n' "${plans[@]}" | median)
+  echo "$med $pmed $rows"
 }
 
 # ---------- main loop ------------------------------------------------------
@@ -263,15 +270,21 @@ echo >&2 "SEMI=$SEMI  OP='$OP'  OBJ=$OBJ  REPS=$REPS  K=$KMIN..$KMAX  timeout=$S
 WANT_NOSHORT=0
 [[ $SEMI == prob ]] && WANT_NOSHORT=1
 
+# Times are "exec+plan" medians in ms; the ratio columns compare the totals.
 if (( WANT_NOSHORT )); then
-  printf '\n%-3s | %14s %8s | %14s %8s | %14s %8s | %8s | %8s | %-8s | %s\n' \
-    K 'HAVING_ms' rows 'HAVING_NS_ms' rows 'JOIN_ms' rows 'NS/H' 'J/H' 'shortcut' 'check'
-  printf -- '----+-------------------------+-------------------------+-------------------------+----------+----------+----------+--------\n'
+  printf '\n%-3s | %22s %8s | %22s %8s | %22s %8s | %8s | %8s | %-8s | %s\n' \
+    K 'HAVING_ms(exec+plan)' rows 'HAVING_NS_ms' rows 'JOIN_ms' rows 'NS/H' 'J/H' 'shortcut' 'check'
+  printf -- '----+---------------------------------+---------------------------------+---------------------------------+----------+----------+----------+--------\n'
 else
-  printf '\n%-3s | %14s %8s | %14s %8s | %8s | %-8s | %s\n' \
-    K 'HAVING_ms' rows 'JOIN_ms' rows 'J/H' 'shortcut' 'check'
-  printf -- '----+-------------------------+-------------------------+----------+----------+--------\n'
+  printf '\n%-3s | %22s %8s | %22s %8s | %8s | %-8s | %s\n' \
+    K 'HAVING_ms(exec+plan)' rows 'JOIN_ms' rows 'J/H' 'shortcut' 'check'
+  printf -- '----+---------------------------------+---------------------------------+----------+----------+--------\n'
 fi
+
+# "<exec>+<plan>" for numeric medians, the bare status word otherwise.
+fmt_time() { [[ $1 =~ ^[0-9.]+$ ]] && echo "$1+$2" || echo "$1"; }
+# Total of numeric exec + plan, or "-".
+total() { [[ $1 =~ ^[0-9.]+$ ]] && awk "BEGIN { print $1 + $2 }" || echo "-"; }
 
 for ((k=KMIN; k<=KMAX; k++)); do
   echo >&2 "=== K=$k ==="
@@ -281,29 +294,35 @@ for ((k=KMIN; k<=KMAX; k++)); do
                    "SET provsql.cmp_probability_evaluation = off;")
   fi
   jv=$(measure "join      k=$k" "$(join_sql $k)")
-  h_ms=${hv% *}; h_rows=${hv#* }
-  j_ms=${jv% *}; j_rows=${jv#* }
+  read -r h_ms h_plan h_rows <<< "$hv"
+  read -r j_ms j_plan j_rows <<< "$jv"
   if (( WANT_NOSHORT )); then
-    hn_ms=${hns% *}; hn_rows=${hns#* }
+    read -r hn_ms hn_plan hn_rows <<< "$hns"
   fi
-  if [[ $h_ms =~ ^[0-9.]+$ && $j_ms =~ ^[0-9.]+$ ]]; then
-    sp=$(awk "BEGIN { printf(\"%.2fx\", $j_ms / $h_ms) }")
+  h_tot=$(total "$h_ms" "$h_plan"); j_tot=$(total "$j_ms" "$j_plan")
+  if [[ $h_tot != - && $j_tot != - ]]; then
+    sp=$(awk "BEGIN { printf(\"%.2fx\", $j_tot / $h_tot) }")
   else
     sp="-"
   fi
-  if (( WANT_NOSHORT )) && [[ $hn_ms =~ ^[0-9.]+$ && $h_ms =~ ^[0-9.]+$ ]]; then
-    nsh=$(awk "BEGIN { printf(\"%.2fx\", $hn_ms / $h_ms) }")
-  else
-    nsh="-"
+  if (( WANT_NOSHORT )); then
+    hn_tot=$(total "$hn_ms" "$hn_plan")
+    if [[ $hn_tot != - && $h_tot != - ]]; then
+      nsh=$(awk "BEGIN { printf(\"%.2fx\", $hn_tot / $h_tot) }")
+    else
+      nsh="-"
+    fi
   fi
   vp=$(verify_pair $k)
   chk=${vp%|*}; sc=${vp##*|}
   if (( WANT_NOSHORT )); then
-    printf '%-3s | %14s %8s | %14s %8s | %14s %8s | %8s | %8s | %-8s | %s\n' \
-      "$k" "$h_ms" "$h_rows" "$hn_ms" "$hn_rows" "$j_ms" "$j_rows" \
-      "$nsh" "$sp" "$sc" "$chk"
+    printf '%-3s | %22s %8s | %22s %8s | %22s %8s | %8s | %8s | %-8s | %s\n' \
+      "$k" "$(fmt_time "$h_ms" "$h_plan")" "$h_rows" \
+      "$(fmt_time "$hn_ms" "$hn_plan")" "$hn_rows" \
+      "$(fmt_time "$j_ms" "$j_plan")" "$j_rows" "$nsh" "$sp" "$sc" "$chk"
   else
-    printf '%-3s | %14s %8s | %14s %8s | %8s | %-8s | %s\n' \
-      "$k" "$h_ms" "$h_rows" "$j_ms" "$j_rows" "$sp" "$sc" "$chk"
+    printf '%-3s | %22s %8s | %22s %8s | %8s | %-8s | %s\n' \
+      "$k" "$(fmt_time "$h_ms" "$h_plan")" "$h_rows" \
+      "$(fmt_time "$j_ms" "$j_plan")" "$j_rows" "$sp" "$sc" "$chk"
   fi
 done

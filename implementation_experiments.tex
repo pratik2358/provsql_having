@@ -26,12 +26,14 @@ multiplication by $\mathbb 0$, etc.
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.9\textwidth]{plots_pierre/bench_fig_combined.pdf}
-    \caption{Execution time of the \sql{HAVING} queries (\sql{COUNT(*) >= k}
-    on the left, \sql{COUNT(*) <= k} on the right) under our semantics and
-    under the self-join rewriting, as a function of~$k$: symbolic
-    provenance computation (top) and probability evaluation (bottom, with
-    and without the Poisson-binomial optimization of
-    Proposition~\ref{prop:agg-cmp-poly-prob}).}
+    \caption{Planning and execution time of the \sql{HAVING} queries
+    (\sql{COUNT(*) >= k} on the left, \sql{COUNT(*) <= k} on the right)
+    under our semantics and under the self-join rewriting, as a function
+    of~$k$: symbolic provenance computation (top) and probability
+    evaluation (bottom, with and without the Poisson-binomial optimization
+    of Proposition~\ref{prop:agg-cmp-poly-prob}). The height of a bar is
+    the planning plus execution time; the black tick marks the execution
+    time alone.}
     \label{fig:bench}
 \end{figure}
 
@@ -81,18 +83,20 @@ values of~$k$, d4.
 For each $k$, every query was executed $3$ times on a desktop computer
 (Intel Core i7-12700, 64~GB of RAM) running Ubuntu 22.04, with PostgreSQL
 18.6; the figures report the mean of the three runs, with error bars at
-one standard deviation, on a logarithmic scale. We report the execution
-time measured by \sql{EXPLAIN ANALYZE}, which excludes query planning. We
-disabled PostgreSQL's genetic query optimizer, which by default replaces
-exhaustive join ordering from 12 relations onwards: for the self-\sql{JOIN}
-rewritings with $k \geq 12$, the join order it selected applied the
-``\sql{id >}'' chain late, the intermediate results blew up, and the queries
-exceeded a five-minute timeout, whereas the exhaustive planner finds an
-order for which execution stays around 3 seconds (its planning time,
-up to 20 seconds for $k = 15$, is not included in the reported times).
+one standard deviation, on a logarithmic scale. We report the
+planning time and the execution time measured by \sql{EXPLAIN ANALYZE}:
+the height of a bar is their sum, and a black tick marks the execution
+time alone. We disabled PostgreSQL's genetic query optimizer, which by
+default replaces exhaustive join ordering from 12 relations onwards: for
+the self-\sql{JOIN} rewritings with $k \geq 12$, the join order it
+selected applied the ``\sql{id >}'' chain late, the intermediate results
+blew up, and the queries exceeded a five-minute timeout, whereas the
+exhaustive planner finds an order for which execution stays around
+3 seconds, at the price of a planning time that grows quickly with the
+number of joins.
 
 Figure~\ref{fig:bench} (top) reports query
-execution times including the materialization of a textual representation
+planning and execution times including the materialization of a textual representation
 of a provenance formula, comparing our possible-world semantics
 with the corresponding \sql{JOIN}-based rewriting. During execution, our semantics constructs
 a provenance circuit with a \emph{comparison gate} representing the aggregate comparison. The
@@ -103,13 +107,16 @@ semantics remains stable as $k$ varies, between $0.2$ and $0.6$ seconds;
 for ``\sql{COUNT(*) >= k}'' it even decreases slowly with~$k$, as the
 range check discards more groups. For this query, the \sql{JOIN}-based
 rewriting is faster for $k \leq 4$, and then becomes slower than the
-\sql{HAVING}-based semantics, its cost growing with the number of joins
-up to $13$ times that of our semantics -- queries with a large number
-of joins can be slow for the query evaluator. For the
+\sql{HAVING}-based semantics, its cost growing with the number of joins:
+$14$ times that of our semantics at $k = 11$, and $106$ times at
+$k = 15$, where planning the $15$-way self-join alone takes
+$20$ seconds -- queries with a large number of joins are slow both for
+the query planner and for the query evaluator. For the
 ``\sql{COUNT(*) <= k}'' query, the \sql{JOIN}-based rewriting (which
 includes a non-monotone \sql{EXCEPT}) is again cheaper for $k \leq 2$,
-but becomes up to $6$ times more expensive than our semantics for larger
-values of $k$. Thus, for provenance computation alone, the main
+but becomes $7$ times more expensive than our semantics at $k = 11$ and
+$108$ times at $k = 15$ ($62$ seconds of planning for the $16$-way
+self-join). Thus, for provenance computation alone, the main
 observation is the stability of the runtime cost, which pays off as $k$
 increases.
 
@@ -129,12 +136,14 @@ is small enough for the general pipeline to evaluate it by world
 enumeration or inclusion--exclusion, so that the closed form of
 Proposition~\ref{prop:agg-cmp-poly-prob} brings no measurable gain on
 this dataset; it would on groups with more tuples, where the DNF
-has~$\binom{n}{k}$ clauses. The \sql{JOIN} rewriting is again cheaper for
-$k \leq 3$, then becomes up to $17$ times slower than our semantics for
-the monotone $\geq k$ case and up to $7$ times slower for the $\leq k$
-case, since it pays, in addition to the joins, the probability
-evaluation of larger circuits, some of which require tree decomposition
-or knowledge compilation. Note also that the \sql{JOIN} rewriting is
+has~$\binom{n}{k}$ clauses. The \sql{JOIN} rewriting is again cheaper
+for~$k \leq 3$, then becomes $12$ to $17$ times slower than our semantics
+for the monotone $\geq k$ case and $4$ to $8$ times slower for the
+$\leq k$ case up to $k = 11$, since it pays, in addition to the joins,
+the probability evaluation of larger circuits, some of which require
+tree decomposition or knowledge compilation; beyond, planning dominates
+and the ratio reaches $83$ and $115$ at $k = 15$. Note also that the
+\sql{JOIN} rewriting is
 unable to exploit the fact that the query becomes vacuously true or
 false when $k$ is higher than the number of objects in the images, which
 both our implementations can.
