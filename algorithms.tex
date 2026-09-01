@@ -639,11 +639,12 @@ Since all values are nonnegative, these families are upward-closed under inclusi
 \lean{Having}{Having.sum_ge_collapse} \lean{Having}{Having.sum_gt_collapse}.
 Let $W$ be a minimal satisfying world. A zero-valued occurrence never belongs to $W$: removing it leaves the sum unchanged, contradicting minimality. Hence every value $a$ of an occurrence of $W$ is nonzero and satisfies $\frac ca\le k$, i.e., $c\le k\cdot a$, so any $k$ selected occurrences of $W$ already contribute a sum at least $c$. For \sql{SUM(a) >= c}, this gives $|W|\le k$: if $|W|>k$, then any $k$-element subset of $W$ already has sum $\ge c$, contradicting minimality \lean{Having}{Having.minimal_card_le_of_sum_ge}. For the strict comparison \sql{SUM(a) > c}, a $k$-element subset only guarantees a sum $\ge c$, and one further (nonzero) occurrence makes the inequality strict -- covering in particular the boundary case $c=0$ -- so minimality gives $|W|\le k+1$ \lean{Having}{Having.minimal_card_le_of_sum_gt}.
 
-Therefore the number of minimal satisfying worlds is bounded by
-$\sum_{i\le k}\binom{|U|}{i}$ for \sql{SUM(a) >= c}
-\lean{Having}{Having.card_minimal_sum_ge_le} and by
-$\sum_{i\le k+1}\binom{|U|}{i}$ for \sql{SUM(a) > c}, which is
-polynomial in $|U|$, $k$ being fixed. Therefore the provenance can be computed in polynomial time.
+Therefore the number of minimal satisfying worlds is at most
+$\sum_{i\le k}\binom{|U|}{i}$ in the first case
+\lean{Having}{Having.card_minimal_sum_ge_le} and
+$\sum_{i\le k+1}\binom{|U|}{i}$ in the second; both bounds are polynomial
+in $|U|$ for fixed~$k$, so the provenance can be computed in polynomial
+time.
 
 \smallskip\noindent\textbf{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:

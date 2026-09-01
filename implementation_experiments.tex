@@ -146,8 +146,8 @@ Section~\ref{sec:implementation_experiments}. They are SQL queries using
 the functions of the ProvSQL extension of PostgreSQL (\sql{provenance()}, \sql{sr_formula},
 \sql{probability_evaluate}, etc.)
 
-The \sql{HAVING}-based template, instantiated either with
-``\sql{COUNT(*) >= k}'' or ``\sql{COUNT(*) <= k}'', is:
+The \sql{HAVING}-based template is the following, its condition being
+instantiated with \sql{COUNT(*) >= k} or with \sql{COUNT(*) <= k}:
 \newcommand{\apos}{\texttt{\textquotesingle}}
 \begin{minted}[fontsize=\small, breaklines, escapeinside=||]{postgresql}
 SELECT * FROM (
@@ -159,14 +159,13 @@ SELECT * FROM (
 ) sub WHERE prov <> |\quotedzero|;
 \end{minted}
 
-For probability evaluation, the projection
-\sql{sr_formula(provenance(), 'image_mapping')} is replaced by
-\sql{probability_evaluate(provenance())} and the zero-filter
-``\mintinline[escapeinside=||]{postgresql}{prov <> |\quotedzero|}'' by
-``\sql{prov > 0}''; both serve to discard images whose
-provenance simplifies to $\mathbb{0}$ (resp.\ whose probability evaluates to probability~$0$), which
-under the \sql{HAVING} semantics correspond to images for which the
-aggregate comparison is impossible in every possible world.
+For probability evaluation, the call to \sql{sr_formula} in the
+projection is replaced by \sql{probability_evaluate(provenance())}, and
+the final filter, which
+discards the images whose provenance simplifies to~$\mathbb 0$, becomes
+\sql{prov > 0}, discarding those whose probability is~$0$; under the
+\sql{HAVING} semantics, these are the images for which the aggregate
+comparison holds in no possible world.
 
 The equivalent self-\sql{JOIN} rewriting for the ``\sql{>= k}'' case uses
 a $(k{-}1)$-fold self-join, with the

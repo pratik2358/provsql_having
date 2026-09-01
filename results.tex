@@ -24,14 +24,15 @@ grouping columns are handled identically.
   =,\geq\}$ consider the queries:
 \begin{align*}
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))\\
-    Q^{\geq C}_2&=\begin{cases}\varepsilon(\Pi_{\#1}(q)) & \text{if } C=1,\\[1mm]\varepsilon(\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
-    q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<\#(2C)}q)) & \text{if }C\ge 2\end{cases}\\
+    Q^{\geq C}_2&=\varepsilon\bigl(\Pi_{\#1}(q\bowtie_{\theta_1}q\bowtie_{\theta_2}\cdots\bowtie_{\theta_{C-1}}q)\bigr)\\
     Q^{\leq C}_2&= Q^{\geq 1}_2 - Q^{\geq (C+1)}_2\\
 Q^{=C}_2&=Q^{\geq C}_2 - Q^{\geq (C+1)}_2
 \end{align*}
-where $\varepsilon$ denotes duplicate elimination; the chain of strict
-comparisons on the identifier column selects each $C$-element set of
-occurrences of a group exactly once.
+where $\varepsilon$ denotes duplicate elimination, $\theta_i$ is the join
+condition $\#1=\#(2i+1)\land\#(2i)<\#(2i+2)$, and the chain is empty for
+$C=1$, so that $Q^{\geq 1}_2=\varepsilon(\Pi_{\#1}(q))$; the chain of
+strict comparisons on the identifier column selects each $C$-element set
+of occurrences of a group exactly once.
     Then:
     \begin{enumerate}[(i)]
       \item
@@ -279,7 +280,7 @@ while $(J_{=,\le})$ and the $\ge$-case give
 $\angsem{\hat I}{Q^{\le C}_2}(a)=S_1(U)\ominus S_{C+1}(U)$. The $\le$ case
 therefore amounts to the identity
 \begin{equation}\label{eq:at-most-C}
-\bigoplus_{\substack{W\sqsubseteq U,\\ 1\le|W|\le C}} T_{U}(W)
+\bigoplus_{1\le|W|\le C} T_{U}(W)
 =S_1(U)\ominus S_{C+1}(U),
 \end{equation}
 which is proven like \eqref{eq:exactly-C}
@@ -608,16 +609,16 @@ $U\setminus(W'\cup\{u\})=U'\setminus W'$. Hence, using distributivity of $\otime
 \Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u.
 \]
 Therefore, using distributivity of $\otimes$ over $\ominus$,
-\[
+\begin{align*}
 T_U(W'\cup\{u\})
-=
+&=
 (A_{W'}\otimes\alpha_u)\ominus
-\Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u
-=
+\Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u\\
+&=
 \Bigl(A_{W'}\ominus\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u
 =
 T_{U'}(W')\otimes\alpha_u.
-\]
+\end{align*}
 Taking $\oplus$ over all $W'\subseteq U'$ with $|W'|\ge C-1$ and factoring $\alpha_u$ using
 distributivity of $\otimes$ over $\oplus$ yields
 \begin{equation}\label{eq:II-simplifies}
@@ -960,11 +961,11 @@ denotes, on either side separately.
   \lean{AggQueryHom}{GenPred.predsem_delta_absorb}: if $\psi$ entails the
   existence of the group of $U$ and every token it compares has
   occurrence sequence~$U$, then
-  \(
+  \[
     \predsem{\hat I}{q}{\psi}(u)\otimes
       \delta\bigl(\bigoplus_{(u,\alpha)\in U}\alpha\bigr)
     =\predsem{\hat I}{q}{\psi}(u).
-  \)
+  \]
   Dropping the pending factor of $U$ next to $\predsem{\hat
   I}{q}{\psi}(u)$ is therefore invisible, whether or not the evaluation
   actually drops it.
