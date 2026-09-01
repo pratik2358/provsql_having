@@ -23,10 +23,10 @@ grouping columns are handled identically.
   relation is carried along). For $C\in\mathbb{N}_{\ge1}$ and $\op\in \{\leq,
   =,\geq\}$ consider the queries:
 \begin{align*}
-    Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))\\
-    Q^{\geq C}_2&=\varepsilon\bigl(\Pi_{\#1}(q\bowtie_{\theta_1}q\bowtie_{\theta_2}\cdots\bowtie_{\theta_{C-1}}q)\bigr)\\
-    Q^{\leq C}_2&= Q^{\geq 1}_2 - Q^{\geq (C+1)}_2\\
-Q^{=C}_2&=Q^{\geq C}_2 - Q^{\geq (C+1)}_2
+    Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))
+    & Q^{\leq C}_2&= Q^{\geq 1}_2 - Q^{\geq (C+1)}_2\\
+    Q^{\geq C}_2&=\varepsilon\bigl(\Pi_{\#1}(q\bowtie_{\theta_1}q\bowtie_{\theta_2}\cdots\bowtie_{\theta_{C-1}}q)\bigr)
+    & Q^{=C}_2&=Q^{\geq C}_2 - Q^{\geq (C+1)}_2
 \end{align*}
 where $\varepsilon$ denotes duplicate elimination, $\theta_i$ is the join
 condition $\#1=\#(2i+1)\land\#(2i)<\#(2i+2)$, and the chain is empty for
@@ -425,12 +425,12 @@ a query is written}, not just on query equivalence.
 Theorem~\ref{th:correctness} shows that our semantics is correct for
 Boolean provenance (the Boolean-function m-semiring is absorptive and has
 $\otimes$ distributive over $\ominus$) and generalizes%
-\footnote{This is proper generalization: the Tropical
-  m-semiring over $\mathbb{N}$, the Viterbi m-semiring, the \L ukasiewicz
-  m-semiring are all absorptive and have $\otimes$ distributive over
-  $\ominus$ (see Table~\ref{tab:semirings}) but there is no semiring
-  homomorphism from $\mathbb{B}[X]$ to either of them sending variables
-  of $X$ to arbitrary values
+\footnote{This is a proper generalization: the tropical m-semiring
+  over $\mathbb{N}$, the Viterbi and the \L ukasiewicz m-semirings are
+  absorptive with $\otimes$ distributive over $\ominus$
+  (Table~\ref{tab:semirings}), but no semiring homomorphism from
+  $\mathbb{B}[X]$ to any of them sends the variables of $X$ to arbitrary
+  values
   \lean{Semirings/Tropical}{TropicalN.no_hom_from_BoolFunc}
   \lean{Semirings/Viterbi}{Viterbi.no_hom_from_BoolFunc}
 \lean{Semirings/Lukasiewicz}{Lukasiewicz.no_hom_from_BoolFunc}.}
@@ -440,46 +440,50 @@ the theorem, we simply choose the proposed semantics as an implementable
 semantics for the \sql{HAVING} clause.
 
 \begin{proofsketch}
-For any $\mathbb{K}$-instance $\hat I$, we prove the equality $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ by showing that, for any tuple in the query result, the corresponding provenance expressions, instantiated on any commutative m-semiring $\mathbb{K}$ under the assumptions of $(i)$, are the same.
-In other words, we need to show that the provenance annotation of each group produced by the grouping operator under our \sql{HAVING} semantics of Definition~\ref{def:semantics} coincides with that produced by the self-join query.
-Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat I}{q}$ has the form $(u_1,u_2,\alpha)$ where $\alpha\in \mathbb K$.
-Fix an arbitrary group key $\vec v=(a)$.
-Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ be the sequence of
-occurrences of the group with key~$a$ in $\angsem{\hat I}{q}$ under
-order~$\preceq$ (Definition~\ref{def:possible_world}). For a possible world
-$W\sqsubseteq U$, write $A_W\defeq\bigotimes_{w\in W}\alpha_w$, where
-$\alpha_w$ is the annotation of occurrence~$w$. The argument revolves
-around three quantities:
-\begin{itemize}
-\item $T_U(W)\defeq A_W\ominus\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$,
-  the normal form of the possible-world annotation $\ann_U(W)$, i.e., the
-  contribution of $W$ to the possible-world sum;
-\item $F_C(U)\defeq\bigoplus_{\substack{W\sqsubseteq U\\|W|\ge C}} T_U(W)$,
-  the \emph{\sql{HAVING} side}: by Definition~\ref{def:semantics},
-  $\angsem{\hat I}{Q^{\ge C}_1}(a)=F_C(U)$;
-\item $S_C(U)\defeq\bigoplus_{\substack{W\sqsubseteq U\\|W|=C}} A_W$,
-  the \emph{join side}: $\angsem{\hat I}{Q^{\ge C}_2}(a)=S_C(U)$,
-  since the self-join exhibits each $C$-subset $W$ once with annotation
-  $A_W$, the projection $\Pi_{\#1}$ repeats the key~$(a)$, and
-  $\varepsilon$ merges these occurrences by~$\oplus$.
-\end{itemize}
-For the $=$ and $\le$ cases, the \sql{HAVING} side is the restriction of
-the possible-world sum to the worlds of size exactly~$C$ (resp.\ between
-$1$ and~$C$), while the join side, from
-$Q^{=C}_2=Q^{\ge C}_2 - Q^{\ge(C+1)}_2$ and
-$Q^{\le C}_2=Q^{\ge1}_2 - Q^{\ge(C+1)}_2$, is the difference
-$S_C\ominus S_{C+1}$ (resp.\ $S_1\ominus S_{C+1}$); their equality
-follows from the $\ge$ case together with a per-world upper bound
-(Lemma~\ref{lem:world-bound} below). Hence the main task is to prove
-$F_C(U)=S_C(U)$.
+Fix a group key $a$ and let $U$ be the sequence of occurrences of its
+group in $\angsem{\hat I}{q}$; the order of $U$ plays no role here, so we
+regard $U$ as a finite \emph{set} and its worlds as subsets $W\subseteq U$,
+writing $A_W\defeq\bigotimes_{w\in W}\alpha_w$ for the product of their
+annotations. Three quantities are compared:
+$T_U(W)\defeq A_W\ominus\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$, the
+world annotation $\ann_U(W)$ in expanded form, which distributivity of
+$\otimes$ over $\ominus$ provides
+\lean{Having}{Having.T_eq_mul_one_monus_sum};
+$F_C(U)\defeq\bigoplus_{|W|\ge C}T_U(W)$, the \sql{HAVING} side
+$\angsem{\hat I}{Q^{\ge C}_1}(a)$ by Definition~\ref{def:semantics}; and
+$S_C(U)\defeq\bigoplus_{|W|=C}A_W$, the self-join side
+$\angsem{\hat I}{Q^{\ge C}_2}(a)$, since the self-join exhibits each
+$C$-subset once and $\varepsilon$ merges the copies of the key by~$\oplus$.
+The $\ge$ case of (i) is the identity $F_C(U)=S_C(U)$
+\lean{Having}{Having.F_eq_S}: both sides satisfy the same include/exclude
+recurrence $X_C(U)=X_C(U')\oplus\bigl(X_{C-1}(U')\otimes\alpha_u\bigr)$ for
+$u\in U$ and $U'\defeq U\setminus\{u\}$ (proved in the appendix, the
+recurrence for $F_C$ relying on the expansion
+$A_V\le\bigoplus_{V\subseteq W\subseteq U}T_U(W)$ for $V\subseteq U$),
+and the recurrences bottom out at
+$S_0(U')=\mathbb 1$ and $F_0(U')=\mathbb 1$, the latter being the only step
+that needs absorptivity rather than the idempotence it implies
+\lean{Having}{Having.F_zero_eq_one}. The $=$ and $\le$ cases are the
+identities $\bigoplus_{|W|=C}T_U(W)=S_C(U)\ominus S_{C+1}(U)$ and
+$\bigoplus_{1\le|W|\le C}T_U(W)=S_1(U)\ominus S_{C+1}(U)$
+\lean{Having}{Having.G_eq_S_monus_S}
+\lean{Having}{Having.atMost_eq_S_monus_S}: one inequality follows from the
+per-world bound $T_U(W)\le S_j(U)\ominus S_{C+1}(U)$ for $j\le|W|\le C$
+(proved in the appendix), the other from the right-distributivity of
+$\ominus$ over $\oplus$ (Corollary~\ref{lem:finite-add-monus}) and the
+antitonicity of $\ominus$ (Lemma~\ref{lem:monus-antitone}). The key $a$
+being arbitrary, this proves~(i). For~(ii) we exhibit a counterexample in
+a five-element absorptive chain in which $\otimes$ does not distribute
+over $\ominus$
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_counterexample},
+and for~(iii) one in the tropical semiring over~$\mathbb Z\cup\{\infty\}$
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}.
+\end{proofsketch}
 
-The order $\preceq$ plays no further role: $A_W$, $T_U(W)$, $F_C(U)$ and
-$S_C(U)$ depend only on \emph{which} occurrences are selected, not on their
-order. We therefore regard $U$ from now on as the finite \emph{set} of its
-occurrences and each possible world $W\sqsubseteq U$ as a subset
-$W\subseteq U$, and prove~$F_C(U)=S_C(U)$ through a shared include/exclude
-recurrence; the key ingredient is the following bound.
-
+\begin{toappendix}
+The proof of Theorem~\ref{th:correctness} rests on the following lemmas,
+whose proofs are given here; $A_W$, $T_U(W)$, $F_C(U)$ and $S_C(U)$ are as
+in the proof of the theorem.
 \begin{lemmarep}\label{lem:upward-expansion}
 \lean{Having}{Having.upward_expansion}
 Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
@@ -857,34 +861,7 @@ depend on $A_W$, and distributivity of $\otimes$ over $\ominus$ is only
 used afterwards, when the subtrahend has grown to $S_j(U)\otimes E_W$,
 which dominates $S_{C+1}(U)$.
 
-By Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}, both
-$F_C(U)$ and $S_C(U)$ satisfy the same include/exclude recurrence
-$X_C(U)=X_C(U')\oplus\bigl(X_{C-1}(U')\otimes\alpha_u\bigr)$ for any
-$u\in U$ and $U'=U\setminus\{u\}$. At $C=1$ this recurrence bottoms out
-at the count-$0$ terms: $S_0(U')=A_\varnothing=\mathbb 1$ is immediate,
-whereas $F_0(U')=\bigoplus_{W\subseteq U'}T_{U'}(W)=\mathbb 1$ holds only
-because $\mathbb K$ is absorptive (so that $\mathbb 1\oplus x=\mathbb 1$);
-this is the single point requiring absorptivity rather than just the
-idempotence it implies
-\lean{Having}{Having.F_zero_eq_one}. Together with the base case
-$|U|=0$, induction on $|U|$ then gives $F_C(U)=S_C(U)$
-\lean{Having}{Having.F_eq_S}, settling the $\ge$ case. For the $=$ case,
-Lemma~\ref{lem:world-bound} with $j=C$ bounds the contribution of each
-world of size~$C$ by $S_C(U)\ominus S_{C+1}(U)$, while
-right-distributivity of $\ominus$ over $\oplus$
-(Corollary~\ref{lem:finite-add-monus}, with fixed subtrahend
-$S_{C+1}(U)$) and antitonicity of $\ominus$
-(Lemma~\ref{lem:monus-antitone}) give the converse inequality; the
-$\le$ case is proven in the same way, using
-Lemma~\ref{lem:world-bound} with $j=1$ and $F_1(U)=S_1(U)$. This yields
-$\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
-$\op\in\{\ge,=,\le\}$; since the group key~$a$ was arbitrary, this
-proves~(i). For~(ii) we exhibit a counterexample in a five-element
-absorptive chain in which $\otimes$ does not distribute over $\ominus$
-\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_counterexample},
-and for~(iii) one in the tropical semiring over~$\mathbb Z\cup\{\infty\}$
-\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}.
-\end{proofsketch}
+\end{toappendix}
 
 \paragraph*{Specialization, probabilistic evaluation, and complexity.}
 Much of the practical value of semiring provenance comes from the fact
