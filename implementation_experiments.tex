@@ -1,9 +1,10 @@
 \section{Implementation and Experiments}
 \label{sec:implementation_experiments}
 \subsection{Implementation}
-We implemented the algorithms described in Section~\ref{sec:algorithms}
-(Proposition~\ref{prop:algorithms})
-within ProvSQL in C++. Beyond these algorithms, the implementation prunes
+We implemented within ProvSQL, in C++, \textsc{ValidCount},
+\textsc{ValidSum}, the closed forms of Proposition~\ref{prop:algorithms}
+for \sql{MIN}, \sql{MAX} and \fakesql{PICKFIRST}, and brute-force
+enumeration otherwise. Beyond these algorithms, the implementation prunes
 with the bounds of Proposition~\ref{prop:algorithms}: in an absorptive
 m-semiring, for the upward-closed comparisons (\sql{COUNT(*) >= k},
 \sql{> k}, \sql{SUM(a) >= c}, \sql{> c}) only the minimal valid worlds
@@ -94,7 +95,7 @@ tree-decomposition of small treewidth and, if unsuccessful, resorts to an
 external knowledge compiler (d4~\cite{DBLP:conf/ijcai/LagniezM17}).
 
 For each $k$, every query was executed $3$ times on a standard laptop
-computer running Ubuntu 26.04, ProvSQL version 1.8.0 on top of PostgreSQL 18.
+computer running Ubuntu 26.04, with PostgreSQL 18.
 
 Figure~\ref{fig:prov_only_times_ge} and Figure~\ref{fig:prov_only_times_lt} report query
 execution times including the materialization of a textual representation
@@ -120,12 +121,14 @@ Figure~\ref{fig:prob_eval_times_lt}, where probability evaluation is included in
 to query execution and provenance computation. In these experiments,
 we compare three different probability computation modes: \sql{HAVING}
 semantics with the Poisson-binomial CDF optimization for counting independent events
-of Proposition~\ref{prop:agg-cmp-poly-prob}, plain \sql{HAVING} semantics, and
+of Proposition~\ref{prop:agg-cmp-poly-prob}, plain \sql{HAVING} semantics
+(the same optimization disabled, so that the provenance circuit goes through
+the general probability pipeline), and
 \sql{JOIN} rewriting; recall that probability evaluation is, in
 general, \#P-hard. The first one remains efficient for all values of~$k$;
 the second one is more efficient than the \sql{JOIN} semantics for the
-monotone $\geq k$ case, but is an order of magnitude slower for the $\leq k$
-case, where the non-monotone and larger provenance expressions become
+monotone $\geq k$ case, but up to two orders of magnitude slower for the
+$\leq k$ case, where the non-monotone and larger provenance expressions become
 hard to process for the knowledge compiler. The \sql{JOIN} rewriting
 presents a similar profile in both cases (note the different scale of
 both graphs) -- note it is unable to exploit the fact that
