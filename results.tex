@@ -919,7 +919,7 @@ combine annotations, it also \emph{inspects} them, in two places:
   distinguishes, and drop on the $\mathbb K'$ side a pending factor that
   the $\mathbb K$ side keeps;
 \item Definition~\ref{def:possible_world} orders occurrences of equal
-  value-tuples arbitrarily; any concrete choice may break ties using the
+  tuples arbitrarily; any concrete choice may break ties using the
   annotations, and $h$ need not preserve it.
 \end{enumerate}
 
@@ -998,9 +998,9 @@ $\alpha'=h(\alpha)$.
   the same tuples, so the two sides produce the same group keys. Fix a
   key: the occurrence sequence built on the $\mathbb K'$ side and the
   $h$-image of the one built on the $\mathbb K$ side are both sorted by
-  the value part and contain the same occurrences, hence differ only
-  inside blocks of equal value-tuples; as the aggregated term reads the
-  value part only, this is a permutation of the kind allowed by~(ii).
+  the tuple $u$ and contain the same occurrences, hence differ only
+  inside blocks of equal tuples; as the aggregated term reads the
+  tuple only, this is a permutation of the kind allowed by~(ii).
   This is where obstruction~(b) is discharged. The output annotation is
   $\delta(\bigoplus_{(u,\alpha)\in U}\alpha)$ on either side, and $h$
   commutes with $\oplus$ and with~$\delta$, which gives~(iii).
