@@ -1029,14 +1029,18 @@ concludes the induction and the proof.
 
 In addition to this important result, our m-semiring semantics
 for \sql{HAVING} also provides an implementable semantics for probabilistic query
-evaluation:
+evaluation over tuple-independent probabilistic databases, in the classical
+sense of~\cite{suciu2011probabilistic}: below, $\Pr(I\models Q)$ is the probability
+that a Boolean query $Q$ holds on a random sub-instance of~$I$, and the
+probability of a Boolean function is that of its being true under a random
+valuation.
 
 \begin{propositionrep}
   \label{prop:pqe-equiv}
   \lean{AggQueryProbability}{AggQuery.boolean_pqe}
   Let $Q$ be a \emph{Boolean} \sql{HAVING} query
   and $I$ be an instance where each tuple $u$ is associated with an
-  independent probability $\Pr(u)\in [0,1]$. Then the probability
+  independent probability $\Pr(u)\in [0,1]$. Then
   $\Pr(I\models Q)=\Pr(\angsem{\hat I}{Q})$, where $\hat I$ is a
   $\mathbb{B}[X]$-instance whose tuples are annotated with independent
   variables $x\in X$ with the same probability as the corresponding tuple
