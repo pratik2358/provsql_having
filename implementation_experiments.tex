@@ -3,24 +3,21 @@
 \subsection{Implementation}
 We implemented the algorithms described in Section~\ref{sec:algorithms}
 (Proposition~\ref{prop:algorithms})
-within ProvSQL in C++. Our implementation includes a number of optimizations. One such optimization is a
-generic \emph{range check}: for every aggregation operator, we determine
-the minimum and maximum values it can take over all possible worlds (e.g., the sum of all
-negative numbers and of all positive numbers respectively for \sql{SUM})
-and return either $\mathbb{0}$ if a condition is unsatisfiable, or the
-$\oplus$ of all possible worlds if a condition is necessarily
-true.
-
-Similarly, for \sql{SUM}, instead of running the dynamic programming up
-to the comparison constant $C$, the maximum tracked sum $J$ is defined in
-an optimized way, in the case of nonnegative integers.
-We also eliminate iterations over sums that are not yet reachable at a
-particular DP-iteration, reducing early-stage DP cost. We exploit when
-possible the absorptive nature of the m-semiring.
-
+within ProvSQL in C++. Beyond these algorithms, the implementation prunes
+with the bounds of Proposition~\ref{prop:algorithms}: in an absorptive
+m-semiring, for the upward-closed comparisons (\sql{COUNT(*) >= k},
+\sql{> k}, \sql{SUM(a) >= c}, \sql{> c}) only the minimal valid worlds
+are generated, and when every non-empty world is valid the provenance
+collapses to the $\oplus$ of the annotations of the group. A \emph{range
+check} first compares the threshold with the smallest and largest values
+the aggregate can take over the worlds (e.g., for \sql{SUM}, the sums of
+the negative and of the positive values) and returns $\mathbb 0$ when
+the comparison is unsatisfiable. For \sql{SUM}, the table of the dynamic
+programming is bounded by the comparison constant when values are
+nonnegative integers, and sums not yet reachable are skipped; negative
+values and tables beyond $10^7$ entries fall back to enumeration.
 For probability evaluation, we also implemented the algorithms presented
 in Proposition~\ref{prop:agg-cmp-poly-prob}.
-
 Finally, while constructing semiring provenance expressions, we fold standard
 (m-)semiring identities: multiplication by $\mathbb 1$, addition or
 multiplication by $\mathbb 0$, etc.
@@ -105,7 +102,7 @@ of a provenance formula, comparing our possible-world semantics
 with the corresponding \sql{JOIN}-based rewriting. During execution, our semantics constructs
 a provenance circuit with a \emph{comparison gate} representing the aggregate comparison. The
 possible-world semantics is triggered at the semiring evaluation level,
-by instantiating the formula pseudo-semiring (\texttt{sr\_semiring})
+by instantiating the formula pseudo-semiring (\sql{sr_formula})
 in ProvSQL. For provenance computation alone, the running time of our semantics remains relatively
 stable as $k$ varies. For the ``\sql{COUNT(*) >= k}'' query, the \sql{JOIN}-based rewriting is faster for
 very small values of $k$, and then becomes slower than the \sql{HAVING}-based semantics after a
