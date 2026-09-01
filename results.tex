@@ -27,53 +27,12 @@ where $\varepsilon$ denotes duplicate elimination and $<^*$ denotes $<$ augmente
         $\mathbb{K}$-instance $\hat I$,
         $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$.
       \item
-        \lean{Semirings/Why}{Why.counterexample_having}
+        \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_counterexample}
         There exists a commutative m-semiring $\mathbb{K}_1$ which is
-        \rjok{absorptive} but does
+        absorptive but does
         not have distributivity of $\otimes$ over $\ominus$, and a
         $\mathbb{K}_1$-instance $\hat I_1$, such that
         $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_2}$.
-        \pierre{We should use \textsf{ChainFive} here instead of
-        Why$[X]$. As stated, this item does not show that distributivity is
-        \emph{needed}: Why$[X]$ is neither absorptive nor
-        $\otimes$/$\ominus$-distributive (Table~\ref{tab:semirings}), so it
-        fails \emph{both} hypotheses of~(i) and only shows that idempotence
-        alone is insufficient. Item~(iii) is sharp by contrast -- it keeps
-        distributivity and drops absorptivity. The five-element chain
-        \textsf{ChainFive} of the Lean development is absorptive (hence
-        idempotent) but not $\otimes$/$\ominus$-distributive, so it isolates
-        the right hypothesis and makes (ii) and~(iii) the symmetric pair
-        ``distributivity is needed'' / ``absorptivity is needed'' that
-        \textsf{HavingQueryCounterexamples} already uses in its module
-        docstring. Beyond retargeting the Lean reference to
-        \textsf{Semirings/ChainFive} (\textsf{ChainFive.query\_counterexample}),
-        this needs a \emph{new human-readable proof}: the one below fixes
-        $C=2$ and a Why$[X]$ valuation, whereas the \textsf{ChainFive} witness
-        is at $C=1$, so neither the instance nor the two closed forms carry
-        over. Sketch to write up: let $\mathbb K_1$ be the chain
-        $\mathbb 0<\mathsf{lo}<\mathsf{mid}<\mathsf{hi}<\mathbb 1$ with
-        $\oplus=\max$, $a\ominus b=\mathbb 0$ if $a\leq b$ and $a$ otherwise,
-        and $\otimes$ commutative with
-        $\mathsf{hi}\otimes\mathsf{hi}=\mathsf{hi}$,
-        $\mathsf{hi}\otimes\mathsf{mid}=\mathsf{hi}\otimes\mathsf{lo}
-        =\mathsf{lo}$, and every other product of elements strictly between
-        $\mathbb 0$ and $\mathbb 1$ equal to $\mathbb 0$; it is absorptive but
-        $\mathsf{hi}\otimes(\mathbb 1\ominus\mathsf{hi})=\mathsf{hi}$ while
-        $(\mathsf{hi}\otimes\mathbb 1)\ominus(\mathsf{hi}\otimes\mathsf{hi})
-        =\mathbb 0$. Take $C=1$, $\op$ to be~$=$, and one group of three
-        occurrences annotated $(\mathsf{mid},\mathsf{hi},\mathsf{hi})$. For
-        $C=1$ the two closed forms are
-        $\angsem{\hat I_1}{Q^{=1}_1}(u)=\bigoplus_i \alpha_i\otimes
-        (\mathbb 1\ominus\bigoplus_{j\neq i}\alpha_j)$ and
-        $\angsem{\hat I_1}{Q^{=1}_2}(u)=(\bigoplus_i\alpha_i)\ominus
-        (\bigoplus_{i<j}\alpha_i\otimes\alpha_j)$. Since
-        $\mathbb 1\ominus\mathsf{hi}=\mathbb 1$, the first is
-        $\mathsf{mid}\oplus\mathsf{hi}\oplus\mathsf{hi}=\mathsf{hi}$, while
-        the second is
-        $\mathsf{hi}\ominus(\mathsf{lo}\oplus\mathsf{lo}\oplus\mathsf{hi})
-        =\mathsf{hi}\ominus\mathsf{hi}=\mathbb 0$. We should also decide
-        whether to keep the Why$[X]$ computation as a second, weaker
-        counterexample (idempotence is not enough) or drop it.}
       \item
         \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}
         There exists a commutative m-semiring $\mathbb{K}_2$ that has
@@ -324,53 +283,23 @@ Since group key $(a)$ was arbitrary, we conclude
 $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
 $\op\in\{\ge,=,\le\}$.
 \paragraph*{Proof of (ii)}
-\lean{Semirings/Why}{Why.counterexample_having}
-We show that there exists a $\mathbb{K}$-instance $\hat I$ such that
-$\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
-Fix $C=2$ and the operator $\op$ to be~$=$.
-The result key~$u$ is then annotated by the provenance of the possible worlds
-in which its group has exactly two tuples. Suppose that in some $\hat I$ this
-group has three occurrences, carrying $\mathbb K$-annotations $t_1$, $t_2$,
-and $t_3$.
-Then
-\[
-  \angsem{\hat I}{Q^{= 2}_1}(u)=(t_1 \otimes t_2)\otimes(\mathbb{1}\ominus t_3) \oplus (t_1 \otimes t_3)\otimes(\mathbb{1}\ominus t_2)\oplus(t_2 \otimes t_3)\otimes(\mathbb{1}\ominus t_1)
-\]
-and, since $Q^{=2}_2=Q^{\geq 2}_2 - Q^{\geq 3}_2$ and the difference is
-interpreted by the monus,
-\[
-  \angsem{\hat I}{Q^{= 2}_2}(u)=\bigl((t_1 \otimes t_2)\oplus (t_1 \otimes t_3)\oplus (t_2 \otimes t_3)\bigr)\ominus(t_1\otimes t_2\otimes t_3).
-\]
-Fix a Why-semiring valuation $t_1 = t_2 = t_3 = \{\{a\}\}$.
-Every product of the $t_i$ then equals $\{\{a\}\}$, and every factor
-$\mathbb 1\ominus t_i=\{\emptyset\}\setminus\{\{a\}\}=\{\emptyset\}=\mathbb 1$.
-So
-\begin{align*}
-  \angsem{\hat I}{Q^{= 2}_1}(u)
-  &=(\{\{a\}\}\Cup\mathbb 1)\cup(\{\{a\}\}\Cup\mathbb 1)\cup(\{\{a\}\}\Cup\mathbb 1)
-  =\{\{a\}\},
-\end{align*}
-but on the join side the difference of the two $\ge$-chains cancels the
-surviving witness:
-\begin{align*}
-  \angsem{\hat I}{Q^{= 2}_2}(u)
-  &=\bigl(\{\{a\}\}\cup\{\{a\}\}\cup\{\{a\}\}\bigr)\setminus\{\{a\}\}
-  =\emptyset=\mathbb 0.
-\end{align*}
-Hence, $\angsem{\hat I}{Q^{\op C}_1}\neq \angsem{\hat I}{Q^{\op C}_2}$.
-
-\rjok{\emph{Correct proof of (ii)}
-\lean{Semirings/ChainFive}{ChainFive.query_counterexample}
-To isolate distributvity we give an \emph{absorptive} counterexample.
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_counterexample}
+To isolate distributivity we give an \emph{absorptive} counterexample.
 Let $\mathbb K_1$ be the five-element chain
 $\mathbb 0=e_0<e_1<e_2<e_3<e_4=\mathbb 1$ with
 \begin{itemize}
-  \item $e_i\oplus e_j=e_{\max(i,j)}$, 
+  \item $e_i\oplus e_j=e_{\max(i,j)}$;
   \item $\otimes$ commutative, of unit~$e_4$ and annihilator~$e_0$, defined on the remaining elements by $e_3\otimes e_3=e_3$, $e_3\otimes e_2=e_3\otimes e_1=e_1$, and $e_i\otimes e_j=\mathbb 0$ for all other $1\le i,j\le 3$.
-\end{itemize} 
-$\ominus$ being a consequence of $\oplus$, $e_i\ominus e_j=\mathbb 0$ if $i\le j$ and $e_i\ominus e_j=e_i$ otherwise.
-Since $e_i\otimes e_j\le e_{\min(i,j)}$, the semiring $\mathbb K_1$ is
-absorptive, hence idempotent. It is not $\otimes$/$\ominus$-distributive: since
+\end{itemize}
+This is a commutative m-semiring
+\lean{Semirings/ChainFive}{ChainFive.instCommSemiringWithMonus}: the
+natural order is the order of the chain, and $\ominus$ is determined by
+it, $e_i\ominus e_j=\mathbb 0$ if $i\le j$ and $e_i\ominus e_j=e_i$
+otherwise.
+Since $\oplus$ is $\max$ and $\mathbb 1=e_4$ is the greatest element,
+$\mathbb K_1$ is absorptive \lean{Semirings/ChainFive}{ChainFive.absorptive},
+hence idempotent. It is not $\otimes$/$\ominus$-distributive
+\lean{Semirings/ChainFive}{ChainFive.not_mul_sub_left_distributive}: since
 $\mathbb 1\ominus e_3=\mathbb 1$, we get
 $e_3\otimes(\mathbb 1\ominus e_3)=e_3$, whereas
 $(e_3\otimes\mathbb 1)\ominus(e_3\otimes e_3)=e_3\ominus e_3=\mathbb 0$.
@@ -398,9 +327,9 @@ $\bigoplus_{i<j}\alpha_i\otimes\alpha_j=e_1\oplus e_1\oplus e_3=e_3$, so
 \[
 \angsem{\hat I_1}{Q^{=1}_2}(u)=e_3\ominus e_3=\mathbb 0\neq e_3.
 \]
-Hence $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_2}$}.
+Hence $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_2}$.
 \paragraph*{Proof of (iii)}
-\rjok{To isolate absorptivity we give a \emph{distributive} counterexample.}
+To isolate absorptivity we give a \emph{distributive} counterexample.
 \lean{Semirings/Tropical}{TropicalR.F_ne_S} Consider the tropical semiring
 $\mathbb K_2=(\mathbb{R}\cup\{\infty\},\min,+,\infty,0)$.
 It is idempotent, $\otimes$ distributes over $\ominus$ and is non-absorptive.
@@ -906,13 +835,12 @@ $\le$ case is proven in the same way, using
 Lemma~\ref{lem:world-bound} with $j=1$ and $F_1(U)=S_1(U)$. This yields
 $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
 $\op\in\{\ge,=,\le\}$; since the group key~$a$ was arbitrary, this
-proves~(i). For~(ii) and~(iii) we exhibit counterexamples in the
-Why[$X$] semiring
-\lean{Semirings/Why}{Why.counterexample_having}
-and the tropical semiring over~$\mathbb R$
-\lean{Semirings/Tropical}{TropicalR.F_ne_S}
-from
-Table~\ref{tab:semirings}.
+proves~(i). For~(ii) we exhibit a counterexample in a five-element
+absorptive chain in which $\otimes$ does not distribute over $\ominus$
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_counterexample},
+and for~(iii) one in the tropical semiring over~$\mathbb R$ of
+Table~\ref{tab:semirings}
+\lean{Semirings/Tropical}{TropicalR.F_ne_S}.
 \end{proofsketch}
 
 \paragraph*{Specialization, probabilistic evaluation, and complexity.}
