@@ -390,7 +390,22 @@ in~\cite{green2007provenance}, a tuple annotated by $\mathbb 0$ is
 considered absent: two $\mathbb K$-relations that differ only by tuples
 annotated by $\mathbb 0$ are identified.
 A $\mathbb K$-instance, usually denoted as $\hat I$, over a database
-schema $\mathcal D$, is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
+schema $\mathcal D$, is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of arity $\mathcal D(R)$.
+
+Unlike in~\cite{green2007provenance}, where a $\mathbb K$-relation is a
+function from tuples to~$\mathbb K$, a tuple may thus occur several
+times, with different annotations. Aggregation requires it: an aggregate
+is computed over the occurrences of a group, not over its distinct
+values, and over an idempotent semiring such as $\mathbb B[X]$ the
+multiplicities cannot be carried by the annotations, as the semimodule
+construction of~\cite{amsterdamer2011provenance} then forces the
+aggregation monoid to be idempotent as
+well~\cite[Proposition~3.11]{amsterdamer2011provenance}, excluding
+\sql{COUNT} and \sql{SUM}. It also matches the bag semantics of SQL,
+under which a projection may produce two occurrences of a tuple with
+distinct provenance, and merging them would change the value of
+\sql{COUNT(*)}~\cite{sen2026provsql}.
+
 The elements of $\mathcal V$ are the \emph{regular data values}: those
 that a term can denote and that a comparison can test directly.
 We adopt the unnamed perspective and consider, instead of attribute names, their \emph{positional indices}, denoted by $\#i$ for $i\in \mathbb N^*$.
