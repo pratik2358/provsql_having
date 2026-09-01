@@ -1223,10 +1223,10 @@ q: SELECT DISTINCT 1 FROM R GROUP BY b HAVING SUM(v) = b
   \end{minted}
   that is, in our relational algebra,
   \[
-    q=\Pi_{1}\bigl(
+    q=\varepsilon\Bigl(\Pi_{1}\bigl(
         \sigma_{\#2=\#1}\bigl(
           \gamma^{\preceq}_{\#1}[\#2{:}f_{\mathrm{SUM}}](R)\bigr)
-      \bigr),
+      \bigr)\Bigr),
   \]
   where $\gamma^{\preceq}_{\#1}[\#2{:}f_{\mathrm{SUM}}]$ groups $R$ by its
   first column and aggregates the $v$-values of each group with \sql{SUM}, so
@@ -1235,8 +1235,8 @@ q: SELECT DISTINCT 1 FROM R GROUP BY b HAVING SUM(v) = b
   regular column~$\#1$, which Definition~\ref{def:semantics} permits since
   the value in a world~$W$ of a side of regular type is $s(u)$, a data value
   read off the output tuple rather than a query constant; and $\Pi_1$
-  projects onto the constant~$1$ (the order $\preceq$ being irrelevant since
-  \sql{SUM} is commutative).
+  projects onto the constant~$1$, whose occurrences $\varepsilon$ merges
+  (the order $\preceq$ being irrelevant since \sql{SUM} is commutative).
 
   All $n$ tuples carry the same group key~$B$, so there is a single group.
   Following Definition~\ref{def:semantics}, and writing

@@ -5,8 +5,9 @@
 \end{toappendix}
 
 We start with preliminaries on (m-)semirings, annotated relations, and
-queries; we refer to \cite{sen2026provsql} for a full description of the
-semantics of aggregate queries, as defined below.
+queries; the syntax and semantics of aggregate queries
+from~\cite{sen2026provsql} are recalled in the
+\hyperref[appendix:algebra]{Appendix}.
 
 \begin{definition} \label{def:semiring}
   A \emph{semiring} is an algebraic structure $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and $\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
@@ -123,13 +124,14 @@ both $\mathbb{N}[X]$ and Why[$X$] had $\otimes$ distributive over $\ominus$
 (called Axiom A13 in~\cite{amsterdamer2011limitations}). Such errors are
 easy to make given some counter-intuitive properties of
 these basic building blocks; clean, formally proven statements
-are one of our contributions. \rjok{We give three handwritten arguments corresponding to the LEAN developments
-in the \hyperref[appendix:corrections]{Appendix} that justify these errors.}
+are one of our contributions. Hand-written proofs of these three
+corrections, mirroring the Lean developments, are given in the
+\hyperref[appendix:corrections]{Appendix}.
 
 \begin{toappendix}
   \subsection{Corrections to the Literature}
   \label{appendix:corrections}
-  \rjok{\paragraph*{The tropical semiring over $\mathbb R$ admits a monus
+  \paragraph*{The tropical semiring over $\mathbb R$ admits a monus
   \lean{Semirings/Tropical}{instCommSemiringWithMonusTropicalWithTopReal}.}
   Write $\mathbb K \defeq \mathbb R\cup\{+\infty\}$ with $a\oplus b\defeq
   \min(a,b)$, $\mathbb 0\defeq+\infty$, $a\otimes b\defeq a+b$ and $\mathbb
@@ -201,7 +203,7 @@ in the \hyperref[appendix:corrections]{Appendix} that justify these errors.}
   \[
     (a\otimes b)\ominus(a\otimes c)=\{\{x\}\}\setminus\{\{x\}\}=\emptyset ,
   \]
-and $\{\{x\}\}\neq\emptyset$. }
+and $\{\{x\}\}\neq\emptyset$.
 \end{toappendix}
 
 For queries with grouping and aggregation, an additional useful notion

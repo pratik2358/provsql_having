@@ -19,9 +19,9 @@ For a new tuple, previously constructed possible worlds can either remain unchan
 After all the tuples have been encountered, the algorithm returns a collection of non-empty worlds whose total sum satisfies the desired comparison.
 The full listing of this algorithm is presented in Algorithm~\ref{alg:sum_dp} of the \hyperref[appendix:algorithms]{Appendix}.
 
-The algorithm works also for the special case where $t=1$, i.e., bounded range \sql{COUNT}$(t)\op C$ comparisons.
+The algorithm works also for the special case where $t=1$, i.e., \sql{COUNT(*)}${}\op C$ comparisons.
 However, for this case we can use a more efficient enumeration algorithm, named \textsc{ValidCount}, exploiting the unit-weight sum structure of \sql{COUNT} aggregates.
-For bounded range \sql{COUNT}$\op C$ we only rely on the fact that the result of a \sql{COUNT} depends only on the number of occurrences of the group key values of the selected tuples.
+For \sql{COUNT(*)}${}\op C$ we only rely on the fact that the result of a \sql{COUNT} depends only on the number of occurrences of the group key values of the selected tuples.
 Our algorithm recursively constructs worlds by deciding for each tuple-occurrence if it is included in or excluded from the current world.
 This enumerates subsets of the desired sizes.
 Finally, depending on the comparison operator, we combine the appropriate size-ranges to get a collection of non-empty worlds that satisfy the comparison.
@@ -29,8 +29,6 @@ The full listing of this algorithm is presented in Algorithm~\ref{alg:count_enum
 
 For other aggregate functions, using brute-force enumeration of non-empty worlds $W\sqsubseteq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ will always give the correct answer by our semantics.
 When a side of the comparison mentions several aggregates of the group, as in \sql{SUM(a) > 2 * COUNT(*)}, the valid worlds are those $W$ on which the two sides, both read in~$W$, compare as required; \textsc{ValidSum} and \textsc{ValidCount} do not apply, and our implementation enumerates the worlds by brute force.
-%\sil{Do we need to list all possible constants for the second aggregate?}
-%\rjok{there are various ways; one way is t look for the aggregate with the smaller result value. but i guess we can talk about the implementation in provsql(which i am not sure about). Pierre did the implementation for agg vs agg if i am not wrong}
 \begin{toappendix}
 \label{appendix:algorithms}
 \begin{algorithm}
@@ -116,7 +114,7 @@ When a side of the comparison mentions several aggregates of the group, as in \s
 The following two theorems state that \textsc{ValidSum} and \textsc{ValidCount} return exactly the set $\{W\sqsubseteq U\mid W\neq\emptyset,\ \mathrm{agg}_{t,f}(W)\op C\}$ of valid worlds, i.e., the index set of the $\oplus$-sum of Definition~\ref{def:semantics}; the predicate provenance is then the $\oplus$-sum of $\ann_U(W)$ over the returned worlds.
 \begin{theoremrep}[Correctness of \textsc{ValidSum}]\label{thm:sumdp-correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
-Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=((u_r,\alpha_r))_{r\in[|U|]}$ be the $\preceq$-ordered sequence of group-member occurrences.
+Fix a $\mathbb K$-instance $\hat I$, an aggregate-free query $q'$ of arity~$k$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=((u_r,\alpha_r))_{r\in[|U|]}$ be the $\preceq$-ordered sequence of group-member occurrences.
 Let $t$ be a term of max-index $\le k$ such that $t(u_r)\in\NN$ for all $r \in [|U|]$.
 Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
 Let $\mathcal W$ be the output of \textsc{ValidSum} on input $(U,t,C,\op,\preceq)$.
@@ -412,7 +410,7 @@ This establishes the correctness.
 
 \begin{theoremrep}[Correctness of \textsc{ValidCount}]\label{thm:count-enum-correct}
 \lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
-Fix a $\mathbb K$-instance $\hat I$, a group key $\vec v$, $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,C,\op)$.
+Fix a $\mathbb K$-instance $\hat I$, an aggregate-free query $q'$, a group key $\vec v$, an ordering $\preceq$, $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$. Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,C,\op)$.
 Then
 \[
 \mathcal W
