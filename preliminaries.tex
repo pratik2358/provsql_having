@@ -219,13 +219,13 @@ next to any annotation that already contains an occurrence of that group.
 The characterization above is unaffected by this strengthening: in an
 m-semiring, a $\delta$ satisfying all three axioms exists exactly when the
 characteristic is $0$, since the support indicator (see below) satisfies
-them all \lean{SemiringWithMonus}{delta_absorb_indicator}.
+them all \lean{SemiringWithMonus}{isDelta_exists_iff_charP_zero}.
 The two usual definitions of $\delta$ are the identity,
 $\delta(x)\defeq x$, and the \emph{support indicator},
 $\delta(x)\defeq\mathbb 1$ for $x\neq\mathbb 0$ and
 $\delta(\mathbb 0)\defeq\mathbb 0$. We choose the former whenever it
-satisfies all properties (e.g., in $\mathbb{B}[X]$), the latter
-otherwise.
+satisfies all properties (e.g., in $\mathbb{B}[X]$
+\lean{Semirings/BoolFunc}{BoolFunc.isDelta_id}), the latter otherwise.
 
 A \emph{homomorphism of m-semirings}
 \lean{SemiringWithMonus}{SemiringWithMonusHom} is a semiring
