@@ -122,11 +122,7 @@ K$-relations (Section~\ref{sec:preliminaries}): besides the
 \emph{non-regular} values produced by aggregation, i.e., aggregate values
 represented as formal aggregations of sequences of pairs formed of a
 value and a semiring element (the straightforward extension of the
-semimodule values of~\cite{amsterdamer2011provenance}). Whether a
-comparison is \emph{ordinary} or involves \emph{aggregate values} is
-determined by the \emph{type} of the compared terms: it is ordinary when
-both sides are of regular type, and is an aggregate comparison as soon as
-one side is of non-regular type. For simplicity
+semimodule values of~\cite{amsterdamer2011provenance}). For simplicity
 of presentation we give
 the semantics of a single comparison applied directly to a grouping; we
 then discuss the
@@ -138,25 +134,28 @@ Let $\hat I$ be a $\mathbb K$-instance, $k\in\NN$, $q$ an arity-$k$
 query, and let
 $\psi$ be a selection predicate over arity~$k$. To $\psi$ we associate a
 \emph{predicate provenance} $\predsem{\hat I}{q}{\psi}\colon\mathcal V_{\mathbb K}^k\to\mathbb K$.
-An atomic comparison $t\op t'$ is treated according to whether $t$ and
-$t'$ evaluate, on the tuples of $\angsem{\hat I}{q}$, to regular or to
-non-regular (aggregate) values.
+An atomic comparison $t\op t'$ is \emph{regular} when both $t$ and $t'$
+are of regular type, i.e., mention only regular columns, and is an
+\emph{aggregate comparison} as soon as one of them mentions an aggregate
+column.
 
-If $\psi=(t\op t')$ with $t,t'$ of regular type (their values lie in
-$\mathcal V$), then
+If $\psi=(t\op t')$ is regular, then
 \(\predsem{\hat I}{q}{\psi}(u)\defeq \chi_{\op}\bigl(t(u),t'(u)\bigr).\)
-If $\psi=(t\op t')$ with at least one of $t,t'$ of non-regular type, we
+If $\psi=(t\op t')$ is an aggregate comparison, we
 require $q$ to be a grouping query
 $q=\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q')$ with
 $q'$ an arity-$k'$ \emph{aggregate-free} query, i.e., one without
 grouping and aggregation, whose order $\preceq$ is the one used for non-commutative
 aggregates (and is irrelevant otherwise); its output column $m+l$ holds
-the non-regular aggregate value of $f_l$ over $t_l$, for $1\le l\le n$. For an output tuple
+the aggregate value of $f_l$ over $t_l$, for $1\le l\le n$. For an output tuple
 $u=(\vec v,b_1,\dots,b_n)$ with group key $\vec v=(v_1,\dots,v_m)$, let
-$U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\,\vec v}$. For a side
-$s\in\{t,t'\}$ and a possible world $W\sqsubseteq U$, its \emph{value
-in~$W$}, $\mathrm{val}_s(W)$, is defined as $\mathrm{agg}_{t_l,f_l}(W)$ if
-$s$ is the aggregate column $m+l$, and $s(u)$ if $s$ is of regular type.
+$U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\,\vec v}$. For a possible
+world $W\sqsubseteq U$, the \emph{value in~$W$} of a side
+$s\in\{t,t'\}$, $\mathrm{val}_s(W)$, is $s$ evaluated on $u$ after
+replacing each aggregate value $b_l$ by $\mathrm{agg}_{t_l,f_l}(W)$; in
+particular, $\mathrm{val}_s(W)=\mathrm{agg}_{t_l,f_l}(W)$ if $s$ is the
+aggregate column $\#(m+l)$, and $\mathrm{val}_s(W)=s(u)$ if $s$ is
+regular.
 Then
 \(
 \predsem{\hat I}{q}{\psi}(u)\defeq
@@ -276,7 +275,11 @@ are typing conditions: $\gamma^{\preceq}$ groups and aggregates an
 all-regular input, $\varepsilon$ and $-$ apply to all-regular relations,
 projection copies aggregate columns verbatim, and a selection atom is
 either a comparison between terms over regular columns, or a comparison
-of one bare aggregate column against a term over regular columns.
+of one bare aggregate column against a term over regular columns. This
+is the form we formalize; an atom whose sides are terms over several
+aggregate columns of the same grouping, as allowed by
+Definition~\ref{def:semantics}, is evaluated by the same possible-world
+sum, all its tokens carrying the same occurrence sequence~$U$.
 
 An \emph{aggregate token} is a pair
 $\lAngle f, U\rAngle$ of an aggregate function and the $\preceq$-ordered

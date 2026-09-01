@@ -28,7 +28,7 @@ Finally, depending on the comparison operator, we combine the appropriate size-r
 The full listing of this algorithm is presented in Algorithm~\ref{alg:count_enum} of the \hyperref[appendix:algorithms]{Appendix}.
 
 For other aggregate functions, using brute-force enumeration of non-empty worlds $W\sqsubseteq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ will always give the correct answer by our semantics.
-The algorithms can also be used to evaluate provenance for comparisons between two aggregates, by evaluating one of the aggregates into a constant value first.
+When a side of the comparison mentions several aggregates of the group, as in \sql{SUM(a) > 2 * COUNT(*)}, the valid worlds are those $W$ on which the two sides, both read in~$W$, compare as required; \textsc{ValidSum} and \textsc{ValidCount} do not apply, and our implementation enumerates the worlds by brute force.
 %\sil{Do we need to list all possible constants for the second aggregate?}
 %\rjok{there are various ways; one way is t look for the aggregate with the smaller result value. but i guess we can talk about the implementation in provsql(which i am not sure about). Pierre did the implementation for agg vs agg if i am not wrong}
 \begin{toappendix}

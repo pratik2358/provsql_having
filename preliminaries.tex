@@ -481,9 +481,9 @@ query} uses no grouping and aggregation; an \emph{aggregate query} may
 use it, but only as its last operator (\emph{terminal aggregation}),
 which is the case covered by \cite{sen2026provsql}; and a
 \emph{\sql{HAVING} query} may in addition apply a selection to aggregate
-expressions (\sql{HAVING} conditions), comparing an aggregate with either
-a constant or another aggregate, wherever in the query the comparison
-occurs. Giving a provenance semantics to \sql{HAVING} queries is the
+expressions (\sql{HAVING} conditions), comparing terms over the
+aggregate values of a group with constants, with the group key, or with
+each other, wherever in the query the comparison occurs. Giving a provenance semantics to \sql{HAVING} queries is the
 object of this paper.
 
 
