@@ -38,8 +38,10 @@ engine which rewrites queries over provenance-tracked relations
 transparently and represents provenance annotations as nodes in a provenance
 circuit. Its implementation of aggregation
 closely follows
-\cite{amsterdamer2011provenance} but, again, only supports terminal
-aggregation -- this is the system we extend in this work. ProvSQL is
+\cite{amsterdamer2011provenance}: aggregate values are semimodule
+elements, and a comparison on them is recorded as a formal comparison
+expression, which can be displayed but not evaluated in any semiring --
+this is the system we extend in this work. ProvSQL is
 also a probabilistic database, which is relevant for this work.
 GProM \cite{arab2018gprom} is a query-rewriting middleware supporting
 different relational backends -- it does not support full semiring
