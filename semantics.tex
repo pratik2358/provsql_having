@@ -86,7 +86,9 @@ first define possible worlds of the sequence of occurrences of a group:
 \]
 where $U\setminus W$ denotes the occurrences of $U$ not retained
 in~$W$, and empty $\bigotimes$-products (resp.\ $\bigoplus$-sums) equal
-$\mathbb{1}$ (resp.\ $\mathbb{0}$).
+$\mathbb{1}$ (resp.\ $\mathbb{0}$). A tuple occurring several times
+in~$U$ contributes one factor per occurrence; the order of the
+$\bigotimes$-product is immaterial, $\otimes$ being commutative.
 Moreover, given a term $t$ and an aggregate function $f$, the
 \emph{aggregate value} of $f$ over $t$ in~$W$ is
 \(
@@ -172,7 +174,8 @@ $\mathbb 0$, i.e., is absent from the result
 Consider a group with key $\vec v$ with pre-aggregation occurrences
 $U=\bigl((u_1,x_1),(u_2,x_2),$ $(u_3,x_3)\bigr)$, annotated in the
 Boolean-function semiring $\mathbb B[X]$ by distinct variables
-$x_1,x_2,x_3$. Take the predicate
+$x_1,x_2,x_3$; the grouping outputs for this group the tuple
+$u=(\vec v,3)$, on which the predicate is evaluated. Take the predicate
 $\psi=\bigl(\text{\sql{COUNT(*)}}\ge 2\bigr)$, for which the aggregate value on a
 world $W$ is $|W|$, compared against the constant~$2$. The non-empty
 worlds $W\sqsubseteq U$ with $|W|\ge 2$ are the three pairs and the full
@@ -211,7 +214,12 @@ remains a symbol otherwise, in particular in $\mathbb B[X]$.
 \end{example}
 
 \paragraph*{Boolean combinations.}
-For selection predicates $\psi_1,\psi_2$ and $u\in\mathcal V_{\mathbb K}^k$,
+A \sql{HAVING} clause need not be a single comparison
+(\sql{HAVING COUNT(*) >= 2 AND SUM(a) < 10}); connectives are
+interpreted by the operations
+used for join, union and difference, which in $\mathbb B[X]$ are
+conjunction, disjunction and negation. For selection predicates
+$\psi_1,\psi_2$ and $u\in\mathcal V_{\mathbb K}^k$,
 \[
 \predsem{\hat I}{q}{\psi_1\land\psi_2}(u)\defeq
   \predsem{\hat I}{q}{\psi_1}(u)\otimes\predsem{\hat I}{q}{\psi_2}(u);
