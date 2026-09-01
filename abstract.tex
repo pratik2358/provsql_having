@@ -8,9 +8,9 @@ elements as aggregate values and formal comparisons between aggregate values as 
 annotations, which takes the approach outside the standard semiring framework. In this work, we
 show how to introduce a semantics for the provenance of such queries in
 arbitrary commutative semirings with monus (or \emph{m-semirings}), without the need for additional
-operators. This semantics is shown to be compatible with the natural
-join-based semantics of \sql{HAVING COUNT(*)} queries in semirings that
-are absorptive and where times distributes over monus. We
+operators. This semantics is shown to agree with the standard provenance of the
+aggregation-free self-join rewriting of \sql{HAVING COUNT(*)} queries in
+semirings that are absorptive and where times distributes over monus. We
 derive algorithms for this semantics and show that they can be
 implemented within the ProvSQL provenance-tracking system with viable
 performance on a real-world dataset for probabilistic query evaluation.

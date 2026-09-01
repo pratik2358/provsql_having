@@ -82,9 +82,9 @@ m-semirings}. In more detail:
   function (not necessarily commutative or based on a monoid). (Section
   \ref{sec:semantics})
 
-\item We show that this semantics coincides with a natural \sql{JOIN}-based
-  semantics for \sql{HAVING} queries involving the \sql{COUNT(*)}
-  aggregate, in the case where the m-semiring
+\item We show that, for \sql{HAVING} queries on the \sql{COUNT(*)}
+  aggregate, this semantics agrees with the standard provenance of their
+  aggregation-free self-join rewriting, in the case where the m-semiring
   is absorptive and $\otimes$ distributes over $\ominus$. We show that it
   commutes with homomorphisms of m-semirings, so that provenance
   computed once can still be specialized to any m-semiring, and that our

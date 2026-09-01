@@ -29,15 +29,15 @@ multiplication by $\mathbb 0$, etc.
     \centering
     \begin{minipage}[t]{0.49\textwidth}
         \includegraphics[width=\textwidth]{plots_pierre/fig1_formula_ge.pdf}
-        \caption{Query execution time (including provenance computation) comparison between \sql{HAVING} and
-        \sql{JOIN}-based semantics for ``\sql{COUNT(*) >= k}'' queries.}
+        \caption{Query execution time (including provenance computation) comparison between the \sql{HAVING} semantics and
+        the self-join rewriting for ``\sql{COUNT(*) >= k}'' queries.}
         \label{fig:prov_only_times_ge}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.49\textwidth}
         \includegraphics[width=\textwidth]{plots_pierre/fig2_formula_le.pdf}
-        \caption{Query execution time (including provenance computation) comparison between \sql{HAVING} and
-        \sql{JOIN}-based semantics for ``\sql{COUNT(*) <= k}'' queries.}
+        \caption{Query execution time (including provenance computation) comparison between the \sql{HAVING} semantics and
+        the self-join rewriting for ``\sql{COUNT(*) <= k}'' queries.}
         \label{fig:prov_only_times_lt}
     \end{minipage}
 \end{figure}
@@ -47,8 +47,8 @@ multiplication by $\mathbb 0$, etc.
     \begin{minipage}[t]{0.49\textwidth}
         \includegraphics[width=\textwidth]{plots_pierre/fig3_prob_ge.pdf}
         \caption{Query execution and probability evaluation time
-        comparison between \sql{HAVING} (Poisson-binomial CDF
-      optimization), \sql{HAVING} (plain) and \sql{JOIN}-based semantics
+        comparison between the \sql{HAVING} semantics (Poisson-binomial CDF
+      optimization), the \sql{HAVING} semantics (plain) and the self-join rewriting
     for ``\sql{COUNT(*) >= k}'' queries.}
         \label{fig:prob_eval_times_ge}
     \end{minipage}
@@ -56,8 +56,8 @@ multiplication by $\mathbb 0$, etc.
     \begin{minipage}[t]{0.49\textwidth}
         \includegraphics[width=\textwidth]{plots_pierre/fig4_prob_le.pdf}
         \caption{Query execution and probability evaluation time
-        comparison between \sql{HAVING} (Poisson-binomial CDF
-      optimization), \sql{HAVING} (plain) and \sql{JOIN}-based semantics
+        comparison between the \sql{HAVING} semantics (Poisson-binomial CDF
+      optimization), the \sql{HAVING} semantics (plain) and the self-join rewriting
     for ``\sql{COUNT(*) <= k}'' queries.}
         \label{fig:prob_eval_times_lt}
     \end{minipage}

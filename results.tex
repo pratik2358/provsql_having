@@ -1,11 +1,21 @@
 \section{Main Results}
 \label{sec:results}
-We show that our semantics as formalized in Section~\ref{sec:semantics}
-is compatible with the \sql{JOIN}-based semantics of simple \sql{HAVING}
-queries on \sql{COUNT} when our semiring of choice is absorptive and satisfies
-distributivity of $\otimes$ over $\ominus$. Since \sql{COUNT} is
-commutative, \sql{COUNT(*) ... GROUP BY #1} can
-be coded as $\gamma^{\preceq}_{\#1}[1:+]$ for an arbitrary order $\preceq$.
+A \emph{simple} \sql{HAVING} query counts the occurrences of each group
+and keeps the groups whose count satisfies a comparison with a constant:
+$\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1{:}+](q))$, \sql{COUNT(*)} being
+the sum of the constant~$1$ over the group, for an arbitrary
+order~$\preceq$. Such a query needs no aggregation at all:
+\sql{COUNT(*)}${}\geq C$ holds if and only if $C$ distinct occurrences of
+the group exist, which a $C$-fold self-join of $q$ on the group key
+expresses, followed by duplicate elimination, and $\leq$ and $=$ follow
+by difference. The provenance of this rewriting is fixed by the semantics
+of Section~\ref{sec:preliminaries}
+\cite{green2007provenance,geerts2010database,sen2026provsql}, and it is
+how \cite{yunus2025using} had to express such queries. We show that our
+semantics agrees with it exactly when the m-semiring is absorptive and
+$\otimes$ distributes over $\ominus$. We state the result for a single
+grouping column and an occurrence identifier as second column; several
+grouping columns are handled identically.
 \begin{theoremrep}\label{th:correctness}
   Let $q$ be an aggregate-free query of arity~$2$ whose second column is
   an \emph{occurrence identifier}: the tuples of $\angsem{\hat I}{q}$ are
