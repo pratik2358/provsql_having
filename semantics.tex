@@ -46,35 +46,28 @@ the first value of its input, is \emph{non-commutative}: its result
 depends on the order of the sequence.
 \end{example}
 
-\rjok{
 A \sql{HAVING} predicate cannot be evaluated on the annotations of a
-group taken as a whole. Those annotations may be combined by $\oplus$
-and $\otimes$ into a single element of $\mathbb K$, but no
-$\mathbb K-$element observs \emph{how many} occurrences are being counted, so
-there is nothing to which a predicate such as \sql{COUNT(*)}${}\geq 2$
-could be applied. Equivalently, the aggregate of a group is not a
-value of $\mathcal V$ but a formal object of $\mathcal V_{\mathbb K}$,
-determined only once one knows which occurrences of the group
-contribute; this is precisely why~\cite{amsterdamer2011provenance}
-introduces an uninterpreted comparison operator rather than evaluating
-the comparison. Our contribution is to give that comparison a value in
-$\mathbb K$, and for this the group must first be split into parts, each
-of which determines both a number of occurrences and an annotation.
+group taken as a whole: they can be combined by $\oplus$ and $\otimes$
+into a single element of $\mathbb K$, but no element of $\mathbb K$
+records how many occurrences are counted or which values are summed, so
+there is nothing to which \sql{COUNT(*)}${}\geq 2$ could be applied. This
+is why~\cite{amsterdamer2011provenance} leaves the comparison
+uninterpreted, as a formal expression over semimodule elements. To give it
+a value in $\mathbb K$ instead, we split the group into its
+\emph{possible worlds}: a world is a subsequence $W$ of the occurrences of
+the group, on which the aggregate is an ordinary value and the comparison
+an ordinary test; its annotation states that the occurrences of $W$ are
+present and the others are not, the latter through the monus. The
+predicate provenance is the $\oplus$-sum of the annotations of the worlds
+satisfying the comparison (Definitions~\ref{def:possible_world}
+and~\ref{def:semantics}). Section~\ref{sec:results} validates this
+choice: for \sql{COUNT(*)} comparisons, it yields exactly the provenance
+of the self-join rewriting of the query, which is fixed
+by~\cite{green2007provenance,geerts2010database,sen2026provsql}, in every
+absorptive m-semiring in which $\otimes$ distributes over $\ominus$.
 
-Definition~\ref{def:possible_world} performs that split. A part (\emph{possible-world}) is a
-subsequence $W$ of the group, on which the aggregate is an ordinary
-value and the comparison an ordinary test; its annotation weights it by "these occurrences contribute, and the others do not". 
-Which split is the right one is settled in an arbitrary m-semiring,
-without reference to the parts. }
-
-Sen et al.~\cite{sen2026provsql} provide a provenance semantics over
-annotated relations for aggregate queries,
-itself based on that of
-\cite{green2007provenance,geerts2010database,amsterdamer2011provenance}.
-We extend the semantics of the \emph{selection} operator to allow
-comparisons of aggregate values (i.e., non-terminal aggregates) using
-possible-world semantics. We define possible worlds of the sequence of
-occurrences of a group:
+We extend the semantics of the \emph{selection} operator accordingly, and
+first define possible worlds of the sequence of occurrences of a group:
 \begin{definition}\label{def:possible_world}
   Let $M$ be a $\mathbb K$-relation of arity~$k$ over $\mathcal V$,
   $(i_j)_{1\leq j \leq m}$ be distinct grouping indices, $\preceq$ a
@@ -207,7 +200,14 @@ provenance is already captured by the \emph{minimal} satisfying worlds
 phenomenon exploited by the results of Section~\ref{sec:results} and the
 polynomial-time algorithms of Section~\ref{sec:algorithms}; in a
 non-absorptive semiring the discarded-occurrence factors do not cancel
-and this simplification fails.
+and this simplification fails. In~\cite{amsterdamer2011provenance}, the
+same comparison is the formal element
+$[x_1*1+x_2*1+x_3*1\geq\mathbb 1*2]$ of a semiring extended with such
+comparison expressions, $*$ being the tensor of
+Section~\ref{sec:preliminaries}; it resolves to $\mathbb 0$ or
+$\mathbb 1$ only when the semimodule $\mathbb K\otimes M$ is isomorphic to
+the aggregation monoid~$M$ (e.g., for $\mathbb N$ and \sql{COUNT}), and
+remains a symbol otherwise, in particular in $\mathbb B[X]$.
 \end{example}
 
 \paragraph*{Boolean combinations.}

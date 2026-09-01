@@ -30,13 +30,14 @@ the ability to turn data values into elements of a
 The next step is naturally to define a semantics for queries involving
 selections on the result of an aggregation, i.e., \sql{HAVING}
 queries using the name of the corresponding SQL clause. This was done
-elegantly in~\cite{amsterdamer2011provenance} by adding an additional
-\emph{comparison operator} to the semiring, which encodes the selection as a comparison of
-semimodule elements within the annotation of a tuple. This has
-the downside of requiring an ad-hoc definition of such a comparison
-operator for each combination of a semiring and aggregation monoid, in
-addition to restricting the approach to aggregate functions that are
-associative and commutative.
+elegantly in~\cite{amsterdamer2011provenance} by extending the semiring
+with formal \emph{comparison expressions} between semimodule elements,
+which encode the selection within the annotation of a tuple. Such an
+expression resolves to a truth value only when the semimodule is
+isomorphic to the aggregation monoid, which fails for the semirings
+needed for probabilistic query evaluation; in addition, the approach is
+restricted to aggregate functions that are commutative monoid
+operations.
 
 Provenance tracking systems on top of regular database management systems
 have been successfully implemented, usually based on query rewriting to construct the
