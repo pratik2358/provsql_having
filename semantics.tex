@@ -399,3 +399,9 @@ aggregating or grouping over aggregate values are thus rejected.
 Extending the semantics to support such queries is non-trivial,
 as order interacts in complex ways with uncertainty and provenance
 \cite{DBLP:journals/tcs/AmarilliBDS19}.
+The definitions also assume at least one grouping index ($m\geq 1$).
+For \emph{scalar} aggregation (no \sql{GROUP BY}), SQL forms a single
+group that exists even on empty input, so that the possible-world sum
+should range over all worlds, the empty one included, and the
+group-existence factor is~$\mathbb 1$; our implementation follows this
+convention, which the formal treatment of this paper leaves aside.
