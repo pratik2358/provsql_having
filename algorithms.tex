@@ -17,7 +17,7 @@ We first provide a dynamic programming algorithm for \sql{SUM} comparisons that 
 It processes each tuple iteratively and maintains, for every possible value of the sum, the collection of worlds that realize it.
 For a new tuple, previously constructed possible worlds can either remain unchanged or be extended by inclusion of this new tuple, hence creating new worlds having larger sums.
 After all the tuples have been encountered, the algorithm returns a collection of non-empty worlds whose total sum satisfies the desired comparison.
-The full listing of this algorithm is presented in Algorithm~\ref{alg:sum_dp} of the \hyperref[appendix:algorithms]{Appendix}.
+The full listing of this algorithm is given in the appendix.
 
 The algorithm works also for the special case where $t=1$, i.e., $\text{\sql{COUNT(*)}}\op C$ comparisons.
 However, for this case we can use a more efficient enumeration algorithm, named \textsc{ValidCount}, exploiting the unit-weight sum structure of \sql{COUNT} aggregates.
@@ -25,7 +25,7 @@ For $\text{\sql{COUNT(*)}}\op C$ we only rely on the fact that the result of a \
 Our algorithm recursively constructs worlds by deciding for each tuple-occurrence if it is included in or excluded from the current world.
 This enumerates subsets of the desired sizes.
 Finally, depending on the comparison operator, we combine the appropriate size-ranges to get a collection of non-empty worlds that satisfy the comparison.
-The full listing of this algorithm is presented in Algorithm~\ref{alg:count_enum} of the \hyperref[appendix:algorithms]{Appendix}.
+The full listing of this algorithm is given in the appendix.
 
 For other aggregate functions, using brute-force enumeration of non-empty worlds $W\sqsubseteq\nobreak U$ will always give the correct answer by our semantics.
 When a side of the comparison mentions several aggregates of the group, as in \sql{SUM(a) > 2 * COUNT(*)}, the valid worlds are those $W$ on which the two sides, both read in~$W$, compare as required; \textsc{ValidSum} and \textsc{ValidCount} do not apply, and our implementation enumerates the worlds by brute force.
@@ -802,8 +802,6 @@ $\neq$ subtracts the equality from the nonempty mass
 $1-\prod_i(1-p_i)$.  All these algebraic combinations stay $O(N)$.
 \end{proof}
 
-Example~\ref{ex:poisson-binomial} in the appendix works out the
-recurrence on the three contributors of Example~\ref{ex:semantics}.
 \begin{toappendix}
 \begin{example}\label{ex:poisson-binomial}
 Suppose the three contributors of Example~\ref{ex:semantics} are

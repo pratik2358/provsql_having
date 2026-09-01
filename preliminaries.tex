@@ -6,8 +6,7 @@
 
 We start with preliminaries on (m-)semirings, annotated relations, and
 queries; the syntax and semantics of aggregate queries
-from~\cite{sen2026provsql} are recalled in the
-\hyperref[appendix:algebra]{Appendix}.
+from~\cite{sen2026provsql} are recalled in the appendix.
 
 \begin{definition} \label{def:semiring}
   A \emph{semiring} is an algebraic structure $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and~$\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
@@ -126,7 +125,7 @@ easy to make given some counter-intuitive properties of
 these basic building blocks; clean, formally proven statements
 are one of our contributions. Hand-written proofs of these three
 corrections, mirroring the Lean developments, are given in the
-\hyperref[appendix:corrections]{Appendix}.
+appendix.
 
 \begin{toappendix}
   \subsection{Corrections to the Literature}
@@ -405,8 +404,8 @@ $\angsem{\hat I}{q}$, is defined over $\mathbb K$-relations by induction
 on these operators, following \cite{sen2026provsql}, which extends
 \cite{green2007provenance,geerts2010database,amsterdamer2011provenance}.
 The full syntax of $\RA_k$ and the definition of $\angsem{\hat
-I}{\cdot}$ on every operator are recalled in the
-\hyperref[appendix:algebra]{Appendix}; we describe here only the
+I}{\cdot}$ on every operator are recalled in the appendix; we describe
+here only the
 aggregation operator, on which this paper builds. Since we allow
 aggregate functions that are not commutative (Section~\ref{sec:semantics}),
 the operator carries a total order~$\preceq$ on tuples fixing the order
