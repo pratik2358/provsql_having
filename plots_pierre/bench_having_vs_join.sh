@@ -13,6 +13,13 @@
 #   OBJ=72 KMIN=1 KMAX=13 ./bench_having_vs_join.sh
 #
 # psql connection comes from the environment (PGDATABASE, PGHOST, ...).
+#
+# Every session sets geqo = off: from 12 relations on (geqo_threshold), the
+# genetic optimizer may order the self-joins so that the `id >` chain is
+# applied late, and the intermediate results then explode (the k=12 JOIN
+# went from 3 s to over 300 s).  Exhaustive planning is slower (up to 20 s
+# at k=15) but only Execution Time is measured.  lc_messages = 'C' keeps the
+# statement-timeout check below working on a non-English server.
 
 set -uo pipefail
 
@@ -115,6 +122,8 @@ run_once() {
 \pset pager off
 SET search_path TO public, provsql;
 SET statement_timeout = '$STATEMENT_TIMEOUT';
+SET lc_messages = 'C';
+SET geqo = off;
 $extra
 EXPLAIN (ANALYZE, TIMING OFF, COSTS OFF, BUFFERS OFF, SUMMARY ON) $sql;
 PSQL
@@ -159,6 +168,8 @@ verify_pair() {
 \pset pager off
 SET search_path TO public, provsql;
 SET statement_timeout = '$STATEMENT_TIMEOUT';
+SET lc_messages = 'C';
+SET geqo = off;
 SET provsql.verbose_level = 5;
 CREATE TEMP TABLE _vh AS $hsql;
 CREATE TEMP TABLE _vj AS $jsql;
