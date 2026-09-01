@@ -1,24 +1,14 @@
 \section{A Possible-World Semantics for Aggregate Comparisons}
 \label{sec:semantics}
 
-In this section we give a general \emph{possible-world semantics} for
-selection predicates involving comparisons of aggregate values, in
-arbitrary m-semirings.
-
-In the approach presented in~\cite{amsterdamer2011provenance}, also used
-in the ProvSQL implementation \cite{sen2026provsql},
-annotation of aggregate query results relies on a \emph{semimodule} whose
-elements are tensor products of data values and semiring elements, with
-the aggregation operation, required to be a commutative monoid operation,
-being lifted as the semimodule sum. This allows compositionality and some
-form of compatibility between semiring operations and the aggregate
-values. On the other hand, this rules out
-common non-associative operations (such as \sql{AVG}) or non-commutative ones
-(such as \fakesql{ARRAY\_AGG} or \fakesql{LISTAGG}). In contrast, for
-generality and because our semantics does not depend on the
-semimodule structure, we extend to any arbitrary aggregate function on
-\emph{sequences} of values. This amounts to replacing the semimodule
-with a formal non-commutative algebraic structure.
+In this section we give a possible-world semantics for selection
+predicates comparing aggregate values, in arbitrary commutative
+m-semirings. Unlike~\cite{amsterdamer2011provenance}, where aggregates
+are commutative monoid operations lifted to a semimodule, which excludes
+non-associative operations such as \sql{AVG} and non-commutative ones
+such as \fakesql{ARRAY\_AGG}, our semantics does not depend on the
+semimodule structure and accepts any function on \emph{sequences} of
+values.
 
 We fix a commutative m-semiring
 $(\mathbb{K},\oplus,\otimes,\ominus,\mathbb{0},\mathbb{1})$, as discussed in the preliminaries, along with a data domain $\mathcal{V}$.
@@ -214,12 +204,11 @@ the aggregation monoid~$M$ (e.g., for $\mathbb N$ and \sql{COUNT}), and
 remains a symbol otherwise, in particular in $\mathbb B[X]$.
 \end{example}
 
-\paragraph*{Boolean combinations.}
-A \sql{HAVING} clause need not be a single comparison
-(\sql{COUNT(*) >= 2 AND SUM(a) < 10}); connectives are
-interpreted by the operations
-used for join, union and difference, which in $\mathbb B[X]$ are
-conjunction, disjunction and negation. For selection predicates
+\textbf{Boolean combinations.}
+A \sql{HAVING} clause need not be a single comparison;
+\sql{COUNT(*) >= 2 AND SUM(a) < 10} is one, whose connectives are
+interpreted by the operations used for join, union and difference, which
+in $\mathbb B[X]$ are conjunction, disjunction and negation. For selection predicates
 $\psi_1,\psi_2$ and $u\in\mathcal V_{\mathbb K}^k$,
 \[
 \predsem{\hat I}{q}{\psi_1\land\psi_2}(u)\defeq
@@ -234,7 +223,7 @@ $\neg(t\op t')\defeq(t\,\overline{\op}\,t')$, where $\overline{\op}$
 is the negated comparison operator (e.g., $\overline{\le}$
 is~$>$).
 
-\paragraph*{Selections not immediately following aggregation.}
+\textbf{Selections not immediately following aggregation.}
 Definition~\ref{def:semantics} covers a comparison applied directly to a
 grouping, which is the typical \sql{HAVING}. More generally, a non-regular
 aggregate value produced by some $\gamma^{\preceq}$ may be carried, as an
@@ -391,7 +380,7 @@ are the primitives that the evaluation of the circuit, and hence
 Section~\ref{sec:algorithms}, has to implement.
 \end{toappendix}
 
-\paragraph*{Limitations.} Grouping and ordering only make sense for
+\textbf{Limitations.} Grouping and ordering only make sense for
 regular values from $\mathcal{V}$, not for aggregate values; queries
 aggregating or grouping over aggregate values are thus rejected.
 Extending the semantics to support such queries is non-trivial,

@@ -825,6 +825,9 @@ $\neq$ subtracts the equality from the nonempty mass
 $1-\prod_i(1-p_i)$.  All these algebraic combinations stay $O(N)$.
 \end{proof}
 
+Example~\ref{ex:poisson-binomial} in the appendix works out the
+recurrence on the three contributors of Example~\ref{ex:semantics}.
+\begin{toappendix}
 \begin{example}\label{ex:poisson-binomial}
 Suppose the three contributors of Example~\ref{ex:semantics} are
 independent with marginals~$p_1=\tfrac12$, $p_2=\tfrac14$ and
@@ -853,3 +856,4 @@ Poisson-binomial CDF is exactly the quantity our implementation evaluates
 for probabilistic \sql{COUNT} comparisons
 (Section~\ref{sec:implementation_experiments}).
 \end{example}
+\end{toappendix}
