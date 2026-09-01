@@ -385,7 +385,10 @@ values (either $\mathcal V$ or an extension of it) a
 $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb
 K}$ is a multiset of tuples over $\mathcal V_{\mathbb K}^k\times\mathbb
 K$ which we usually denote $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$.
-We call $\alpha$ the annotation of the tuple $u$.
+We call $\alpha$ the annotation of the tuple $u$. As
+in~\cite{green2007provenance}, a tuple annotated by $\mathbb 0$ is
+considered absent: two $\mathbb K$-relations that differ only by tuples
+annotated by $\mathbb 0$ are identified.
 A $\mathbb K$-instance, usually denoted as $\hat I$, over a database
 schema $\mathcal D$, is a function mapping each relation symbol $R$ of $\mathcal D$ to a $\mathbb K$-relation over $\mathcal V_{\mathbb K}$ of the same arity as $\mathcal D(R)$.
 \rjok{

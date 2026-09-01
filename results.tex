@@ -7,20 +7,26 @@ distributivity of $\otimes$ over $\ominus$. Since \sql{COUNT} is
 commutative, \sql{COUNT(*) ... GROUP BY #1} can
 be coded as $\gamma^{\preceq}_{\#1}[1:+]$ for an arbitrary order $\preceq$.
 \begin{theoremrep}\label{th:correctness}
-  For any arity~$2$ aggregate-free query $q$, $C\in\mathbb{N}_{\ge1}$, $\op\in \{\leq,
+  Let $q$ be an aggregate-free query of arity~$2$ whose second column is
+  an \emph{occurrence identifier}: the tuples of $\angsem{\hat I}{q}$ are
+  pairwise distinct (as is the case, e.g., when a key attribute of a base
+  relation is carried along). For $C\in\mathbb{N}_{\ge1}$ and $\op\in \{\leq,
   =,\geq\}$ consider the queries:
 \begin{align*}
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))\\
-    Q^{\geq C}_2&=\begin{cases}\varepsilon(\Pi_{\#1}(q)) & \text{if } C=1,\\[1mm]\varepsilon(\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<^*\#4}
-    q\bowtie_{\#1=\#5\land\#4<^*\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<^*\#(2C)}q)) & \text{if }C\ge 2\end{cases}\\
+    Q^{\geq C}_2&=\begin{cases}\varepsilon(\Pi_{\#1}(q)) & \text{if } C=1,\\[1mm]\varepsilon(\Pi_{\#1}(q\bowtie_{\#1=\#3\land\#2<\#4}
+    q\bowtie_{\#1=\#5\land\#4<\#6}\dots\bowtie_{\#1=\#(2C-1)\land\#(2C-2)<\#(2C)}q)) & \text{if }C\ge 2\end{cases}\\
     Q^{\leq C}_2&= Q^{\geq 1}_2 - Q^{\geq (C+1)}_2\\
 Q^{=C}_2&=Q^{\geq C}_2 - Q^{\geq (C+1)}_2
 \end{align*}
-where $\varepsilon$ denotes duplicate elimination and $<^*$ denotes $<$ augmented with an occurrence-based tie-break, ensuring distinct matches under multiset semantics.
+where $\varepsilon$ denotes duplicate elimination; the chain of strict
+comparisons on the identifier column selects each $C$-element set of
+occurrences of a group exactly once.
     Then:
     \begin{enumerate}[(i)]
       \item
         \lean{HavingQueryCorrectness}{Query.joinCount_correct}
+        \lean{HavingJoinCompositional}{joinCountQueryPadded_correct}
         For any commutative m-semiring $\mathbb{K}$ which is
         absorptive and such that $\otimes$ is
         distributive over $\ominus$, for any
@@ -50,7 +56,17 @@ For any $\mathbb{K}$-instance $\hat I$, we prove the equality $\angsem{\hat I}{Q
     In other words, we need to show that the provenance annotation of each group produced by
     the grouping operator under our \sql{HAVING} semantics of
     Definition~\ref{def:semantics} coincides with
-    that produced by the self-join query.
+    that produced by the self-join query. Recall from
+    Section~\ref{sec:preliminaries} that a tuple annotated by $\mathbb 0$
+    is absent from a $\mathbb K$-relation: a group whose predicate
+    provenance is $\mathbb 0$ is thus absent from $\angsem{\hat
+    I}{Q^{\op C}_1}$, as it is from $\angsem{\hat I}{Q^{\op C}_2}$, which
+    produces no row for it. The Lean development states the identity per
+    group key \lean{HavingQueryCorrectness}{Query.joinCount_correct} and,
+    row for row, for $Q^{\op C}_2$ padded with a $\mathbb 0$-annotated
+    row per group key
+    \lean{HavingJoinCompositional}{joinCountQueryPadded_correct}; it also
+    covers the operators $<$, $>$ and $\neq$.
     Since \(q\) is an arity~$2$ query, every tuple in $\angsem{\hat
     I}{q}$ has the form $(u_1,u_2,\alpha)$ where $\alpha\in \mathbb K$.
 Fix an arbitrary group key $\vec v=(a)$.
@@ -111,8 +127,10 @@ S_C(U)\defeq\bigoplus_{\substack{W\sqsubseteq U \\|W|=C}} A_W
 \]
 Consider the query $Q^{\ge C}_2$.  A join-valuation contributing to the output
 tuple in $\angsem{\hat I}{Q^{\ge C}_2}$  with key $(a)$ corresponds to choosing $C$ tuples from $\angsem{\hat I}{q}$ with first
-attribute $a$ and strictly increasing second attributes (due to the chain of
-join conditions $\#2<^*\#4<^*\cdots$) with a tie-breaking occurrence attribute as in $U$ so that it is possible to select distinct tuple occurrences with equal second attributes in increasing order. Thus, complying with multiset semantics, this corresponds to choosing a
+attribute $a$ and strictly increasing identifiers (due to the chain of
+join conditions $\#2<\#4<\cdots$); identifiers being pairwise distinct,
+each $C$-element set of occurrences is selected exactly once, in the order
+of its identifiers. Thus this corresponds to choosing a
 $C$-element subset $W\sqsubseteq U$, which contributes the product $A_W$.
 Under multiset semantics, $\Pi_{\#1}$ produces one occurrence of the output tuple $(a)$ for each such subset; the duplicate elimination $\varepsilon$ then merges these occurrences into a single tuple whose annotation is their $\oplus$-sum.
 Therefore,
@@ -383,6 +401,12 @@ $
 \angsem{\hat I}{Q^{\ge1}_2}.
 $
 \end{proof}
+
+The three operators of the theorem suffice: \sql{COUNT(*)}${}>C$ is
+\sql{COUNT(*)}${}\geq C+1$, \sql{COUNT(*)}${}<C$ is
+\sql{COUNT(*)}${}\leq C-1$, and $\neq C$ is the disjunction of the two,
+both for $Q_1$ (Definition~\ref{def:semantics}) and for the self-join
+rewriting (set union $\cup$ of the two rewritings).
 
 This mismatch across m-semirings is to be expected: outside of
 the Boolean provenance world, semiring provenance depends on \emph{the way
