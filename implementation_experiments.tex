@@ -85,19 +85,37 @@ Note that this is the exact set-up of \cite{yunus2025using}, where
 authors had to use the \sql{JOIN} version as nothing else was available.
 
 We choose a specific object class (72, \emph{refrigerator}).
-In our experiments we vary the scalar $k$ of the queries from 0 to 15
+In our experiments we vary the scalar~$k$ of the queries from 0 to 15
 (the maximum number of refrigerators detected in an image is 13).
 The exact queries we ran, along with their \sql{JOIN}-rewrites, are presented in
 \hyperref[sec:appendix_impl_experiments]{Appendix~\ref*{sec:appendix_impl_experiments}}. For probabilistic query
-evaluation, we use the default ProvSQL pipeline, which evaluates
-read-once circuits directly, otherwise attempts to build a
-tree decomposition of small treewidth and, if unsuccessful, resorts to an
-external knowledge compiler (d4~\cite{DBLP:conf/ijcai/LagniezM17}).
+evaluation, we use the default ProvSQL pipeline: a cost-based chooser
+selects, for each provenance circuit, the cheapest exact method it
+estimates applicable, among linear-time evaluation of read-once
+circuits, exhaustive enumeration of the possible worlds of circuits with
+very few inputs, inclusion--exclusion over the clauses of a small DNF,
+tree decompositions of small treewidth, in-process compilation to
+d-trees and, as a last resort, an external knowledge compiler
+(d4~\cite{DBLP:conf/ijcai/LagniezM17}); a method that turns out slower
+than estimated is abandoned for the next one. In our experiments, the
+circuit of a group has at most 13 inputs; for the \sql{HAVING} queries
+the chooser settles on world enumeration, inclusion--exclusion or
+read-once evaluation, whereas the larger circuits of the \sql{JOIN}
+rewritings also require tree decompositions, d-trees and, for some
+values of~$k$, d4.
 
-For each $k$, every query was executed $3$ times on a standard laptop
-computer running Ubuntu 26.04, with PostgreSQL 18; the figures report the
-mean of the three runs, with error bars at one standard deviation, on a
-logarithmic scale.
+For each $k$, every query was executed $3$ times on a desktop computer
+(Intel Core i7-12700, 64~GB of RAM) running Ubuntu 22.04, with PostgreSQL
+18.6; the figures report the mean of the three runs, with error bars at
+one standard deviation, on a logarithmic scale. We report the execution
+time measured by \sql{EXPLAIN ANALYZE}, which excludes query planning. We
+disabled PostgreSQL's genetic query optimizer, which by default replaces
+exhaustive join ordering from 12 relations onwards: for the self-\sql{JOIN}
+rewritings with $k \geq 12$, the join order it selected applied the
+``\sql{id >}'' chain late, the intermediate results blew up, and the queries
+exceeded a five-minute timeout, whereas the exhaustive planner finds an
+order for which execution stays around 3 seconds (its planning time,
+up to 20 seconds for $k = 15$, is not included in the reported times).
 
 Figure~\ref{fig:prov_only_times_ge} and Figure~\ref{fig:prov_only_times_lt} report query
 execution times including the materialization of a textual representation
@@ -106,14 +124,17 @@ with the corresponding \sql{JOIN}-based rewriting. During execution, our semanti
 a provenance circuit with a \emph{comparison gate} representing the aggregate comparison. The
 possible-world semantics is triggered at the semiring evaluation level,
 by instantiating the formula pseudo-semiring (\sql{sr_formula})
-in ProvSQL. For provenance computation alone, the running time of our semantics remains relatively
-stable as $k$ varies. For the ``\sql{COUNT(*) >= k}'' query, the \sql{JOIN}-based rewriting is faster for
-very small values of $k$, and then becomes slower than the \sql{HAVING}-based semantics after a
-phase shift around $k=6$ -- queries with a large number of joins can be
-slow for the query evaluator. For the ``\sql{COUNT(*) <= k}'' query, the
-\sql{JOIN}-based rewriting (which includes a non-monotone \sql{EXCEPT}) is again
-cheaper for very small values of $k$, but becomes several times
-more expensive than our semantics for larger
+in ProvSQL. For provenance computation alone, the running time of our
+semantics remains stable as $k$ varies, between $0.2$ and $0.6$ seconds;
+for ``\sql{COUNT(*) >= k}'' it even decreases slowly with~$k$, as the
+range check discards more groups. For this query, the \sql{JOIN}-based
+rewriting is faster for $k \leq 4$, and then becomes slower than the
+\sql{HAVING}-based semantics, its cost growing with the number of joins
+up to $13$ times that of our semantics -- queries with a large number
+of joins can be slow for the query evaluator. For the
+``\sql{COUNT(*) <= k}'' query, the \sql{JOIN}-based rewriting (which
+includes a non-monotone \sql{EXCEPT}) is again cheaper for $k \leq 2$,
+but becomes up to $6$ times more expensive than our semantics for larger
 values of $k$. Thus, for provenance computation alone, the main
 observation is the stability of the runtime cost, which pays off as $k$
 increases.
@@ -127,15 +148,22 @@ of Proposition~\ref{prop:agg-cmp-poly-prob}, plain \sql{HAVING} semantics
 (the same optimization disabled, so that the provenance circuit goes through
 the general probability pipeline), and
 \sql{JOIN} rewriting; recall that probability evaluation is, in
-general, \#P-hard. The first one remains efficient for all values of~$k$;
-the second one is more efficient than the \sql{JOIN} semantics for the
-monotone $\geq k$ case, but up to two orders of magnitude slower for the
-$\leq k$ case, where the non-monotone and larger provenance expressions become
-hard to process for the knowledge compiler. The \sql{JOIN} rewriting
-presents a similar profile in both cases (note the different scale of
-both graphs) -- note it is unable to exploit the fact that
-the query becomes vacuously true or false when $k$ is higher than the
-number of objects in the images, which both our implementations can.
+general, \#P-hard. The first two remain efficient for all values of~$k$,
+between $0.2$ and $0.5$ seconds, and within a few percent of each other:
+with at most $13$ objects per image, the DNF of valid worlds of a group
+is small enough for the general pipeline to evaluate it by world
+enumeration or inclusion--exclusion, so that the closed form of
+Proposition~\ref{prop:agg-cmp-poly-prob} brings no measurable gain on
+this dataset; it would on groups with more tuples, where the DNF
+has~$\binom{n}{k}$ clauses. The \sql{JOIN} rewriting is again cheaper for
+$k \leq 3$, then becomes up to $17$ times slower than our semantics for
+the monotone $\geq k$ case and up to $7$ times slower for the $\leq k$
+case, since it pays, in addition to the joins, the probability
+evaluation of larger circuits, some of which require tree decomposition
+or knowledge compilation. Note also that the \sql{JOIN} rewriting is
+unable to exploit the fact that the query becomes vacuously true or
+false when $k$ is higher than the number of objects in the images, which
+both our implementations can.
 
 \begin{toappendix}
   \section{Material for Section~\ref{sec:implementation_experiments}
