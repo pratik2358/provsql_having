@@ -111,23 +111,94 @@ When a side of the comparison mentions several aggregates of the group, as in \s
 \end{toappendix}
 
 
-The following two theorems state that \textsc{ValidSum} and \textsc{ValidCount} return exactly the set $\{W\sqsubseteq U\mid W\neq\emptyset,\ \mathrm{agg}_{t,f}(W)\op C\}$ of valid worlds, i.e., the index set of the $\oplus$-sum of Definition~\ref{def:semantics}; the predicate provenance is then the $\oplus$-sum of $\ann_U(W)$ over the returned worlds.
-\begin{theoremrep}[Correctness of \textsc{ValidSum}]\label{thm:sumdp-correct}
+The following theorem states that \textsc{ValidSum} and
+\textsc{ValidCount} return exactly the index set of the $\oplus$-sum of
+Definition~\ref{def:semantics}; the predicate provenance is then the
+$\oplus$-sum of $\ann_U(W)$ over the returned worlds.
+\begin{toappendix}
+\begin{algorithm}
+  \small
+  \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
+  \label{alg:count_enum}
+
+  \nlset{}\textbf{\textsc{ValidCount}:}\;
+
+  \Input{a finite set of group-member occurrences $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
+  \Output{$\mathcal W =\{\,W\sqsubseteq U\mid W\neq\emptyset,|W|\op C\,\}$}
+    \BlankLine
+  $\mathcal W \gets \emptyset$\;
+
+  \SetKwFunction{Combinations}{Combinations}
+  \Fn{\Combinations{$i, x, W$}}{
+    \If{$x = 0$}{
+      append $W$ to $\mathcal W$\;
+      \Return\;
+    }
+    \If{$i > |U|$}{
+      \Return\;
+    }
+    \If{$|U|-i+1 < x$}{
+      \Return\;
+    }
+
+    \tcp{Case 1: do not select occurrence $i$}
+    \Combinations{$i+1, x, W$}\;
+
+    \tcp{Case 2: select occurrence $i$}
+    \Combinations{$i+1, x-1, W \cup \{i\}$}\;
+  }
+
+  \SetKwFunction{AddExact}{AddExact}
+  \Fn{\AddExact{$x$}}{
+    \If{$x\le 0$ \textbf{or} $x>|U|$}{\Return}
+    \Combinations{$1, x, \emptyset$}\;
+     }
+
+  \BlankLine
+  \Switch{$\op$}{
+    \Case{$=$}{
+      \AddExact{$C$}\;
+    }
+    \Case{$>$}{
+      \For{$x\gets C+1$ \KwTo $|U|$}{\AddExact{$x$}}
+    }
+    \Case{$\ge$}{
+      \For{$x\gets C$ \KwTo $|U|$}{\AddExact{$x$}}
+    }
+    \Case{$<$}{
+      \For{$x\gets 1$ \KwTo $\min(C-1,|U|)$}{\AddExact{$x$}}
+    }
+    \Case{$\le$}{
+      \For{$x\gets 1$ \KwTo $\min(C,|U|)$}{\AddExact{$x$}}
+    }
+    \Case{$\neq$}{
+      \For{$x\gets 1$ \KwTo $|U|$}{
+        \If{$x\neq C$}{\AddExact{$x$}}
+      }
+    }
+  }
+
+  \Return $\mathcal W$\;
+\end{algorithm}
+\end{toappendix}
+\begin{theoremrep}[Correctness of the algorithms]\label{thm:algorithms-correct}
+\lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
 \lean{Algorithms/SumDP}{SumDP.sumDP_correct}
-Fix a $\mathbb K$-instance $\hat I$, an aggregate-free query $q'$ of arity~$k$, a group key $\vec v$ and an arbitrary ordering $\preceq$. Let $U\defeq\nobreak U^{\preceq}_{\angsem{\hat I}{q'},\vec v}=\nobreak((u_r,\alpha_r))_{r\in[|U|]}$ be the $\preceq$-ordered sequence of group-member occurrences.
-Let $t$ be a term of max-index $\le k$ such that $t(u_r)\in\NN$ for all $r \in [|U|]$.
-Fix $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$.
-Let $\mathcal W$ be the output of \textsc{ValidSum} on input $(U,t,C,\op,\preceq)$.
-Then
-\[
-\mathcal W
-=
-\{\,W\sqsubseteq U\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}.
-\]
-where $f_\Sigma$ is the \sql{SUM} aggregate, so that $\mathrm{agg}_{t,f_\Sigma}(W)=\sum_{r\in W}t(u_r)$.
+Let $q'$ be an aggregate-free query of arity~$k$, $\hat I$ a
+$\mathbb K$-instance, $\vec v$ a group key, $\preceq$ an ordering,
+$U\defeq\nobreak U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, $C\in\NN$ and
+$\op\in\{=,>,<,\ge,\le,\neq\}$. Then, on input $(U,C,\op)$ and
+$(U,t,C,\op,\preceq)$ respectively, \textsc{ValidCount} and
+\textsc{ValidSum} output the set
+$\{\,W\sqsubseteq U\mid W\neq\emptyset,\ \mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}$
+of valid worlds, where $t$ is the constant term~$1$ for
+\textsc{ValidCount} and, for \textsc{ValidSum}, any term of max-index
+$\le k$ taking values in $\NN$ on the occurrences of~$U$; $f_\Sigma$
+is the \sql{SUM} aggregate, so that $\mathrm{agg}_{1,f_\Sigma}(W)=|W|$.
 \end{theoremrep}
 
 \begin{appendixproof}
+\textbf{Correctness of \textsc{ValidSum}.}
 Write
 \[
   T\defeq \mathrm{agg}_{t,f_\Sigma}([|U|])=\sum_{r=1}^{|U|} t(u_r).
@@ -339,87 +410,8 @@ It follows that the final output is exactly
 \]
 
 This establishes the correctness.
-\end{appendixproof}
 
-\begin{toappendix}
-\begin{algorithm}
-  \small
-  \caption{Enumeration of valid worlds for \sql{COUNT}$(t)\op C$ at a fixed group key $\vec v$}
-  \label{alg:count_enum}
-
-  \nlset{}\textbf{\textsc{ValidCount}:}\;
-
-  \Input{a finite set of group-member occurrences $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
-  \Output{$\mathcal W =\{\,W\sqsubseteq U\mid W\neq\emptyset,|W|\op C\,\}$}
-    \BlankLine
-  $\mathcal W \gets \emptyset$\;
-
-  \SetKwFunction{Combinations}{Combinations}
-  \Fn{\Combinations{$i, x, W$}}{
-    \If{$x = 0$}{
-      append $W$ to $\mathcal W$\;
-      \Return\;
-    }
-    \If{$i > |U|$}{
-      \Return\;
-    }
-    \If{$|U|-i+1 < x$}{
-      \Return\;
-    }
-
-    \tcp{Case 1: do not select occurrence $i$}
-    \Combinations{$i+1, x, W$}\;
-
-    \tcp{Case 2: select occurrence $i$}
-    \Combinations{$i+1, x-1, W \cup \{i\}$}\;
-  }
-
-  \SetKwFunction{AddExact}{AddExact}
-  \Fn{\AddExact{$x$}}{
-    \If{$x\le 0$ \textbf{or} $x>|U|$}{\Return}
-    \Combinations{$1, x, \emptyset$}\;
-     }
-
-  \BlankLine
-  \Switch{$\op$}{
-    \Case{$=$}{
-      \AddExact{$C$}\;
-    }
-    \Case{$>$}{
-      \For{$x\gets C+1$ \KwTo $|U|$}{\AddExact{$x$}}
-    }
-    \Case{$\ge$}{
-      \For{$x\gets C$ \KwTo $|U|$}{\AddExact{$x$}}
-    }
-    \Case{$<$}{
-      \For{$x\gets 1$ \KwTo $\min(C-1,|U|)$}{\AddExact{$x$}}
-    }
-    \Case{$\le$}{
-      \For{$x\gets 1$ \KwTo $\min(C,|U|)$}{\AddExact{$x$}}
-    }
-    \Case{$\neq$}{
-      \For{$x\gets 1$ \KwTo $|U|$}{
-        \If{$x\neq C$}{\AddExact{$x$}}
-      }
-    }
-  }
-
-  \Return $\mathcal W$\;
-\end{algorithm}
-\end{toappendix}
-
-\begin{theoremrep}[Correctness of \textsc{ValidCount}]\label{thm:count-enum-correct}
-\lean{Algorithms/CountEnum}{CountEnum.countEnum_correct}
-Fix a $\mathbb K$-instance $\hat I$, an aggregate-free query $q'$, a group key $\vec v$, an ordering $\preceq$, $C\in\NN$ and $\op\in\{=,>,<,\ge,\le,\neq\}$. Let $U\defeq\nobreak U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$. Let $\mathcal W$ be the output of \textsc{ValidCount} on input $(U,C,\op)$.
-Then
-\[
-\mathcal W
-=
-\{\,W\sqsubseteq U\mid W\neq\emptyset,|W|\op C\,\}.
-\]
-\end{theoremrep}
-
-\begin{appendixproof}
+\medskip\noindent\textbf{Correctness of \textsc{ValidCount}.}
 The computation for \sql{COUNT} depends only on the occurrences in $U$.
 
 \smallskip\noindent\textbf{Correctness of \textsc{Combinations}.}
@@ -546,6 +538,7 @@ In every case, the resulting  $\mathcal W$ is exactly
 This establishes correctness.
 \end{appendixproof}
 
+
 We identify certain aggregate-comparison predicates for which the valid worlds can be constructed in polynomial time:
 \begin{propositionrep}
   \label{prop:algorithms}
@@ -619,7 +612,7 @@ are established.
 
 \smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}
-(Theorem~\ref{thm:count-enum-correct}), the valid worlds are exactly the non-empty worlds
+(Theorem~\ref{thm:algorithms-correct}), the valid worlds are exactly the non-empty worlds
 $W\sqsubseteq U$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
   If such a $W$ satisfies the condition, then every superset of $W$ also satisfies it; equivalently these $W$ form an upward-closed family of sets. The m-semiring $\mathbb K$ being absorptive, the possible-world provenance of an upward-closed family of worlds (the $\oplus$-sum of their world annotations) is equal to the $\oplus$-sum of the monomials of its minimal worlds \lean{Having}{Having.upward_closed_collapse}; for the family of worlds of size at least $k$ this collapse is exactly the identity $F_k(U)=S_k(U)$ of Section~\ref{sec:results} \lean{Having}{Having.F_eq_S}. Here, the minimal satisfying worlds are:
 \begin{itemize}
@@ -631,7 +624,7 @@ which is polynomial in $|U|$. Therefore the provenance can be computed in polyno
 
 \smallskip\noindent\textbf{Case 3: \sql{SUM(a) >= c} and \sql{SUM(a) > c} with $c\ge 0$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:sum_dp}
-(Theorem~\ref{thm:sumdp-correct}), the valid worlds are exactly the non-empty worlds
+(Theorem~\ref{thm:algorithms-correct}), the valid worlds are exactly the non-empty worlds
 $W\sqsubseteq U$ such that $\sum_{r\in W} t(u_r)\ge c$ (resp.\ $>c$).
 Since all values are nonnegative, these families are upward-closed under inclusion. Hence, in an absorptive m-semiring, the provenance collapses to the $\oplus$-sum of the monomials of the minimal satisfying worlds
 \lean{Having}{Having.sum_ge_collapse} \lean{Having}{Having.sum_gt_collapse}.
@@ -656,7 +649,7 @@ Since $k$ is fixed, the number of such worlds is bounded by
 
 \smallskip\noindent\textbf{Case 5: \sql{SUM(a) = }$c$, \sql{SUM(a) <= }$c$, and \sql{SUM(a) < }$c$ with all values nonzero and $\frac ca\le k$, in arbitrary m-semirings.}
 By correctness of Algorithm~\ref{alg:sum_dp}
-(Theorem~\ref{thm:sumdp-correct}), the valid worlds are exactly the
+(Theorem~\ref{thm:algorithms-correct}), the valid worlds are exactly the
 non-empty worlds $W\sqsubseteq U$ whose sum is equal to, at most, or less
 than~$c$. If $c=0$ there is none, all values being nonzero. Otherwise, a
 valid world $W$ satisfies $|W|\cdot\frac ck\le\sum_{r\in W}t(u_r)\le c$,
