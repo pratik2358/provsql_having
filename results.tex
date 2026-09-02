@@ -878,10 +878,12 @@ principle that ProvSQL implements by storing a single provenance circuit
 and evaluating it in the semiring of interest~\cite{sen2026provsql}. The
 principle survives the introduction of aggregate comparisons.
 For a homomorphism of m-semirings $h:\mathbb K\to\mathbb K'$, we write $h(\hat I)$ for the $\mathbb
-K'$-instance obtained from $\hat I$ by applying $h$ to every annotation.
+K'$-instance obtained from~$\hat I$ by applying $h$ to every annotation.
 
 \begin{toappendix}
 \subsection{Specialization, Probabilistic Evaluation, and Complexity}
+We prove here the results of Section~\ref{sec:results} on specialization
+by homomorphisms, probabilistic evaluation, and complexity.
 \end{toappendix}
 \begin{propositionrep}\label{prop:hom}
   \lean{AggQueryHom}{AggQuery.evaluateAnnotated_hom}

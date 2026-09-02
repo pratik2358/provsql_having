@@ -35,6 +35,10 @@ For other aggregate functions, using brute-force enumeration of non-empty worlds
 When a side of the comparison mentions several aggregates of the group, as in \sql{SUM(a) > 2 * COUNT(*)}, the valid worlds are those $W$ on which the two sides, both read in~$W$, compare as required; \textsc{ValidSum} and \textsc{ValidCount} do not apply, and our implementation enumerates the worlds by brute force.
 \begin{toappendix}
 \label{appendix:algorithms}
+This appendix gives the full listings of \textsc{ValidSum}
+(Algorithm~\ref{alg:sum_dp}) and \textsc{ValidCount}
+(Algorithm~\ref{alg:count_enum}), then proves the results of
+Section~\ref{sec:algorithms}.
 \begin{algorithm}
   \small
   \caption{Enumeration of valid worlds for \sql{SUM}$(t)\op C$ at a fixed group key $\vec v$}
@@ -800,6 +804,8 @@ $1-\prod_i(1-p_i)$.  All these algebraic combinations stay $O(N)$.
 \end{proof}
 
 \begin{toappendix}
+The following example illustrates the convolution used in the proof of
+Proposition~\ref{prop:agg-cmp-poly-prob}.
 \begin{example}\label{ex:poisson-binomial}
 Suppose the three contributors of Example~\ref{ex:semantics} are
 independent with marginals~$p_1=\tfrac12$, $p_2=\tfrac14$ and
