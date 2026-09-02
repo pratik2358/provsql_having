@@ -433,14 +433,14 @@ of occurrences of a group exactly once.
         absorptive but does
         not have distributivity of $\otimes$ over $\ominus$, and a
         $\mathbb{K}_1$-instance $\hat I_1$, such that
-        $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_2}$.
+        $\angsem{\hat I_1}{Q^{=1}_1}\neq\angsem{\hat I_1}{Q^{=1}_2}$.
       \item
         \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}
         There exists a commutative m-semiring $\mathbb{K}_2$ that has
         distributivity of $\otimes$ over $\ominus$ and that is idempotent but not
         absorptive, and a
         $\mathbb{K}_2$-instance $\hat I_2$, such that
-        $\angsem{\hat I_2}{Q^{\op C}_1}\neq\angsem{\hat I_2}{Q^{\op C}_2}$.
+        $\angsem{\hat I_2}{Q^{\geq 1}_1}\neq\angsem{\hat I_2}{Q^{\geq 1}_2}$.
     \end{enumerate}
 \end{theoremrep}
 \begin{proof}
@@ -715,10 +715,10 @@ hence idempotent. It is not $\otimes$/$\ominus$-distributive
 $\mathbb 1\ominus e_3=\mathbb 1$, we get
 $e_3\otimes(\mathbb 1\ominus e_3)=e_3$, whereas
 $(e_3\otimes\mathbb 1)\ominus(e_3\otimes e_3)=e_3\ominus e_3=\mathbb 0$.
-Fix $C=1$ and the operator $\op$ to be~$=$, and let $\hat I_1$ have a group with
+Let $\hat I_1$ have a group with
 key~$u$ consisting of three occurrences annotated $\alpha_1=e_2$ and
-$\alpha_2=\alpha_3=e_3$. For $C=1$ only the singleton possible worlds
-satisfy the \sql{HAVING} condition, so
+$\alpha_2=\alpha_3=e_3$. Only the singleton possible worlds
+satisfy the \sql{HAVING} condition $\text{\sql{COUNT(*)}}=1$, so
 \[
 \angsem{\hat I_1}{Q^{=1}_1}(u)
 =\bigoplus_{i}\alpha_i\otimes\Bigl(\mathbb 1\ominus\bigoplus_{j\neq i}\alpha_j\Bigr),
@@ -739,7 +739,7 @@ $\bigoplus_{i<j}\alpha_i\otimes\alpha_j=e_1\oplus e_1\oplus e_3=e_3$, so
 \[
 \angsem{\hat I_1}{Q^{=1}_2}(u)=e_3\ominus e_3=\mathbb 0\neq e_3.
 \]
-Hence $\angsem{\hat I_1}{Q^{\op C}_1}\neq\angsem{\hat I_1}{Q^{\op C}_2}$.
+Hence $\angsem{\hat I_1}{Q^{=1}_1}\neq\angsem{\hat I_1}{Q^{=1}_2}$.
 \paragraph*{Proof of (iii)}
 To isolate absorptivity we give a \emph{distributive} counterexample.
 \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}
@@ -757,12 +757,11 @@ not absorptive
 $\mathbb 1\oplus(-1)=\min(0,-1)=-1\neq\mathbb 1$.
 We show that there exists a $\mathbb K_2$-instance $\hat I$ such that
 \[
-\angsem{\hat I}{Q^{\op C}_1}
+\angsem{\hat I}{Q^{\geq 1}_1}
 \neq
-\angsem{\hat I}{Q^{\op C}_2}.
+\angsem{\hat I}{Q^{\geq 1}_2}.
 \]
 
-Fix $C=1$ and take $\op$ to be $\geq$.
 Consider a group with key $u$ containing exactly two tuples,
 both annotated by
 $
