@@ -3,17 +3,14 @@
 
 We have presented a general semantics for \sql{HAVING} queries that
 applies to provenance in any commutative m-semiring, giving a value to
-the formal comparison expressions of~\cite{amsterdamer2011provenance} in
-every such semiring. It agrees with the provenance of the self-join
+the formal comparison expressions of~\cite{amsterdamer2011provenance}. It agrees with the provenance of the self-join
 rewriting in m-semirings that are absorptive and where times distributes
-over monus, in particular in the Boolean-function semiring needed for
-probability evaluation; in other semirings the two differ, unavoidably,
-since outside Boolean provenance the way a query is written changes its
-provenance. Algorithms for specific aggregate functions and comparison
-operators, together with experiments, show the feasibility of the
-approach, which yields the first end-to-end provenance-aware
-implementation of selection on aggregate values. A natural next step is
+over monus, notably in the Boolean-function semiring used for
+probability evaluation; elsewhere the two unavoidably differ, as outside
+Boolean provenance the way a query is written changes its provenance. Algorithms for specific aggregates and comparisons, together with
+experiments, show the approach feasible, yielding the first end-to-end
+provenance-aware implementation of selection on aggregate values. A natural next step is
 to lift the safe plans of~\cite{re2009trichotomy}, whose base case
-Proposition~\ref{prop:agg-cmp-poly-prob} restates, to our provenance
-circuits, so that the probabilistic evaluation of safe \sql{HAVING}
-queries over joins remains polynomial.
+Proposition~\ref{prop:agg-cmp-poly-prob} restates, to provenance
+circuits, keeping probabilistic evaluation of safe \sql{HAVING}
+queries over joins polynomial.

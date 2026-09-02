@@ -414,9 +414,9 @@ which dominates $S_{C+1}(U)$.
 \end{align*}
 where $\varepsilon$ denotes duplicate elimination, $\phi_i$ is the join
 condition $\#1=\#(2i+1)\land\#(2i)<\#(2i+2)$, and the chain is empty for
-$C=1$, so that $Q^{\geq 1}_2=\varepsilon(\Pi_{\#1}(q))$; the chain of
-strict comparisons on the identifier column selects each $C$-element set
-of occurrences of a group exactly once.
+$C=1$, so that $Q^{\geq 1}_2=\varepsilon(\Pi_{\#1}(q))$; the strict
+comparisons on the identifier column select each $C$-element set
+of occurrences of a group once.
     Then:
     \begin{enumerate}[(i)]
       \item
@@ -429,17 +429,15 @@ of occurrences of a group exactly once.
         $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$.
       \item
         \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_counterexample}
-        There exists a commutative m-semiring $\mathbb{K}_1$ which is
-        absorptive but does
-        not have distributivity of $\otimes$ over $\ominus$, and a
-        $\mathbb{K}_1$-instance $\hat I_1$, such that
+        There exist a commutative m-semiring $\mathbb{K}_1$ that is
+        absorptive but where $\otimes$ is not distributive over
+        $\ominus$, and a $\mathbb{K}_1$-instance $\hat I_1$ such that
         $\angsem{\hat I_1}{Q^{=1}_1}\neq\angsem{\hat I_1}{Q^{=1}_2}$.
       \item
         \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}
-        There exists a commutative m-semiring $\mathbb{K}_2$ that has
-        distributivity of $\otimes$ over $\ominus$ and that is idempotent but not
-        absorptive, and a
-        $\mathbb{K}_2$-instance $\hat I_2$, such that
+        There exist a commutative idempotent m-semiring $\mathbb{K}_2$
+        with $\otimes$ distributive over $\ominus$ but not absorptive,
+        and a $\mathbb{K}_2$-instance $\hat I_2$ such that
         $\angsem{\hat I_2}{Q^{\geq 1}_1}\neq\angsem{\hat I_2}{Q^{\geq 1}_2}$.
     \end{enumerate}
 \end{theoremrep}
@@ -806,8 +804,8 @@ This mismatch across m-semirings is to be expected: outside of
 the Boolean provenance world, semiring provenance depends on \emph{the way
 a query is written}, not just on query equivalence.
 Theorem~\ref{th:correctness} shows that our semantics is correct for
-Boolean provenance (the Boolean-function m-semiring is absorptive and has
-$\otimes$ distributive over $\ominus$) and generalizes%
+Boolean provenance (the Boolean-function m-semiring satisfies both
+hypotheses) and generalizes%
 \footnote{This is a proper generalization: the tropical m-semiring
   over $\mathbb{N}$, the Viterbi and the \L ukasiewicz m-semirings are
   absorptive with $\otimes$ distributive over $\ominus$
@@ -818,9 +816,8 @@ $\otimes$ distributive over $\ominus$) and generalizes%
   \lean{Semirings/Viterbi}{Viterbi.no_hom_from_BoolFunc}
 \lean{Semirings/Lukasiewicz}{Lukasiewicz.no_hom_from_BoolFunc}.}
 this equivalence to
-other m-semirings. For m-semirings that do not satisfy the conditions of
-the theorem, we simply choose the proposed semantics as an implementable
-semantics for the \sql{HAVING} clause.
+other m-semirings. For other m-semirings, we simply choose the proposed
+semantics as an implementable semantics for \sql{HAVING}.
 
 \begin{proofsketch}
 Fix a group key $a$ and let $U$ be the sequence of occurrences of its
@@ -867,6 +864,220 @@ and for~(iii) one in the tropical semiring over~$\mathbb Z\cup\{\infty\}$
 \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}.
 \end{proofsketch}
 
+For \emph{monotone} \sql{HAVING} conditions -- preserved as a group
+grows, such as $\text{\sql{COUNT(*)}}\geq C$ -- absorptivity
+suffices: part~(i) holds without distributivity of $\otimes$
+over~$\ominus$, and extends to every monotone condition classically
+rewritable into a positive aggregate-free query (see appendix).
+
+\begin{toappendix}
+\subsection{Monotone Conditions: Absorptivity Suffices}
+\label{appendix:monotone}
+
+This appendix isolates the class of \sql{HAVING} conditions for which
+the first hypothesis of Theorem~\ref{th:correctness}(i), absorptivity,
+suffices on its own. The role of the second hypothesis, distributivity
+of $\otimes$ over~$\ominus$, is tied to the difference operator: the
+rewritings $Q^{\leq C}_2$ and $Q^{=C}_2$ use it, and part~(ii) of the
+theorem shows that distributivity is then unavoidable. When the
+rewriting is \emph{positive}, as $Q^{\geq C}_2$ is, distributivity can
+be dropped: the monus cancels from the possible-world sum.
+
+\begin{definition}\label{def:monotone}
+  In the setting of Definition~\ref{def:semantics}, an atomic
+  comparison $t\op t'$ \emph{holds in} a non-empty world
+  $W\sqsubseteq U$ if $\mathrm{val}_t(W)\op\mathrm{val}_{t'}(W)$; it
+  is \emph{monotone} if, for every occurrence sequence~$U$, the family
+  of the non-empty worlds in which it holds is closed under
+  supersequences within~$U$. A \emph{monotone condition} is a Boolean
+  combination, using $\land$ and~$\lor$ only, of monotone atomic
+  comparisons.
+\end{definition}
+Note that ``holds in'' is used only atom by atom: the provenance of a
+compound condition remains that of Section~\ref{sec:semantics},
+interpreting $\land$ by $\otimes$ and $\lor$ by $\oplus$ of the
+atoms' predicate provenances; summing $\ann_U(W)$ over the worlds
+where the whole combination holds would define a different
+semantics.
+Monotone atomic comparisons include $\text{\sql{COUNT(*)}}\geq C$
+and~$>C$, since adding occurrences only increases the count;
+$\text{\sql{MIN}}(t)\leq c$ and~$<c$, since a new occurrence can only
+lower the minimum; and symmetrically $\text{\sql{MAX}}(t)\geq c$
+and~$>c$. In contrast, an added occurrence can falsify
+$\text{\sql{COUNT(*)}}\leq C$ or $=C$, and negation exchanges
+monotone and non-monotone atoms, whence its exclusion.
+$\text{\sql{SUM}}(t)\geq c$ is monotone when the aggregated values
+are non-negative, though it admits no aggregate-free rewriting in
+general.
+
+The key observation is that on families of worlds closed under
+supersets, the monus contributes nothing to the possible-world sum:
+\begin{proposition}[monus cancellation]\label{prop:monus-cancellation}
+  Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+  commutative m-semiring, $U$ a finite set and $(\alpha_w)_{w\in U}$ a
+  family of elements of~$\mathbb K$; for $W\subseteq U$, let
+  $A_W\defeq\bigotimes_{w\in W}\alpha_w$,
+  $E_W\defeq\bigoplus_{w\in U\setminus W}\alpha_w$,
+  $\ann_U(W)=A_W\otimes(\mathbb 1\ominus E_W)$ as in
+  Definition~\ref{def:possible_world}, and
+  $T_U(W)\defeq A_W\ominus\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$
+  as in Lemma~\ref{lem:upward-expansion}.
+  \begin{enumerate}[(i)]
+    \item
+      \lean{Having}{Having.monus_factor_le}
+      $T_U(W)\leq\ann_U(W)\leq A_W$ for every $W\subseteq U$.
+    \item
+      \lean{Having}{Having.witness_identity}
+      \lean{Having}{Having.sum_T_eq_sum_A}
+      If $\mathbb K$ is idempotent then, for every family
+      $\mathcal V$ of non-empty subsets of~$U$ closed under supersets
+      (i.e., $W\in\mathcal V$ and $W\subseteq W'\subseteq U$ imply
+      $W'\in\mathcal V$),
+      \[
+        \bigoplus_{W\in\mathcal V}\ann_U(W)
+        =\bigoplus_{W\in\mathcal V}T_U(W)
+        =\bigoplus_{W\in\mathcal V}A_W.
+      \]
+    \item
+      \lean{Having}{Having.witness_minimal}
+      If $\mathbb K$ is moreover absorptive, these sums further
+      equal $\bigoplus_{W\in\min\mathcal V}A_W$, where
+      $\min\mathcal V$ denotes the set of $\subseteq$-minimal elements
+      of~$\mathcal V$.
+  \end{enumerate}
+\end{proposition}
+\begin{proof}
+  (i) For the right inequality, $\mathbb 1\ominus E_W\le\mathbb 1$ by
+  Lemma~\ref{lem:monus-basic}(i), and $\otimes$ is monotone. For the
+  left one, distributivity of $\otimes$ over $\oplus$ gives
+  $\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}=A_W\otimes E_W$, so by
+  the residuation law~\eqref{eq:residuation} it suffices that
+  $A_W\le(A_W\otimes E_W)\oplus\bigl(A_W\otimes(\mathbb 1\ominus
+  E_W)\bigr)=A_W\otimes\bigl(E_W\oplus(\mathbb 1\ominus E_W)\bigr)$,
+  which holds since $\mathbb 1\le E_W\oplus(\mathbb 1\ominus E_W)$ by
+  Lemma~\ref{lem:monus-basic}(ii) and $\otimes$ is monotone.
+
+  (ii) Summing~(i) over $\mathcal V$ yields
+  $\bigoplus_{\mathcal V}T_U(W)\le\bigoplus_{\mathcal V}\ann_U(W)
+  \le\bigoplus_{\mathcal V}A_W$. Conversely, for each
+  $W\in\mathcal V$, Lemma~\ref{lem:upward-expansion} gives
+  $A_W\le\bigoplus_{W\subseteq W'\subseteq U}T_U(W')$, and every such
+  $W'$ belongs to~$\mathcal V$ by closure under supersets; summing
+  over $\mathcal V$ and collapsing duplicate summands by idempotence
+  of~$\oplus$,
+  $\bigoplus_{\mathcal V}A_W\le\bigoplus_{\mathcal V}T_U(W)$, which
+  closes the cycle of inequalities.
+
+  (iii) Absorptivity gives $a\otimes b\le a$, hence $A_W\le A_{W'}$
+  whenever $W'\subseteq W$: every summand of
+  $\bigoplus_{\mathcal V}A_W$ is dominated by one over
+  $\min\mathcal V$, and $x\le y$ implies $x\oplus y=y$.
+\end{proof}
+Neither absorptivity nor distributivity of $\otimes$ over~$\ominus$
+enters parts~(i) and~(ii). The proposition is also indifferent to
+rewritability: it applies, e.g., to $\text{\sql{SUM}}(t)\geq c$ over
+non-negative values, for which no aggregate-free rewriting is
+available. It yields the announced refinement of
+Theorem~\ref{th:correctness}, in which the distributivity hypothesis
+is dropped:
+
+\begin{theorem}\label{th:monotone}
+  Let $\mathbb K$ be a commutative \emph{absorptive} m-semiring and
+  $\hat I$ a $\mathbb K$-instance.
+  \begin{enumerate}[(i)]
+    \item
+      \lean{HavingQueryCorrectness}{Query.joinCount_monotone_correct}
+      \lean{HavingJoinCompositional}{countHaving_site_rewrite_monotone}
+      In the setting of Theorem~\ref{th:correctness},
+      $\angsem{\hat I}{Q^{\geq C}_1}=\angsem{\hat I}{Q^{\geq C}_2}$.
+    \item More generally, let $q$ be an aggregate-free query with a
+      group-key column $\#1$ and an occurrence-identifier column, let
+      $\gamma^{\preceq}_{\#1}[\dots](q)$ compute the aggregates
+      mentioned by a monotone condition $\psi$ over the atoms
+      $\text{\sql{COUNT(*)}}\geq C$, $>C$,
+      $\text{\sql{MIN}}(t)\leq c$, $<c$, $\text{\sql{MAX}}(t)\geq c$,
+      $>c$, and let the positive aggregate-free rewriting $Q_\psi$ be
+      defined compositionally: an atom on \sql{COUNT(*)} is rewritten
+      as $Q^{\geq C}_2$ of Theorem~\ref{th:correctness}, an atom on
+      \sql{MIN} or \sql{MAX} as
+      $\varepsilon(\Pi_{\#1}(\sigma_{t\op c}(q)))$, a conjunction as
+      the join of the two rewritings on the group key, and a
+      disjunction as their set union. Then
+      $\angsem{\hat
+      I}{\Pi_{\#1}(\sigma_\psi(\gamma^{\preceq}_{\#1}[\dots](q)))}
+      =\angsem{\hat I}{Q_\psi}$.
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+  Fix a group key~$a$ and let
+  $U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ be the sequence of
+  the occurrences of its group, with annotations
+  $(\alpha_w)_{w\in U}$; as in the proof of
+  Theorem~\ref{th:correctness}, a group whose annotation on either
+  side is $\mathbb 0$ is absent from it, so it suffices to prove the
+  annotations equal, key by key.
+
+  (i) By Definition~\ref{def:semantics}, the annotation of the group
+  on the left-hand side is $\bigoplus_{W\in\mathcal V}\ann_U(W)$,
+  where $\mathcal V\defeq\{W\neq\emptyset:|W|\geq C\}$. This family
+  is closed under supersets
+  and its minimal elements are the $C$-element subsets, so
+  Proposition~\ref{prop:monus-cancellation}(ii)--(iii) (absorptivity
+  implies idempotence) give
+  $\bigoplus_{\mathcal V}\ann_U(W)=\bigoplus_{|W|=C}A_W=S_C(U)$. On
+  the right-hand side, as computed in the proof of
+  Theorem~\ref{th:correctness}, the join chain of $Q^{\geq C}_2$
+  derives each $C$-element subset of the group exactly once, thanks to
+  the strict comparisons on the identifier column, and $\varepsilon$
+  merges the copies of the key by~$\oplus$, giving $S_C(U)$ as well;
+  this computation uses no hypothesis on the m-semiring.
+
+  (ii) For an atom $\text{\sql{MIN}}(t)\leq c$ (the other \sql{MIN}
+  and \sql{MAX} atoms are identical, and \sql{COUNT(*)} atoms are
+  part~(i), with $>C$ being $\geq C+1$), the valid worlds are the
+  non-empty $W$ meeting the set
+  $S\defeq\{w\in U: t(w)\leq c\}$ of qualifying occurrences; this
+  family is closed under supersets and its minimal elements are the
+  singletons $\{w\}$, $w\in S$, so
+  Proposition~\ref{prop:monus-cancellation} gives the predicate
+  provenance $\bigoplus_{w\in S}\alpha_w$, which is exactly the
+  annotation of key~$a$ in
+  $\varepsilon(\Pi_{\#1}(\sigma_{t\leq c}(q)))$. For the Boolean
+  combinations, the semantics of Section~\ref{sec:semantics}
+  interprets $\land$ by $\otimes$ and $\lor$ by $\oplus$ of the
+  predicate provenances, which is precisely what joining the two
+  rewritings on the group key, respectively taking their set union,
+  computes on the annotation of each key; the claim follows by
+  induction on~$\psi$.
+\end{proof}
+
+Three remarks are in order. First, the equality of
+Theorem~\ref{th:monotone}(ii) is for the rewritings exhibited, and
+cannot hold for every classically equivalent positive rewriting, since
+provenance depends on how a query is written: rewriting
+$\text{\sql{COUNT(*)}}\geq 1$ as
+$\varepsilon(\Pi_{\#1}(\sigma_{\#2=\#4}(q\bowtie_{\#1=\#3}q)))$, which
+pairs each occurrence with itself, is classically equivalent to
+$\varepsilon(\Pi_{\#1}(q))$ but annotates the group by
+$\bigoplus_w\alpha_w\otimes\alpha_w$, which in the (absorptive)
+tropical semiring over~$\mathbb N$ is $\min_w2\alpha_w$ rather than
+$\min_w\alpha_w$. The rewritings of Theorem~\ref{th:monotone} use
+every occurrence at most once per derivation, as the tie-break chain
+of $Q^{\geq C}_2$ does. Second, no assumption is placed on the base
+query~$q$, which may in particular use the difference operator: the
+proof manipulates the annotations of the group's occurrences as
+opaque elements of~$\mathbb K$. Third, the restriction to positive
+rewritings is what the counterexample of
+Theorem~\ref{th:correctness}(ii) shows to be unavoidable: as soon as
+the rewriting requires the difference operator, as for $\leq$
+and~$=$, distributivity of $\otimes$ over~$\ominus$ becomes necessary
+even over absorptive m-semirings. The separation is sharp: on the very
+m-semiring and instance of that counterexample,
+$\text{\sql{COUNT(*)}}\geq 1$ and $\geq 2$ agree with their rewritings
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_ge_agree}
+\lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_ge_two_agree}
+while $=1$ does not.
+\end{toappendix}
 
 \inlinepar{Specialization, probabilistic evaluation, and complexity.}
 Much of the practical value of semiring provenance comes from the fact
