@@ -16,6 +16,390 @@ semantics agrees with it exactly when the m-semiring is absorptive and
 $\otimes$ distributes over $\ominus$. We state the result for a single
 grouping column and an occurrence identifier as second column; several
 grouping columns are handled identically.
+\begin{toappendix}
+\subsection{Proof of Theorem~\ref{th:correctness}}
+The proof of Theorem~\ref{th:correctness} below rests on the following
+lemmas; $A_W$, $T_U(W)$, $F_C(U)$ and $S_C(U)$ are as defined in that
+proof.
+\begin{lemma}\label{lem:upward-expansion}
+\lean{Having}{Having.upward_expansion}
+Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+commutative idempotent m-semiring,~$U$ a finite set, and
+$(\alpha_w)_{w\in U}$ a family of elements of $\mathbb K$. For
+$W\subseteq U$ define~$A_W \defeq\nobreak \bigotimes_{w\in W}\alpha_w$
+and~$T_U(W) \defeq A_W \ominus \bigoplus_{w\in U\setminus W} A_{W\cup\{w\}}$.
+Then $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)$
+for every~$V\subseteq\nobreak U$.
+\end{lemma}
+
+\begin{proof}
+From the properties of m-semirings $\ominus$ is the (right) residual of $\oplus$, i.e., for all $x,y,z\in \mathbb K$,
+\begin{equation}\label{eq:residuation}
+  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
+\end{equation}
+
+We prove
+\begin{equation}\label{eq:upward-expansion}
+  A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
+\end{equation}
+by induction on $d\defeq|U\setminus V|$.
+
+\smallskip\noindent
+\textbf{Base case ($d=0$).}
+Then $V=U$. Since $U\setminus U=\varnothing$ and $\bigoplus_{\varnothing}(\cdot)=\mathbb 0$,
+\[
+  T_U(U)=A_U\ominus \mathbb 0.
+\]
+We claim $A_U\ominus\mathbb 0=A_U$. Indeed, by \eqref{eq:residuation}, for any $z\in \mathbb K$,
+\[
+  A_U\ominus\mathbb 0 \le z \iff A_U \le \mathbb 0\oplus z = z,
+\]
+so $A_U\ominus\mathbb 0$ is the greatest element below $A_U$, hence equals $A_U$.
+Therefore,
+\[
+  \bigoplus_{\substack{W:\;U\subseteq W\subseteq U}} T_U(W)=T_U(U)=A_U=A_V,
+\]
+and \eqref{eq:upward-expansion} holds.
+
+\smallskip\noindent
+\textbf{Inductive step.}
+Assume $d>0$ and that \eqref{eq:upward-expansion} holds for all pairs $(U,V')$
+with $V\subsetneq V'\subseteq U$ and $|U\setminus V'|<d$.
+Let
+\[
+  Y \defeq \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}} \in \mathbb K.
+\]
+From Lemma~\ref{lem:monus-basic}(ii) we obtain the standard inequality
+\begin{equation}\label{eq:M2-lemma1}
+  X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in \mathbb K,
+\end{equation}
+by instantiating \eqref{eq:residuation} with $z=X\ominus Y$ (since $X\ominus Y\le X\ominus Y$).
+Applying \eqref{eq:M2-lemma1} to $X=A_V$ gives
+\[
+  A_V \le Y \oplus (A_V\ominus Y).
+\]
+By definition of $T_U(V)$ we have $A_V\ominus Y = T_U(V)$, hence
+\begin{equation}\label{eq:AV-bound}
+  A_V \le T_U(V)\ \oplus\ \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}}.
+\end{equation}
+
+For each $w\in U\setminus V$ set $V_w\defeq V\cup\{w\}$. Then $|U\setminus V_w|=d-1$,
+so the induction hypothesis yields
+\[
+  A_{V_w}\le \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W).
+\]
+Taking the $\oplus$-sum over all $w\in U\setminus V$ and using monotonicity of $\oplus$,
+\[
+  \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}}
+  =
+  \bigoplus_{w\in U\setminus V} A_{V_w}
+  \le
+  \bigoplus_{w\in U\setminus V}\ \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W).
+\]
+Every $W$ appearing on the right satisfies $V\subseteq V_w\subseteq W\subseteq U$, hence $V\subseteq W\subseteq U$.
+Therefore, using associativity/commutativity/idempotence of $\oplus$ to ignore duplicates and reorder summands,
+\[
+  \bigoplus_{w\in U\setminus V}\ \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W)
+  \le
+  \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
+\]
+Combining with \eqref{eq:AV-bound} yields
+\[
+  A_V \le T_U(V)\ \oplus\ \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)
+  =
+  \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W),
+\]
+since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
+This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
+\end{proof}
+With Lemma~\ref{lem:upward-expansion} in hand, we now establish matching
+recurrences for $F_C(U)$ and $S_C(U)$.
+\begin{lemma}[Recurrence for $F_C$]\label{lem:FC_recurrence}
+\lean{Having}{Having.FC_recurrence}
+Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+commutative idempotent m-semiring in which $\otimes$ distributes over
+$\ominus$,~$U$ a non-empty finite set, and $(\alpha_w)_{w\in U}$ a family
+of elements of~$\mathbb K$. For $W\subseteq U$ define~$A_W\defeq\bigotimes_{w\in W}\alpha_w$ and
+$T_U(W)\defeq A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$, and
+for $C\ge 0$ set
+$F_C(U)\defeq\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W)$.
+Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
+$F_C(U)=F_C(U')\oplus\bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
+\end{lemma}
+
+\begin{proof}
+  Fix $u\in U$ such that $U'=U\setminus\{u\}$ and a $C\in\mathbb N_{\ge 1}$.
+Split  $F_C(U)$ according to whether $u\in W$:
+\begin{equation}\label{eq:split-I-II}
+F_C(U)
+=
+\underbrace{\bigoplus_{\substack{W\subseteq U'\\|W|\ge C}}T_U(W)}_{(I).\;u\notin W}
+\ \oplus\
+\underbrace{\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_U(W'\cup\{u\})}_{(II).\;u\in W}.
+\end{equation}
+
+\paragraph*{Simplify $(II)$: }
+Fix $W'\subseteq U'$. Then $A_{W'\cup\{u\}}=A_{W'}\otimes\alpha_u$, and
+$U\setminus(W'\cup\{u\})=U'\setminus W'$. Hence, using distributivity of $\otimes$ over $\oplus$,
+\[
+\bigoplus_{w\in U\setminus(W'\cup\{u\})}A_{W'\cup\{u,w\}}
+=
+\bigoplus_{w\in U'\setminus W'}\bigl(A_{W'\cup\{w\}}\otimes\alpha_u\bigr)
+=
+\Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u.
+\]
+Therefore, using distributivity of $\otimes$ over $\ominus$,
+\begin{align*}
+T_U(W'\cup\{u\})
+&=
+(A_{W'}\otimes\alpha_u)\ominus
+\Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u\\
+&=
+\Bigl(A_{W'}\ominus\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u
+=
+T_{U'}(W')\otimes\alpha_u.
+\end{align*}
+Taking $\oplus$ over all $W'\subseteq U'$ with $|W'|\ge C-1$ and factoring $\alpha_u$ using
+distributivity of $\otimes$ over $\oplus$ yields
+\begin{equation}\label{eq:II-simplifies}
+(II)=\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_{U'}(W')\Bigr)\otimes\alpha_u
+=F_{C-1}(U')\otimes\alpha_u.
+\end{equation}
+
+\paragraph*{Relate $T_U(W)$ and $T_{U'}(W)$ for $W\subseteq U'$: }
+Fix $W\subseteq U'$. Since $U\setminus W=(U'\setminus W)\cup\{u\}$, we have
+\[
+\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}
+=
+\Bigl(\bigoplus_{w\in U'\setminus W}A_{W\cup\{w\}}\Bigr)\oplus (A_W\otimes\alpha_u).
+\]
+Using
+$x\ominus(y\oplus z)=(x\ominus y)\ominus z$, we get
+\begin{equation}\label{eq:TU-rewrite}
+T_U(W)
+=
+A_W\ominus\Bigl(\bigoplus_{w\in U'\setminus W}A_{W\cup\{w\}}\oplus(A_W\otimes\alpha_u)\Bigr)
+=
+T_{U'}(W)\ominus(A_W\otimes\alpha_u).
+\end{equation}
+
+\paragraph*{Show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)$: }
+  By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$ (shown in Lemma~\ref{lem:monus-basic}(i)),
+we have $T_U(W)\le T_{U'}(W)$ for all $W\subseteq U'$.
+Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ yields $(I)\le F_C(U')$.
+Together with \eqref{eq:split-I-II} and \eqref{eq:II-simplifies}, this gives
+\begin{equation}\label{eq:leq-direction}
+F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u).
+\end{equation}
+
+\paragraph*{Show $F_C(U')\le F_C(U)$: }
+Fix $W\subseteq U'$ with $|W|\ge C$.
+By the inequality $x\le y\oplus(x\ominus y)$ (shown in Lemma~\ref{lem:monus-basic}(ii)) applied to
+$x=T_{U'}(W)$ and $y=A_W\otimes\alpha_u$, and using \eqref{eq:TU-rewrite}, we get
+\begin{equation}\label{eq:TUprime-bound}
+T_{U'}(W)\le (A_W\otimes\alpha_u)\oplus T_U(W).
+\end{equation}
+Since $|W|\ge C$, the term $T_U(W)$ is one of the summands of $F_C(U)$, hence $T_U(W)\le F_C(U)$.
+Moreover $A_W\otimes\alpha_u=A_{W\cup\{u\}}$, and $|W\cup\{u\}|\ge C$.
+By Lemma~\ref{lem:upward-expansion} applied to $V=W\cup\{u\}$ we have
+\[
+A_{W\cup\{u\}}
+\le
+\bigoplus_{\substack{Y:\;W\cup\{u\}\subseteq Y\subseteq U}} T_U(Y)
+\le
+\bigoplus_{\substack{Y\subseteq U\\|Y|\ge C}}T_U(Y)
+=
+F_C(U),
+\]
+so $A_W\otimes\alpha_u\le F_C(U)$.
+Plugging these two bounds into \eqref{eq:TUprime-bound} yields $T_{U'}(W)\le F_C(U)$.
+Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ gives $F_C(U')\le F_C(U)$.
+
+\paragraph*{The recurrence: }
+From \eqref{eq:leq-direction}, $F_C(U')\le F_C(U)$ and
+$F_{C-1}(U')\otimes\alpha_u=(II)\le F_C(U)$, we obtain
+$F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)\le F_C(U)$.
+Together with \eqref{eq:leq-direction}, we get
+\[
+F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u),
+\]
+as required.
+\end{proof}
+\begin{lemma}[Recurrence for $S_C$]\label{lem:SC_recurrence}
+\lean{Having}{Having.SC_recurrence}
+Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+commutative m-semiring and $(\alpha_w)_{w\in U}$ a family of elements of
+$\mathbb K$ indexed by a non-empty finite set~$U$. For
+$W\subseteq U$ define~$A_W\defeq\nobreak\bigotimes_{w\in W}\alpha_w$, and for
+$C\ge 0$ set $S_C(U)\defeq\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$.
+Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
+$S_C(U)=S_C(U')\oplus\bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
+\end{lemma}
+
+\begin{proof}
+Fix $C\ge 1$ and $u\in U$, and write $U=U'\cup\{u\}$ with $U'=U\setminus\{u\}$.
+
+Define two index families:
+\[
+\mathcal A\defeq\{\,W\subseteq U \mid |W|=C,\ u\notin W\,\},
+\qquad
+\mathcal B\defeq\{\,W\subseteq U \mid |W|=C,\ u\in W\,\}.
+\]
+Then $\mathcal A$ and $\mathcal B$ are disjoint and their union is the full family
+\[
+\mathcal A\ \dot\cup\ \mathcal B=\{\,W\subseteq U\mid |W|=C\,\},
+\]
+because every $W\subseteq U$ either contains $u$ or does not.
+
+Therefore, by associativity and commutativity of $\oplus$ (finite sum over a disjoint
+union equals the $\oplus$ of the two partial sums),
+\begin{equation}\label{eq:split-SC}
+S_C(U)
+=
+\bigoplus_{W\in\mathcal A} A_W\ \oplus\ \bigoplus_{W\in\mathcal B} A_W.
+\end{equation}
+
+\smallskip\noindent
+\emph{(i) The $\mathcal A$-part.}
+If $W\in\mathcal A$, then $u\notin W$ and $W\subseteq U'=U\setminus\{u\}$.
+Conversely, if $W\subseteq U'$ and $|W|=C$, then $W\subseteq U$ and $u\notin W$.
+Hence
+\[
+\mathcal A=\{\,W\subseteq U'\mid |W|=C\,\},
+\]
+so
+\begin{equation}\label{eq:A-part}
+\bigoplus_{W\in\mathcal A}A_W
+=
+\bigoplus_{\substack{W\subseteq U'\\|W|=C}}A_W
+=
+S_C(U').
+\end{equation}
+
+\smallskip\noindent
+\emph{(ii) The $\mathcal B$-part.}
+Define a map
+\[
+\phi:\{\,W'\subseteq U'\mid |W'|=C-1\,\}\longrightarrow \mathcal B,
+\qquad
+\phi(W')\defeq W'\cup\{u\}.
+\]
+This map is a bijection:
+\begin{itemize}
+\item It is well-defined because if $W'\subseteq U'$ and $|W'|=C-1$, then
+$u\notin W'$ and thus $|W'\cup\{u\}|=|W'|+1=C$, and $\phi(W')$ contains $u$.
+\item It is injective because if $W'_1\cup\{u\}=W'_2\cup\{u\}$, removing $u$ gives
+$W'_1=W'_2$.
+\item It is surjective because if $W\in\mathcal B$, then $u\in W$ and setting
+$W'\defeq W\setminus\{u\}$ gives $W'\subseteq U'$ and $|W'|=C-1$, with $W=\phi(W')$.
+\end{itemize}
+Hence we may re-index the sum over $\mathcal B$ via $\phi$:
+\begin{equation}\label{eq:B-reindex}
+\bigoplus_{W\in\mathcal B}A_W
+=
+\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{\phi(W')}
+=
+\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{W'\cup\{u\}}.
+\end{equation}
+For each $W'\subseteq U'$ we have, by commutativity and associativity of $\otimes$,
+\[
+A_{W'\cup\{u\}}
+=
+\Bigl(\bigotimes_{w\in W'}\alpha_w \Bigr)\otimes \alpha_u
+=
+A_{W'}\otimes \alpha_u.
+\]
+Substituting into \eqref{eq:B-reindex} and using distributivity of $\otimes$ over $\oplus$,
+\begin{equation}\label{eq:B-part}
+\bigoplus_{W\in\mathcal B}A_W
+=
+\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} (A_{W'}\otimes\alpha_u)
+=
+\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{W'}\Bigr)\otimes\alpha_u
+=
+S_{C-1}(U')\otimes\alpha_u.
+\end{equation}
+
+Finally, combining \eqref{eq:split-SC}, \eqref{eq:A-part}, and \eqref{eq:B-part}, we obtain
+\[
+S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr),
+\]
+as required.
+\end{proof}
+The last ingredient, used for the $=$ and $\le$ cases, is a per-world
+upper bound: the contribution $T_U(W)$ of a single world $W$ of size at
+most~$C$ is below the difference $S_j(U)\ominus S_{C+1}(U)$, for every
+level $j\le|W|$.
+\begin{lemma}[Per-world upper bound]\label{lem:world-bound}
+\lean{Having}{Having.world_bound}
+Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
+commutative absorptive m-semiring in which $\otimes$ distributes over
+$\ominus$, $U$ a finite set, and $(\alpha_w)_{w\in U}$ a family of
+elements of~$\mathbb K$, with $A_W$, $T_U(W)$, and $S_C(U)$ defined as in
+Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}. Then for
+every $W\subseteq U$ and all integers $j,C$ with $j\le|W|\le C$,
+\[
+T_U(W)\ \le\ S_j(U)\ominus S_{C+1}(U).
+\]
+\end{lemma}
+
+\begin{proof}
+First note that, since $\mathbb K$ is absorptive, every $y\in\mathbb K$
+satisfies $y\le\mathbb 1$, so by monotonicity of $\otimes$ (a consequence
+of its distributivity over $\oplus$) we have $x\otimes y\le x$ for all
+$x,y$: products only decrease as factors are added.
+
+Write $E_W\defeq\bigoplus_{w\in U\setminus W}\alpha_w$. By distributivity
+of $\otimes$ over $\oplus$,
+$\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}=A_W\otimes E_W$, so by
+distributivity of $\otimes$ over $\ominus$,
+\begin{equation}\label{eq:TW-factored}
+T_U(W)=A_W\ominus(A_W\otimes E_W)=A_W\otimes(\mathbb 1\ominus E_W).
+\end{equation}
+
+We now make two observations.
+
+\emph{(1) $A_W\le S_j(U)$.} Choose any $W'\subseteq W$ with $|W'|=j$.
+Then $A_W=A_{W'}\otimes A_{W\setminus W'}\le A_{W'}\le S_j(U)$, the last
+step because $A_{W'}$ is one of the summands of $S_j(U)$.
+
+\emph{(2) $S_{C+1}(U)\le S_j(U)\otimes E_W$.} Let $V\subseteq U$ with
+$|V|=C+1$ (if no such $V$ exists, $S_{C+1}(U)=\mathbb 0$ and the claim is
+trivial). Since $|V|>|W|$, there is some $v\in V\setminus W$, and since
+$|V\setminus\{v\}|=C\ge j$, there is some $V'\subseteq V\setminus\{v\}$
+with $|V'|=j$. Then
+\[
+A_V=A_{V'}\otimes\alpha_v\otimes A_{V\setminus(V'\cup\{v\})}
+\le A_{V'}\otimes\alpha_v\le S_j(U)\otimes E_W,
+\]
+using $A_{V'}\le S_j(U)$, $\alpha_v\le E_W$ (as $v\in U\setminus W$), and
+monotonicity of $\otimes$. Taking the $\oplus$-sum over all such $V$
+(idempotence) proves the claim.
+
+Combining: by \eqref{eq:TW-factored}, observation (1) and monotonicity of
+$\otimes$, then distributivity of $\otimes$ over $\ominus$, then
+observation (2) and antitonicity of $\ominus$ in its second argument
+(Lemma~\ref{lem:monus-basic}(iii)),
+\[
+T_U(W)=A_W\otimes(\mathbb 1\ominus E_W)
+\le S_j(U)\otimes(\mathbb 1\ominus E_W)
+= S_j(U)\ominus\bigl(S_j(U)\otimes E_W\bigr)
+\le S_j(U)\ominus S_{C+1}(U).\qedhere
+\]
+\end{proof}
+Note the order of the steps in the proof of
+Lemma~\ref{lem:world-bound}: writing
+$E_W\defeq\bigoplus_{w\in U\setminus W}\alpha_w$, bounding $A_W$ by
+$S_j(U)$ \emph{directly inside the subtrahend} of
+$T_U(W)=A_W\ominus(A_W\otimes E_W)$ would move the monus in the wrong
+direction; the bound is instead applied to the factored form
+$T_U(W)=A_W\otimes(\mathbb 1\ominus E_W)$, whose second factor does not
+depend on $A_W$, and distributivity of $\otimes$ over $\ominus$ is only
+used afterwards, when the subtrahend has grown to $S_j(U)\otimes E_W$,
+which dominates $S_{C+1}(U)$.
+
+\end{toappendix}
+
 \begin{theoremrep}\label{th:correctness}
   Let $q$ be an aggregate-free query of arity~$2$ whose second column is
   an \emph{occurrence identifier}: the tuples of $\angsem{\hat I}{q}$ are
@@ -480,388 +864,6 @@ and for~(iii) one in the tropical semiring over~$\mathbb Z\cup\{\infty\}$
 \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.TropicalZ.query_counterexample}.
 \end{proofsketch}
 
-\begin{toappendix}
-The proof of Theorem~\ref{th:correctness} rests on the following lemmas,
-whose proofs are given here; $A_W$, $T_U(W)$, $F_C(U)$ and $S_C(U)$ are as
-in the proof of the theorem.
-\begin{lemma}\label{lem:upward-expansion}
-\lean{Having}{Having.upward_expansion}
-Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
-commutative idempotent m-semiring,~$U$ a finite set, and
-$(\alpha_w)_{w\in U}$ a family of elements of $\mathbb K$. For
-$W\subseteq U$ define~$A_W \defeq\nobreak \bigotimes_{w\in W}\alpha_w$
-and~$T_U(W) \defeq A_W \ominus \bigoplus_{w\in U\setminus W} A_{W\cup\{w\}}$.
-Then $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)$
-for every~$V\subseteq\nobreak U$.
-\end{lemma}
-
-\begin{proof}
-From the properties of m-semirings $\ominus$ is the (right) residual of $\oplus$, i.e., for all $x,y,z\in \mathbb K$,
-\begin{equation}\label{eq:residuation}
-  x\ominus y \le z \quad\Longleftrightarrow\quad x \le y\oplus z .
-\end{equation}
-
-We prove
-\begin{equation}\label{eq:upward-expansion}
-  A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
-\end{equation}
-by induction on $d\defeq|U\setminus V|$.
-
-\smallskip\noindent
-\textbf{Base case ($d=0$).}
-Then $V=U$. Since $U\setminus U=\varnothing$ and $\bigoplus_{\varnothing}(\cdot)=\mathbb 0$,
-\[
-  T_U(U)=A_U\ominus \mathbb 0.
-\]
-We claim $A_U\ominus\mathbb 0=A_U$. Indeed, by \eqref{eq:residuation}, for any $z\in \mathbb K$,
-\[
-  A_U\ominus\mathbb 0 \le z \iff A_U \le \mathbb 0\oplus z = z,
-\]
-so $A_U\ominus\mathbb 0$ is the greatest element below $A_U$, hence equals $A_U$.
-Therefore,
-\[
-  \bigoplus_{\substack{W:\;U\subseteq W\subseteq U}} T_U(W)=T_U(U)=A_U=A_V,
-\]
-and \eqref{eq:upward-expansion} holds.
-
-\smallskip\noindent
-\textbf{Inductive step.}
-Assume $d>0$ and that \eqref{eq:upward-expansion} holds for all pairs $(U,V')$
-with $V\subsetneq V'\subseteq U$ and $|U\setminus V'|<d$.
-Let
-\[
-  Y \defeq \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}} \in \mathbb K.
-\]
-From Lemma~\ref{lem:monus-basic}(ii) we obtain the standard inequality
-\begin{equation}\label{eq:M2-lemma1}
-  X \le Y \oplus (X\ominus Y)\qquad\text{for all }X,Y\in \mathbb K,
-\end{equation}
-by instantiating \eqref{eq:residuation} with $z=X\ominus Y$ (since $X\ominus Y\le X\ominus Y$).
-Applying \eqref{eq:M2-lemma1} to $X=A_V$ gives
-\[
-  A_V \le Y \oplus (A_V\ominus Y).
-\]
-By definition of $T_U(V)$ we have $A_V\ominus Y = T_U(V)$, hence
-\begin{equation}\label{eq:AV-bound}
-  A_V \le T_U(V)\ \oplus\ \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}}.
-\end{equation}
-
-For each $w\in U\setminus V$ set $V_w\defeq V\cup\{w\}$. Then $|U\setminus V_w|=d-1$,
-so the induction hypothesis yields
-\[
-  A_{V_w}\le \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W).
-\]
-Taking the $\oplus$-sum over all $w\in U\setminus V$ and using monotonicity of $\oplus$,
-\[
-  \bigoplus_{w\in U\setminus V} A_{V\cup\{w\}}
-  =
-  \bigoplus_{w\in U\setminus V} A_{V_w}
-  \le
-  \bigoplus_{w\in U\setminus V}\ \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W).
-\]
-Every $W$ appearing on the right satisfies $V\subseteq V_w\subseteq W\subseteq U$, hence $V\subseteq W\subseteq U$.
-Therefore, using associativity/commutativity/idempotence of $\oplus$ to ignore duplicates and reorder summands,
-\[
-  \bigoplus_{w\in U\setminus V}\ \bigoplus_{\substack{W:\;V_w\subseteq W\subseteq U}} T_U(W)
-  \le
-  \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W).
-\]
-Combining with \eqref{eq:AV-bound} yields
-\[
-  A_V \le T_U(V)\ \oplus\ \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)
-  =
-  \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W),
-\]
-since the right-hand $\oplus$-sum already includes the summand $T_U(V)$ (take $W=V$).
-This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
-\end{proof}
-With Lemma~\ref{lem:upward-expansion} in hand, we now establish matching
-recurrences for $F_C(U)$ and $S_C(U)$.
-\begin{lemma}[Recurrence for $F_C$]\label{lem:FC_recurrence}
-\lean{Having}{Having.FC_recurrence}
-Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
-commutative idempotent m-semiring in which $\otimes$ distributes over
-$\ominus$,~$U$ a non-empty finite set, and $(\alpha_w)_{w\in U}$ a family
-of elements of~$\mathbb K$. For $W\subseteq U$ define~$A_W\defeq\bigotimes_{w\in W}\alpha_w$ and
-$T_U(W)\defeq A_W\ominus \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}$, and
-for $C\ge 0$ set
-$F_C(U)\defeq\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W)$.
-Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
-$F_C(U)=F_C(U')\oplus\bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
-\end{lemma}
-
-\begin{proof}
-  Fix $u\in U$ such that $U'=U\setminus\{u\}$ and a $C\in\mathbb N_{\ge 1}$.
-Split  $F_C(U)$ according to whether $u\in W$:
-\begin{equation}\label{eq:split-I-II}
-F_C(U)
-=
-\underbrace{\bigoplus_{\substack{W\subseteq U'\\|W|\ge C}}T_U(W)}_{(I).\;u\notin W}
-\ \oplus\
-\underbrace{\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_U(W'\cup\{u\})}_{(II).\;u\in W}.
-\end{equation}
-
-\paragraph*{Simplify $(II)$: }
-Fix $W'\subseteq U'$. Then $A_{W'\cup\{u\}}=A_{W'}\otimes\alpha_u$, and
-$U\setminus(W'\cup\{u\})=U'\setminus W'$. Hence, using distributivity of $\otimes$ over $\oplus$,
-\[
-\bigoplus_{w\in U\setminus(W'\cup\{u\})}A_{W'\cup\{u,w\}}
-=
-\bigoplus_{w\in U'\setminus W'}\bigl(A_{W'\cup\{w\}}\otimes\alpha_u\bigr)
-=
-\Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u.
-\]
-Therefore, using distributivity of $\otimes$ over $\ominus$,
-\begin{align*}
-T_U(W'\cup\{u\})
-&=
-(A_{W'}\otimes\alpha_u)\ominus
-\Bigl(\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u\\
-&=
-\Bigl(A_{W'}\ominus\bigoplus_{w\in U'\setminus W'}A_{W'\cup\{w\}}\Bigr)\otimes\alpha_u
-=
-T_{U'}(W')\otimes\alpha_u.
-\end{align*}
-Taking $\oplus$ over all $W'\subseteq U'$ with $|W'|\ge C-1$ and factoring $\alpha_u$ using
-distributivity of $\otimes$ over $\oplus$ yields
-\begin{equation}\label{eq:II-simplifies}
-(II)=\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_{U'}(W')\Bigr)\otimes\alpha_u
-=F_{C-1}(U')\otimes\alpha_u.
-\end{equation}
-
-\paragraph*{Relate $T_U(W)$ and $T_{U'}(W)$ for $W\subseteq U'$: }
-Fix $W\subseteq U'$. Since $U\setminus W=(U'\setminus W)\cup\{u\}$, we have
-\[
-\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}
-=
-\Bigl(\bigoplus_{w\in U'\setminus W}A_{W\cup\{w\}}\Bigr)\oplus (A_W\otimes\alpha_u).
-\]
-Using
-$x\ominus(y\oplus z)=(x\ominus y)\ominus z$, we get
-\begin{equation}\label{eq:TU-rewrite}
-T_U(W)
-=
-A_W\ominus\Bigl(\bigoplus_{w\in U'\setminus W}A_{W\cup\{w\}}\oplus(A_W\otimes\alpha_u)\Bigr)
-=
-T_{U'}(W)\ominus(A_W\otimes\alpha_u).
-\end{equation}
-
-\paragraph*{Show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)$: }
-  By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$ (shown in Lemma~\ref{lem:monus-basic}(i)),
-we have $T_U(W)\le T_{U'}(W)$ for all $W\subseteq U'$.
-Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ yields $(I)\le F_C(U')$.
-Together with \eqref{eq:split-I-II} and \eqref{eq:II-simplifies}, this gives
-\begin{equation}\label{eq:leq-direction}
-F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u).
-\end{equation}
-
-\paragraph*{Show $F_C(U')\le F_C(U)$: }
-Fix $W\subseteq U'$ with $|W|\ge C$.
-By the inequality $x\le y\oplus(x\ominus y)$ (shown in Lemma~\ref{lem:monus-basic}(ii)) applied to
-$x=T_{U'}(W)$ and $y=A_W\otimes\alpha_u$, and using \eqref{eq:TU-rewrite}, we get
-\begin{equation}\label{eq:TUprime-bound}
-T_{U'}(W)\le (A_W\otimes\alpha_u)\oplus T_U(W).
-\end{equation}
-Since $|W|\ge C$, the term $T_U(W)$ is one of the summands of $F_C(U)$, hence $T_U(W)\le F_C(U)$.
-Moreover $A_W\otimes\alpha_u=A_{W\cup\{u\}}$, and $|W\cup\{u\}|\ge C$.
-By Lemma~\ref{lem:upward-expansion} applied to $V=W\cup\{u\}$ we have
-\[
-A_{W\cup\{u\}}
-\le
-\bigoplus_{\substack{Y:\;W\cup\{u\}\subseteq Y\subseteq U}} T_U(Y)
-\le
-\bigoplus_{\substack{Y\subseteq U\\|Y|\ge C}}T_U(Y)
-=
-F_C(U),
-\]
-so $A_W\otimes\alpha_u\le F_C(U)$.
-Plugging these two bounds into \eqref{eq:TUprime-bound} yields $T_{U'}(W)\le F_C(U)$.
-Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ gives $F_C(U')\le F_C(U)$.
-
-\paragraph*{The recurrence: }
-From \eqref{eq:leq-direction}, $F_C(U')\le F_C(U)$ and
-$F_{C-1}(U')\otimes\alpha_u=(II)\le F_C(U)$, we obtain
-$F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)\le F_C(U)$.
-Together with \eqref{eq:leq-direction}, we get
-\[
-F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u),
-\]
-as required.
-\end{proof}
-\begin{lemma}[Recurrence for $S_C$]\label{lem:SC_recurrence}
-\lean{Having}{Having.SC_recurrence}
-Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
-commutative m-semiring and $(\alpha_w)_{w\in U}$ a family of elements of
-$\mathbb K$ indexed by a non-empty finite set~$U$. For
-$W\subseteq U$ define~$A_W\defeq\nobreak\bigotimes_{w\in W}\alpha_w$, and for
-$C\ge 0$ set $S_C(U)\defeq\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$.
-Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
-$S_C(U)=S_C(U')\oplus\bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
-\end{lemma}
-
-\begin{proof}
-Fix $C\ge 1$ and $u\in U$, and write $U=U'\cup\{u\}$ with $U'=U\setminus\{u\}$.
-
-Define two index families:
-\[
-\mathcal A\defeq\{\,W\subseteq U \mid |W|=C,\ u\notin W\,\},
-\qquad
-\mathcal B\defeq\{\,W\subseteq U \mid |W|=C,\ u\in W\,\}.
-\]
-Then $\mathcal A$ and $\mathcal B$ are disjoint and their union is the full family
-\[
-\mathcal A\ \dot\cup\ \mathcal B=\{\,W\subseteq U\mid |W|=C\,\},
-\]
-because every $W\subseteq U$ either contains $u$ or does not.
-
-Therefore, by associativity and commutativity of $\oplus$ (finite sum over a disjoint
-union equals the $\oplus$ of the two partial sums),
-\begin{equation}\label{eq:split-SC}
-S_C(U)
-=
-\bigoplus_{W\in\mathcal A} A_W\ \oplus\ \bigoplus_{W\in\mathcal B} A_W.
-\end{equation}
-
-\smallskip\noindent
-\emph{(i) The $\mathcal A$-part.}
-If $W\in\mathcal A$, then $u\notin W$ and $W\subseteq U'=U\setminus\{u\}$.
-Conversely, if $W\subseteq U'$ and $|W|=C$, then $W\subseteq U$ and $u\notin W$.
-Hence
-\[
-\mathcal A=\{\,W\subseteq U'\mid |W|=C\,\},
-\]
-so
-\begin{equation}\label{eq:A-part}
-\bigoplus_{W\in\mathcal A}A_W
-=
-\bigoplus_{\substack{W\subseteq U'\\|W|=C}}A_W
-=
-S_C(U').
-\end{equation}
-
-\smallskip\noindent
-\emph{(ii) The $\mathcal B$-part.}
-Define a map
-\[
-\phi:\{\,W'\subseteq U'\mid |W'|=C-1\,\}\longrightarrow \mathcal B,
-\qquad
-\phi(W')\defeq W'\cup\{u\}.
-\]
-This map is a bijection:
-\begin{itemize}
-\item It is well-defined because if $W'\subseteq U'$ and $|W'|=C-1$, then
-$u\notin W'$ and thus $|W'\cup\{u\}|=|W'|+1=C$, and $\phi(W')$ contains $u$.
-\item It is injective because if $W'_1\cup\{u\}=W'_2\cup\{u\}$, removing $u$ gives
-$W'_1=W'_2$.
-\item It is surjective because if $W\in\mathcal B$, then $u\in W$ and setting
-$W'\defeq W\setminus\{u\}$ gives $W'\subseteq U'$ and $|W'|=C-1$, with $W=\phi(W')$.
-\end{itemize}
-Hence we may re-index the sum over $\mathcal B$ via $\phi$:
-\begin{equation}\label{eq:B-reindex}
-\bigoplus_{W\in\mathcal B}A_W
-=
-\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{\phi(W')}
-=
-\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{W'\cup\{u\}}.
-\end{equation}
-For each $W'\subseteq U'$ we have, by commutativity and associativity of $\otimes$,
-\[
-A_{W'\cup\{u\}}
-=
-\Bigl(\bigotimes_{w\in W'}\alpha_w \Bigr)\otimes \alpha_u
-=
-A_{W'}\otimes \alpha_u.
-\]
-Substituting into \eqref{eq:B-reindex} and using distributivity of $\otimes$ over $\oplus$,
-\begin{equation}\label{eq:B-part}
-\bigoplus_{W\in\mathcal B}A_W
-=
-\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} (A_{W'}\otimes\alpha_u)
-=
-\Bigl(\bigoplus_{\substack{W'\subseteq U'\\|W'|=C-1}} A_{W'}\Bigr)\otimes\alpha_u
-=
-S_{C-1}(U')\otimes\alpha_u.
-\end{equation}
-
-Finally, combining \eqref{eq:split-SC}, \eqref{eq:A-part}, and \eqref{eq:B-part}, we obtain
-\[
-S_C(U)=S_C(U')\ \oplus\ \bigl(S_{C-1}(U')\otimes\alpha_u\bigr),
-\]
-as required.
-\end{proof}
-The last ingredient, used for the $=$ and $\le$ cases, is a per-world
-upper bound: the contribution $T_U(W)$ of a single world $W$ of size at
-most~$C$ is below the difference $S_j(U)\ominus S_{C+1}(U)$, for every
-level $j\le|W|$.
-\begin{lemma}[Per-world upper bound]\label{lem:world-bound}
-\lean{Having}{Having.world_bound}
-Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
-commutative absorptive m-semiring in which $\otimes$ distributes over
-$\ominus$, $U$ a finite set, and $(\alpha_w)_{w\in U}$ a family of
-elements of~$\mathbb K$, with $A_W$, $T_U(W)$, and $S_C(U)$ defined as in
-Lemmas~\ref{lem:FC_recurrence} and~\ref{lem:SC_recurrence}. Then for
-every $W\subseteq U$ and all integers $j,C$ with $j\le|W|\le C$,
-\[
-T_U(W)\ \le\ S_j(U)\ominus S_{C+1}(U).
-\]
-\end{lemma}
-
-\begin{proof}
-First note that, since $\mathbb K$ is absorptive, every $y\in\mathbb K$
-satisfies $y\le\mathbb 1$, so by monotonicity of $\otimes$ (a consequence
-of its distributivity over $\oplus$) we have $x\otimes y\le x$ for all
-$x,y$: products only decrease as factors are added.
-
-Write $E_W\defeq\bigoplus_{w\in U\setminus W}\alpha_w$. By distributivity
-of $\otimes$ over $\oplus$,
-$\bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}=A_W\otimes E_W$, so by
-distributivity of $\otimes$ over $\ominus$,
-\begin{equation}\label{eq:TW-factored}
-T_U(W)=A_W\ominus(A_W\otimes E_W)=A_W\otimes(\mathbb 1\ominus E_W).
-\end{equation}
-
-We now make two observations.
-
-\emph{(1) $A_W\le S_j(U)$.} Choose any $W'\subseteq W$ with $|W'|=j$.
-Then $A_W=A_{W'}\otimes A_{W\setminus W'}\le A_{W'}\le S_j(U)$, the last
-step because $A_{W'}$ is one of the summands of $S_j(U)$.
-
-\emph{(2) $S_{C+1}(U)\le S_j(U)\otimes E_W$.} Let $V\subseteq U$ with
-$|V|=C+1$ (if no such $V$ exists, $S_{C+1}(U)=\mathbb 0$ and the claim is
-trivial). Since $|V|>|W|$, there is some $v\in V\setminus W$, and since
-$|V\setminus\{v\}|=C\ge j$, there is some $V'\subseteq V\setminus\{v\}$
-with $|V'|=j$. Then
-\[
-A_V=A_{V'}\otimes\alpha_v\otimes A_{V\setminus(V'\cup\{v\})}
-\le A_{V'}\otimes\alpha_v\le S_j(U)\otimes E_W,
-\]
-using $A_{V'}\le S_j(U)$, $\alpha_v\le E_W$ (as $v\in U\setminus W$), and
-monotonicity of $\otimes$. Taking the $\oplus$-sum over all such $V$
-(idempotence) proves the claim.
-
-Combining: by \eqref{eq:TW-factored}, observation (1) and monotonicity of
-$\otimes$, then distributivity of $\otimes$ over $\ominus$, then
-observation (2) and antitonicity of $\ominus$ in its second argument
-(Lemma~\ref{lem:monus-basic}(iii)),
-\[
-T_U(W)=A_W\otimes(\mathbb 1\ominus E_W)
-\le S_j(U)\otimes(\mathbb 1\ominus E_W)
-= S_j(U)\ominus\bigl(S_j(U)\otimes E_W\bigr)
-\le S_j(U)\ominus S_{C+1}(U).\qedhere
-\]
-\end{proof}
-Note the order of the steps in the proof of
-Lemma~\ref{lem:world-bound}: writing
-$E_W\defeq\bigoplus_{w\in U\setminus W}\alpha_w$, bounding $A_W$ by
-$S_j(U)$ \emph{directly inside the subtrahend} of
-$T_U(W)=A_W\ominus(A_W\otimes E_W)$ would move the monus in the wrong
-direction; the bound is instead applied to the factored form
-$T_U(W)=A_W\otimes(\mathbb 1\ominus E_W)$, whose second factor does not
-depend on $A_W$, and distributivity of $\otimes$ over $\ominus$ is only
-used afterwards, when the subtrahend has grown to $S_j(U)\otimes E_W$,
-which dominates $S_{C+1}(U)$.
-
-\end{toappendix}
 
 \textbf{Specialization, probabilistic evaluation, and complexity.}
 Much of the practical value of semiring provenance comes from the fact
@@ -874,6 +876,9 @@ principle survives the introduction of aggregate comparisons.
 For a homomorphism of m-semirings $h:\mathbb K\to\mathbb K'$, we write $h(\hat I)$ for the $\mathbb
 K'$-instance obtained from $\hat I$ by applying $h$ to every annotation.
 
+\begin{toappendix}
+\subsection{Specialization, Probabilistic Evaluation, and Complexity}
+\end{toappendix}
 \begin{propositionrep}\label{prop:hom}
   \lean{AggQueryHom}{AggQuery.evaluateAnnotated_hom}
   Let $h:\mathbb K\to\mathbb K'$ be an m-semiring homomorphism. Then, for
