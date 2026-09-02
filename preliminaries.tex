@@ -11,7 +11,7 @@ from~\cite{sen2026provsql} are recalled in the appendix.
 \begin{definition} \label{def:semiring}
   A \emph{semiring} is an algebraic structure $(\mathbb K,\oplus,\otimes,\mathbb 0,\mathbb 1)$ where $\mathbb K$ is a set, $\oplus$ and~$\otimes$ are binary operations on $\mathbb K$, and $\mathbb 0,\mathbb 1\in \mathbb K$, such that:
   \begin{itemize}
-    \item $(\mathbb K,\oplus,\mathbb 0)$ is a commutative monoid and $(\mathbb K,\otimes,\mathbb 1)$ is a (not necessarily commutative) monoid;
+    \item $(\mathbb K,\oplus,\mathbb 0)$ is a commutative monoid and $(\mathbb K,\otimes,\mathbb 1)$ is a monoid;
     \item $\otimes$ distributes over $\oplus$: $\forall~a,b,c\in\mathbb K$, $a\otimes (b\oplus c) = (a\otimes b)\oplus (a\otimes c)$ and $(a\oplus b)\otimes c = (a\otimes c)\oplus (b\otimes c)$;
     \item $\mathbb 0$ is an annihilator for $\otimes$: $\forall
       a\in\mathbb K$, $a\otimes \mathbb 0 = \mathbb 0 \otimes a = \mathbb 0$.
@@ -19,14 +19,14 @@ from~\cite{sen2026provsql} are recalled in the appendix.
 \end{definition}
 
 \begin{example}\label{ex:semirings}
-  Some example semirings are:
+  Some example semirings
+  \cite{green2007provenance,senellart2017provenance} are:
   the counting semiring $\mathbb N$: $(\mathbb N,+,\times,0,1)$;
   the Boolean semiring $\mathbb B$:
   $(\{\top,\bot\},\lor,\land,\bot,\top)$;
   the Why-provenance semiring over some set of variables $X$:
       $(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\})$ where $\Cup$ is defined as follows: $A\Cup B \defeq \{a\cup b \mid a\in A, b\in B\}$;
-  the Boolean-function semiring $\mathbb B[X]$ over a set of variables $X$
-  \cite{green2007provenance,senellart2017provenance}: Boolean functions
+  the Boolean-function semiring $\mathbb B[X]$ over a set of variables $X$: Boolean functions
   over $X$ (propositional formulas up to logical equivalence) with
   $(\lor,\land,\bot,\top)$.
 \end{example}
@@ -59,6 +59,7 @@ a naturally ordered semiring where a $\ominus$ cannot be
 introduced~\cite{amarilli2016example}.
 An m-semiring $(\mathbb K, \oplus, \otimes, \ominus, \mathbb 0, \mathbb
 1)$ satisfies some basic properties, for $a, b, c\in\mathbb K$:
+\vspace*{-1em}
 \begin{multicols}{2}
   \begin{itemize}
     \item \lean{SemiringWithMonus}{add_monus}
@@ -70,8 +71,8 @@ An m-semiring $(\mathbb K, \oplus, \otimes, \ominus, \mathbb 0, \mathbb
     \item \lean{SemiringWithMonus}{monus_zero} $a\ominus \mathbb 0=a$.
   \end{itemize}
 \end{multicols}
-
-In addition to these, m-semirings may have other properties. Useful ones are:
+\vspace*{-1em}
+\noindent In addition to these, m-semirings may have other properties. Useful ones are:
 \begin{itemize}
   \item \textbf{Commutativity:} $\forall a,b\in \mathbb K$, $a\otimes b = b\otimes a$.
   \item \textbf{Idempotence:} \lean{SemiringWithMonus}{idempotent} $\forall a\in \mathbb K$, $a\oplus a = a$.
@@ -101,19 +102,19 @@ the semirings in Example~\ref{ex:semirings}, along with the
 Which[$X$] semiring \cite{green2017provenance}, the
 Temporal semiring of unions of intervals
 used in temporal databases
-\cite{widiaatmaja2025demonstration}, the tropical semirings \cite{green2007provenance}, the Viterbi semiring
-\cite{green2017provenance}, the security or access control semiring
+\cite{widiaatmaja2025demonstration}, the tropical semirings
+\cite{green2007provenance}, the Viterbi semiring~\cite{green2017provenance}, the security or access control semiring
 \cite{green2017provenance}, the $\mathbb{N}[X]$ or How[$X$] semiring
 \cite{green2007provenance} and the \L ukasiewicz semiring~\cite{gradel2025provenance}.
-We note that only the Boolean, Boolean-function, Temporal, Tropical (over
-$\mathbb{N}$), Viterbi, and \L
+We note that only the Boolean, Boolean-function, Temporal, Tropical (over~$\mathbb{N}$), Viterbi, and \L
 ukasiewicz m-semirings are idempotent, absorptive and have $\otimes$
 distributive over $\ominus$.
 These properties will be important for the semantics of \sql{HAVING}
 queries. Note that this table, along with the formal Lean proofs that
 ensure its validity, definitively fixes
 a
-few erroneous statements in the literature:
+few erroneous statements in the literature (see human-readable proofs in
+appendix):
 \cite[Example~4]{geerts2010database}
 wrongly claimed that the tropical semiring over reals could not be equipped with
 $\ominus$; \cite{amsterdamer2011limitations} wrongly claimed that
@@ -121,10 +122,7 @@ both $\mathbb{N}[X]$ and Why[$X$] had $\otimes$ distributive over $\ominus$
 (called Axiom A13 in~\cite{amsterdamer2011limitations}). Such errors are
 easy to make given some counter-intuitive properties of
 these basic building blocks; clean, formally proven statements
-are one of our contributions. Hand-written proofs of these three
-corrections, mirroring the Lean developments, are given in the
-appendix.
-
+are one of our contributions.
 
 For queries with grouping and aggregation, an additional useful notion
 \cite{amsterdamer2011provenance} is that of \emph{$\delta$-semirings},
@@ -141,7 +139,7 @@ further axiom, \emph{$\delta$-absorption}: $\forall a,b\in\mathbb K$,
 $a\otimes\delta(a\oplus b)=a$; a group-existence factor is thus redundant
 next to any annotation that already contains an occurrence of that group.
 The characterization above is unaffected by this strengthening: in an
-m-semiring, a $\delta$ satisfying all three axioms exists exactly when the
+m-semiring, a~$\delta$ satisfying all three axioms exists exactly when the
 characteristic is $0$, since the support indicator (see below) satisfies
 them all \lean{SemiringWithMonus}{isDelta_exists_iff_charP_zero}.
 The two usual definitions of $\delta$ are the identity,
@@ -190,7 +188,7 @@ $\ominus$ and with $\delta$.
   R}a<_{\mathbb R}b$ for every $c$, so no such $c$ exists. Hence $a\leq b$
   iff $b\leq_{\mathbb R}a$, and therefore the semiring is naturally ordered.
 
-  Now, 
+  Now,
   \[
     a\ominus b\defeq
     \begin{cases}
@@ -264,8 +262,8 @@ $\ominus$ and with $\delta$.
 and $\{\{x\}\}\neq\emptyset$.
 \end{toappendix}
 
-\textbf{Useful results on m-semirings.} We discuss now some
-additional results on m-semirings that we use later. First we show that idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
+\inlinepar{Useful results on m-semirings.} We discuss some
+additional results on m-semirings. First we show that idempotence is equivalent to $\ominus$ being right-distributive over $\oplus$.
 \begin{toappendix}
   \subsection{Proofs of the Useful Results on M-Semirings}
 \end{toappendix}
@@ -361,7 +359,7 @@ Proposition~\ref{prop:idempotent_iff_add_monus} and the third uses the
 induction hypothesis.
 \end{appendixproof}
 
-Finally, we show a few elementary consequences of the residual
+\noindent We also show elementary consequences of the residual
 characterization of $\ominus$ in m-semirings.
 \begin{lemmarep}\label{lem:monus-basic}
   In any m-semiring $\mathbb K$, for all $x,y,y'\in\mathbb K$:
@@ -384,7 +382,7 @@ characterization of $\ominus$ in m-semirings.
 \end{appendixproof}
 
 
-\textbf{Annotated relations and semantics.}
+\inlinepar{Annotated relations and semantics.}
 We use the notion of annotated relations initially introduced in
 \cite{green2007provenance}, relying on the setting (in particular where
 relations are multisets of tuples) and definitions introduced in detail in
@@ -394,7 +392,7 @@ data values used within unannotated relations, given a commutative m-semiring
 $\mathbb K$ and a set $\mathcal V_{\mathbb K}\supseteq \mathcal V$ of
 values (either~$\mathcal V$ or an extension of it) a
 $\mathbb K$-relation of arity $k\in\mathbb N$ over $\mathcal V_{\mathbb
-K}$ is a multiset of tuples over~$\mathcal V_{\mathbb K}^k\times\mathbb
+K}$ is a \emph{multiset} of tuples over~$\mathcal V_{\mathbb K}^k\times\mathbb
 K$ which we usually denote $(u,\alpha)$ with $u\in \mathcal V_{\mathbb K}^k$ and $\alpha\in \mathbb K$.
 We call $\alpha$ the annotation of the tuple $u$. As
 in~\cite{green2007provenance}, a tuple annotated by $\mathbb 0$ is
@@ -445,6 +443,7 @@ in which the values of a group are aggregated, as the standard SQL
 ``\sql{AGG(...) WITHIN GROUP (ORDER BY ...)}'' clause or PostgreSQL's
 ``\sql{AGG(... ORDER BY ...)}'' do; the order is irrelevant for
 commutative aggregates.
+\smallskip
 \begin{description}
   \item[syntax] for $k\in\mathbb N$, $q\in\RA_k$, distinct grouping
     indices $(i_j)_{1\leq j\leq m}$ with $1\leq i_j\leq k$, terms
@@ -505,19 +504,20 @@ i.e., \sql{HAVING} conditions, assigning them a $\mathbb K$-annotation
 instead of filtering on them. A predicate $\phi$ of the algebra above is
 exactly a $\psi$ with no aggregate comparison; the extension is
 conservative, such that, on those, the two definitions coincide.
-We use three classes of queries throughout: an \emph{aggregate-free
-query} uses no grouping and aggregation; an \emph{aggregate query} may
+We use three classes of queries throughout. An \emph{aggregate-free
+query} uses no grouping and aggregation. An \emph{aggregate query} may
 use it, but only as its last operator (\emph{terminal aggregation}),
-which is the case covered by \cite{sen2026provsql}; and a
+which is the case covered by \cite{sen2026provsql};
+terminal
+aggregation excludes any selection, join or further grouping on an
+aggregate value, and in particular \sql{HAVING}, an ordinary part of SQL
+(two of the 22 TPC-H queries~\cite{tpch}, Q11 and Q18, use it).
+A
 \emph{\sql{HAVING} query} may in addition apply a selection to aggregate
 expressions (\sql{HAVING} conditions), comparing terms over the
 aggregate values of a group with constants, with the group key, or with
-each other, wherever in the query the comparison occurs. Terminal
-aggregation excludes any selection, join or further grouping on an
-aggregate value, and in particular \sql{HAVING}, an ordinary part of SQL
-(two of the 22 TPC-H queries, Q11 and Q18, use it) and the only natural
-way to express the queries of our experiments
-(Section~\ref{sec:implementation_experiments}). Giving a provenance
+each other.
+Giving a provenance
 semantics to \sql{HAVING} queries is the object of this paper.
 
 

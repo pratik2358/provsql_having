@@ -208,7 +208,7 @@ Write
   T\defeq \mathrm{agg}_{t,f_\Sigma}([|U|])=\sum_{r=1}^{|U|} t(u_r).
 \]
 
-\smallskip\noindent\textbf{Case $\op$ is $\neq$.}
+\inlinepar{Case $\op$ is $\neq$.}
 If $\op$ is $\neq$, the algorithm returns
 \[
 \textsc{ValidSum}(U,t,C,<, \preceq)\cup\textsc{ValidSum}(U,t,C,>, \preceq).
@@ -228,7 +228,7 @@ Hence the theorem holds when $\op$ is $\neq$.
 \smallskip\noindent
 The remainder of the proof establishes correctness for $\op\in\{=,>,<,\ge,\le\}$.
 
-\smallskip\noindent\textbf{Early-return cases.}
+\inlinepar{Early-return cases.}
 The algorithm returns $\emptyset$ in the following scenarios:
 \begin{itemize}
 \item if $\op$ is $=$ and $C>T$;
@@ -254,7 +254,7 @@ If $\op$ is $<$ and $C=0$, since all values $t(u_r)$ lie in $\NN$, every world h
 
 Therefore, in each early-return case, the algorithm correctly outputs $\emptyset$.
 
-\smallskip\noindent\textbf{DP invariant.}
+\inlinepar{DP invariant.}
 We can safely assume from now on that none of the early-return cases occur.
 For $0\le i\le |U|$, $j\ge 0$, define
 \[
@@ -389,7 +389,7 @@ dp[j]
 \{\,W\subseteq [|U|]\mid \sum_{r\in W}t(u_r)=j\,\}.
 \]
 
-\smallskip\noindent\textbf{Selecting satisfying worlds.}
+\inlinepar{Selecting satisfying worlds.}
 The algorithm forms $\mathcal W$ as a union of those $dp[j]$ whose index $j$ satisfies the comparison with $C$:
 \begin{itemize}
 \item if $\op$ is $=$, it takes $dp[C]$;
@@ -418,7 +418,7 @@ This establishes the correctness.
 \paragraph*{Correctness of \textsc{ValidCount}}
 The computation for \sql{COUNT} depends only on the occurrences in $U$.
 
-\smallskip\noindent\textbf{Correctness of \textsc{Combinations}.}
+\inlinepar{Correctness of \textsc{Combinations}.}
 For integers $i$ and $x$, and for a $W\subseteq [|U|]$, consider a call
 \[
 \textsc{Combinations}(i,x,W).
@@ -478,7 +478,7 @@ By the I.H, the first recursive call appends exactly the worlds of the first kin
 
 This proves the claim.
 
-\smallskip\noindent\textbf{Correctness of \textsc{AddExact}.}
+\inlinepar{Correctness of \textsc{AddExact}.}
 Consider a call \textsc{AddExact}$(x)$.
 
 If $x\le 0$, the procedure returns immediately. This is correct because the output requires $W\neq\emptyset$, so no world of size $0$ should be output, and no world has negative cardinality.
@@ -497,7 +497,7 @@ By the claim proved above, this appends exactly all sets
 \]
 Hence \textsc{AddExact}$(x)$ appends exactly the non-empty worlds of cardinality $x$.
 
-\smallskip\noindent\textbf{Selecting satisfying worlds.}
+\inlinepar{Selecting satisfying worlds.}
 We now inspect the final case distinction on $\op$.
 
 \begin{itemize}
@@ -575,7 +575,7 @@ For each case below, we show that the provenance for $\vec v$ can be computed in
 We recall that the provenance of the \sql{HAVING} condition (equiv.\ selection predicates with aggregate comparisons) at group key $\vec v$ is obtained by enumerating the valid non-empty worlds
 and then forming the corresponding semiring sum of the $\mathbb K$-annotations associated with these worlds using the possible-world semantics. Thus it suffices to show that, in each of the stated cases, the relevant list of worlds can be computed in polynomial time.
 
-\smallskip\noindent\textbf{Case 1: $\text{\sql{MIN(a)}}\op c$, $\text{\sql{MAX(a)}}\op c$, and $\text{\fakesql{PICKFIRST}\texttt{(a)}}\op c$.}
+\inlinepar{Case 1: $\text{\sql{MIN(a)}}\op c$, $\text{\sql{MAX(a)}}\op c$, and $\text{\fakesql{PICKFIRST}\texttt{(a)}}\op c$.}
 Write $\alpha_i$ and $a_i$ for the annotation and the value of
 attribute~\texttt{a} of the $i$-th occurrence of~$U$, occurrences being
 indexed in the order~$\preceq$, and
@@ -614,7 +614,7 @@ the expanded form $T_U(W)$ of Section~\ref{sec:results}
 \lean{HavingSemantics}{Having.worldAnn_eq_T}, on which the closed forms
 are established.
 
-\smallskip\noindent\textbf{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
+\inlinepar{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}
 (Theorem~\ref{thm:algorithms-correct}), the valid worlds are exactly the non-empty worlds
 $W\sqsubseteq U$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
@@ -626,7 +626,7 @@ $W\sqsubseteq U$ such that $|W|\ge k\text{ or }|W|>k$, respectively.
 Since $k$ is fixed, the number of such worlds is $\binom{|U|}{k}\text{ or }\binom{|U|}{k+1}$,
 which is polynomial in $|U|$. Therefore the provenance can be computed in polynomial time.
 
-\smallskip\noindent\textbf{Case 3: \sql{SUM(a) >= c} and \sql{SUM(a) > c} with $c\ge 0$, in absorptive m-semirings.}
+\inlinepar{Case 3: \sql{SUM(a) >= c} and \sql{SUM(a) > c} with $c\ge 0$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:sum_dp}
 (Theorem~\ref{thm:algorithms-correct}), the valid worlds are exactly the non-empty worlds
 $W\sqsubseteq U$ such that $\sum_{r\in W} t(u_r)\ge c$ (resp.\ $>c$).
@@ -641,7 +641,7 @@ $\sum_{i\le k+1}\binom{|U|}{i}$ in the second; both bounds are polynomial
 in $|U|$ for fixed~$k$, so the provenance can be computed in polynomial
 time.
 
-\smallskip\noindent\textbf{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
+\inlinepar{Case 4: \sql{COUNT(*) = k}, \sql{COUNT(*) <= k}, and \sql{COUNT(*) < k} for fixed $k$, in arbitrary m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
 \begin{itemize}
 \item the worlds of size exactly $k$ for \sql{COUNT(*) = k};
@@ -651,7 +651,7 @@ By correctness of Algorithm~\ref{alg:count_enum}, the valid worlds are exactly:
 Since $k$ is fixed, the number of such worlds is bounded by
   $\binom{|U|}{k},\, \sum_{i=1}^{k}\binom{|U|}{i},\text{ and } \sum_{i=1}^{k-1}\binom{|U|}{i}$, respectively \lean{Having}{Having.card_powerset_filter_card_le}. Each of these bounds is polynomial in $|U|$. Therefore the provenance can be computed in polynomial time in arbitrary m-semirings.
 
-\smallskip\noindent\textbf{Case 5: \sql{SUM(a) = }$c$, \sql{SUM(a) <= }$c$, and \sql{SUM(a) < }$c$ with all values nonzero and $\frac ca\le k$, in arbitrary m-semirings.}
+\inlinepar{Case 5: \sql{SUM(a) = }$c$, \sql{SUM(a) <= }$c$, and \sql{SUM(a) < }$c$ with all values nonzero and $\frac ca\le k$, in arbitrary m-semirings.}
 By correctness of Algorithm~\ref{alg:sum_dp}
 (Theorem~\ref{thm:algorithms-correct}), the valid worlds are exactly the
 non-empty worlds $W\sqsubseteq U$ whose sum is equal to, at most, or less
@@ -729,7 +729,7 @@ $X_i\defeq[(u_i,\alpha_i)\text{ present in the world}]$, which form a
 family of \emph{independent} Bernoullis with $\Pr[X_i=1]=p_i$.
 We exhibit the three procedures.
 
-\smallskip\noindent\textbf{(1) \sql{COUNT(*)}\,$\op\,C$.}
+\inlinepar{(1) \sql{COUNT(*)}\,$\op\,C$.}
 The aggregate value on a world $W$ is $|W|=\sum_{i=1}^N X_i$, a
 Poisson-binomial variable $B$.  For each $\op$, the satisfaction set
 $\{j\in\{0,\dots,N\}\mid j\op C\}$ is an interval (possibly truncated
@@ -755,7 +755,7 @@ by-product (linear time) and subtracted in the branches whose
 satisfaction interval contains $0$ (i.e., $\le$, $<$, $\neq$, and $\ge$
 with $C\le0$).
 
-\smallskip\noindent\textbf{(2) \sql{SUM}$(t)\,\op\,C$ with integer
+\inlinepar{(2) \sql{SUM}$(t)\,\op\,C$ with integer
 weights.}
 The aggregate value on a world $W$ is
 $\Sigma\defeq\sum_{i:X_i=1}t(u_i)$, a weighted Poisson-binomial
@@ -774,7 +774,7 @@ $\sigma_N(\cdot)$ on $[0,\min(C,S)]$ takes $O(N\cdot\min(C,S))$ time and
 gives every $\Pr[\Sigma\op C]$ by a single summation; the empty-world
 adjustment is the same $\prod_i(1-p_i)$ as before.
 
-\smallskip\noindent\textbf{(3) \sql{MIN}$(t)\,\op\,C$ and
+\inlinepar{(3) \sql{MIN}$(t)\,\op\,C$ and
 \sql{MAX}$(t)\,\op\,C$.}
 Independence makes the events
 ``$\max_{i:X_i=1}t(u_i)\le C$''

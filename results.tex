@@ -843,7 +843,9 @@ The $\ge$ case of (i) is the identity $F_C(U)=S_C(U)$
 recurrence $X_C(U)=X_C(U')\oplus\bigl(X_{C-1}(U')\otimes\alpha_u\bigr)$ for
 $u\in U$ and $U'\defeq U\setminus\{u\}$ (proved in the appendix, the
 recurrence for $F_C$ relying on the expansion
-$A_V\le\bigoplus_{V\subseteq W\subseteq U}T_U(W)$ for $V\subseteq U$),
+$A_V\le\bigoplus_{V\subseteq W\subseteq U}T_U(W)$ for $V\subseteq U$,
+both obtained from the elementary monus inequalities of
+Lemma~\ref{lem:monus-basic}(i)--(ii)),
 and the recurrences bottom out at
 $S_0(U')=\mathbb 1$ and $F_0(U')=\mathbb 1$, the latter being the only step
 that needs absorptivity rather than the idempotence it implies
@@ -854,7 +856,9 @@ $\bigoplus_{1\le|W|\le C}T_U(W)=S_1(U)\ominus S_{C+1}(U)$
 \lean{Having}{Having.atMost_eq_S_monus_S}: one inequality follows from the
 per-world bound $T_U(W)\le S_j(U)\ominus S_{C+1}(U)$ for $j\le|W|\le C$
 (proved in the appendix), the other from the right-distributivity of
-$\ominus$ over $\oplus$ (Corollary~\ref{lem:finite-add-monus}) and the
+$\ominus$ over $\oplus$, which idempotence grants
+(Proposition~\ref{prop:idempotent_iff_add_monus}, in $n$-ary form
+Corollary~\ref{lem:finite-add-monus}), and the
 antitonicity of $\ominus$ (Lemma~\ref{lem:monus-basic}(iii)). The key $a$
 being arbitrary, this proves~(i). For~(ii) we exhibit a counterexample in
 a five-element absorptive chain in which $\otimes$ does not distribute
@@ -865,7 +869,7 @@ and for~(iii) one in the tropical semiring over~$\mathbb Z\cup\{\infty\}$
 \end{proofsketch}
 
 
-\textbf{Specialization, probabilistic evaluation, and complexity.}
+\inlinepar{Specialization, probabilistic evaluation, and complexity.}
 Much of the practical value of semiring provenance comes from the fact
 that provenance computed once in a sufficiently general semiring can be
 specialized to any other one by applying a homomorphism, instead of

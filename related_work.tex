@@ -1,7 +1,7 @@
 \section{Related Work}
 \label{sec:related_work}
 
-\textbf{Aggregation in the provenance semiring framework.}
+\inlinepar{Aggregation in the provenance semiring framework.}
 Our approach builds on~\cite{amsterdamer2011provenance}, in which
 \sql{HAVING} conditions become formal comparison expressions between
 elements of a provenance semimodule; \cite{amsterdamer2011provenance}
@@ -12,7 +12,7 @@ stores the expressions as strings. The present work starts where these
 two end, by giving the expressions a value in every commutative
 m-semiring.
 
-\textbf{Negation in the provenance semiring framework.}
+\inlinepar{Negation in the provenance semiring framework.}
 Since provenance semirings \cite{green2007provenance,green2017provenance}
 do not support non-monotone queries, \cite{geerts2010database} extended
 them with a monus, yielding m-semirings. Some m-semirings lack axioms one
@@ -26,7 +26,7 @@ semirings of polynomials with dual
 indeterminates~\cite{gradel2025provenance} are an alternative, less
 amenable to implementation.
 
-\textbf{Provenance systems.}
+\inlinepar{Provenance systems.}
 ProvSQL~\cite{sen2026provsql}, the system we extend, rewrites queries
 over provenance-tracked relations and stores annotations as a circuit;
 its aggregation follows~\cite{amsterdamer2011provenance}, recording
@@ -39,7 +39,7 @@ and treats \sql{HAVING} as a plain selection, so that it does not record
 how the provenance depends on the comparison, which precludes its use as
 a probabilistic database.
 
-\textbf{Aggregation in probabilistic databases.}
+\inlinepar{Aggregation in probabilistic databases.}
 \cite{re2009trichotomy} characterizes which aggregate conjunctive queries
 with a single \sql{HAVING} atom can be evaluated or approximated in
 polynomial time over probabilistic databases, by the shape of the query;
@@ -68,7 +68,7 @@ on aggregates through grounding and weighted model counting, but no other
 (m-)semiring, and does not scale to databases of realistic
 sizes~\cite{sen2026provsql}.
 
-\textbf{Aggregation over compact representations.}
+\inlinepar{Aggregation over compact representations.}
 \cite{bakibayev2013aggregation} adds aggregation and \sql{HAVING} to a
 factorized database engine, without provenance and in a deterministic
 setting; whether factorized representations could compress the possible

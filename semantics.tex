@@ -202,7 +202,7 @@ the aggregation monoid~$M$ (e.g., for $\mathbb N$ and \sql{COUNT}), and
 remains a symbol otherwise, in particular in $\mathbb B[X]$.
 \end{example}
 
-\textbf{Boolean combinations.}
+\inlinepar{Boolean combinations.}
 \sql{COUNT(*) >= 2 AND SUM(a) < 10} is a \sql{HAVING} clause too; its
 connectives are interpreted by the operations used for join, union and
 difference, which in $\mathbb B[X]$ are conjunction, disjunction and
@@ -220,7 +220,7 @@ De Morgan duality, and on an atomic comparison
 $\neg(t\op t')\defeq(t\,\overline{\op}\,t')$, where $\overline{\op}$
 is the complementary operator ($\overline{\le}$ is~$>$).
 
-\textbf{Selections not immediately following aggregation.}
+\inlinepar{Selections not immediately following aggregation.}
 Definition~\ref{def:semantics} covers a comparison applied directly to a
 grouping, which is the typical \sql{HAVING}. More generally, a non-regular
 aggregate value produced by some $\gamma^{\preceq}$ may be carried, as an
@@ -377,7 +377,7 @@ are the primitives that the evaluation of the circuit, and hence
 Section~\ref{sec:algorithms}, has to implement.
 \end{toappendix}
 
-\textbf{Limitations.} Grouping and ordering only make sense for
+\inlinepar{Limitations.} Grouping and ordering only make sense for
 regular values from $\mathcal{V}$, not for aggregate values; queries
 aggregating or grouping over aggregate values are thus rejected.
 Extending the semantics to support such queries is non-trivial,

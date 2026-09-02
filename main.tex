@@ -76,12 +76,14 @@ processing}
 \newcommand{\op}{\mathrel{\uptheta}}
 
 \renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\phi}{\varphi}
 \renewcommand{\le}{\leqslant}
 \renewcommand{\ge}{\geqslant}
 \renewcommand{\leq}{\leqslant}
 \renewcommand{\geq}{\geqslant}
 
 \newcommand\complexity[1]{\textsf{\upshape #1}}
+\newcommand{\inlinepar}[1]{\smallskip\noindent\textbf{#1}}
 
 \newcommand\leanmain{\href{https://anonymousprovenance.github.io/Provenance.html}{\fbox{\includegraphics[height=.6em]{lean}}}}
 %\newcommand\leanmain{\href{https://provsql.org/lean-docs/Provenance.html}{\fbox{\includegraphics[height=.6em]{lean}}}}
@@ -119,6 +121,9 @@ processing}
 \pgphstyle{proposition}{shape=box,style="rounded,filled",fillcolor=lightblue}
 \pgphstyle{corollary}{shape=box,style="rounded,filled",fillcolor=palegoldenrod}
 \pgphstyle{lemma}{shape=ellipse,style=filled,fillcolor=lightgray}
+% prop:idempotent_iff_add_monus is cited only in the proof sketch of
+% th:correctness; the full proof uses it only through lem:finite-add-monus
+\proofgraphignore{th:correctness}{prop:idempotent_iff_add_monus}
 
 
 \makeatletter
