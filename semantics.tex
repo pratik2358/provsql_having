@@ -31,9 +31,9 @@ are \emph{commutative}: their value is unchanged under any reordering of
 the input sequence. For instance, the \sql{SUM} aggregate is
 $f_\Sigma\bigl((x_1,\dots,x_n)\bigr)\defeq x_1+\dots+x_n$.
 By contrast, the \fakesql{PICKFIRST} aggregate
-$\fakesql{PICKFIRST}\bigl((x_1,\dots,x_n)\bigr)\defeq x_1$, which returns
+$\fakesql{PICKFIRST}\bigl((x_1,\dots,x_n)\bigr)\defeq x_1$, returning
 the first value of its input, is \emph{non-commutative}: its result
-depends on the order of the sequence.
+depends on the order.
 \end{example}
 
 A \sql{HAVING} predicate cannot be evaluated on the annotations of a
@@ -84,7 +84,7 @@ Moreover, given a term $t$ and an aggregate function $f$, the
 \(
 \mathrm{agg}_{t,f}(W)\defeq f\bigl((t(u))_{(u,\alpha)\in W}\bigr),
 \)
-i.e., $f$ applied to the sequence of $t$-values of the tuples of~$W$.
+i.e., $f$ applied to the sequence of $t$-values of~$W$.
 \end{definition}
 
 We now give the semantics of \emph{selection} over comparison predicates.
@@ -182,10 +182,8 @@ $\mathbb 1\ominus(\cdot)$ over the discarded ones:
 \end{array}
 \]
 Their $\oplus$-sum is
-\[
-\predsem{\hat I}{q}{\psi}(u)=
-(x_1\land x_2)\lor(x_1\land x_3)\lor(x_2\land x_3),
-\]
+$\predsem{\hat I}{q}{\psi}(u)=
+(x_1\land x_2)\lor(x_1\land x_3)\lor(x_2\land x_3)$,
 the Boolean function ``at least two of $x_1,x_2,x_3$ hold'', as one would
 expect of $\text{\sql{COUNT(*)}}\ge 2$. Notice that the negative factors
 $\lnot x_i$ have cancelled out: since $\mathbb B[X]$ is absorptive, the
@@ -220,8 +218,7 @@ $\psi_1,\psi_2$ and $u\in\mathcal V_{\mathbb K}^k$,
 Negation is pushed to the atoms: $\neg$ traverses $\land$ and $\lor$ by
 De Morgan duality, and on an atomic comparison
 $\neg(t\op t')\defeq(t\,\overline{\op}\,t')$, where $\overline{\op}$
-is the negated comparison operator (e.g., $\overline{\le}$
-is~$>$).
+is the complementary operator ($\overline{\le}$ is~$>$).
 
 \textbf{Selections not immediately following aggregation.}
 Definition~\ref{def:semantics} covers a comparison applied directly to a

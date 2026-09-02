@@ -19,8 +19,8 @@ grouping columns are handled identically.
 \begin{theoremrep}\label{th:correctness}
   Let $q$ be an aggregate-free query of arity~$2$ whose second column is
   an \emph{occurrence identifier}: the tuples of $\angsem{\hat I}{q}$ are
-  pairwise distinct (as is the case, e.g., when a key attribute of a base
-  relation is carried along). For $C\in\mathbb{N}_{\ge1}$ and $\op\in \{\leq,
+  pairwise distinct (e.g., a key attribute of a base relation carried
+  along). For $C\in\mathbb{N}_{\ge1}$ and $\op\in \{\leq,
   =,\geq\}$ consider the queries:
 \begin{align*}
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))
@@ -1157,8 +1157,8 @@ already in \emph{data} complexity, i.e., for a single fixed query.
   Boolean \sql{HAVING} query~$q$ such that deciding, given as sole input a
   $\mathbb{K}$-instance~$\hat I$ whose tuples are annotated by distinct
   variables, whether the provenance of~$q$ over~$\hat I$ is
-  non-$\mathbb{0}_\mathbb{K}$, is NP-complete. Moreover, for every fixed
-  \sql{HAVING} query, deciding whether its provenance over an arbitrary
+  non-$\mathbb{0}_\mathbb{K}$, is NP-complete. Moreover, deciding whether
+  the provenance of a fixed \sql{HAVING} query over a
   $\mathbb B[X]$-instance is non-$\mathbb 0$ is in NP.
 \end{propositionrep}
 

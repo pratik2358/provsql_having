@@ -8,10 +8,14 @@ In this section we describe specialized procedures for evaluating the valid poss
 % Under this invariant, the multiset of group member occurrences can be treated as a finite \emph{set}, and possible worlds are then ordinary subsets.
 % This does not change our semantics: multiset properties are preserved because distinct occurrences may still yield equal values $t(u)$, so the induced aggregate input $\vals_t(W)=\mset{t(u)\mid (u,\alpha)\in W}$ remains a multiset of values.
 
-All our algorithms are applied \emph{per group key} $\vec v$ and operate on the set of group-member occurrences~$U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ of the \emph{pre-aggregation} sub-query $q'$.
-We represent these group-member occurrences as an $\preceq$-ordered sequence as in Definition~\ref{def:possible_world}.
-By Definition~\ref{def:possible_world}, a possible world is a subsequence $W\sqsubseteq U$; since the order $\preceq$ is fixed, we identify each $W\sqsubseteq U$ with its set of positions in the sequence, an index set $W\subseteq [|U|]$, which is the representation the algorithms manipulate.
-Any term $t$ handled by these procedures is evaluated on tuples produced by~$q'$, and its max-index is bounded by the arity of $q'$ (denoted by $k$ in the algorithms for readability).
+All our algorithms are applied \emph{per group key} $\vec v$, on the
+$\preceq$-ordered sequence of group-member
+occurrences~$U\defeq\nobreak U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$ of the
+\emph{pre-aggregation} sub-query $q'$
+(Definition~\ref{def:possible_world}); the order being fixed, we
+identify a possible world $W\sqsubseteq U$ with its set of positions, an
+index set $W\subseteq [|U|]$. Terms are evaluated on tuples produced
+by~$q'$, whose arity is denoted~$k$.
 
 We first provide a dynamic programming algorithm for \sql{SUM} comparisons that incrementally constructs all possible worlds producing the desired sum, named \textsc{ValidSum}.
 It processes each tuple iteratively and maintains, for every possible value of the sum, the collection of worlds that realize it.

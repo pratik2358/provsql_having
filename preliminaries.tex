@@ -26,9 +26,8 @@ from~\cite{sen2026provsql} are recalled in the appendix.
   the Why-provenance semiring over some set of variables $X$:
       $(2^{2^X},\cup,\Cup,\emptyset,\{\emptyset\})$ where $\Cup$ is defined as follows: $A\Cup B \defeq \{a\cup b \mid a\in A, b\in B\}$;
   the Boolean-function semiring $\mathbb B[X]$ over a set of variables $X$
-  \cite{green2007provenance,senellart2017provenance}:
-  the set of Boolean functions over $X$ (equivalently, propositional
-  formulas over $X$ up to logical equivalence) with
+  \cite{green2007provenance,senellart2017provenance}: Boolean functions
+  over $X$ (propositional formulas up to logical equivalence) with
   $(\lor,\land,\bot,\top)$.
 \end{example}
 
@@ -43,8 +42,7 @@ relation,\footnote{$\leq$ is always a
 pre-order, but not always antisymmetric: on the ring $\mathbb Z$ of
 integers, any two elements are related in both directions, e.g.,
 $0\le 1\le 0$ with $0\neq 1$
-\lean{SemiringWithMonus}{natural_preorder_not_antisymm}. Consequently,
-not all semirings are naturally ordered.}
+\lean{SemiringWithMonus}{natural_preorder_not_antisymm}.}
 it is called
 the \emph{natural order} of the semiring, and the semiring is said to be
 \emph{naturally ordered}.
@@ -352,7 +350,6 @@ characterization of $\ominus$ in m-semirings.
 \end{appendixproof}
 
 \textbf{Annotated relations and semantics.}
-
 We use the notion of annotated relations initially introduced in
 \cite{green2007provenance}, relying on the setting (in particular where
 relations are multisets of tuples) and definitions introduced in detail in
@@ -426,13 +423,14 @@ commutative aggregates.
     $(u_{i_1},\dots,u_{i_m})=\vec v$, taken with their multiplicity and
     ordered by~$\preceq$ on~$u$ (occurrences of equal tuples in an
     arbitrary order; the grouping indices are those of the operator). Then
-    \begin{align*}
-      &\angsem{\hat I}{\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)}\defeq\\
-      &\quad\Bigl\{\,\bigl(\vec v,\lAngle f_1,t_1,U\rAngle,\dots,
+    $\angsem{\hat I}{\gamma^{\preceq}_{i_1,\dots,i_m}[t_1{:}f_1,\dots,t_n{:}f_n](q)}$
+    is defined as
+    \[
+      \Bigl\{\,\bigl(\vec v,\lAngle f_1,t_1,U\rAngle,\dots,
       \lAngle f_n,t_n,U\rAngle,\delta(\beta)\bigr)\ \Big|\
       (\vec v,\beta)\in\angsem{\hat
       I}{\epsilon(\Pi_{\#i_1,\dots,\#i_m}(q))}\,\Bigr\}
-    \end{align*}
+    \]
     where the \emph{aggregate value} $\lAngle f_l,t_l,U\rAngle$ is a
     formal object recording the aggregate function $f_l$ together with
     the annotated sequence $\bigl((t_l(u),\alpha)\bigr)_{(u,\alpha)\in U}$
