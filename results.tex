@@ -13,7 +13,7 @@ of Section~\ref{sec:preliminaries}
 \cite{green2007provenance,geerts2010database,sen2026provsql}, and it is
 how \cite{yunus2025using} had to express such queries. We show that our
 semantics agrees with it exactly when the m-semiring is absorptive and
-$\otimes$ distributes over $\ominus$. We state the result for a single
+$\otimes$ distributes over~$\ominus$. We state the result for a single
 grouping column and an occurrence identifier as second column; several
 grouping columns are handled identically.
 \begin{toappendix}
@@ -409,10 +409,10 @@ which dominates $S_{C+1}(U)$.
 \begin{align*}
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))
     & Q^{\leq C}_2&= Q^{\geq 1}_2 - Q^{\geq (C+1)}_2\\
-    Q^{\geq C}_2&=\varepsilon\bigl(\Pi_{\#1}(q\bowtie_{\theta_1}q\bowtie_{\theta_2}\cdots\bowtie_{\theta_{C-1}}q)\bigr)
+    Q^{\geq C}_2&=\varepsilon\bigl(\Pi_{\#1}(q\bowtie_{\phi_1}q\bowtie_{\phi_2}\cdots\bowtie_{\phi_{C-1}}q)\bigr)
     & Q^{=C}_2&=Q^{\geq C}_2 - Q^{\geq (C+1)}_2
 \end{align*}
-where $\varepsilon$ denotes duplicate elimination, $\theta_i$ is the join
+where $\varepsilon$ denotes duplicate elimination, $\phi_i$ is the join
 condition $\#1=\#(2i+1)\land\#(2i)<\#(2i+2)$, and the chain is empty for
 $C=1$, so that $Q^{\geq 1}_2=\varepsilon(\Pi_{\#1}(q))$; the chain of
 strict comparisons on the identifier column selects each $C$-element set
@@ -825,7 +825,7 @@ semantics for the \sql{HAVING} clause.
 
 \begin{proofsketch}
 Fix a group key $a$ and let $U$ be the sequence of occurrences of its
-group in $\angsem{\hat I}{q}$; the order of $U$ plays no role here, so we
+group in~$\angsem{\hat I}{q}$; the order of $U$ plays no role here, so we
 regard $U$ as a finite \emph{set} and its worlds as subsets $W\subseteq U$,
 writing $A_W\defeq\bigotimes_{w\in W}\alpha_w$ for the product of their
 annotations. Three quantities are compared:
