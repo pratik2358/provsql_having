@@ -990,7 +990,9 @@ is dropped:
       \lean{HavingJoinCompositional}{countHaving_site_rewrite_monotone}
       In the setting of Theorem~\ref{th:correctness},
       $\angsem{\hat I}{Q^{\geq C}_1}=\angsem{\hat I}{Q^{\geq C}_2}$.
-    \item More generally, let $q$ be an aggregate-free query with a
+    \item
+      \lean{HavingMonotone}{MonoCond.site_rewrite}
+      More generally, let $q$ be an aggregate-free query with a
       group-key column $\#1$ and an occurrence-identifier column, let
       $\gamma^{\preceq}_{\#1}[\dots](q)$ compute the aggregates
       mentioned by a monotone condition $\psi$ over the atoms
@@ -1001,7 +1003,8 @@ is dropped:
       as $Q^{\geq C}_2$ of Theorem~\ref{th:correctness}, an atom on
       \sql{MIN} or \sql{MAX} as
       $\varepsilon(\Pi_{\#1}(\sigma_{t\op c}(q)))$, a conjunction as
-      the join of the two rewritings on the group key, and a
+      the join of the two rewritings on the group key, projected back
+      to it and duplicate-eliminated, and a
       disjunction as their set union. Then
       $\angsem{\hat
       I}{\Pi_{\#1}(\sigma_\psi(\gamma^{\preceq}_{\#1}[\dots](q)))}
@@ -1032,7 +1035,10 @@ is dropped:
   merges the copies of the key by~$\oplus$, giving $S_C(U)$ as well;
   this computation uses no hypothesis on the m-semiring.
 
-  (ii) For an atom $\text{\sql{MIN}}(t)\leq c$ (the other \sql{MIN}
+  (ii)
+  \lean{Having}{Having.sum_ann_meet}
+  \lean{HavingSemantics}{Having.havingProv_existential}
+  For an atom $\text{\sql{MIN}}(t)\leq c$ (the other \sql{MIN}
   and \sql{MAX} atoms are identical, and \sql{COUNT(*)} atoms are
   part~(i), with $>C$ being $\geq C+1$), the valid worlds are the
   non-empty $W$ meeting the set
@@ -1048,7 +1054,12 @@ is dropped:
   predicate provenances, which is precisely what joining the two
   rewritings on the group key, respectively taking their set union,
   computes on the annotation of each key; the claim follows by
-  induction on~$\psi$.
+  induction on~$\psi$. As for Theorem~\ref{th:correctness}, the Lean
+  statement pads the rewriting with a $\mathbb 0$-annotated row per
+  failing group key, matching the convention that
+  $\mathbb 0$-annotated tuples are absent; it fixes a three-column
+  base query (group key, aggregated value, occurrence identifier), as
+  Theorem~\ref{th:correctness} fixes a two-column one.
 \end{proof}
 
 Three remarks are in order. First, the equality of
