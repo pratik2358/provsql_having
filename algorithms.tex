@@ -42,7 +42,7 @@ When a side of the comparison mentions several aggregates of the group, as in \s
 
   \nlset{}\textbf{\textsc{ValidSum}}:\;
 
-  \Input{a finite set of group-member occurrences $U \defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, an arbitrary ordering $\preceq$ of $U$, a term $t$ of max-index $\le k$ such that $t(u)\in\NN$ for every $(u,\alpha)\in U$, a constant $C\in\NN$, and an operator $\op\in\{=,>,<,\ge,\le,\neq\}$}
+  \Input{a finite set of group-member occurrences $U \defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, an arbitrary ordering $\preceq$ of $U$, a term $t$ of max-index $\le k$ such that $t(u)\in\NN$ for every $(u,\alpha)\in U$, a constant $C\in\NN$, and an operator ${\op}\in\{=,>,<,\ge,\le,\neq\}$}
   \Output{$\mathcal W =\{\,W\sqsubseteq U\mid W\neq\emptyset,\mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}$}
   \BlankLine
   \Fn{\textsc{ValidSum}$(U,t,C,\op, \preceq)$}{
@@ -55,7 +55,7 @@ When a side of the comparison mentions several aggregates of the group, as in \s
   \If{($\op$ is $=$ \textbf{and} $C > T$) \textbf{or} ($\op$ is $>$ \textbf{and} $C \ge T$) \textbf{or} ($\op$ is $\ge$ \textbf{and} $C > T$) \textbf{or} ($\op$ is $<$ \textbf{and} $C = 0$)}{
     \Return $\emptyset$\;
   }
-  \If{$\op\in\{>,\ge\}$}{
+  \If{${\op}\in\{>,\ge\}$}{
     $J \gets T$\;
   }
   \ElseIf{$\op$ is $<$}{
@@ -127,7 +127,7 @@ $\oplus$-sum of $\ann_U(W)$ over the returned worlds.
 
   \nlset{}\textbf{\textsc{ValidCount}:}\;
 
-  \Input{a finite set of group-member occurrences $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, a constant $C\in\NN$, and an operator $\op\in \{=,\neq,>,<,\ge,\le\} $}
+  \Input{a finite set of group-member occurrences $U\defeq U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, a constant $C\in\NN$, and an operator ${\op}\in \{=,\neq,>,<,\ge,\le\} $}
   \Output{$\mathcal W =\{\,W\sqsubseteq U\mid W\neq\emptyset,|W|\op C\,\}$}
     \BlankLine
   $\mathcal W \gets \emptyset$\;
@@ -191,7 +191,7 @@ $\oplus$-sum of $\ann_U(W)$ over the returned worlds.
 Let $q'$ be an aggregate-free query of arity~$k$, $\hat I$ a
 $\mathbb K$-instance, $\vec v$ a group key, $\preceq$ an ordering,
 $U\defeq\nobreak U^{\preceq}_{\angsem{\hat I}{q'},\vec v}$, $C\in\NN$ and
-$\op\in\{=,>,<,\ge,\le,\neq\}$. Then, on input $(U,C,\op)$ and
+${\op}\in\{=,>,<,\ge,\le,\neq\}$. Then, on input $(U,C,\op)$ and
 $(U,t,C,\op,\preceq)$ respectively, \textsc{ValidCount} and
 \textsc{ValidSum} output the set
 $\{\,W\sqsubseteq U\mid W\neq\emptyset,\ \mathrm{agg}_{t,f_\Sigma}(W)\op C\,\}$
@@ -213,7 +213,7 @@ If $\op$ is $\neq$, the algorithm returns
 \[
 \textsc{ValidSum}(U,t,C,<, \preceq)\cup\textsc{ValidSum}(U,t,C,>, \preceq).
 \]
-By the correctness proved below for $\op\in\{<,>\}$, this equals
+By the correctness proved below for ${\op}\in\{<,>\}$, this equals
 \[
   \{\,W\subseteq [|U|]\mid W\neq\emptyset,\sum_{r\in W}t(u_r)<C\,\}
 \cup
@@ -226,7 +226,7 @@ Since for every integer $x$ one has $x\neq C$ iff $x<C$ or $x>C$, the latter uni
 Hence the theorem holds when $\op$ is $\neq$.
 
 \smallskip\noindent
-The remainder of the proof establishes correctness for $\op\in\{=,>,<,\ge,\le\}$.
+The remainder of the proof establishes correctness for ${\op}\in\{=,>,<,\ge,\le\}$.
 
 \inlinepar{Early-return cases.}
 The algorithm returns $\emptyset$ in the following scenarios:
@@ -553,7 +553,7 @@ We identify certain aggregate-comparison predicates for which the valid worlds c
     $\text{\sql{MAX(a)}}\op c$,
 $\text{\fakesql{PICKFIRST}\texttt{(a)}}\op c$
       with
-      $\op\in\{<,\leq,=,\geq,>,\neq\}$ in absorptive m-semirings in which
+      ${\op}\in\{<,\leq,=,\geq,>,\neq\}$ in absorptive m-semirings in which
       $\otimes$ distributes over $\ominus$;
     \item \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for $k$ a fixed constant, in absorptive
       m-semirings;

@@ -404,7 +404,7 @@ which dominates $S_{C+1}(U)$.
   Let $q$ be an aggregate-free query of arity~$2$ whose second column is
   an \emph{occurrence identifier}: the tuples of $\angsem{\hat I}{q}$ are
   pairwise distinct (e.g., a key attribute of a base relation carried
-  along). For $C\in\mathbb{N}_{\ge1}$ and $\op\in \{\leq,
+  along). For $C\in\mathbb{N}_{\ge1}$ and ${\op}\in \{\leq,
   =,\geq\}$ consider the queries:
 \begin{align*}
     Q^{\op C}_1&=\Pi_{\#1}(\sigma_{\#2\op C}(\gamma^{\preceq}_{\#1}[1:+](q)))
@@ -693,7 +693,7 @@ $\angsem{\hat I}{Q^{\le C}_1}(a)=\angsem{\hat I}{Q^{\le C}_2}(a)$.
 \smallskip
 Since group key $(a)$ was arbitrary, we conclude
 $\angsem{\hat I}{Q^{\op C}_1}=\angsem{\hat I}{Q^{\op C}_2}$ for
-$\op\in\{\ge,=,\le\}$.
+${\op}\in\{\ge,=,\le\}$.
 \paragraph*{Proof of (ii)}
 \lean{HavingQueryCounterexamples}{HavingQueryCounterexamples.ChainFive.query_counterexample}
 To isolate distributivity we give an \emph{absorptive} counterexample.
