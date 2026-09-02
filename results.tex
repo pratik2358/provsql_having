@@ -85,7 +85,7 @@ Let $U\defeq U^{\preceq}_{\angsem{\hat I}{q},(a)}$ be the sequence of
 occurrences of the group with key~$a$ in $\angsem{\hat I}{q}$ under
 order~$\preceq$ (Definition~\ref{def:possible_world}).
 
-\paragraph{Provenance of the \sql{HAVING} query using possible-world semantics:}
+\paragraph*{Provenance of the \sql{HAVING} query using possible-world semantics:}
 For the query
 $
 Q^{\op C}_1
@@ -128,7 +128,7 @@ Since $\chi_{\op}(|W|,C)=\mathbb{1}_\mathbb{K}$ iff $|W|\op C$ is true and $\mat
 =
 \bigoplus_{\substack{W\sqsubseteq U,\\ W\neq\emptyset,\\|W|\op C}} T_{U}(W).
 \end{equation}
-\paragraph{Provenance of the \sql{JOIN} queries:}
+\paragraph*{Provenance of the \sql{JOIN} queries:}
 For every $W\sqsubseteq U $ and $C\ge 1$ we define,
 \[
 S_C(U)\defeq\bigoplus_{\substack{W\sqsubseteq U \\|W|=C}} A_W
@@ -166,7 +166,7 @@ S_C(U) \ominus S_{C+1}(U),
 S_1(U) \ominus S_{C+1}(U).
 \tag{$J_{=,\le}$}
 \]
-\paragraph{\textbf{When $\op$ is $\ge$:}}
+\paragraph*{\textbf{When $\op$ is $\ge$:}}
 From \eqref{eq:pw_tw} with $\op$ being $\ge$, we set
 $
 F_C(U)\defeq \bigoplus_{\substack{W\sqsubseteq U\\|W|\ge C}} T_{U}(W).
@@ -220,7 +220,7 @@ Thus $F_C(U)=S_C(U)$ for all $C\ge 1$. Hence by \eqref{eq:PW_ge_equals_F} and $(
 \[
 \angsem{\hat I}{Q^{\ge C}_1}(a)=\angsem{\hat I}{Q^{\ge C}_2}(a).
 \]
-\paragraph{\textbf{When $\op$ is $=$:}}
+\paragraph*{\textbf{When $\op$ is $=$:}}
 Since $\chi_{=}(n,C)$ is $\mathbb 1$ when $n=C$ and $\mathbb 0$ otherwise, the
 \sql{HAVING} side is simply the restriction of the sum to the worlds of size
 exactly~$C$:
@@ -267,7 +267,7 @@ S_C(U)\ominus S_{C+1}(U)
 This proves \eqref{eq:exactly-C}, whence
 $\angsem{\hat I}{Q^{=C}_1}(a)=\angsem{\hat I}{Q^{=C}_2}(a)$.
 
-\paragraph{\textbf{When $\op$ is $\le$:}}
+\paragraph*{\textbf{When $\op$ is $\le$:}}
 Since groups produced by $\gamma^{\preceq}_{\#1}$ are non-empty, only
 $n=|W|\ge 1$ occurs, and for such $n$ the condition $n\le C$ is equivalent to
 $n\ge 1$ and not $n\ge C+1$. As in the $=$ case, the \sql{HAVING} side is the
@@ -484,7 +484,7 @@ and for~(iii) one in the tropical semiring over~$\mathbb Z\cup\{\infty\}$
 The proof of Theorem~\ref{th:correctness} rests on the following lemmas,
 whose proofs are given here; $A_W$, $T_U(W)$, $F_C(U)$ and $S_C(U)$ are as
 in the proof of the theorem.
-\begin{lemmarep}\label{lem:upward-expansion}
+\begin{lemma}\label{lem:upward-expansion}
 \lean{Having}{Having.upward_expansion}
 Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
 commutative idempotent m-semiring,~$U$ a finite set, and
@@ -493,7 +493,7 @@ $W\subseteq U$ define~$A_W \defeq\nobreak \bigotimes_{w\in W}\alpha_w$
 and~$T_U(W) \defeq A_W \ominus \bigoplus_{w\in U\setminus W} A_{W\cup\{w\}}$.
 Then $A_V \;\le\; \bigoplus_{\substack{W:\;V\subseteq W\subseteq U}} T_U(W)$
 for every~$V\subseteq\nobreak U$.
-\end{lemmarep}
+\end{lemma}
 
 \begin{proof}
 From the properties of m-semirings $\ominus$ is the (right) residual of $\oplus$, i.e., for all $x,y,z\in \mathbb K$,
@@ -577,7 +577,7 @@ This proves \eqref{eq:upward-expansion} for $V$ and completes the induction.
 \end{proof}
 With Lemma~\ref{lem:upward-expansion} in hand, we now establish matching
 recurrences for $F_C(U)$ and $S_C(U)$.
-\begin{lemmarep}[Recurrence for $F_C$]\label{lem:FC_recurrence}
+\begin{lemma}[Recurrence for $F_C$]\label{lem:FC_recurrence}
 \lean{Having}{Having.FC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
 commutative idempotent m-semiring in which $\otimes$ distributes over
@@ -588,7 +588,7 @@ for $C\ge 0$ set
 $F_C(U)\defeq\bigoplus_{\substack{W\subseteq U\\|W|\ge C}} T_U(W)$.
 Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
 $F_C(U)=F_C(U')\oplus\bigl(F_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
-\end{lemmarep}
+\end{lemma}
 
 \begin{proof}
   Fix $u\in U$ such that $U'=U\setminus\{u\}$ and a $C\in\mathbb N_{\ge 1}$.
@@ -601,7 +601,7 @@ F_C(U)
 \underbrace{\bigoplus_{\substack{W'\subseteq U'\\|W'|\ge C-1}}T_U(W'\cup\{u\})}_{(II).\;u\in W}.
 \end{equation}
 
-\paragraph{Simplify $(II)$: }
+\paragraph*{Simplify $(II)$: }
 Fix $W'\subseteq U'$. Then $A_{W'\cup\{u\}}=A_{W'}\otimes\alpha_u$, and
 $U\setminus(W'\cup\{u\})=U'\setminus W'$. Hence, using distributivity of $\otimes$ over $\oplus$,
 \[
@@ -629,7 +629,7 @@ distributivity of $\otimes$ over $\oplus$ yields
 =F_{C-1}(U')\otimes\alpha_u.
 \end{equation}
 
-\paragraph{Relate $T_U(W)$ and $T_{U'}(W)$ for $W\subseteq U'$: }
+\paragraph*{Relate $T_U(W)$ and $T_{U'}(W)$ for $W\subseteq U'$: }
 Fix $W\subseteq U'$. Since $U\setminus W=(U'\setminus W)\cup\{u\}$, we have
 \[
 \bigoplus_{w\in U\setminus W}A_{W\cup\{w\}}
@@ -646,7 +646,7 @@ A_W\ominus\Bigl(\bigoplus_{w\in U'\setminus W}A_{W\cup\{w\}}\oplus(A_W\otimes\al
 T_{U'}(W)\ominus(A_W\otimes\alpha_u).
 \end{equation}
 
-\paragraph{Show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)$: }
+\paragraph*{Show $F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)$: }
   By \eqref{eq:TU-rewrite} and the inequality $x\ominus y\le x$ (shown in Lemma~\ref{lem:monus-basic}(i)),
 we have $T_U(W)\le T_{U'}(W)$ for all $W\subseteq U'$.
 Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ yields $(I)\le F_C(U')$.
@@ -655,7 +655,7 @@ Together with \eqref{eq:split-I-II} and \eqref{eq:II-simplifies}, this gives
 F_C(U)\le F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u).
 \end{equation}
 
-\paragraph{Show $F_C(U')\le F_C(U)$: }
+\paragraph*{Show $F_C(U')\le F_C(U)$: }
 Fix $W\subseteq U'$ with $|W|\ge C$.
 By the inequality $x\le y\oplus(x\ominus y)$ (shown in Lemma~\ref{lem:monus-basic}(ii)) applied to
 $x=T_{U'}(W)$ and $y=A_W\otimes\alpha_u$, and using \eqref{eq:TU-rewrite}, we get
@@ -678,7 +678,7 @@ so $A_W\otimes\alpha_u\le F_C(U)$.
 Plugging these two bounds into \eqref{eq:TUprime-bound} yields $T_{U'}(W)\le F_C(U)$.
 Taking $\oplus$ over all $W\subseteq U'$ with $|W|\ge C$ gives $F_C(U')\le F_C(U)$.
 
-\paragraph{The recurrence: }
+\paragraph*{The recurrence: }
 From \eqref{eq:leq-direction}, $F_C(U')\le F_C(U)$ and
 $F_{C-1}(U')\otimes\alpha_u=(II)\le F_C(U)$, we obtain
 $F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u)\le F_C(U)$.
@@ -688,7 +688,7 @@ F_C(U)=F_C(U')\oplus(F_{C-1}(U')\otimes\alpha_u),
 \]
 as required.
 \end{proof}
-\begin{lemmarep}[Recurrence for $S_C$]\label{lem:SC_recurrence}
+\begin{lemma}[Recurrence for $S_C$]\label{lem:SC_recurrence}
 \lean{Having}{Having.SC_recurrence}
 Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
 commutative m-semiring and $(\alpha_w)_{w\in U}$ a family of elements of
@@ -697,7 +697,7 @@ $W\subseteq U$ define~$A_W\defeq\nobreak\bigotimes_{w\in W}\alpha_w$, and for
 $C\ge 0$ set $S_C(U)\defeq\bigoplus_{\substack{W\subseteq U\\|W|=C}} A_W$.
 Then, for any $u\in U$ and $U'\defeq U\setminus\{u\}$,
 $S_C(U)=S_C(U')\oplus\bigl(S_{C-1}(U')\otimes\alpha_u\bigr)$ for every $C\ge 1$.
-\end{lemmarep}
+\end{lemma}
 
 \begin{proof}
 Fix $C\ge 1$ and $u\in U$, and write $U=U'\cup\{u\}$ with $U'=U\setminus\{u\}$.
@@ -793,7 +793,7 @@ The last ingredient, used for the $=$ and $\le$ cases, is a per-world
 upper bound: the contribution $T_U(W)$ of a single world $W$ of size at
 most~$C$ is below the difference $S_j(U)\ominus S_{C+1}(U)$, for every
 level $j\le|W|$.
-\begin{lemmarep}[Per-world upper bound]\label{lem:world-bound}
+\begin{lemma}[Per-world upper bound]\label{lem:world-bound}
 \lean{Having}{Having.world_bound}
 Let $(\mathbb K,\oplus,\otimes,\ominus,\mathbb 0,\mathbb 1)$ be a
 commutative absorptive m-semiring in which $\otimes$ distributes over
@@ -804,7 +804,7 @@ every $W\subseteq U$ and all integers $j,C$ with $j\le|W|\le C$,
 \[
 T_U(W)\ \le\ S_j(U)\ominus S_{C+1}(U).
 \]
-\end{lemmarep}
+\end{lemma}
 
 \begin{proof}
 First note that, since $\mathbb K$ is absorptive, every $y\in\mathbb K$
