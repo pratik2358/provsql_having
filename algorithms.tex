@@ -198,7 +198,7 @@ is the \sql{SUM} aggregate, so that $\mathrm{agg}_{1,f_\Sigma}(W)=|W|$.
 \end{theoremrep}
 
 \begin{appendixproof}
-\textbf{Correctness of \textsc{ValidSum}.}
+\paragraph*{Correctness of \textsc{ValidSum}}
 Write
 \[
   T\defeq \mathrm{agg}_{t,f_\Sigma}([|U|])=\sum_{r=1}^{|U|} t(u_r).
@@ -411,7 +411,7 @@ It follows that the final output is exactly
 
 This establishes the correctness.
 
-\medskip\noindent\textbf{Correctness of \textsc{ValidCount}.}
+\paragraph*{Correctness of \textsc{ValidCount}}
 The computation for \sql{COUNT} depends only on the occurrences in $U$.
 
 \smallskip\noindent\textbf{Correctness of \textsc{Combinations}.}
