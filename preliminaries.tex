@@ -406,12 +406,12 @@ schema $\mathcal D$, is a function mapping each relation symbol $R$ of $\mathcal
 Unlike in~\cite{green2007provenance}, where a $\mathbb K$-relation is a
 function from tuples to~$\mathbb K$, a tuple may thus occur several
 times, with different annotations. Aggregation requires it: an aggregate
-is computed over the occurrences of a group, not over its distinct
-values, and over an idempotent semiring such as $\mathbb B[X]$ the
+is computed over the occurrences of a group and not only over its distinct
+values. Over an idempotent semiring such as $\mathbb B[X]$ the
 multiplicities cannot be carried by the annotations, as the semimodule
 construction of~\cite{amsterdamer2011provenance} then forces the
 aggregation monoid to be idempotent as
-well~\cite[Proposition~3.11]{amsterdamer2011provenance}, excluding
+well~\cite[Proposition~3.11]{amsterdamer2011provenance}, thus excluding
 \sql{COUNT} and \sql{SUM}. It also matches the bag semantics of SQL,
 under which a projection may produce two occurrences of a tuple with
 distinct provenance, and merging them would change the value of

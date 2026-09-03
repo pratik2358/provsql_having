@@ -30,21 +30,21 @@ Aggregates such as \sql{SUM}, \sql{COUNT}, \sql{MIN} and \sql{MAX}
 are \emph{commutative}: their value is unchanged under any reordering of
 the input sequence, as for instance the \sql{SUM} aggregate
 $f_\Sigma\bigl((x_1,\dots,x_n)\bigr)\defeq x_1+\dots+x_n$.
-But \fakesql{PICKFIRST} defined by
+But
 $\fakesql{PICKFIRST}\bigl((x_1,\dots,x_n)\bigr)\defeq x_1$, returning
 the first value of its input, is \emph{non-commutative}: its result
 depends on the order.
 \end{example}
 
 A \sql{HAVING} predicate cannot be evaluated on the annotations of a
-group taken as a whole: they can be combined by $\oplus$ and $\otimes$
+group taken as a whole. The annotations can be combined by $\oplus$ and $\otimes$
 into a single element of $\mathbb K$, but no element of $\mathbb K$
 records how many occurrences are counted or which values are summed, so
-there is nothing to which $\text{\sql{COUNT(*)}}\geq 2$ could be applied. This
-is why~\cite{amsterdamer2011provenance} leaves the comparison
-uninterpreted, as a formal expression over semimodule elements. To give it
+there is nothing to which e..g, $\text{\sql{COUNT(*)}}\geq 2$ could be applied. This
+is why~\cite{amsterdamer2011provenance} leaves comparisons
+uninterpreted, as formal expressions over semimodule elements. To give the predicate
 a value in $\mathbb K$ instead, we split the group into its
-\emph{possible worlds}: a world is a subsequence $W$ of the occurrences of
+\emph{possible worlds}. A world is a subsequence $W$ of the occurrences of
 the group, on which the aggregate is an ordinary value and the comparison
 an ordinary test; its annotation states that the occurrences of $W$ are
 present and the others are not, the latter through the monus. The
@@ -142,11 +142,11 @@ Then
 \end{definition}
 The first case is identical to the selection semantics
 of~\cite{sen2026provsql}.
-In the second case the annotation~$\alpha$ is
-dropped: the possible-world sum ranges over non-empty worlds only, so it
+In the second case, the possible-world sum ranges over non-empty worlds only, so it
 already enforces group existence (the role of the $\delta(\cdot)$-type
 factor $\alpha$), making the extra $\otimes$ by $\alpha$ redundant by
-the $\delta$-absorption axiom of Section~\ref{sec:preliminaries}. A
+the $\delta$-absorption axiom of Section~\ref{sec:preliminaries}. The
+annotation~$\alpha$ is thus dropped. A
 group for which no world satisfies $\psi$ receives the annotation
 $\mathbb 0$, i.e., is absent from the result
 (Section~\ref{sec:preliminaries}).
@@ -177,7 +177,7 @@ expect of $\text{\sql{COUNT(*)}}\ge 2$. Notice that the negative factors
 $\lnot x_i$ have cancelled out: since $\mathbb B[X]$ is absorptive, the
 provenance is already captured by the \emph{minimal} satisfying worlds
 (here the three pairs), with no use of $\ominus$. This is precisely the
-phenomenon exploited by the results of Section~\ref{sec:results} and the
+property exploited by the results of Section~\ref{sec:results} and the
 polynomial-time algorithms of Section~\ref{sec:algorithms}; in a
 non-absorptive semiring the discarded-occurrence factors do not cancel
 and this simplification fails. In~\cite{amsterdamer2011provenance}, the
