@@ -311,7 +311,7 @@ directly to a grouping, $\sigma_\psi(\gamma^{\preceq}(q'))$; a comparison
 occurring further downstream has the same predicate provenance as the
 site formed by that comparison and its originating grouping.
 Definition~\ref{def:general} is a conservative extension of
-Definition~\ref{def:semantics}: the two agree on every site.
+Definition~\ref{def:semantics}, where the two agree on every site.
 \begin{proposition}\label{prop:general-agrees}
   \lean{AggQueryBridges}{AggQuery.havingSite_evaluateAnnotated}
   Let $\psi$ be a single aggregate comparison and
@@ -340,12 +340,12 @@ comparison applied to a grouping, applies verbatim to the corresponding
 site of an arbitrary query.
 
 \paragraph*{Materializing a site in the provenance circuit.} The
-implementation does not compute the possible-world sum eagerly: it
+implementation does not compute the possible-world sum eagerly. Instead, it
 rewrites the query so that the aggregate columns hold tokens built by
 ProvSQL's aggregate-token constructor and the provenance column of a
 grouping holds its group-existence guard. A predicate $\psi$ with at
 least one aggregate atom is then compiled into a
-\emph{gate term}~$\llbracket\psi\rrbracket$: an aggregate atom becomes a
+\emph{gate term}~$\llbracket\psi\rrbracket$ where an aggregate atom becomes a
 comparison gate applied to the token and to the compared regular term, a
 regular atom becomes an indicator gate $\chi_{\op}$, $\land$ becomes
 $\otimes$, $\lor$ becomes $\oplus$, and $\neg$ is pushed to the atoms
