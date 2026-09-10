@@ -35,9 +35,8 @@ not evaluated; it is also a probabilistic database.
 GProM~\cite{arab2018gprom} is a rewriting middleware over several
 backends that computes several forms of provenance without full semiring
 semantics; it joins aggregation results with the provenance of each group
-and treats \sql{HAVING} as a plain selection, so that it does not record
-how the provenance depends on the comparison, which precludes its use as
-a probabilistic database.
+and treats \sql{HAVING} as a plain selection, without recording how the
+provenance depends on the comparison, which precludes probabilistic use.
 
 \inlinepar{Aggregation in probabilistic databases.}
 \cite{re2009trichotomy} characterizes which aggregate conjunctive queries
@@ -72,4 +71,4 @@ sizes~\cite{sen2026provsql}.
 \cite{bakibayev2013aggregation} adds aggregation and \sql{HAVING} to a
 factorized database engine, without provenance and in a deterministic
 setting; whether factorized representations could compress our possible
-worlds is a natural question for future work.
+worlds is a natural question.

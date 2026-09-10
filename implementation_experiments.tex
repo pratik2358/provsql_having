@@ -8,7 +8,14 @@ prunings that
 Proposition~\ref{prop:algorithms} justifies: in an absorptive m-semiring,
 only the minimal valid worlds of an upward-closed comparison are
 generated, and a \emph{range check} on the extremal values the aggregate
-can take answers directly the comparisons that no world can satisfy. The
+can take answers directly the comparisons that no world can satisfy.
+The monus cancellation behind the monotone case of
+Section~\ref{sec:results} adds two shortcuts: the monus-free closed
+forms ($\text{\sql{MIN(a)}}<c$, ${}\leq c$, and their \sql{MAX} mirrors)
+serve in every absorptive m-semiring, distributive or not, and in an
+idempotent non-absorptive one such as $\mathrm{Why}[X]$ the valid worlds
+of a monotone comparison are enumerated in full but annotated by their
+present annotations alone. The
 table of \textsc{ValidSum}'s dynamic programming is bounded by the
 comparison constant for nonnegative integers (negative values and tables
 beyond $10^7$ entries fall back to enumeration); the algorithms of

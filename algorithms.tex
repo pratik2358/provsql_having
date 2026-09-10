@@ -607,8 +607,8 @@ Example~\ref{ex:aggregates}) it is
 $\bigoplus_{i:\,a_i\op c}(\mathbb 1\ominus\bigoplus_{j<i}\alpha_j)\otimes\alpha_i$,
 one term per satisfying occurrence that comes first
 \lean{HavingMinMax}{Having.firstScan_correct}. Each is computed by a
-single scan of~$U$ using $O(|U|)$ semiring operations. Both hypotheses
-are used: absorptivity fails in the tropical m-semiring over
+single scan of~$U$ using $O(|U|)$ semiring operations. For the four
+forms with a monus factor, both hypotheses are used: absorptivity fails in the tropical m-semiring over
 $\mathbb R\cup\{\infty\}$ (idempotent and distributive), where the scan
 value differs from the possible-world provenance already for
 $\text{\sql{MIN(a)}}\ge c$ on a two-occurrence group
@@ -616,7 +616,12 @@ $\text{\sql{MIN(a)}}\ge c$ on a two-occurrence group
 $\otimes$ over $\ominus$ identifies the world annotation $\ann_U(W)$ with
 the expanded form $T_U(W)$ of Section~\ref{sec:results}
 \lean{HavingSemantics}{Having.worldAnn_eq_T}, on which the closed forms
-are established.
+are established. The two monus-free forms, ${}<c$ and ${}\le c$, need
+absorptivity alone: their valid worlds are those meeting a set of
+occurrences, a family closed under supersets whose minimal elements
+are the singletons, so
+Proposition~\ref{prop:monus-cancellation}(iii) applies
+\lean{Having}{Having.sum_ann_meet}.
 
 \inlinepar{Case 2: \sql{COUNT(*) >= k} and \sql{COUNT(*) > k} for fixed $k$, in absorptive m-semirings.}
 By correctness of Algorithm~\ref{alg:count_enum}
