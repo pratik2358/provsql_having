@@ -1,0 +1,103 @@
+Paper ID
+113
+Paper Title
+Provenance of HAVING Queries in Semirings with Monus
+Track Name
+ICDT2027 Round 2 - Regular Research Paper
+Reviewer #1
+Questions
+
+    1. Please provide a detailed review. Both the score and the review text are required. Please summarize the contributions, mention strong points (S1, S2, ...) and weak points (W1, W2, ...) with details, and include a justification for your recommendation.
+        The paper extends the established semiring-based study of provenance to SQL HAVING queries. It does so bydefining the provenance of aggregate comparisons as the semiring sum of annotations of satisfying possible worlds, using an additional monus operation to represent excluded tuples. This yields a very natural Boolean lineage interpretation and extends to arbitrary commutative m-semirings (semirings with monus). The paper also states a lean formalisation of many of its statements and definitions as well as an implementation+experiments as further contributions.
+
+        S1: provenance for having queries is something that has been studied and has clear motivation in database research. And especially for Boolean provenance the proposed solution reads very natural to me, and the overall approach is interesting and well thought out.
+
+        S2: great care has been take to provide a lean formalisation for most of the results, and especially to naturally integrate this into the paper. Especially now when there is no clear community consensus on how to do this, such efforts and experimentation are commendable.
+
+        S3: The theorem showing that the semantics agree on count with the aggregation free rewriting of having queries for absorptive semirings is a nice result that further strengthens the new provenance semantics proposed here.
+
+        W1: I am missing some further motivation/discussion of your algebraic generalisation of the provenance notion here. I think there are some quite unintuitive situations. For instance, say I have HAVING COUNT(*) = 1 AND COUNT(*) = 2. Suppose I take the Viterbi semiring (with monus) and my group by has 2 tuples each with anotation 0.5. Then if I understand correctly the two provenances are evaluated separately for the conjuncts and the total provenance is their product 0.125, even though the having clause is unsatisfiable.
+
+        W2: The implementation section reads to me like it assumes a lot of familiarity with previous provenance evaluation on these image recognition datasets and previous ProvSQL experiments. It was not really clear to me what queries exactly are being benchmarked and what the meaning of their provenance is in this setting.
+
+        In summary I think this is an interesting contribution for a natural but conceptually very tricky problem. While I am not sure that the general semantics are ideal for various natural semirings to consider beyond the Boolean lineage one, I still think this is a good step forward.
+
+        Comments
+        - The proof sketch for Proposition 17 was too compressed for me. I could not really gain any understanding of how the proof might work from it.
+        - L364: what mismatch is being talked about here?
+        - Announcing the correction of claims from examples of [5] and [17] as a contribution in the introduction strikes me as somewhat out of proportion. I agree with the overall message of more formalisation and the value of machine-proofs, but to my taste, announcing these corrections as main contributions detracts from the actual core of the paper.
+    2. Please enter your confidence in your review and the recommendation.
+        Medium
+    3. Specific questions (if any) that you invite the authors to respond to during the rebuttal period.
+        Q1: I would be curious about your thoughts on W1.
+
+        Q2: Could you elaborate on what your experiments show. The main body section was unclear to me and it seems from Appendix E that you compute the provenance on queries without joins and jus a single equality filter? If this is right could you please comment on what kind of insight we get from this type of experiment.
+
+Reviewer #2
+Questions
+
+    1. Please provide a detailed review. Both the score and the review text are required. Please summarize the contributions, mention strong points (S1, S2, ...) and weak points (W1, W2, ...) with details, and include a justification for your recommendation.
+        The paper introduces a semiring provenance semantics for aggregate queries involving conditions between the aggregated values. The semantics uses a possible world approach, and it assumes commutative semirings with monus (m-semirings). The paper comes with a number of Lean formalized results regarding the semantics and the associated algorithms. Perhaps most important is Theorem 12 which identifies m-semirings where the proposed semantics agrees with an earlier self-join rewrite based semantics; this result concerns counting comparisons and it also identifies some m-semirings where the two semantics disagree. The semantics is also implemented within ProvSQL, and, considering the COUNT(*) <= k and COUNT(*) >= k comparisons, its running time is compared to that of the self-join approach, considering both symbolic provenance computation and probability computation. As k grows, the approach of this paper exhibits a relatively stable performance, while the self-join approach, being faster for small k, exhibits exponential growth. Lastly, the paper fixes some erroneous statements from earlier literature in the appendix.
+
+        As to the strong and weak points, I raise the following:
+
+        (S1) The paper makes a novel contribution to semiring provenance of aggregate queries involving comparisons.
+        (S2) The Lean formalization is a bonus (perhaps soon this will be expected).
+        (S3) The implementation and experimental comparison are nice contributions and give justification for further research on the approach.
+
+        (W1) The novel theoretical idea concerns the treatment of aggregate queries with HAVING conditions, which to me seems somewhat incremental; it is also not well communicated how much this idea builds on earlier research. The technical results strike as routine calculations, however I only consulted the appendix cursorily. Given the timestamp of submission and the absence of AI declaration, I take it that the proofs are human generated (as a calibrating neutral comment).
+        (W2) Regarding scope, this paper feels to land in-between theory and systems. I am not sure where the results would be best appreciated.
+        (W3) The presentation is quite hard to follow — for instance, definitions are verbose — and the paper does not use examples effectively. Partly for this reason, I cannot really judge correctness; I have no reasons to doubt it either. The anonymized Lean formalization backs this up.
+
+        I think the theoretical work *in itself* is not that impressive, but the implementation work carries some value.
+        However, the paper would at least need a major rewrite before inclusion in the conference program. For instance, algorithms and implementation take four pages; I wonder if some of that could be sacrificed for the sake of new examples. I would also urge the authors to think if there is a way to somehow tidy or decompose the definitions. I would now opt for weak reject.
+
+        Detailed remarks:
+        - Reading the paper linearly, it is hard to distill the standalone contribution. Perhaps Related Work could be placed after Introduction? At least, I suggest making the comparison to earlier work, such as [6] and [34], more precise from the start. This would also make paragraphs like 165-172 and 205-212 easier to read. Illustrative examples would be especially helpful, as well as more explanation on semimodules. Currently it is difficult to appreciate what we obtain regarding the objective stated in line 227 and compared to previous approaches.
+        - 132-143. Please elaborate for the reader the motivation for introducing delta? Also, I cannot make sense of the statement regarding the “group-existence factor” in line 137.
+        - Not all terms are precisely defined, like “database schema” in line 163, or a “term” in line 175 (what kind of expression?).
+        - 175. Should it be i \in N?
+        - 193-204. The definition is hard to read. In the semantics, the instance and the query are not fixed and alpha is not introduced (not necessary but helps reader). Why do we want ordering in the RA expression; is it really necessary to model GROUP BY in RA? Projection(?) Pi is not defined. No motivation (e.g., why is delta there?) or example is given. Please add one example to instantiate the definition.
+        - 259. The empty product (resp. sum) convention could be stated in the beginning?
+        - Definitions 9 and 10 are very hard to read. I was not able to parse Def 10 for instance.
+        - Example 11 illustrates a bit but it does not show how the definition is instantiated via a concrete query.
+        - Section 5. Would it be possible to give examples for the algorithms?
+        - Theorem 16 has a double Lean sign; state what K is (any m-semiring)?
+    2. Please enter your confidence in your review and the recommendation.
+        Medium
+    3. Specific questions (if any) that you invite the authors to respond to during the rebuttal period.
+        - How has the Lean vs paper correspondence been checked (assuming the formalization is by LLM)?
+        - Why Theorem 12 is not a tight dichotomy; (i) is for any and (ii-iii) for some? Could the scope of item (i) be expanded to some example m-semirings of the type described in (ii-iii)?
+
+Reviewer #3
+Questions
+
+    1. Please provide a detailed review. Both the score and the review text are required. Please summarize the contributions, mention strong points (S1, S2, ...) and weak points (W1, W2, ...) with details, and include a justification for your recommendation.
+        This paper studies provenance for queries with HAVING conditions in commutative semirings with monus. It assigns concrete annotations to aggregate comparisons by summing over possible worlds for the contributing tuple occurrences. The framework supports aggregate functions defined on sequences, including order-sensitive aggregates, subject to the query language's restrictions. The paper establishes connections between this semantics and aggregate-free query rewritings, proves compatibility with suitable homomorphisms and probabilistic evaluation, develops evaluation algorithms, and implements them in ProvSQL. It also provides a systematic account of relevant semiring properties, accompanied by Lean formalizations.
+
+        S1: The paper addresses a relevant problem and connects semantics to implementation. Supporting aggregate comparisons is necessary for useful SQL provenance, and the paper develops its proposal through formal definitions, algebraic results, algorithms, and a working implementation. The distinction between constructing a formal comparison expression and evaluating it in a target annotation structure is clearly motivated.
+
+        S2: The separation of algebraic assumptions is useful. The distinction between idempotence, absorptivity, and distributivity over monus helps explain why different classes of comparisons admit different simplifications.
+
+        S3: Although it is not usual for PODS/ICDT, the implementation and formalization strengthen the work. It is nice to correct some claims about basic semiring properties that were previously stated incorrectly.
+
+        Some points need to be addressed:
+
+        W1: Some related work is not discussed, including "Different Differences in Semirings". In addition, the monus for the tropical semiring is already defined on page 3, eq. (4) in the paper.
+
+        W2: The experiments provide limited evidence for the general algorithmic claims. The experimental evaluation only covers COUNT queries, and each tested group contains at most 13 relevant occurrences. Consequently, even full world enumeration remains small. The evaluation does not establish scalability with group size or provide evidence for the SUM algorithms, order-sensitive aggregates, or the range of non-Boolean semirings discussed in the theory.
+
+        W3: The two semantic definitions appear inconsistent for mixed predicates. Definitions 10 and 20 appear to disagree when a predicate combines regular and aggregate comparisons. As the definition is quite dense, I would like to hear the authors' rebuttal.
+
+        Consider a relation (R(g,v)) containing one tuple ((7,42)), annotated by (x) in B[X}, and the query:
+
+        SELECT g
+        FROM R
+        GROUP BY g
+        HAVING g = 7 OR COUNT(*) >= 2;
+
+        The regular comparison contributes (1), while the aggregate comparison contributes (0). Would that be the following case: under Definition 10 and the stated interpretation of disjunction, the predicate annotation is therefore (1), because the predicate contains an aggregate comparison and the original group annotation should be discarded? On the other hand, under Definition 20, the group-existence factor is retained, yielding (x), the expected Boolean provenance.
+    2. Please enter your confidence in your review and the recommendation.
+        Medium
+    3. Specific questions (if any) that you invite the authors to respond to during the rebuttal period.
+        W3
